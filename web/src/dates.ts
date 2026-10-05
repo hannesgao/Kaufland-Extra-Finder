@@ -38,6 +38,19 @@ export function daysBetween(from: IsoDate, to: IsoDate): number {
   return Math.round((utc(to) - utc(from)) / DAY_MS);
 }
 
+/** Monday of the ISO week that contains `iso`. */
+export function mondayOf(iso: IsoDate): IsoDate {
+  const weekday = (new Date(utc(iso)).getUTCDay() + 6) % 7; // Monday = 0
+  return addDays(iso, -weekday);
+}
+
+/** ISO 8601 week number ("KW"), e.g. 41 for 2026-10-06. */
+export function isoWeek(iso: IsoDate): number {
+  const thursday = addDays(mondayOf(iso), 3); // the week belongs to the year of its Thursday
+  const jan1 = `${thursday.slice(0, 4)}-01-01`;
+  return Math.floor(daysBetween(jan1, thursday) / 7) + 1;
+}
+
 /** Inclusive list of dates from `from` to `to`. */
 export function dateRange(from: IsoDate, to: IsoDate): IsoDate[] {
   const out: IsoDate[] = [];

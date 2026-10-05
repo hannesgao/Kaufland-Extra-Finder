@@ -927,17 +927,37 @@ a {
   gap: 4px 10px;
 }
 
-/* Week strip: one cell per day of validity. */
-.week {
+/* Calendar from today: rows are weeks (KW, Mo–So); leaflet days are filled in the chip colour. */
+.cal {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 6px;
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
+  margin-top: 12px;
 }
 
-.week__day {
+.cal__row {
+  display: grid;
+  grid-template-columns: 2.75rem repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.cal__kw {
+  align-self: center;
+  color: var(--md-on-surface-variant);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+
+.cal__weekday {
+  color: var(--md-on-surface-variant);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+  text-align: center;
+}
+
+.cal__day {
   display: grid;
   justify-items: center;
   gap: 1px;
@@ -947,20 +967,18 @@ a {
   background: var(--md-surface-container-lowest);
 }
 
-.week__weekday {
-  color: var(--md-on-surface-variant);
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1rem;
+.cal__day--empty {
+  border-color: transparent;
+  background: none;
 }
 
-.week__date {
+.cal__date {
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.25rem;
 }
 
-.week__note {
+.cal__note {
   min-height: 1rem;
   color: var(--md-on-surface-variant);
   font-size: 0.6875rem;
@@ -969,49 +987,77 @@ a {
   white-space: nowrap;
 }
 
-.week__day.is-sunday {
-  border-style: dashed;
-}
-
-.week__day.is-past {
-  opacity: 0.45;
-}
-
-.week__day.is-sunday .week__date {
+/* Days outside the leaflet: quiet */
+.cal__day:not(.is-valid) .cal__date {
   color: var(--md-on-surface-variant);
+  font-weight: 400;
 }
 
-.week__day.is-today {
-  border: 2px solid var(--md-primary);
-  padding: 5px 0 4px;
-}
-
-.week__day.is-today .week__note {
-  color: var(--md-primary);
-}
-
-.week__day.is-special .week__note {
+.cal--upcoming .cal__day.is-valid {
+  border-color: transparent;
+  background: var(--md-tertiary-container);
   color: var(--md-on-tertiary-container);
 }
 
-.week__day.is-special {
-  background: var(--md-tertiary-container);
+.cal--now .cal__day.is-valid {
   border-color: transparent;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
 }
 
-.week__day.is-closed {
-  background: var(--md-error-container);
+.cal__day.is-valid .cal__note {
+  color: inherit;
+}
+
+.cal__day.is-sunday {
+  border-style: dashed;
+}
+
+.cal__day.is-sunday.is-valid {
+  border-color: var(--md-outline);
+}
+
+.cal__day.is-today {
+  padding: 5px 0 4px;
+  border: 2px solid var(--md-primary);
+}
+
+.cal__day.is-today .cal__note {
+  color: var(--md-primary);
+}
+
+.cal--now .cal__day.is-today.is-valid .cal__note {
+  color: var(--md-on-primary-container);
+}
+
+.cal__day.is-closed {
   border-color: transparent;
+  background: var(--md-error-container);
   color: var(--md-on-error-container);
 }
 
-.week__day.is-closed .week__date {
+.cal__day.is-closed .cal__date {
   text-decoration: line-through;
 }
 
-.week__day.is-closed .week__weekday,
-.week__day.is-closed .week__note {
-  color: var(--md-on-error-container);
+@media (max-width: 479px) {
+  .cal,
+  .cal__row {
+    gap: 4px;
+  }
+
+  /* Phones: the seven days need the full width; the week number is dropped. */
+  .cal__row {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .cal__kw {
+    display: none;
+  }
+
+  .cal__note {
+    font-size: 0.625rem;
+  }
 }
 
 .visually-hidden {

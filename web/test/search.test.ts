@@ -62,6 +62,49 @@ describe("search", () => {
     expect(hit.find((h) => h.store.id === "DE8530")?.foreignOnly).toBe(false);
   });
 
+  it("builds the calendar from today's week through the end of the leaflet", () => {
+    const view = nth(nth(search(data, PLZ_KASSEL, 10, "2026-10-06").hits).leaflets);
+    expect(view.weeks.map((w) => w.kw)).toEqual([41, 42]);
+    const first = nth(view.weeks).days;
+    expect(first[0]).toBeNull(); // Monday 05.10. is before today
+    expect(first[1]?.today).toBe(true);
+    expect(first.map((d) => d?.valid ?? null)).toEqual([
+      null,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+    ]);
+  });
+
+  it("shows one row when the leaflet ends this week", () => {
+    const view = nth(nth(search(data, PLZ_KASSEL, 10, "2026-10-13").hits).leaflets);
+    expect(view.weeks.map((w) => w.kw)).toEqual([42]);
+    expect(nth(view.weeks).days.map((d) => d?.day ?? null)).toEqual([
+      null,
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+    ]);
+  });
+
+  it("skips empty weeks between today and a later leaflet", () => {
+    const store = nth(data.stores.filter((s) => s.id === "DE4453"));
+    const leaflets = store.leaflets.map((l) => ({
+      ...l,
+      validFrom: "2026-10-22",
+      validTo: "2026-10-28",
+    }));
+    const patched = replaceStore(data, "DE4453", { leaflets });
+    const view = nth(nth(search(patched, PLZ_KASSEL, 10, "2026-10-06").hits).leaflets);
+    expect(view.weeks.map((w) => w.kw)).toEqual([41, 43, 44]);
+  });
+
   it("has no siblings for a leaflet only one store has", () => {
     const hit = nth(search(data, PLZ_KASSEL, 10, MONDAY).hits);
     expect(nth(hit.leaflets).siblings).toEqual([]);

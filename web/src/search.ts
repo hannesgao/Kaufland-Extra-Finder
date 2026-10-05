@@ -2,11 +2,14 @@
 
 import type { ExtraData, IsoDate, LatLng, Leaflet, SpecialDay, Store } from "./data";
 import {
+  addDays,
   dateRange,
   formatDate,
   formatDay,
   formatRange,
+  isoWeek,
   leafletLabel,
+  mondayOf,
   relativeValidity,
   weekdayName,
   weekdayShort,
@@ -21,17 +24,23 @@ export interface DayLabel {
   date: string;
 }
 
-/** One day of a leaflet's validity, for the week strip. */
+/** One calendar day (from today on). */
 export interface DayView {
   iso: IsoDate;
-  weekday: string; // "Do"
   day: string; // "08"
-  past: boolean;
   today: boolean;
+  /** Inside the leaflet's validity. */
+  valid: boolean;
   closed: boolean;
   /** Shortened/extended hours, e.g. "7–14". */
   hours?: string;
   sunday: boolean;
+}
+
+/** One calendar row, Monday to Sunday; days before today are null. */
+export interface WeekView {
+  kw: number;
+  days: (DayView | null)[];
 }
 
 export interface LeafletView {
@@ -43,7 +52,8 @@ export interface LeafletView {
   rangeText: string;
   /** "startet in 2 Tagen" / "noch 3 Tage gültig" */
   relative: string;
-  days: DayView[];
+  /** Today's week, then the weeks of the validity (no gap weeks in between). */
+  weeks: WeekView[];
   range: string; // "08.10.–14.10.2026"
   /** Already valid today (otherwise it starts in the future). */
   running: boolean;
@@ -90,22 +100,31 @@ export interface SearchResult {
 
 const shortHour = (time: string) => time.replace(/^0/, "").replace(/:00$/, "");
 
-function dayViews(store: Store, leaflet: Leaflet, today: IsoDate): DayView[] {
+function calendar(store: Store, leaflet: Leaflet, today: IsoDate): WeekView[] {
   const special = new Map(store.specialDays.map((d) => [d.date, d]));
-  return dateRange(leaflet.validFrom, leaflet.validTo).map((iso) => {
-    const sd = special.get(iso);
-    const view: DayView = {
-      iso,
-      weekday: weekdayShort(iso),
-      day: iso.slice(8, 10),
-      past: iso < today,
-      today: iso === today,
-      closed: sd?.closed === true,
-      sunday: new Date(`${iso}T00:00:00Z`).getUTCDay() === 0,
-    };
-    if (sd && !sd.closed) view.hours = `${shortHour(sd.open)}–${shortHour(sd.close)}`;
-    return view;
-  });
+  const mondays = new Set([mondayOf(today)]);
+  for (let m = mondayOf(leaflet.validFrom); m <= leaflet.validTo; m = addDays(m, 7)) {
+    if (m >= mondayOf(today)) mondays.add(m);
+  }
+  return [...mondays].sort().map((monday) => ({
+    kw: isoWeek(monday),
+    days: Array.from({ length: 7 }, (_, i) => {
+      const iso = addDays(monday, i);
+      if (iso < today) return null;
+      const sd = special.get(iso);
+      const valid = iso >= leaflet.validFrom && iso <= leaflet.validTo;
+      const view: DayView = {
+        iso,
+        day: iso.slice(8, 10),
+        today: iso === today,
+        valid,
+        closed: valid && sd?.closed === true,
+        sunday: i === 6,
+      };
+      if (valid && sd && !sd.closed) view.hours = `${shortHour(sd.open)}–${shortHour(sd.close)}`;
+      return view;
+    }),
+  }));
 }
 
 function viewLeaflet(
@@ -133,7 +152,7 @@ function viewLeaflet(
       `Gültig von ${weekdayShort(leaflet.validFrom)},\u00a0${formatDay(leaflet.validFrom)} ` +
       `bis ${weekdayShort(leaflet.validTo)},\u00a0${formatDate(leaflet.validTo)}`,
     relative: relativeValidity(leaflet.validFrom, leaflet.validTo, today),
-    days: dayViews(store, leaflet, today),
+    weeks: calendar(store, leaflet, today),
     range: formatRange(leaflet.validFrom, leaflet.validTo),
     running: leaflet.validFrom <= today,
     from: { weekday: weekdayName(leaflet.validFrom), date: formatDate(leaflet.validFrom) },

@@ -52,32 +52,52 @@ function leafletHeader(view: LeafletView): HTMLDivElement {
   );
 }
 
+const WEEKDAYS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+
 function dayNote(day: DayView): string {
   if (day.closed) return "zu";
   return day.hours ?? (day.today ? "heute" : "");
 }
 
-/** One cell per day of validity; closures, special hours and today are marked. Visual only. */
-function weekStrip(view: LeafletView): HTMLOListElement {
+function dayCell(day: DayView | null): HTMLSpanElement {
+  if (!day) return h("span", { class: "cal__day cal__day--empty" });
   return h(
-    "ol",
-    { class: "week", "aria-hidden": "true" },
-    ...view.days.map((day) =>
+    "span",
+    {
+      class: classes(
+        "cal__day",
+        day.valid && "is-valid",
+        day.today && "is-today",
+        day.closed && "is-closed",
+        day.hours !== undefined && "is-special",
+        day.sunday && "is-sunday",
+      ),
+    },
+    h("span", { class: "cal__date" }, day.day),
+    h("span", { class: "cal__note" }, dayNote(day)),
+  );
+}
+
+/**
+ * Calendar from today: one row per week (Mo–So) up to the end of the leaflet; leaflet days are
+ * filled. Visual only — the header text and the hidden summary carry the same facts.
+ */
+function calendar(view: LeafletView): HTMLDivElement {
+  return h(
+    "div",
+    { class: `cal ${view.running ? "cal--now" : "cal--upcoming"}`, "aria-hidden": "true" },
+    h(
+      "div",
+      { class: "cal__row cal__row--head" },
+      h("span", { class: "cal__kw" }),
+      ...WEEKDAYS.map((d) => h("span", { class: "cal__weekday" }, d)),
+    ),
+    ...view.weeks.map((week) =>
       h(
-        "li",
-        {
-          class: classes(
-            "week__day",
-            day.past && "is-past",
-            day.today && "is-today",
-            day.closed && "is-closed",
-            day.hours !== undefined && "is-special",
-            day.sunday && "is-sunday",
-          ),
-        },
-        h("span", { class: "week__weekday" }, day.weekday),
-        h("span", { class: "week__date" }, day.day),
-        h("span", { class: "week__note" }, dayNote(day)),
+        "div",
+        { class: "cal__row" },
+        h("span", { class: "cal__kw" }, `KW ${String(week.kw)}`),
+        ...week.days.map(dayCell),
       ),
     ),
   );
@@ -149,7 +169,7 @@ function leafletPanel(view: LeafletView, storeName: string, withSiblings: boolea
     { class: "leaflet" },
     pdfWarning(view),
     leafletHeader(view),
-    weekStrip(view),
+    calendar(view),
     view.unusable &&
       h(
         "p",

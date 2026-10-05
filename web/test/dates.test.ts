@@ -7,8 +7,10 @@ import {
   formatDate,
   formatRange,
   formatStamp,
+  isoWeek,
   isStale,
   leafletLabel,
+  mondayOf,
   relativeValidity,
   weekdayName,
   weekdayShort,
@@ -71,6 +73,22 @@ describe("formatting", () => {
 
   it("formats the data timestamp in Berlin time", () => {
     expect(formatStamp(new Date("2026-10-06T04:31:12Z"))).toBe("06.10.2026, 06:31 Uhr");
+  });
+});
+
+describe("calendar weeks", () => {
+  it("finds the Monday of a week", () => {
+    expect(mondayOf("2026-10-06")).toBe("2026-10-05");
+    expect(mondayOf("2026-10-05")).toBe("2026-10-05");
+    expect(mondayOf("2026-10-11")).toBe("2026-10-05");
+  });
+
+  it("numbers ISO weeks, including the year boundary", () => {
+    expect(isoWeek("2026-10-06")).toBe(41);
+    expect(isoWeek("2026-01-01")).toBe(1);
+    expect(isoWeek("2026-12-31")).toBe(53);
+    expect(isoWeek("2027-01-03")).toBe(53);
+    expect(isoWeek("2027-01-04")).toBe(1);
   });
 });
 

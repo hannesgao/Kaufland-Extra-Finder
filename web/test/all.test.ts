@@ -68,7 +68,7 @@ describe("renderRow", () => {
     expect(row.querySelector(".row__address")?.textContent).toBe("Franzgraben 40-42, 34125 Kassel");
     const titles = [...row.querySelectorAll(".lp-head__title")].map((t) => t.textContent);
     expect(titles).toEqual(["Laufender Extra-Prospekt", "Aktuellster Extra-Prospekt"]);
-    expect(row.querySelectorAll(".week")).toHaveLength(2);
+    expect(row.querySelectorAll(".cal")).toHaveLength(2);
     // Same buttons as the cards: per leaflet, then the store page (no map in this tab).
     const links = [...row.querySelectorAll("a")].map((a) => a.textContent);
     expect(links).toEqual([

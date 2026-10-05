@@ -29,21 +29,19 @@ describe("renderHit", () => {
       "Gültig von Do,\u00a008.10. bis Mi,\u00a014.10.2026",
     );
     expect(li.querySelector(".lp-head__relative")?.textContent).toBe("startet in 3 Tagen");
-    const days = [...li.querySelectorAll(".week__day")].map((d) => [
-      d.querySelector(".week__weekday")?.textContent,
-      d.querySelector(".week__date")?.textContent,
+    // Calendar from today (Monday 05.10.): this week and next week, leaflet days filled.
+    const rows = [...li.querySelectorAll(".cal__row:not(.cal__row--head)")].map((row) =>
+      [...row.children].map((c) =>
+        c.classList.contains("cal__kw")
+          ? c.textContent
+          : `${c.querySelector(".cal__date")?.textContent ?? "·"}${c.classList.contains("is-valid") ? "*" : ""}`,
+      ),
+    );
+    expect(rows).toEqual([
+      ["KW 41", "05", "06", "07", "08*", "09*", "10*", "11*"],
+      ["KW 42", "12*", "13*", "14*", "15", "16", "17", "18"],
     ]);
-    expect(days).toEqual([
-      ["Do", "08"],
-      ["Fr", "09"],
-      ["Sa", "10"],
-      ["So", "11"],
-      ["Mo", "12"],
-      ["Di", "13"],
-      ["Mi", "14"],
-    ]);
-    // Today (Monday 05.10.) lies before the leaflet: nothing is marked as today.
-    expect(li.querySelector(".week__day.is-today")).toBeNull();
+    expect(li.querySelector(".cal__day.is-today .cal__date")?.textContent).toBe("05");
     expect(li.querySelector(".siblings__title")?.textContent).toBe(
       "Gleicher Extra-Prospekt auch in",
     );
@@ -149,25 +147,23 @@ describe("renderHit", () => {
     expect(titles).toEqual(["Laufender Extra-Prospekt", "Aktuellster Extra-Prospekt"]);
     const relative = [...kassel.querySelectorAll(".lp-head__relative")].map((t) => t.textContent);
     expect(relative).toEqual(["noch 3 Tage gültig", "startet in 3 Tagen"]);
-    // Running leaflet 01.–07.10.: days before Monday 05.10. are past, 05.10. is today.
-    const current = kassel.querySelector(".leaflet");
-    const past = [...(current?.querySelectorAll(".week__day.is-past .week__date") ?? [])];
-    expect(past.map((d) => d.textContent)).toEqual(["01", "02", "03", "04"]);
-    expect(current?.querySelector(".week__day.is-today .week__date")?.textContent).toBe("05");
-    expect(current?.querySelector(".week__day.is-today .week__note")?.textContent).toBe("heute");
+    // Running leaflet 01.–07.10. ends this week: one row, starting today (Monday 05.10.).
+    const [current, next] = [...kassel.querySelectorAll(".cal")];
+    expect(current?.querySelectorAll(".cal__row:not(.cal__row--head)")).toHaveLength(1);
+    const valid = [...(current?.querySelectorAll(".cal__day.is-valid .cal__date") ?? [])];
+    expect(valid.map((d) => d.textContent)).toEqual(["05", "06", "07"]);
+    expect(current?.querySelector(".is-today .cal__note")?.textContent).toBe("heute");
+    expect(next?.querySelectorAll(".cal__row:not(.cal__row--head)")).toHaveLength(2);
 
     const grunwinkel = hitsFor(data, PLZ_KARLSRUHE).find((h) => h.store.id === "DE8530");
     const card = renderHit(nth(grunwinkel ? [grunwinkel] : []), vi.fn());
-    const closed = card.querySelector(".week__day.is-closed");
-    expect([closed?.querySelector(".week__date")?.textContent, closed?.textContent]).toEqual([
-      "09",
-      "Fr09zu",
-    ]);
-    const special = card.querySelector(".week__day.is-special");
-    expect(special?.querySelector(".week__note")?.textContent).toBe("7–14");
-    expect(card.querySelector(".week__day.is-sunday .week__date")?.textContent).toBe("11");
-    // The strip is visual only; screen readers get the same facts as text.
-    expect(card.querySelector(".week")?.getAttribute("aria-hidden")).toBe("true");
+    const closed = card.querySelector(".cal__day.is-closed");
+    expect(closed?.textContent).toBe("09zu");
+    const special = card.querySelector(".cal__day.is-special");
+    expect(special?.querySelector(".cal__note")?.textContent).toBe("7–14");
+    expect(card.querySelector(".cal__day.is-sunday .cal__date")?.textContent).toBe("11");
+    // The calendar is visual only; screen readers get the same facts as text.
+    expect(card.querySelector(".cal")?.getAttribute("aria-hidden")).toBe("true");
     expect(card.querySelector(".leaflet .visually-hidden")?.textContent).toBe(
       "Geschlossen am 09.10. Sonderöffnungszeiten: 10.10. 07:00–14:00 Uhr.",
     );
