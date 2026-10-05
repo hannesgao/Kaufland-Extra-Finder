@@ -4,6 +4,7 @@ import {
   berlinToday,
   dateRange,
   daysBetween,
+  formatLongDate,
   formatRange,
   formatStamp,
   isStale,
@@ -55,6 +56,11 @@ describe("leafletLabel", () => {
 });
 
 describe("formatting", () => {
+  it("formats long dates with weekday", () => {
+    expect(formatLongDate("2026-10-08")).toBe("Donnerstag, 08.10.2026");
+    expect(formatLongDate("2027-01-03")).toBe("Sonntag, 03.01.2027");
+  });
+
   it("formats ranges", () => {
     expect(formatRange("2026-10-08", "2026-10-14")).toBe("08.10.–14.10.2026");
   });

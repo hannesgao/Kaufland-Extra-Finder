@@ -11,8 +11,6 @@ import type { Hit } from "../search";
 export interface MapView {
   show(origin: LatLng, radiusKm: number, hits: readonly Hit[]): void;
   select(id: string | null): void;
-  /** Re-measure after the container was hidden (e.g. tab switch). */
-  refresh(): void;
 }
 
 const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -86,10 +84,6 @@ export async function createMap(
       }
       map.invalidateSize();
       map.fitBounds(bounds, { padding: [16, 16] });
-    },
-
-    refresh() {
-      map.invalidateSize();
     },
 
     select(id) {

@@ -128,8 +128,9 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 - `data/extra.json` is served from `fixtures/extra.json` in development (a sample; dates are shifted
   by whole weeks so it always looks current). Production builds **require** `KEF_EXTRA_JSON`, so a
   fixture can never be deployed by accident; the deploy job passes the `data` branch's file.
-- The page makes no third-party request until the first search; then the Leaflet chunk is loaded
-  and map tiles come from `tile.openstreetmap.org`. No cookies, no storage, no external fonts.
+- On page load the default PLZ 76131 (25 km) is searched, so the map and the store cards show
+  right away. Map tiles therefore come from `tile.openstreetmap.org` on every visit of the search
+  tab (the *Alle Extra-Filialen* tab loads no map). No cookies, no storage, no external fonts.
 - Two tabs: *Umkreissuche* (radius search with map) and *Alle Extra-Filialen* (all stores with a
   current or upcoming Extra leaflet, sortable by PLZ). State lives in the URL
   (`?plz=76137&r=50&tab=all&sort=plz-desc`); geolocation results never put coordinates into it.

@@ -41,7 +41,22 @@ function renderLeaflet(view: LeafletView, storeName: string): HTMLLIElement {
       "p",
       { class: "leaflet__head" },
       h("span", { class: running ? "chip chip--now" : "chip chip--upcoming" }, view.label),
-      h("span", { class: "leaflet__range" }, view.range),
+    ),
+    h(
+      "dl",
+      { class: "validity" },
+      h(
+        "div",
+        { class: "validity__row" },
+        h("dt", null, "Gültig ab"),
+        h("dd", null, view.validFromText),
+      ),
+      h(
+        "div",
+        { class: "validity__row" },
+        h("dt", null, "Gültig bis"),
+        h("dd", null, view.validToText),
+      ),
     ),
     view.unusable
       ? h(
@@ -67,18 +82,33 @@ function renderLeaflet(view: LeafletView, storeName: string): HTMLLIElement {
       ),
     siblings.length > 0 &&
       h(
-        "p",
-        { class: "notice notice--muted" },
-        icon("info"),
+        "section",
+        { class: "siblings", "aria-label": "Gleicher Prospekt auch in" },
+        h("h4", { class: "siblings__title" }, icon("info"), "Gleicher Prospekt auch in"),
         h(
-          "span",
-          null,
-          "Gleicher Prospekt auch in: ",
-          siblings
+          "ul",
+          { class: "siblings__list" },
+          ...siblings
             .slice(0, MAX_SIBLINGS)
-            .map((s) => `${s.name} (${s.plz})`)
-            .join(", "),
-          more > 0 && ` und ${String(more)} weiteren`,
+            .map((s) =>
+              h(
+                "li",
+                { class: "siblings__item" },
+                icon("storefront"),
+                h(
+                  "span",
+                  null,
+                  h("span", { class: "siblings__name" }, s.name),
+                  h("span", { class: "siblings__place" }, `${s.plz} ${s.city}`),
+                ),
+              ),
+            ),
+          more > 0 &&
+            h(
+              "li",
+              { class: "siblings__more" },
+              `und ${String(more)} ${more === 1 ? "weitere Filiale" : "weitere Filialen"}`,
+            ),
         ),
       ),
     h(

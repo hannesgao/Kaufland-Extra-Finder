@@ -96,10 +96,19 @@
   box-sizing: border-box;
 }
 
+/* Footer sits at the bottom of the window when the content is shorter than the viewport. */
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
   background: var(--md-surface);
   color: var(--md-on-surface);
+}
+
+body > main {
+  flex: 1 0 auto;
 }
 
 a {
@@ -489,47 +498,50 @@ a {
   outline-offset: -3px;
 }
 
-/* ---------- Status ---------- */
-.status-bar {
-  margin: 8px 4px 16px;
-}
-
-.status {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.5rem;
-}
-
-.status:empty {
-  display: none;
-}
-
-.status--error {
-  color: var(--md-error);
-}
-
-.data-age {
+/* ---------- Banners (status, data age, footer notice): one shared look ---------- */
+.banner {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 4px 6px;
-  margin: 2px 0 0;
-  color: var(--md-on-surface-variant);
+  gap: 12px;
+  min-height: 56px;
+  padding: 14px 20px;
+  border-radius: var(--shape-xl);
+  background: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
   font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
-.data-age:empty {
-  display: none;
+.banner p {
+  margin: 0;
 }
 
-.data-age .icon {
-  width: 18px;
-  height: 18px;
+.banner__icon {
+  width: 20px;
+  height: 20px;
 }
 
-.stale {
-  color: var(--md-error);
+.banner--error {
+  background: var(--md-error-container);
+  color: var(--md-on-error-container);
+}
+
+/* Status and data age: two boxes, same height; side by side on wide screens. */
+.status-bar {
+  display: grid;
+  grid-auto-rows: 1fr; /* stacked on phones: both boxes as tall as the taller one */
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+@media (min-width: 720px) {
+  .status-bar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
+  }
+}
+
+#status {
   font-weight: 500;
 }
 
@@ -726,6 +738,98 @@ a {
   font-weight: 500;
 }
 
+.validity {
+  display: grid;
+  gap: 2px;
+  margin: 10px 0 0;
+}
+
+.validity__row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.validity dt {
+  flex: none;
+  width: 5.5rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+}
+
+.validity dd {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.siblings {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--shape-md);
+  background: var(--md-surface-container-lowest);
+}
+
+.siblings__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.siblings__title .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.siblings__list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.siblings__item,
+.siblings__more {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.siblings__item + .siblings__item,
+.siblings__item + .siblings__more {
+  border-top: 1px solid var(--md-outline-variant);
+}
+
+.siblings__item .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--md-primary);
+}
+
+.siblings__name {
+  display: block;
+  font-weight: 500;
+}
+
+.siblings__place {
+  display: block;
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+}
+
+.siblings__more {
+  padding-left: 28px;
+  color: var(--md-on-surface-variant);
+}
+
 .leaflet__actions {
   display: flex;
   flex-wrap: wrap;
@@ -763,15 +867,15 @@ a {
 .store__actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 4px;
-  margin-top: 8px;
+  margin: 8px 0 0 -12px; /* text buttons: align the first icon with the card content */
 }
 
 /* ---------- Footer ----------
- * Three bands sharing one type scale (12px, on-surface-variant, credit items with dividers):
- * a notice banner, the third-party sources (labels and values in aligned columns) and the
- * bar with legal links on the left and the project credits on the right.
+ * Two framed boxes with the same shape and padding: the notice (tertiary container, prominent)
+ * and the sources (neutral surface, quieter). Below, a bar with the legal links on the left and
+ * the project credits on the right; all bar items share one 12px style and vertical dividers.
  */
 .site-footer {
   margin-top: 48px;
@@ -779,64 +883,66 @@ a {
   color: var(--md-on-surface-variant);
 }
 
-.site-footer__notice {
-  padding: 24px 0 8px;
-}
-
-.notice-banner {
-  display: flex;
-  align-items: flex-start;
+.site-footer__boxes {
+  display: grid;
   gap: 12px;
-  padding: 14px 20px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.sources-box {
+  padding: 16px 20px;
   border-radius: var(--shape-xl);
-  background: var(--md-tertiary-container);
-  color: var(--md-on-tertiary-container);
-  font-size: 0.875rem;
+  border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface-container-low);
+}
+
+.sources-box__title {
+  margin: 0 0 12px;
+  color: var(--md-on-surface);
+  font-size: 0.875rem; /* title-small */
+  font-weight: 500;
   line-height: 1.25rem;
-}
-
-.notice-banner p {
-  margin: 0;
-}
-
-.notice-banner__icon {
-  width: 20px;
-  height: 20px;
-}
-
-.site-footer__sources {
-  padding: 16px 0 20px;
 }
 
 .sources {
   display: grid;
-  gap: 6px;
-  margin: 0 auto;
-}
-
-.source {
-  display: grid;
-  gap: 2px;
-}
-
-@media (min-width: 720px) {
-  .source {
-    grid-template-columns: 12.5rem minmax(0, 1fr);
-    gap: 12px;
-  }
+  grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+  gap: 12px 24px;
+  margin: 0;
 }
 
 .source dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
   color: var(--md-on-surface);
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.01em;
 }
 
+.source dt .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--md-primary);
+}
+
 .source dd {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
+  margin: 0 0 0 22px;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+}
+
+.source a {
+  color: inherit;
+  text-decoration-color: var(--md-outline);
+  white-space: nowrap; /* keep "Apache 2.0", "CC BY 4.0" together */
+}
+
+.source a:hover {
+  color: var(--md-primary);
 }
 
 .site-footer__bar {
@@ -866,7 +972,7 @@ a {
   margin-left: auto;
 }
 
-/* One item style everywhere: 12px text, items separated by a thin vertical rule. */
+/* One item style for the bar: 12px text, items separated by a thin vertical rule. */
 .credit {
   display: inline-flex;
   align-items: center;
@@ -891,16 +997,50 @@ a {
   border-left: 1px solid var(--md-outline);
 }
 
-.credit--mono {
-  font-family: var(--font-mono);
-}
-
 .credit .icon {
   width: 13px;
   height: 13px;
 }
 
-a.credit:hover {
+/* Project credits come in two groups: one row on wide screens, two right-aligned rows on phones. */
+.credit-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.credit-group + .credit-group > .credit:first-child {
+  padding-left: 11px;
+  border-left: 1px solid var(--md-outline);
+}
+
+.credit-group:not(:last-child) > .credit:last-child {
+  padding-right: 11px;
+}
+
+@media (max-width: 719px) {
+  .credits--project {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .credit-group + .credit-group > .credit:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .credit-group:not(:last-child) > .credit:last-child {
+    padding-right: 0;
+  }
+}
+
+.credit a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.credit:hover,
+.credit a:hover {
   color: var(--md-primary);
   text-decoration: underline;
 }
@@ -1137,9 +1277,13 @@ a.credit:hover {
 }
 
 /* ---------- Static pages ---------- */
+/* Aligned with the header; only the text measure is limited. */
 .prose {
-  max-width: 48rem;
   padding-top: 24px;
+}
+
+.prose > * {
+  max-width: 48rem;
 }
 
 /* ---------- Wide screens: list left, map right ---------- */

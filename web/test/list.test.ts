@@ -25,9 +25,46 @@ describe("renderHit", () => {
     );
     expect(li.querySelector(".chip--distance")?.textContent).toBe("1,5 km");
     expect(li.querySelector(".leaflet .chip")?.textContent).toBe("Ab Donnerstag");
-    expect(li.querySelector(".leaflet .notice--muted")?.textContent).toBe(
-      "Gleicher Prospekt auch in: Karlsruhe-Beiertheim-Bulac (76135), Karlsruhe-Grünwinkel (76185)",
-    );
+    const validity = [...li.querySelectorAll(".validity__row")].map((r) => [
+      r.querySelector("dt")?.textContent,
+      r.querySelector("dd")?.textContent,
+    ]);
+    expect(validity).toEqual([
+      ["Gültig ab", "Donnerstag, 08.10.2026"],
+      ["Gültig bis", "Mittwoch, 14.10.2026"],
+    ]);
+    const siblings = [...li.querySelectorAll(".siblings__item")].map((item) => [
+      item.querySelector(".siblings__name")?.textContent,
+      item.querySelector(".siblings__place")?.textContent,
+    ]);
+    expect(siblings).toEqual([
+      ["Karlsruhe-Beiertheim-Bulac", "76135 Karlsruhe"],
+      ["Karlsruhe-Grünwinkel", "76185 Karlsruhe"],
+    ]);
+    expect(li.querySelector(".siblings__more")).toBeNull();
+  });
+
+  it("lists at most five siblings and counts the rest", () => {
+    const data = fixture();
+    const cluster = nth(nth(data.stores.filter((s) => s.id === "DE4443")).leaflets).cluster;
+    const extra = Array.from({ length: 6 }, (_, i) => `DE900${String(i)}`);
+    const template = nth(data.stores.filter((s) => s.id === "DE5443"));
+    const stores = [
+      ...data.stores,
+      ...extra.map((id, i) => ({ ...template, id, name: `Test ${String(i)}` })),
+    ];
+    const clusters = new Map(data.clusters);
+    clusters.set(cluster, [...(clusters.get(cluster) ?? []), ...extra]);
+    const patched: ExtraData = {
+      ...data,
+      stores,
+      storesById: new Map(stores.map((s) => [s.id, s])),
+      clusters,
+    };
+    const hit = nth(hitsFor(patched, PLZ_KARLSRUHE).filter((h) => h.store.id === "DE4443"));
+    const li = renderHit(hit, vi.fn());
+    expect(li.querySelectorAll(".siblings__item")).toHaveLength(5);
+    expect(li.querySelector(".siblings__more")?.textContent).toBe("und 3 weitere Filialen");
   });
 
   it("links the Extra leaflet, its PDF and the store page", () => {

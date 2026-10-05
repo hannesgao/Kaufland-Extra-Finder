@@ -50,6 +50,12 @@ export function formatDay(iso: IsoDate): string {
   return `${iso.slice(8, 10)}.${iso.slice(5, 7)}.`;
 }
 
+/** "Donnerstag, 08.10.2026" */
+export function formatLongDate(iso: IsoDate): string {
+  const weekday = weekdayFormat.format(new Date(utc(iso)));
+  return `${weekday}, ${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
+}
+
 /** "08.10.–14.10.2026" */
 export function formatRange(from: IsoDate, to: IsoDate): string {
   return `${formatDay(from)}–${formatDay(to)}${to.slice(0, 4)}`;

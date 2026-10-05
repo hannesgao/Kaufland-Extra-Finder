@@ -3,13 +3,21 @@ import "./styles.css";
 import { loadData, type ExtraData, type LatLng, type PlzIndex } from "./data";
 import { berlinToday, formatStamp, isStale, STALE_AFTER_DAYS } from "./dates";
 import { byId, h, replaceChildren } from "./dom";
-import { hydrateIcons, icon } from "./icons";
+import { hydrateIcons } from "./icons";
 import { formatKm } from "./geo";
 import { listAll, search, SORT_ORDERS, type Hit, type SortOrder } from "./search";
 import { renderHit, renderRow } from "./ui/list";
 import type { MapView } from "./ui/map";
 import { setupTabs } from "./ui/tabs";
-import { buildQuery, isPlz, isRadius, parseQuery, type QueryState, type Tab } from "./url";
+import {
+  buildQuery,
+  DEFAULT_PLZ,
+  isPlz,
+  isRadius,
+  parseQuery,
+  type QueryState,
+  type Tab,
+} from "./url";
 
 interface Origin {
   point: LatLng;
@@ -24,6 +32,8 @@ const plzError = byId("plz-error", HTMLParagraphElement);
 const locateButton = byId("locate", HTMLButtonElement);
 const status = byId("status", HTMLParagraphElement);
 const dataAge = byId("data-age", HTMLParagraphElement);
+const statusBox = byId("status-box", HTMLDivElement);
+const dataAgeBox = byId("data-age-box", HTMLDivElement);
 const mapContainer = byId("map", HTMLDivElement);
 const list = byId("list", HTMLOListElement);
 const allList = byId("all-list", HTMLOListElement);
@@ -39,11 +49,12 @@ let radius = parseQuery(location.search).radius;
 let tab: Tab = parseQuery(location.search).tab;
 let sort: SortOrder = parseQuery(location.search).sort;
 let mapView: Promise<MapView> | null = null;
+let lastMap: { point: LatLng; radius: number; shown: Hit[] } | null = null;
 const items = new Map<string, HTMLLIElement>();
 
 function setStatus(text: string, kind: "info" | "error" = "info"): void {
   status.textContent = text;
-  status.classList.toggle("status--error", kind === "error");
+  statusBox.classList.toggle("banner--error", kind === "error");
 }
 
 function showPlzError(message: string | null): void {
@@ -78,10 +89,7 @@ function withMap(action: (map: MapView) => void): void {
     .catch((err: unknown) => {
       console.error(err);
       mapContainer.hidden = true;
-      dataAge.append(
-        " ",
-        h("strong", { class: "stale" }, "Die Karte konnte nicht geladen werden."),
-      );
+      dataAge.append(" ", h("strong", null, "Die Karte konnte nicht geladen werden."));
     });
 }
 
@@ -141,9 +149,16 @@ function runSearch(): void {
   }
   if (import.meta.env.DEV) console.debug(`search took ${(performance.now() - t0).toFixed(1)} ms`);
 
-  const { point } = origin;
+  lastMap = { point: origin.point, radius, shown };
+  if (tab === "search") drawMap();
+}
+
+/** Draw the last search on the map; only while the search tab is visible (Leaflet needs a size). */
+function drawMap(): void {
+  if (!lastMap) return;
+  const { point, radius: r, shown } = lastMap;
   withMap((map) => {
-    map.show(point, radius, shown);
+    map.show(point, r, shown);
   });
 }
 
@@ -184,11 +199,7 @@ const tabs = setupTabs(tablist, (selected) => {
 /** Render what the visible tab needs (the map must re-measure after being hidden). */
 function showTab(): void {
   if (tab === "all") renderAll();
-  else if (mapView) {
-    withMap((map) => {
-      map.refresh();
-    });
-  }
+  else drawMap();
 }
 
 function searchPlz(plz: string, push: boolean): void {
@@ -277,15 +288,10 @@ function applyQuery(): void {
   tab = query.tab;
   tabs.select(tab);
   showTab();
-  plzInput.value = query.plz ?? "";
-  if (query.plz) {
-    searchPlz(query.plz, false);
-  } else if (origin?.plz) {
-    // Navigated back to the start page.
-    origin = null;
-    render([]);
-    setStatus("");
-  }
+  // Without a PLZ in the URL the default PLZ is searched, so the map and cards show right away.
+  const plz = query.plz ?? DEFAULT_PLZ;
+  plzInput.value = plz;
+  searchPlz(plz, false);
 }
 
 function showDataAge(extra: ExtraData): void {
@@ -294,15 +300,13 @@ function showDataAge(extra: ExtraData): void {
     { datetime: extra.generatedAt.toISOString() },
     formatStamp(extra.generatedAt),
   );
-  replaceChildren(dataAge, icon("schedule"), "Stand der Daten: ", stamp);
-  if (isStale(extra.generatedAt, new Date())) {
+  replaceChildren(dataAge, "Stand der Daten: ", stamp);
+  const stale = isStale(extra.generatedAt, new Date());
+  dataAgeBox.classList.toggle("banner--error", stale);
+  if (stale) {
     dataAge.append(
       " ",
-      h(
-        "strong",
-        { class: "stale" },
-        `Die Daten sind älter als ${String(STALE_AFTER_DAYS)} Tage und möglicherweise veraltet.`,
-      ),
+      h("strong", null, `Älter als ${String(STALE_AFTER_DAYS)} Tage, möglicherweise veraltet.`),
     );
   }
 }
@@ -318,7 +322,7 @@ plzInput.addEventListener("input", () => {
 window.addEventListener("popstate", applyQuery);
 
 const initial = parseQuery(location.search);
-plzInput.value = initial.plz ?? "";
+plzInput.value = initial.plz ?? DEFAULT_PLZ;
 const initialRadio = radioFor(initial.radius);
 if (initialRadio) initialRadio.checked = true;
 tabs.select(initial.tab);

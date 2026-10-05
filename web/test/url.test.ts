@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildQuery, isPlz, parseQuery, type QueryState } from "../src/url";
+import { buildQuery, DEFAULT_PLZ, isPlz, parseQuery, type QueryState } from "../src/url";
 
 const DEFAULTS: QueryState = { plz: null, radius: 25, tab: "search", sort: "plz-asc" };
 
@@ -27,6 +27,10 @@ describe("buildQuery", () => {
     expect(buildQuery({ ...DEFAULTS, tab: "all", sort: "plz-desc" })).toBe(
       "?tab=all&sort=plz-desc",
     );
+  });
+
+  it("omits the default PLZ (searched on page load anyway)", () => {
+    expect(buildQuery({ ...DEFAULTS, plz: DEFAULT_PLZ, radius: 50 })).toBe("?r=50");
   });
 
   it("round-trips", () => {

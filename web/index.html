@@ -110,8 +110,14 @@
         </section>
 
         <div class="status-bar">
-          <p id="status" class="status" role="status" aria-live="polite">Daten werden geladen …</p>
-          <p id="data-age" class="data-age"></p>
+          <div class="banner" id="status-box">
+            <span class="banner__icon" data-icon="search"></span>
+            <p id="status" role="status" aria-live="polite">Daten werden geladen …</p>
+          </div>
+          <div class="banner" id="data-age-box">
+            <span class="banner__icon" data-icon="schedule"></span>
+            <p id="data-age">Wird geladen …</p>
+          </div>
         </div>
 
         <section id="results" class="results" aria-label="Ergebnisse" tabindex="-1">

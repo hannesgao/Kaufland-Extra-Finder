@@ -5,6 +5,8 @@
 
 import { RADII, SORT_ORDERS, type Radius, type SortOrder } from "./search";
 
+/** Searched on page load when the URL has no PLZ (Karlsruhe city centre). */
+export const DEFAULT_PLZ = "76131";
 export const DEFAULT_RADIUS: Radius = 25;
 export const TABS = ["search", "all"] as const;
 export type Tab = (typeof TABS)[number];
@@ -43,7 +45,7 @@ export function parseQuery(search: string): QueryState {
 
 export function buildQuery(state: QueryState): string {
   const params = new URLSearchParams();
-  if (state.plz) params.set("plz", state.plz);
+  if (state.plz && state.plz !== DEFAULT_PLZ) params.set("plz", state.plz);
   if (state.radius !== DEFAULT_RADIUS) params.set("r", String(state.radius));
   if (state.tab !== "search") params.set("tab", state.tab);
   if (state.sort !== "plz-asc") params.set("sort", state.sort);
