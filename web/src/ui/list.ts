@@ -4,7 +4,7 @@ import { formatDay } from "../dates";
 import { h } from "../dom";
 import { formatKm } from "../geo";
 import { icon } from "../icons";
-import type { Hit, LeafletView, StoreView } from "../search";
+import type { DayLabel, Hit, LeafletView, StoreView } from "../search";
 
 const MAX_SIBLINGS = 5;
 
@@ -29,34 +29,33 @@ function externalButton(
   );
 }
 
+/** "Ab | Donnerstag | (08.10.2026)" — three cells that line up across both chips. */
+function validityChip(prefix: string, day: DayLabel): HTMLSpanElement {
+  return h(
+    "span",
+    { class: "chip validity__chip", "aria-hidden": "true" },
+    h("span", { class: "validity__prefix" }, prefix),
+    h("span", null, day.weekday),
+    h("span", { class: "validity__date" }, `(${day.date})`),
+  );
+}
+
 function renderLeaflet(view: LeafletView, storeName: string): HTMLLIElement {
   const { leaflet, closedDays, specialHours, siblings } = view;
-  const running = view.label === "Diese Woche";
   const more = siblings.length - MAX_SIBLINGS;
   const description = `Extra-Angebote ${storeName}, ${view.range}`;
   return h(
     "li",
     { class: "leaflet" },
     h(
-      "p",
-      { class: "leaflet__head" },
-      h("span", { class: running ? "chip chip--now" : "chip chip--upcoming" }, view.label),
-    ),
-    h(
-      "dl",
-      { class: "validity" },
-      h(
-        "div",
-        { class: "validity__row" },
-        h("dt", null, "Gültig ab"),
-        h("dd", null, view.validFromText),
-      ),
-      h(
-        "div",
-        { class: "validity__row" },
-        h("dt", null, "Gültig bis"),
-        h("dd", null, view.validToText),
-      ),
+      "div",
+      {
+        class: `validity ${view.running ? "validity--now" : "validity--upcoming"}`,
+        role: "group",
+        "aria-label": `Gültig ${view.running ? "seit" : "ab"} ${view.from.weekday}, ${view.from.date}, bis ${view.to.weekday}, ${view.to.date}`,
+      },
+      validityChip(view.running ? "Seit" : "Ab", view.from),
+      validityChip("Bis", view.to),
     ),
     view.unusable
       ? h(
@@ -83,8 +82,8 @@ function renderLeaflet(view: LeafletView, storeName: string): HTMLLIElement {
     siblings.length > 0 &&
       h(
         "section",
-        { class: "siblings", "aria-label": "Gleicher Prospekt auch in" },
-        h("h4", { class: "siblings__title" }, icon("info"), "Gleicher Prospekt auch in"),
+        { class: "siblings", "aria-label": "Gleicher Extra-Prospekt auch in" },
+        h("h4", { class: "siblings__title" }, icon("info"), "Gleicher Extra-Prospekt auch in"),
         h(
           "ul",
           { class: "siblings__list" },

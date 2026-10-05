@@ -4,11 +4,12 @@ import {
   berlinToday,
   dateRange,
   daysBetween,
-  formatLongDate,
+  formatDate,
   formatRange,
   formatStamp,
   isStale,
   leafletLabel,
+  weekdayName,
 } from "../src/dates";
 
 describe("berlinToday", () => {
@@ -56,9 +57,10 @@ describe("leafletLabel", () => {
 });
 
 describe("formatting", () => {
-  it("formats long dates with weekday", () => {
-    expect(formatLongDate("2026-10-08")).toBe("Donnerstag, 08.10.2026");
-    expect(formatLongDate("2027-01-03")).toBe("Sonntag, 03.01.2027");
+  it("formats dates and weekdays", () => {
+    expect(formatDate("2026-10-08")).toBe("08.10.2026");
+    expect(weekdayName("2026-10-08")).toBe("Donnerstag");
+    expect(weekdayName("2027-01-03")).toBe("Sonntag");
   });
 
   it("formats ranges", () => {

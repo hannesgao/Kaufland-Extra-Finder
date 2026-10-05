@@ -738,29 +738,35 @@ a {
   font-weight: 500;
 }
 
+/* Validity: two chips ("Ab Donnerstag (08.10.2026)" / "Bis Mittwoch (14.10.2026)") whose
+   prefix, weekday and date share columns via subgrid, so they line up. */
 .validity {
-  display: grid;
-  gap: 2px;
-  margin: 10px 0 0;
-}
-
-.validity__row {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.validity dt {
-  flex: none;
-  width: 5.5rem;
-  color: var(--md-on-surface-variant);
-  font-size: 0.8125rem;
-}
-
-.validity dd {
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+  row-gap: 6px;
   margin: 0;
-  font-size: 0.875rem;
-  font-weight: 500;
+}
+
+.validity__chip {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  column-gap: 6px;
+  justify-content: start;
+}
+
+.validity__prefix {
+  font-weight: 700;
+}
+
+.validity--now .validity__chip {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+.validity--upcoming .validity__chip {
+  background: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
 }
 
 .siblings {

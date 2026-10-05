@@ -50,10 +50,14 @@ export function formatDay(iso: IsoDate): string {
   return `${iso.slice(8, 10)}.${iso.slice(5, 7)}.`;
 }
 
-/** "Donnerstag, 08.10.2026" */
-export function formatLongDate(iso: IsoDate): string {
-  const weekday = weekdayFormat.format(new Date(utc(iso)));
-  return `${weekday}, ${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
+/** "Donnerstag" */
+export function weekdayName(iso: IsoDate): string {
+  return weekdayFormat.format(new Date(utc(iso)));
+}
+
+/** "08.10.2026" */
+export function formatDate(iso: IsoDate): string {
+  return `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 }
 
 /** "08.10.–14.10.2026" */
@@ -70,7 +74,7 @@ export function formatStamp(date: Date): string {
 export function leafletLabel(validFrom: IsoDate, today: IsoDate): string {
   if (validFrom <= today) return "Diese Woche";
   if (daysBetween(today, validFrom) <= 6) {
-    return `Ab ${weekdayFormat.format(new Date(utc(validFrom)))}`;
+    return `Ab ${weekdayName(validFrom)}`;
   }
   return `Ab ${formatDay(validFrom)}`;
 }

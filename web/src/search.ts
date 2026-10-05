@@ -1,18 +1,26 @@
 /** Pure search logic: which Extra stores are near a point, and what to show for each. */
 
 import type { ExtraData, IsoDate, LatLng, Leaflet, SpecialDay, Store } from "./data";
-import { dateRange, formatLongDate, formatRange, leafletLabel } from "./dates";
+import { dateRange, formatDate, formatRange, leafletLabel, weekdayName } from "./dates";
 import { distanceKm } from "./geo";
 
 export const RADII = [10, 25, 50, 100] as const;
 export type Radius = (typeof RADII)[number];
 
+export interface DayLabel {
+  weekday: string;
+  date: string;
+}
+
 export interface LeafletView {
   leaflet: Leaflet;
   label: string; // "Diese Woche" / "Ab Donnerstag"
   range: string; // "08.10.–14.10.2026"
-  validFromText: string; // "Donnerstag, 08.10.2026"
-  validToText: string; // "Mittwoch, 14.10.2026"
+  /** Already valid today (otherwise it starts in the future). */
+  running: boolean;
+  /** Start and end, e.g. { weekday: "Donnerstag", date: "08.10.2026" }. */
+  from: DayLabel;
+  to: DayLabel;
   /** Days within the remaining validity on which the store is closed. */
   closedDays: IsoDate[];
   /** Shortened/extended hours within the remaining validity. */
@@ -58,8 +66,9 @@ function viewLeaflet(store: Store, leaflet: Leaflet, today: IsoDate, data: Extra
     leaflet,
     label: leafletLabel(leaflet.validFrom, today),
     range: formatRange(leaflet.validFrom, leaflet.validTo),
-    validFromText: formatLongDate(leaflet.validFrom),
-    validToText: formatLongDate(leaflet.validTo),
+    running: leaflet.validFrom <= today,
+    from: { weekday: weekdayName(leaflet.validFrom), date: formatDate(leaflet.validFrom) },
+    to: { weekday: weekdayName(leaflet.validTo), date: formatDate(leaflet.validTo) },
     closedDays,
     specialHours: relevant.filter((d): d is Extract<SpecialDay, { closed: false }> => !d.closed),
     unusable: closedDays.length === days.size,

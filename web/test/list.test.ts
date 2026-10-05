@@ -24,15 +24,19 @@ describe("renderHit", () => {
       "Durlacher Allee 111, 76137 Karlsruhe",
     );
     expect(li.querySelector(".chip--distance")?.textContent).toBe("1,5 km");
-    expect(li.querySelector(".leaflet .chip")?.textContent).toBe("Ab Donnerstag");
-    const validity = [...li.querySelectorAll(".validity__row")].map((r) => [
-      r.querySelector("dt")?.textContent,
-      r.querySelector("dd")?.textContent,
+    const chips = [...li.querySelectorAll(".validity__chip")].map((c) =>
+      [...c.children].map((cell) => cell.textContent),
+    );
+    expect(chips).toEqual([
+      ["Ab", "Donnerstag", "(08.10.2026)"],
+      ["Bis", "Mittwoch", "(14.10.2026)"],
     ]);
-    expect(validity).toEqual([
-      ["Gültig ab", "Donnerstag, 08.10.2026"],
-      ["Gültig bis", "Mittwoch, 14.10.2026"],
-    ]);
+    expect(li.querySelector(".validity")?.getAttribute("aria-label")).toBe(
+      "Gültig ab Donnerstag, 08.10.2026, bis Mittwoch, 14.10.2026",
+    );
+    expect(li.querySelector(".siblings__title")?.textContent).toBe(
+      "Gleicher Extra-Prospekt auch in",
+    );
     const siblings = [...li.querySelectorAll(".siblings__item")].map((item) => [
       item.querySelector(".siblings__name")?.textContent,
       item.querySelector(".siblings__place")?.textContent,
@@ -110,8 +114,14 @@ describe("renderHit", () => {
   it("shows both validity periods and closure notices", () => {
     const data = edgeCases();
     const kassel = renderHit(nth(hitsFor(data, PLZ_KASSEL)), vi.fn());
-    const labels = [...kassel.querySelectorAll(".leaflet .chip")].map((c) => c.textContent);
-    expect(labels).toEqual(["Diese Woche", "Ab Donnerstag"]);
+    const starts = [...kassel.querySelectorAll(".validity")].map((v) => [
+      v.className,
+      v.querySelector(".validity__chip")?.textContent,
+    ]);
+    expect(starts).toEqual([
+      ["validity validity--now", "SeitDonnerstag(01.10.2026)"],
+      ["validity validity--upcoming", "AbDonnerstag(08.10.2026)"],
+    ]);
 
     const grunwinkel = hitsFor(data, PLZ_KARLSRUHE).find((h) => h.store.id === "DE8530");
     const text = renderHit(nth(grunwinkel ? [grunwinkel] : []), vi.fn()).textContent;
