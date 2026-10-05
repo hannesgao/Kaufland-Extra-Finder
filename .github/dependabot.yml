@@ -7,4 +7,11 @@ updates:
     groups:
       actions:
         patterns: ["*"]
-  # pip (/scraper) and npm (/web) entries are added once those manifests exist.
+  - package-ecosystem: uv
+    directory: /scraper
+    schedule:
+      interval: weekly
+    groups:
+      python:
+        patterns: ["*"]
+  # The npm (/web) entry is added once that manifest exists.
