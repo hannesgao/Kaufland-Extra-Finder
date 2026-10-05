@@ -21,6 +21,8 @@ USER_AGENT = (
     "Chrome/128.0 Safari/537.36"
 )
 MAX_WORKERS = 4
+MAX_PDF_BYTES = 50_000_000  # Extra PDFs are ~6 MB
+PDF_TIMEOUT_S = 120.0
 _RETRY_STATUS = frozenset({429, 500, 502, 503, 504})
 _MAX_RETRY_AFTER_S = 60.0
 
@@ -37,6 +39,8 @@ class Fetcher(Protocol):
     def store_list(self) -> object: ...
 
     def leaflet_page(self, store_id: str) -> str: ...
+
+    def pdf(self, url: str) -> bytes: ...
 
 
 class HttpFetcher:
@@ -89,18 +93,25 @@ class HttpFetcher:
         resp = self._get(f"{self.base_url}{LEAFLET_PATH}", cookies={"x-aem-variant": store_id})
         return resp.text
 
+    def pdf(self, url: str) -> bytes:
+        resp = self._get(url, timeout=PDF_TIMEOUT_S)
+        if len(resp.content) > MAX_PDF_BYTES:
+            raise FetchError(f"{url}: PDF larger than {MAX_PDF_BYTES} bytes")
+        return resp.content
+
     def _get(
         self,
         url: str,
         cookies: dict[str, str] | None = None,
         accept_status: frozenset[int] = frozenset(),
+        timeout: float | None = None,
     ) -> requests.Response:
         last_error = "no attempt made"
         for attempt in range(1, self.retries + 1):
             time.sleep(self.delay)
             wait = self.backoff * 2 ** (attempt - 1) + random.uniform(0, 0.5)  # noqa: S311
             try:
-                resp = self._session().get(url, cookies=cookies, timeout=self.timeout)
+                resp = self._session().get(url, cookies=cookies, timeout=timeout or self.timeout)
             except requests.RequestException as e:
                 last_error = f"{type(e).__name__}: {e}"
             else:

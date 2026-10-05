@@ -42,6 +42,7 @@ Please don't run full scans locally; they run on a schedule in GitHub Actions.
 | `--workers N` | 4 | Concurrent requests, 1–4. |
 | `--delay S` | 0.25 | Pause before each request. |
 | `--summary FILE` | – | Append a Markdown report (e.g. `$GITHUB_STEP_SUMMARY`). |
+| `--skip-pdf-check` | off | Don't download new Extra PDFs for the PDF check (see below). |
 
 Exit codes: `0` success, `1` error (store list unavailable, unknown store id, …),
 `2` sanity check failed (fewer than 700 stores or more than 5 % failures) — nothing is written.
@@ -61,7 +62,9 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, �
       "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html",  // optional
       "leaflets": [                                // Mon–Wed often current + next week
         { "valid_from": "2026-10-08", "valid_to": "2026-10-14",
-          "cluster": "<PDF uuid>", "viewer": "https://leaflets.kaufland.com/…", "pdf": "https://…pdf" }
+          "cluster": "<PDF uuid>", "viewer": "https://leaflets.kaufland.com/…", "pdf": "https://…pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",   // optional, see below
+          "pdf_store_match": false }
       ],
       "special_days": [                            // optional; only today and later
         { "date": "2026-10-08", "closed": true },
@@ -74,6 +77,16 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, �
 ```
 
 Expired leaflets are not filtered by the scraper; consumers compare `valid_to` with today's date.
+
+### PDF check
+
+Page 1 of every Extra PDF names the store(s) it is valid in ("NUR IN KARLSRUHE-OSTSTADT, IM DURLACH
+CENTER"; several stores are separated by "•"). Kaufland also serves such a PDF to neighbouring
+stores that the PDF does not name. The scraper downloads every **new** PDF once (2 s apart, ~6 MB
+each), reads that block (`pypdf`) and sets `pdf_store` / `pdf_store_match` per leaflet. Results are
+cached per PDF in `pdf_checks.json` next to `extra.json`; failed downloads are retried on the next
+run and leave both fields out. `--skip-pdf-check` disables the downloads (cached results are still
+used). The footer code in the PDF ("1_D41-H_8530_TS") does not identify the store reliably.
 
 ### Postcode coordinates (`web/public/plz.json`)
 

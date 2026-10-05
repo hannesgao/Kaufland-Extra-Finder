@@ -11,16 +11,17 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from conftest import MINIMAL_PAGE, FakeFetcher, store_list_sample
+from conftest import MINIMAL_PAGE, FakeFetcher, make_pdf, store_list_sample
 from kef_scraper.cli import EXIT_ERROR, EXIT_OK, EXIT_SANITY, main
 from kef_scraper.fetch import FetchError
+from kef_scraper.pdfcheck import PARSER_VERSION
 
 MONDAY = dt.datetime(2026, 10, 5, 6, 30, tzinfo=ZoneInfo("Europe/Berlin"))
 TUESDAY = MONDAY + dt.timedelta(days=1)
 
 
 def _run(fetcher: FakeFetcher, out: Path, *extra_args: str, now: dt.datetime = MONDAY) -> int:
-    args = ["--out", str(out), "--delay", "0", *extra_args]
+    args = ["--out", str(out), "--delay", "0", "--pdf-delay", "0", *extra_args]
     return main(args, fetcher=fetcher, now=now)
 
 
@@ -125,3 +126,89 @@ def test_network_is_blocked() -> None:
 
     with pytest.raises(RuntimeError, match="network access is not allowed"):
         socket.create_connection(("filiale.kaufland.de", 443))
+
+
+DE4453_PDF = (
+    "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7f24-7ff4-89fd-aa2e11127632/"
+    "Extra-Angebote-08-10-2026-14-10-2026-00.pdf"
+)
+DE8530_PDF = (
+    "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/"
+    "Extra-Angebote-08-10-2026-14-10-2026-00.pdf"
+)
+
+
+def _leaflet(out: Path, store_id: str) -> dict[str, Any]:
+    extra = json.loads((out / "extra.json").read_text())
+    store = next(s for s in extra["stores"] if s["id"] == store_id)
+    leaflet: dict[str, Any] = store["leaflets"][0]
+    return leaflet
+
+
+def test_pdf_check_flags_mismatches_and_caches(
+    tmp_path: Path, pages: dict[str, str], capsys: pytest.CaptureFixture[str]
+) -> None:
+    pdfs: dict[str, bytes | Exception] = {
+        DE4453_PDF: make_pdf(["NUR IN KASSEL-WESERTOR, FRANZGRABEN 40-42"]),
+        DE8530_PDF: make_pdf(["NUR IN KARLSRUHE-OSTSTADT, IM DURLACH CENTER"]),
+    }
+    out = tmp_path / "data"
+    summary = tmp_path / "summary.md"
+    fetcher = FakeFetcher(store_list_sample(), pages, pdfs=pdfs)
+    args = ("--stores", "DE4453,DE8530", "--summary", str(summary))
+    assert _run(fetcher, out, *args) == EXIT_OK
+
+    assert _leaflet(out, "DE4453")["pdf_store"] == "KASSEL-WESERTOR, FRANZGRABEN 40-42"
+    assert _leaflet(out, "DE4453")["pdf_store_match"] is True
+    assert _leaflet(out, "DE8530")["pdf_store"] == "KARLSRUHE-OSTSTADT, IM DURLACH CENTER"
+    assert _leaflet(out, "DE8530")["pdf_store_match"] is False
+    report = capsys.readouterr().out
+    assert "Karlsruhe-Grünwinkel (76185): PDF says NUR IN KARLSRUHE-OSTSTADT" in report
+    assert "**PDF names a different store (1):**" in summary.read_text()
+    cache = json.loads((out / "pdf_checks.json").read_text())
+    assert cache["parser"] == PARSER_VERSION
+    assert cache["checks"]["01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8"] == {
+        "store_line": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER"
+    }
+
+    # Second run reuses the cache: no PDF is downloaded again.
+    again = FakeFetcher(store_list_sample(), pages, pdfs={})
+    assert _run(again, out, "--stores", "DE4453,DE8530", now=TUESDAY) == EXIT_OK
+    assert again.pdf_requests == []
+    assert _leaflet(out, "DE8530")["pdf_store_match"] is False
+
+
+def test_pdf_failures_do_not_fail_the_scan(tmp_path: Path, pages: dict[str, str]) -> None:
+    pdfs: dict[str, bytes | Exception] = {
+        DE4453_PDF: FetchError("HTTP 503"),
+        DE8530_PDF: b"not a pdf",
+    }
+    out = tmp_path / "data"
+    fetcher = FakeFetcher(store_list_sample(), pages, pdfs=pdfs)
+    assert _run(fetcher, out, "--stores", "DE4453,DE8530") == EXIT_OK
+    for store_id in ("DE4453", "DE8530"):
+        assert "pdf_store" not in _leaflet(out, store_id)
+        assert "pdf_store_match" not in _leaflet(out, store_id)
+    cache = json.loads((out / "pdf_checks.json").read_text())
+    assert cache == {"parser": PARSER_VERSION, "checks": {}}  # retried next run
+
+
+def test_cache_from_an_older_parser_is_ignored(tmp_path: Path, pages: dict[str, str]) -> None:
+    out = tmp_path / "data"
+    out.mkdir()
+    old = {"01a0e6b0-7f24-7ff4-89fd-aa2e11127632": {"store_line": "SOMEWHERE ELSE"}}
+    (out / "pdf_checks.json").write_text(json.dumps(old))
+    pdfs: dict[str, bytes | Exception] = {
+        DE4453_PDF: make_pdf(["NUR IN KASSEL-WESERTOR, FRANZGRABEN 40-42"])
+    }
+    fetcher = FakeFetcher(store_list_sample(), pages, pdfs=pdfs)
+    assert _run(fetcher, out, "--stores", "DE4453") == EXIT_OK
+    assert fetcher.pdf_requests == [DE4453_PDF]
+    assert _leaflet(out, "DE4453")["pdf_store_match"] is True
+
+
+def test_skip_pdf_check(tmp_path: Path, pages: dict[str, str]) -> None:
+    fetcher = FakeFetcher(store_list_sample(), pages)
+    out = tmp_path / "data"
+    assert _run(fetcher, out, "--stores", "DE4453", "--skip-pdf-check") == EXIT_OK
+    assert fetcher.pdf_requests == []

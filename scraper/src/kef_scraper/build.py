@@ -4,17 +4,28 @@ from __future__ import annotations
 
 import datetime as dt
 from collections import defaultdict
+from collections.abc import Mapping
 from typing import Any
 
-from kef_scraper.models import ScanResult, SpecialDay
+from kef_scraper.models import Leaflet, ScanResult, SpecialDay, Store
+from kef_scraper.pdfcheck import PdfCheck, matches_store
 
 SCHEMA_VERSION = 1
 MIN_STORES = 700
 MAX_FAILURE_RATE = 0.05
 
 
-def build_extra(result: ScanResult, generated_at: dt.datetime) -> dict[str, Any]:
-    """Stores with at least one Extra leaflet, nested per store, plus PDF clusters."""
+def build_extra(
+    result: ScanResult,
+    generated_at: dt.datetime,
+    pdf_checks: Mapping[str, PdfCheck] | None = None,
+) -> dict[str, Any]:
+    """Stores with at least one Extra leaflet, nested per store, plus PDF clusters.
+
+    With `pdf_checks`, each leaflet gets `pdf_store` (the PDF's "NUR IN" line) and
+    `pdf_store_match` (whether that line names this store). Both are omitted when unknown.
+    """
+    pdf_checks = pdf_checks or {}
     if generated_at.tzinfo is None:
         raise ValueError("generated_at must be timezone-aware")
     today = generated_at.date()
@@ -33,16 +44,7 @@ def build_extra(result: ScanResult, generated_at: dt.datetime) -> dict[str, Any]
             "lat": s.lat,
             "lng": s.lng,
             **({"url": s.url} if s.url else {}),
-            "leaflets": [
-                {
-                    "valid_from": lf.valid_from.isoformat(),
-                    "valid_to": lf.valid_to.isoformat(),
-                    "cluster": lf.cluster,
-                    "viewer": lf.viewer,
-                    "pdf": lf.pdf,
-                }
-                for lf in r.leaflets
-            ],
+            "leaflets": [_leaflet(lf, s, pdf_checks.get(lf.cluster)) for lf in r.leaflets],
         }
         special = [_special_day(d) for d in s.special_days if d.date >= today]
         if special:  # optional field, omitted when empty
@@ -56,6 +58,20 @@ def build_extra(result: ScanResult, generated_at: dt.datetime) -> dict[str, Any]
         "stores": stores,
         "clusters": {k: sorted(v) for k, v in sorted(clusters.items())},
     }
+
+
+def _leaflet(lf: Leaflet, store: Store, check: PdfCheck | None) -> dict[str, Any]:
+    out: dict[str, Any] = {
+        "valid_from": lf.valid_from.isoformat(),
+        "valid_to": lf.valid_to.isoformat(),
+        "cluster": lf.cluster,
+        "viewer": lf.viewer,
+        "pdf": lf.pdf,
+    }
+    if check and check.store_line:
+        out["pdf_store"] = check.store_line
+        out["pdf_store_match"] = matches_store(check.store_line, store)
+    return out
 
 
 def _special_day(day: SpecialDay) -> dict[str, Any]:

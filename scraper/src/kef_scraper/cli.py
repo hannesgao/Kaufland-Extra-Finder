@@ -19,14 +19,16 @@ from kef_scraper.output import (
     diff_extra,
     dump_json,
     read_history,
+    read_pdf_checks,
     render_history,
+    render_pdf_checks,
     render_report,
     render_summary_md,
     update_history,
     write_text_atomic,
 )
 from kef_scraper.parse import ParseError, parse_stores
-from kef_scraper.scan import scan
+from kef_scraper.scan import PDF_DELAY_S, check_pdfs, scan
 
 log = logging.getLogger("kef_scraper")
 
@@ -62,6 +64,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--delay", type=float, default=0.25, help="seconds to wait before each request")
     p.add_argument("--summary", type=Path, help="append a Markdown summary to this file")
+    p.add_argument(
+        "--skip-pdf-check",
+        action="store_true",
+        help="do not download new Extra PDFs to check which store they name",
+    )
+    p.add_argument("--pdf-delay", type=float, default=PDF_DELAY_S, help=argparse.SUPPRESS)
     p.add_argument("--min-stores", type=int, default=MIN_STORES, help=argparse.SUPPRESS)
     p.add_argument(
         "--max-failure-rate", type=float, default=MAX_FAILURE_RATE, help=argparse.SUPPRESS
@@ -113,7 +121,12 @@ def main(
         fetcher, stores, workers=args.workers, full_scan=full_scan, list_errors=tuple(list_errors)
     )
     now = now or dt.datetime.now(TZ)
-    extra = build_extra(result, now)
+    pdf_cache = read_pdf_checks(previous_dir / "pdf_checks.json")
+    if args.skip_pdf_check:
+        pdf_checks = pdf_cache
+    else:
+        pdf_checks = check_pdfs(fetcher, result, pdf_cache, delay=args.pdf_delay)
+    extra = build_extra(result, now, pdf_checks)
     diff = diff_extra(_load_json(previous_dir / "extra.json"), extra)
     problems = sanity_problems(
         result, min_stores=args.min_stores, max_failure_rate=args.max_failure_rate
@@ -137,6 +150,7 @@ def main(
         dump_json(build_snapshot(result, extra, now), indent=1),
     )
     write_text_atomic(out / "history.csv", render_history(history))
+    write_text_atomic(out / "pdf_checks.json", render_pdf_checks(pdf_checks))
     write_text_atomic(out / "extra.json", dump_json(extra))
     log.info("wrote %s", out / "extra.json")
     return EXIT_OK

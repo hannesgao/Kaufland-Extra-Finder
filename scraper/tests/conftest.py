@@ -51,11 +51,14 @@ class FakeFetcher:
         stores: object,
         pages: Mapping[str, str | Exception],
         default: str | Exception | None = None,
+        pdfs: Mapping[str, bytes | Exception] | None = None,
     ) -> None:
         self._stores = stores
         self._pages = dict(pages)
         self._default = default
+        self._pdfs = dict(pdfs or {})
         self.requested: list[str] = []
+        self.pdf_requests: list[str] = []
 
     def preflight(self) -> None:
         return None
@@ -72,6 +75,15 @@ class FakeFetcher:
             raise page
         return page
 
+    def pdf(self, url: str) -> bytes:
+        self.pdf_requests.append(url)
+        pdf = self._pdfs.get(url)
+        if pdf is None:
+            raise FetchError(f"no PDF fixture for {url}")
+        if isinstance(pdf, Exception):
+            raise pdf
+        return pdf
+
 
 @pytest.fixture
 def pages() -> dict[str, str]:
@@ -86,3 +98,34 @@ def make_store_record() -> Callable[[str], dict[str, Any]]:
         return {**template, "n": store_id, "cn": f"Kaufland Test {store_id}"}
 
     return make
+
+
+def make_pdf(lines: list[str]) -> bytes:
+    """A minimal one-page PDF with the given text lines (Helvetica, WinAnsi), for PDF checks."""
+
+    def esc(text: str) -> str:
+        return text.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
+    stream = "BT /F1 10 Tf 12 TL 40 800 Td " + " ".join(f"({esc(t)}) Tj T*" for t in lines) + " ET"
+    body = stream.encode("cp1252")
+    objects = [
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] "
+        b"/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+        b"<< /Length %d >>\nstream\n" % len(body) + body + b"\nendstream",
+    ]
+    out = bytearray(b"%PDF-1.4\n")
+    offsets = []
+    for i, obj in enumerate(objects, 1):
+        offsets.append(len(out))
+        out += b"%d 0 obj\n" % i + obj + b"\nendobj\n"
+    xref = len(out)
+    out += b"xref\n0 %d\n0000000000 65535 f \n" % (len(objects) + 1)
+    out += b"".join(b"%010d 00000 n \n" % o for o in offsets)
+    out += b"trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF\n" % (
+        len(objects) + 1,
+        xref,
+    )
+    return bytes(out)

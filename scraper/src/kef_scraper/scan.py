@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from kef_scraper.fetch import MAX_WORKERS, Fetcher, FetchError
 from kef_scraper.models import Leaflet, ScanResult, Store, StoreResult, Tile
 from kef_scraper.parse import ParseError, is_extra, is_standard, parse_tiles, to_leaflet
+from kef_scraper.pdfcheck import PdfCheck, check_pdf
 
 log = logging.getLogger(__name__)
 
@@ -54,3 +55,36 @@ def scan(
         list_errors=list_errors,
         duration_s=time.monotonic() - t0,
     )
+
+
+PDF_DELAY_S = 2.0  # between PDF downloads (~6 MB each); the CDN answers 503 when hurried
+
+
+def check_pdfs(
+    fetcher: Fetcher,
+    result: ScanResult,
+    cache: dict[str, PdfCheck],
+    *,
+    delay: float = PDF_DELAY_S,
+) -> dict[str, PdfCheck]:
+    """Read the store line of every Extra PDF not in `cache`, one download at a time.
+
+    Returns checks for all PDFs of this scan. Download errors are reported but not cached, so the
+    PDF is tried again on the next run.
+    """
+    pdfs = {lf.cluster: lf.pdf for r in result.extra for lf in r.leaflets}
+    checks = {cluster: cache[cluster] for cluster in pdfs if cluster in cache}
+    todo = sorted(set(pdfs) - set(checks))
+    log.info("Checking %d new PDFs (%d cached) ...", len(todo), len(checks))
+    for i, cluster in enumerate(todo):
+        if i:
+            time.sleep(delay)
+        try:
+            checks[cluster] = check_pdf(fetcher.pdf(pdfs[cluster]))
+        except FetchError as e:
+            log.warning("PDF %s: %s", cluster, e)
+            checks[cluster] = PdfCheck(store_line=None, error=str(e))
+            continue
+        if checks[cluster].error:
+            log.warning("PDF %s: %s", cluster, checks[cluster].error)
+    return checks
