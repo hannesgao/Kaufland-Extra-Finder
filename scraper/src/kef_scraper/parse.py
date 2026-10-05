@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import datetime as dt
+import logging
 import re
 
 from bs4 import BeautifulSoup, Tag
 
-from kef_scraper.models import Leaflet, Store, Tile
+from kef_scraper.models import Leaflet, SpecialDay, Store, Tile
+
+log = logging.getLogger(__name__)
 
 # Leaflet types every store gets; anything else is "unusual" (Extra, store opening, ...).
 STANDARD_SUBCATEGORIES = frozenset({"KDZ1", "KDZ2", "Leaflet1", "Leaflet2", "Wrapper1", "Wrapper2"})
@@ -18,6 +21,9 @@ _PLZ_RE = re.compile(r"\d{5}")
 _LAT_RANGE = (47.0, 55.5)
 _LNG_RANGE = (5.5, 15.5)
 _PDF_ID_RE = re.compile(r"/pdfs/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/")
+_SPECIAL_DAY_RE = re.compile(
+    r"(?P<date>\d{4}-\d{2}-\d{2})\|(?P<opens>\d{2}:\d{2})\|(?P<closes>\d{2}:\d{2})"
+)
 _VALIDITY_RE = re.compile(
     r"^(?P<d1>\d{2})\.(?P<m1>\d{2})\.(?P<y1>\d{4})\s*-\s*(?P<d2>\d{2})\.(?P<m2>\d{2})\.(?P<y2>\d{4})_"
 )
@@ -68,7 +74,40 @@ def _parse_store(index: int, rec: object) -> Store:
         street=street,
         lat=lat,
         lng=lng,
+        special_days=parse_special_days(sid, rec.get("sod")),
     )
+
+
+def parse_special_days(store_id: str, raw: object) -> tuple[SpecialDay, ...]:
+    """Parse the optional `sod` field (`YYYY-MM-DD|HH:MM|HH:MM`, `00:00|00:00` = closed).
+
+    This is supplementary information, so malformed entries are logged and skipped instead of
+    failing the store.
+    """
+    if raw is None:
+        return ()
+    if not isinstance(raw, list):
+        log.warning("%s: ignoring special opening days of type %s", store_id, type(raw).__name__)
+        return ()
+    days: dict[dt.date, SpecialDay] = {}
+    for entry in raw:
+        m = _SPECIAL_DAY_RE.fullmatch(entry) if isinstance(entry, str) else None
+        try:
+            if m is None:
+                raise ValueError("unexpected format")
+            day = dt.date.fromisoformat(m["date"])
+            opens, closes = _valid_time(m["opens"]), _valid_time(m["closes"])
+        except ValueError as e:
+            log.warning("%s: ignoring special opening day %r: %s", store_id, entry, e)
+            continue
+        closed = opens == closes == "00:00"
+        days[day] = SpecialDay(day) if closed else SpecialDay(day, opens, closes)
+    return tuple(days[d] for d in sorted(days))
+
+
+def _valid_time(value: str) -> str:
+    dt.time.fromisoformat(value)  # raises ValueError for e.g. 25:00
+    return value
 
 
 def _attr(tag: Tag, name: str) -> str | None:

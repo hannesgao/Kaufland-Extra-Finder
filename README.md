@@ -61,6 +61,10 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, �
       "leaflets": [                                // Mon–Wed often current + next week
         { "valid_from": "2026-10-08", "valid_to": "2026-10-14",
           "cluster": "<PDF uuid>", "viewer": "https://leaflets.kaufland.com/…", "pdf": "https://…pdf" }
+      ],
+      "special_days": [                            // optional; only today and later
+        { "date": "2026-10-08", "closed": true },
+        { "date": "2026-12-24", "open": "07:00", "close": "13:30" }
       ]
     }
   ],

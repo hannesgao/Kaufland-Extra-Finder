@@ -133,6 +133,29 @@ class TestBuildExtra:
             "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8": ["DE8530"],
         }
 
+    def test_special_days_only_from_today(self, pages: dict[str, str]) -> None:
+        raw = store_list_sample()
+        for rec in raw:
+            if rec["n"] == "DE4453":
+                rec["sod"] = [
+                    "2026-10-05|00:00|00:00",
+                    "2026-10-06|00:00|00:00",
+                    "2026-12-24|07:00|13:30",
+                ]
+        stores, _ = parse_stores(raw)
+        result = scan(
+            FakeFetcher([], pages),
+            [s for s in stores if s.id in {"DE4453", "DE8530"}],
+            full_scan=False,
+        )
+        extra = build_extra(result, NOW)  # NOW is 2026-10-06
+        by_id = {s["id"]: s for s in extra["stores"]}
+        assert by_id["DE4453"]["special_days"] == [
+            {"date": "2026-10-06", "closed": True},
+            {"date": "2026-12-24", "open": "07:00", "close": "13:30"},
+        ]
+        assert "special_days" not in by_id["DE8530"]
+
     def test_naive_timestamp_rejected(self) -> None:
         with pytest.raises(ValueError, match="timezone-aware"):
             build_extra(_result(), dt.datetime(2026, 10, 6))  # noqa: DTZ001

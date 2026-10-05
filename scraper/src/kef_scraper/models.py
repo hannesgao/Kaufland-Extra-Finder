@@ -7,6 +7,19 @@ from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True, slots=True)
+class SpecialDay:
+    """A day with non-standard opening hours. `opens`/`closes` are None when the store is closed."""
+
+    date: dt.date
+    opens: str | None = None
+    closes: str | None = None
+
+    @property
+    def closed(self) -> bool:
+        return self.opens is None
+
+
+@dataclass(frozen=True, slots=True)
 class Store:
     id: str
     name: str
@@ -15,6 +28,7 @@ class Store:
     street: str
     lat: float
     lng: float
+    special_days: tuple[SpecialDay, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
