@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+.coverage
+.coverage.*
+htmlcov/
+
+# Node / Vite
+node_modules/
+web/dist/
+.vite/
+*.tsbuildinfo
+.eslintcache
+coverage/
+*.log
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+.envrc
+
+# Local scraper output (real data lives on the `data` branch)
+/data/
+scraper/data/
+web/public/data/
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+*.swp
+*~
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Claude Code (local only, never commit)
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+.mcp.json
