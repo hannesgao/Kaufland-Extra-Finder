@@ -117,6 +117,7 @@ class TestBuildExtra:
             "street": "Durlacher Allee 111",
             "lat": 49.0039646,
             "lng": 8.4493277,
+            "url": "https://filiale.kaufland.de/service/filiale/karlsruhe-oststadt-4443.html",
             "leaflets": [
                 {
                     "valid_from": "2026-10-08",

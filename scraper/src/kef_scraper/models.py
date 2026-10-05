@@ -29,6 +29,7 @@ class Store:
     lat: float
     lng: float
     special_days: tuple[SpecialDay, ...] = ()
+    url: str | None = None  # the store's page on filiale.kaufland.de
 
 
 @dataclass(frozen=True, slots=True)
