@@ -1,0 +1,134 @@
+[
+ {
+  "n": "DE1300",
+  "slf": "BakingFresh,Echarging,Barrier-freeWC,Tchibo,WCWomen,WCMen,MobilePayment,LoyaltyProgram,LoyaltyPointsProgram,LoyaltyCoupons,AdBanner,PartnerBenefits,Xtra",
+  "lat": "52.0660227",
+  "lng": "6.9650751",
+  "cn": "Kaufland Ahaus",
+  "p": "02561/98360",
+  "pc": "48683",
+  "sn": "Andreasstraße 3-5",
+  "t": "Ahaus",
+  "opd": "2003-08-04T00:00:00.000Z",
+  "wod": [
+   "Monday|07:00|22:00",
+   "Tuesday|07:00|22:00",
+   "Wednesday|07:00|22:00",
+   "Thursday|07:00|22:00",
+   "Friday|07:00|22:00",
+   "Saturday|07:00|22:00",
+   "Sunday|00:00|00:00"
+  ],
+  "friendlyUrl": "ahaus-1300",
+  "eod": ""
+ },
+ {
+  "n": "DE1530",
+  "slf": "BakingFresh,GourmetFood,DelicatessenService,Barrier-freeWC,MeatSpecialChest,Tchibo,WCWomen,WCMen,Meat,Sausage,Cheese,MobilePayment,LoyaltyProgram,LoyaltyPointsProgram,LoyaltyCoupons,AdBanner,PartnerBenefits,Xtra",
+  "lat": "51.4487113",
+  "lng": "7.75716",
+  "cn": "Kaufland Menden-Bösperde",
+  "p": "02373/96800",
+  "pc": "58708",
+  "sn": "Holzener Straße 1-13",
+  "t": "Menden",
+  "opd": "2003-08-04T00:00:00.000Z",
+  "sod": [
+   "2026-10-05|00:00|00:00",
+   "2026-10-06|00:00|00:00",
+   "2026-10-07|00:00|00:00",
+   "2026-10-08|00:00|00:00",
+   "2026-10-09|00:00|00:00",
+   "2026-10-10|00:00|00:00",
+   "2026-10-11|00:00|00:00"
+  ],
+  "wod": [
+   "Monday|07:00|22:00",
+   "Tuesday|07:00|22:00",
+   "Wednesday|07:00|22:00",
+   "Thursday|07:00|22:00",
+   "Friday|07:00|22:00",
+   "Saturday|07:00|22:00",
+   "Sunday|00:00|00:00"
+  ],
+  "f": {
+   "from": "2026-05-31",
+   "to": "2027-08-09"
+  },
+  "friendlyUrl": "menden-boesperde-1530",
+  "eod": ""
+ },
+ {
+  "n": "DE4443",
+  "slf": "BakingFresh,GasStation,GourmetFood,DelicatessenService,SelfScanning,MeatSpecialChest,Tchibo,Meat,Sausage,Cheese,Fish,MobilePayment,LoyaltyProgram,LoyaltyPointsProgram,LoyaltyCoupons,AdBanner,PartnerBenefits,KScanDZ,Xtra",
+  "lat": "49.0039646",
+  "lng": "8.4493277",
+  "cn": "Kaufland Karlsruhe-Oststadt",
+  "p": "0721/6677290",
+  "pc": "76137",
+  "sn": "Durlacher Allee 111",
+  "t": "Karlsruhe",
+  "opd": "2021-11-25T00:00:00.000Z",
+  "wod": [
+   "Monday|07:00|22:00",
+   "Tuesday|07:00|22:00",
+   "Wednesday|07:00|22:00",
+   "Thursday|07:00|22:00",
+   "Friday|07:00|22:00",
+   "Saturday|07:00|22:00",
+   "Sunday|00:00|00:00"
+  ],
+  "friendlyUrl": "karlsruhe-oststadt-4443",
+  "eod": ""
+ },
+ {
+  "n": "DE4453",
+  "slf": "BakingFresh,GasStation,GourmetFood,Echarging,DelicatessenService,Barrier-freeWC,SelfScanning,MeatSpecialChest,Tchibo,WCWomen,WCMen,Meat,Sausage,Cheese,Fish,MobilePayment,LoyaltyProgram,LoyaltyPointsProgram,LoyaltyCoupons,AdBanner,PartnerBenefits,Xtra",
+  "lat": "51.321132",
+  "lng": "9.517428",
+  "cn": "Kaufland Kassel-Wesertor",
+  "p": "0561/994502-0",
+  "pc": "34125",
+  "sn": "Franzgraben 40-42",
+  "t": "Kassel",
+  "opd": "2021-04-14T00:00:00.000Z",
+  "wod": [
+   "Monday|07:00|22:00",
+   "Tuesday|07:00|22:00",
+   "Wednesday|07:00|22:00",
+   "Thursday|07:00|22:00",
+   "Friday|07:00|22:00",
+   "Saturday|07:00|22:00",
+   "Sunday|00:00|00:00"
+  ],
+  "friendlyUrl": "kassel-wesertor-4453",
+  "eod": ""
+ },
+ {
+  "n": "DE8530",
+  "slf": "BakingFresh,GourmetFood,DelicatessenService,Barrier-freeWC,SelfScanning,Tchibo,WCWomen,WCMen,Sausage,Cheese,Fish,MobilePayment,LoyaltyProgram,LoyaltyPointsProgram,LoyaltyCoupons,AdBanner,PartnerBenefits,KScanDZ,Xtra",
+  "lat": "49.0101522",
+  "lng": "8.3525396",
+  "cn": "Kaufland Karlsruhe-Grünwinkel",
+  "p": "0721/15180",
+  "pc": "76185",
+  "sn": "Carl-Metz-Straße 7",
+  "t": "Karlsruhe",
+  "opd": "2010-02-01T00:00:00.000Z",
+  "wod": [
+   "Monday|07:00|22:00",
+   "Tuesday|07:00|22:00",
+   "Wednesday|07:00|22:00",
+   "Thursday|07:00|22:00",
+   "Friday|07:00|22:00",
+   "Saturday|07:00|22:00",
+   "Sunday|00:00|00:00"
+  ],
+  "f": {
+   "from": "2017-07-17",
+   "to": "2017-07-18"
+  },
+  "friendlyUrl": "karlsruhe-gruenwinkel-8530",
+  "eod": ""
+ }
+]
