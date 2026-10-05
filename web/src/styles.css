@@ -1512,10 +1512,53 @@ a.credit:hover,
 /* Aligned with the header; only the text measure is limited. */
 .prose {
   padding-top: 24px;
+  font-size: 0.9375rem;
+  line-height: 1.6;
 }
 
 .prose > * {
   max-width: 48rem;
+}
+
+.prose h2 {
+  margin: 28px 0 8px;
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+}
+
+.prose p,
+.prose ul {
+  margin: 0 0 12px;
+}
+
+.prose ul {
+  padding-left: 1.25rem;
+}
+
+.prose li + li {
+  margin-top: 6px;
+}
+
+.prose code {
+  padding: 1px 4px;
+  border-radius: var(--shape-xs);
+  background: var(--md-surface-container);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+.prose__meta {
+  color: var(--md-on-surface-variant);
+  font-size: 0.875rem;
+}
+
+/* Draft placeholders the site owner still has to fill in. */
+mark.todo {
+  padding: 0 4px;
+  border-radius: var(--shape-xs);
+  background: #ffe08a;
+  color: #3a2f00;
 }
 
 /* ---------- Wide screens: list left, map right ---------- */
