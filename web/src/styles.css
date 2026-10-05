@@ -1321,7 +1321,7 @@ a {
 }
 
 .source__text {
-  margin: 0 0 0 24px; /* aligned with the label text, past the icon */
+  margin: 0; /* flush with the icon above */
   font-size: 0.75rem;
   line-height: 1.125rem;
 }
