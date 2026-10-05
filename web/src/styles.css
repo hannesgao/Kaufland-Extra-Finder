@@ -531,18 +531,14 @@ a {
   font-weight: 500;
 }
 
-/* Switch on the left, text flush right (user request). */
+/* Material list-item order: text first (starts where the PLZ text starts), switch at the end. */
 .switch-field .switch {
   display: flex;
+  justify-content: space-between;
   width: 100%;
   height: 54px;
   margin-top: -7px;
-  padding: 0 24px 0 16px;
-}
-
-.switch-field .switch__label {
-  margin-left: auto;
-  text-align: right;
+  padding: 0 16px 0 24px;
 }
 
 .switch__input {
@@ -581,19 +577,19 @@ a {
     background 150ms ease;
 }
 
-.switch__input:checked + .switch__track {
+.switch__input:checked ~ .switch__track {
   border-color: var(--md-primary);
   background: var(--md-primary);
 }
 
-.switch__input:checked + .switch__track .switch__thumb {
+.switch__input:checked ~ .switch__track .switch__thumb {
   left: 22px;
   width: 24px;
   height: 24px;
   background: var(--md-on-primary);
 }
 
-.switch__input:focus-visible + .switch__track {
+.switch__input:focus-visible ~ .switch__track {
   outline: 3px solid var(--md-primary);
   outline-offset: 2px;
 }
