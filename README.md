@@ -97,6 +97,33 @@ uv run --project ../scraper mypy
 uv run --project ../scraper pytest
 ```
 
+### Frontend (`web/`)
+
+Vite + TypeScript (no framework), Leaflet for the map. Requires Node 24 (`.nvmrc`).
+
+```sh
+cd web
+npm ci
+npm run dev                                   # http://localhost:5173/Kaufland-Extra-Finder/
+KEF_EXTRA_JSON=../scraper/data/extra.json npm run dev   # use a local scraper run instead
+npm run lint && npm run typecheck && npm run format:check
+npm test                                      # vitest, offline
+KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
+```
+
+- `data/extra.json` is served from `fixtures/extra.json` in development (a sample; dates are shifted
+  by whole weeks so it always looks current). Production builds **require** `KEF_EXTRA_JSON`, so a
+  fixture can never be deployed by accident; the deploy job passes the `data` branch's file.
+- The page makes no third-party request until the first search; then the Leaflet chunk is loaded
+  and map tiles come from `tile.openstreetmap.org`. No cookies, no storage, no external fonts.
+- Search state lives in the URL (`?plz=76137&r=50`); geolocation results never put coordinates
+  into the URL.
+- XSS: all data is rendered through `h()` (`src/dom.ts`), which only creates text nodes and refuses
+  `on*` attributes and non-http(s) URLs; ESLint forbids `innerHTML` & co. Leaflet tooltips get DOM
+  nodes, not strings. A CSP meta tag (production build) allows only same-origin resources plus OSM
+  tiles.
+- `impressum.html` and `datenschutz.html` are placeholders to be filled in by the site owner.
+
 ## Data & attribution
 
 - Store and leaflet data: © Kaufland, retrieved from public web pages. Not covered by this repository's license.

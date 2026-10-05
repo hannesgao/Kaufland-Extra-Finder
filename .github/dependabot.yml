@@ -14,4 +14,10 @@ updates:
     groups:
       python:
         patterns: ["*"]
-  # The npm (/web) entry is added once that manifest exists.
+  - package-ecosystem: npm
+    directory: /web
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        patterns: ["*"]
