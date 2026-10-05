@@ -29,6 +29,7 @@
   --md-on-surface-variant: #3f4946;
   --md-outline: #6f7976;
   --md-outline-variant: #bec9c5;
+  --sponsor: #bf3989; /* GitHub Sponsors heart */
   --md-shadow: 0 0 0;
 
   --map-marker: #006a60;
@@ -83,6 +84,7 @@
     --md-on-surface-variant: #bec9c5;
     --md-outline: #899390;
     --md-outline-variant: #3f4946;
+    --sponsor: #db61a2;
 
     --map-marker: #82d5c8;
     --map-marker-closed: #6f7976;
@@ -192,12 +194,51 @@ a {
   line-height: 1.25rem;
 }
 
-.app-bar__back {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
+/* Title column gives way first; the buttons wrap below it (still right-aligned) when it can't. */
+.app-bar__inner {
+  flex-wrap: wrap;
+  row-gap: 12px;
+}
+
+.app-bar__text {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.app-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* GitHub Sponsors: outlined, with the pink heart GitHub uses for it. */
+.btn--sponsor {
+  border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface-container-lowest);
+  color: var(--md-on-surface);
+}
+
+.btn--sponsor .icon {
+  color: var(--sponsor);
+}
+
+/* Phones: the sponsor button shrinks to its heart. */
+@media (max-width: 599px) {
+  .btn--sponsor {
+    width: 40px;
+    padding: 0;
+  }
+
+  .btn--sponsor .btn__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 
 /* ---------- Search card ---------- */
@@ -1508,57 +1549,124 @@ a.credit:hover,
   height: 18px;
 }
 
-/* ---------- Static pages ---------- */
-/* Aligned with the header; only the text measure is limited. */
-.prose {
+/* ---------- Static pages (Impressum, Datenschutz) ---------- */
+/* One outlined card per section; text runs the full card width. */
+.legal {
+  display: grid;
+  gap: 16px;
   padding-top: 24px;
+  padding-bottom: 8px;
   font-size: 0.9375rem;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
-.prose > * {
-  max-width: 48rem;
+.legal__pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 16px;
 }
 
-.prose h2 {
-  margin: 28px 0 8px;
+.legal-card {
+  min-width: 0;
+  padding: 20px 24px 22px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--shape-xl);
+  background: var(--md-surface-container-lowest);
+  overflow-wrap: anywhere;
+}
+
+.legal-card--summary {
+  border-color: transparent;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.legal-card__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 1.125rem;
   font-weight: 500;
   line-height: 1.5rem;
 }
 
-.prose p,
-.prose ul {
-  margin: 0 0 12px;
+.legal-card__title .icon {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border-radius: var(--shape-md);
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
 }
 
-.prose ul {
+.legal-card--summary .legal-card__title .icon {
+  background: var(--md-surface-container-lowest);
+  color: var(--md-primary);
+}
+
+.legal-card > * {
+  margin: 0;
+}
+
+.legal-card > * + * {
+  margin-top: 12px;
+}
+
+.legal-card ul {
   padding-left: 1.25rem;
 }
 
-.prose li + li {
-  margin-top: 6px;
+.legal-card li + li {
+  margin-top: 8px;
 }
 
-.prose code {
-  padding: 1px 4px;
+.legal-card li::marker {
+  color: var(--md-primary);
+}
+
+.legal-card code {
+  padding: 1px 5px;
   border-radius: var(--shape-xs);
   background: var(--md-surface-container);
   font-family: var(--font-mono);
   font-size: 0.85em;
 }
 
-.prose__meta {
+.legal-card__address {
+  font-style: normal;
+}
+
+.legal-card__address--inset {
+  padding: 12px 16px;
+  border-radius: var(--shape-md);
+  background: var(--md-surface-container-low);
+}
+
+.legal-card__note {
   color: var(--md-on-surface-variant);
   font-size: 0.875rem;
 }
 
-/* Draft placeholders the site owner still has to fill in. */
-mark.todo {
-  padding: 0 4px;
-  border-radius: var(--shape-xs);
-  background: #ffe08a;
-  color: #3a2f00;
+/* Label above value, like the address card next to it. */
+.legal-card__facts dt {
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+.legal-card__facts dd {
+  margin: 0;
+}
+
+.legal-card__facts dd + dt {
+  margin-top: 10px;
+}
+
+@media (max-width: 479px) {
+  .legal-card {
+    padding: 16px 16px 18px;
+  }
 }
 
 /* ---------- Wide screens: list left, map right ---------- */
