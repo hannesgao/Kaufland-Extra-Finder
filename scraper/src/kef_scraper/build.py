@@ -32,6 +32,7 @@ def build_extra(result: ScanResult, generated_at: dt.datetime) -> dict[str, Any]
             "street": s.street,
             "lat": s.lat,
             "lng": s.lng,
+            **({"url": s.url} if s.url else {}),
             "leaflets": [
                 {
                     "valid_from": lf.valid_from.isoformat(),

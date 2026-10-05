@@ -21,6 +21,8 @@ _PLZ_RE = re.compile(r"\d{5}")
 _LAT_RANGE = (47.0, 55.5)
 _LNG_RANGE = (5.5, 15.5)
 _PDF_ID_RE = re.compile(r"/pdfs/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/")
+STORE_PAGE_BASE = "https://filiale.kaufland.de/service/filiale/"
+_SLUG_RE = re.compile(r"[a-z0-9]+(?:-+[a-z0-9]+)*")
 _SPECIAL_DAY_RE = re.compile(
     r"(?P<date>\d{4}-\d{2}-\d{2})\|(?P<opens>\d{2}:\d{2})\|(?P<closes>\d{2}:\d{2})"
 )
@@ -75,7 +77,18 @@ def _parse_store(index: int, rec: object) -> Store:
         lat=lat,
         lng=lng,
         special_days=parse_special_days(sid, rec.get("sod")),
+        url=store_url(sid, rec.get("friendlyUrl")),
     )
+
+
+def store_url(store_id: str, slug: object) -> str | None:
+    """Store page URL from the `friendlyUrl` slug, e.g. `kassel-wesertor-4453`."""
+    if slug is None:
+        return None
+    if not isinstance(slug, str) or not _SLUG_RE.fullmatch(slug):
+        log.warning("%s: ignoring invalid store slug %r", store_id, slug)
+        return None
+    return f"{STORE_PAGE_BASE}{slug}.html"
 
 
 def parse_special_days(store_id: str, raw: object) -> tuple[SpecialDay, ...]:

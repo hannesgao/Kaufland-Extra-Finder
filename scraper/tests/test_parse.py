@@ -15,6 +15,7 @@ from kef_scraper.parse import (
     parse_tiles,
     parse_validity,
     pdf_id,
+    store_url,
     to_leaflet,
 )
 
@@ -117,6 +118,32 @@ class TestSpecialDays:
     def test_duplicate_dates_keep_last(self) -> None:
         days = parse_special_days("DE1", ["2026-10-06|00:00|00:00", "2026-10-06|08:00|12:00"])
         assert days == (SpecialDay(dt.date(2026, 10, 6), "08:00", "12:00"),)
+
+
+class TestStoreUrl:
+    def test_from_store_list(self) -> None:
+        stores, _ = parse_stores(store_list_sample())
+        urls = {s.id: s.url for s in stores}
+        assert (
+            urls["DE4453"]
+            == "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html"
+        )
+
+    def test_double_hyphen_slug(self) -> None:
+        # Real slug, e.g. "Halle (Saale)" -> "halle-saale--1393"
+        assert store_url("DE1393", "halle-saale--1393") == (
+            "https://filiale.kaufland.de/service/filiale/halle-saale--1393.html"
+        )
+
+    def test_missing(self) -> None:
+        assert store_url("DE1", None) is None
+
+    @pytest.mark.parametrize(
+        "slug", ["", "../../evil", "kassel/wesertor", "Kassel-4453", "-4453", "a b", 4453]
+    )
+    def test_invalid_slug_is_dropped(self, slug: object, caplog: pytest.LogCaptureFixture) -> None:
+        assert store_url("DE1", slug) is None
+        assert "ignoring invalid store slug" in caplog.text
 
 
 class TestParseTiles:

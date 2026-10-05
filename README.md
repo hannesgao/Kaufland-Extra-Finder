@@ -58,6 +58,7 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, �
     {
       "id": "DE4453", "name": "Kassel-Wesertor", "plz": "34125", "city": "Kassel",
       "street": "Franzgraben 40-42", "lat": 51.321132, "lng": 9.517428,
+      "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html",  // optional
       "leaflets": [                                // Mon–Wed often current + next week
         { "valid_from": "2026-10-08", "valid_to": "2026-10-14",
           "cluster": "<PDF uuid>", "viewer": "https://leaflets.kaufland.com/…", "pdf": "https://…pdf" }
