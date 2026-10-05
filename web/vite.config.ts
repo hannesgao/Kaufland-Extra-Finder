@@ -64,6 +64,17 @@ export function shiftedFixture(now: Date): string {
   return text.replace(/\b(\d{4}-\d{2}-\d{2})(?=[T"])/g, (iso) => shift(iso));
 }
 
+/** Replaces `<!-- include:name -->` with `partials/name.html`, so all pages share one footer. */
+function partials(): Plugin {
+  return {
+    name: "kef-partials",
+    transformIndexHtml: (html) =>
+      html.replace(/<!-- include:([a-z-]+) -->/g, (_match, name: string) =>
+        readFileSync(resolve(import.meta.dirname, "partials", `${name}.html`), "utf-8"),
+      ),
+  };
+}
+
 /** "05.10.2026 22:50" in Berlin time, like the author's other projects. */
 export function buildStamp(date: Date): string {
   const parts = new Intl.DateTimeFormat("de-DE", {
@@ -113,7 +124,7 @@ function contentSecurityPolicy(): Plugin {
 
 export default defineConfig({
   base: BASE,
-  plugins: [extraJson(), buildInfo(), contentSecurityPolicy()],
+  plugins: [extraJson(), partials(), buildInfo(), contentSecurityPolicy()],
   build: {
     rolldownOptions: {
       input: {

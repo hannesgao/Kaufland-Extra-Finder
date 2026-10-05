@@ -4,7 +4,7 @@ import { formatDay } from "../dates";
 import { h } from "../dom";
 import { formatKm } from "../geo";
 import { icon } from "../icons";
-import type { Hit, LeafletView } from "../search";
+import type { Hit, LeafletView, StoreView } from "../search";
 
 const MAX_SIBLINGS = 5;
 
@@ -153,6 +153,77 @@ export function renderHit(hit: Hit, onSelect: (id: string) => void, note?: strin
           icon("map"),
           "Auf Karte zeigen",
         ),
+      ),
+    ),
+  );
+}
+
+/** Compact row for the "Alle Extra-Filialen" list. */
+export function renderRow(view: StoreView): HTMLLIElement {
+  const { store } = view;
+  const headingId = `row-${store.id}`;
+  return h(
+    "li",
+    { class: view.closed ? "row row--closed" : "row", "data-id": store.id },
+    h("span", { class: "row__plz", "aria-hidden": "true" }, store.plz),
+    h(
+      "article",
+      { class: "row__main", "aria-labelledby": headingId },
+      h(
+        "div",
+        { class: "row__head" },
+        h(
+          "div",
+          null,
+          h("h3", { class: "row__title", id: headingId }, store.name),
+          h("p", { class: "row__address" }, `${store.street}, ${store.plz} ${store.city}`),
+        ),
+        store.url &&
+          externalButton(store.url, "Filialseite", store.name, "btn--text btn--xs", "storefront"),
+      ),
+      view.closed &&
+        h("p", { class: "chip chip--closed" }, icon("event_busy"), "Vorübergehend geschlossen"),
+      h(
+        "ul",
+        { class: "row__leaflets" },
+        ...view.leaflets.map((l) => {
+          const description = `Extra-Angebote ${store.name}, ${l.range}`;
+          return h(
+            "li",
+            { class: "row__leaflet" },
+            h(
+              "span",
+              { class: l.label === "Diese Woche" ? "chip chip--now" : "chip chip--upcoming" },
+              l.label,
+            ),
+            h("span", { class: "leaflet__range" }, l.range),
+            l.closedDays.length > 0 &&
+              h(
+                "span",
+                { class: "row__warn" },
+                icon("event_busy"),
+                `geschlossen ${l.closedDays.map(formatDay).join(", ")}`,
+              ),
+            h(
+              "span",
+              { class: "row__links" },
+              externalButton(
+                l.leaflet.viewer,
+                "Prospekt",
+                description,
+                "btn--tonal btn--xs",
+                "open_in_new",
+              ),
+              externalButton(
+                l.leaflet.pdf,
+                "PDF",
+                description,
+                "btn--outlined btn--xs",
+                "download",
+              ),
+            ),
+          );
+        }),
       ),
     ),
   );

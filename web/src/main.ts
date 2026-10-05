@@ -5,10 +5,11 @@ import { berlinToday, formatStamp, isStale, STALE_AFTER_DAYS } from "./dates";
 import { byId, h, replaceChildren } from "./dom";
 import { hydrateIcons, icon } from "./icons";
 import { formatKm } from "./geo";
-import { search, type Hit } from "./search";
-import { renderHit } from "./ui/list";
+import { listAll, search, SORT_ORDERS, type Hit, type SortOrder } from "./search";
+import { renderHit, renderRow } from "./ui/list";
 import type { MapView } from "./ui/map";
-import { buildQuery, isPlz, isRadius, parseQuery, type QueryState } from "./url";
+import { setupTabs } from "./ui/tabs";
+import { buildQuery, isPlz, isRadius, parseQuery, type QueryState, type Tab } from "./url";
 
 interface Origin {
   point: LatLng;
@@ -25,12 +26,18 @@ const status = byId("status", HTMLParagraphElement);
 const dataAge = byId("data-age", HTMLParagraphElement);
 const mapContainer = byId("map", HTMLDivElement);
 const list = byId("list", HTMLOListElement);
+const allList = byId("all-list", HTMLOListElement);
+const allMeta = byId("all-meta", HTMLParagraphElement);
+const sortGroup = byId("sort", HTMLDivElement);
+const tablist = byId("tabs", HTMLDivElement);
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 let data: { extra: ExtraData; plz: PlzIndex } | null = null;
 let origin: Origin | null = null;
 let radius = parseQuery(location.search).radius;
+let tab: Tab = parseQuery(location.search).tab;
+let sort: SortOrder = parseQuery(location.search).sort;
 let mapView: Promise<MapView> | null = null;
 const items = new Map<string, HTMLLIElement>();
 
@@ -50,7 +57,7 @@ function radioFor(value: number): HTMLInputElement | null {
 }
 
 function syncUrl(push: boolean): void {
-  const state: QueryState = { plz: origin?.plz ?? null, radius };
+  const state: QueryState = { plz: origin?.plz ?? null, radius, tab, sort };
   const url = `${location.pathname}${buildQuery(state)}`;
   if (push) history.pushState(null, "", url);
   else history.replaceState(null, "", url);
@@ -140,6 +147,50 @@ function runSearch(): void {
   });
 }
 
+function renderAll(): void {
+  if (!data) return;
+  const views = listAll(data.extra, berlinToday(new Date()), sort);
+  replaceChildren(allList, ...views.map(renderRow));
+  const count = views.length;
+  replaceChildren(
+    allMeta,
+    `${String(count)} ${count === 1 ? "Filiale" : "Filialen"} mit Extra-Prospekt · Stand der Daten: `,
+    h(
+      "time",
+      { datetime: data.extra.generatedAt.toISOString() },
+      formatStamp(data.extra.generatedAt),
+    ),
+  );
+}
+
+function isSortOrder(value: string): value is SortOrder {
+  return (SORT_ORDERS as readonly string[]).includes(value);
+}
+
+function onSortChange(event: Event): void {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement) || !isSortOrder(target.value)) return;
+  sort = target.value;
+  syncUrl(false);
+  renderAll();
+}
+
+const tabs = setupTabs(tablist, (selected) => {
+  tab = selected;
+  syncUrl(true);
+  showTab();
+});
+
+/** Render what the visible tab needs (the map must re-measure after being hidden). */
+function showTab(): void {
+  if (tab === "all") renderAll();
+  else if (mapView) {
+    withMap((map) => {
+      map.refresh();
+    });
+  }
+}
+
 function searchPlz(plz: string, push: boolean): void {
   if (!data) return;
   const point = data.plz.get(plz);
@@ -220,6 +271,12 @@ function applyQuery(): void {
   radius = query.radius;
   const radio = radioFor(radius);
   if (radio) radio.checked = true;
+  sort = query.sort;
+  const sortRadio = sortGroup.querySelector<HTMLInputElement>(`input[value="${sort}"]`);
+  if (sortRadio) sortRadio.checked = true;
+  tab = query.tab;
+  tabs.select(tab);
+  showTab();
   plzInput.value = query.plz ?? "";
   if (query.plz) {
     searchPlz(query.plz, false);
@@ -253,6 +310,7 @@ function showDataAge(extra: ExtraData): void {
 hydrateIcons();
 form.addEventListener("submit", onSubmit);
 form.addEventListener("change", onRadiusChange);
+sortGroup.addEventListener("change", onSortChange);
 locateButton.addEventListener("click", onLocate);
 plzInput.addEventListener("input", () => {
   showPlzError(null);
@@ -263,6 +321,7 @@ const initial = parseQuery(location.search);
 plzInput.value = initial.plz ?? "";
 const initialRadio = radioFor(initial.radius);
 if (initialRadio) initialRadio.checked = true;
+tabs.select(initial.tab);
 
 loadData(import.meta.env.BASE_URL)
   .then((loaded) => {
@@ -274,4 +333,5 @@ loadData(import.meta.env.BASE_URL)
   .catch((err: unknown) => {
     console.error(err);
     setStatus("Die Daten konnten nicht geladen werden. Bitte später erneut versuchen.", "error");
+    allMeta.textContent = "Die Daten konnten nicht geladen werden.";
   });

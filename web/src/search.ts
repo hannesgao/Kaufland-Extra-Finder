@@ -21,13 +21,20 @@ export interface LeafletView {
   siblings: Store[];
 }
 
-export interface Hit {
+/** A store with its non-expired Extra leaflets. */
+export interface StoreView {
   store: Store;
-  distanceKm: number;
   leaflets: LeafletView[];
   /** Closed for the whole remaining validity of all its leaflets. */
   closed: boolean;
 }
+
+export interface Hit extends StoreView {
+  distanceKm: number;
+}
+
+export const SORT_ORDERS = ["plz-asc", "plz-desc"] as const;
+export type SortOrder = (typeof SORT_ORDERS)[number];
 
 export interface SearchResult {
   hits: Hit[];
@@ -57,18 +64,31 @@ function viewLeaflet(store: Store, leaflet: Leaflet, today: IsoDate, data: Extra
 }
 
 /** A store with its non-expired leaflets, or null if all of them have expired. */
-export function toHit(store: Store, origin: LatLng, today: IsoDate, data: ExtraData): Hit | null {
+export function describeStore(store: Store, today: IsoDate, data: ExtraData): StoreView | null {
   const leaflets = store.leaflets
     .filter((l) => l.validTo >= today)
     .sort((a, b) => a.validFrom.localeCompare(b.validFrom))
     .map((l) => viewLeaflet(store, l, today, data));
   if (leaflets.length === 0) return null;
-  return {
-    store,
-    distanceKm: distanceKm(origin, [store.lat, store.lng]),
-    leaflets,
-    closed: leaflets.every((l) => l.unusable),
-  };
+  return { store, leaflets, closed: leaflets.every((l) => l.unusable) };
+}
+
+export function toHit(store: Store, origin: LatLng, today: IsoDate, data: ExtraData): Hit | null {
+  const view = describeStore(store, today, data);
+  return view && { ...view, distanceKm: distanceKm(origin, [store.lat, store.lng]) };
+}
+
+/** All stores with a current or upcoming Extra leaflet, sorted by PLZ (then name). */
+export function listAll(data: ExtraData, today: IsoDate, order: SortOrder): StoreView[] {
+  const direction = order === "plz-asc" ? 1 : -1;
+  return data.stores
+    .map((s) => describeStore(s, today, data))
+    .filter((v): v is StoreView => v !== null)
+    .sort(
+      (a, b) =>
+        direction * a.store.plz.localeCompare(b.store.plz) ||
+        a.store.name.localeCompare(b.store.name, "de"),
+    );
 }
 
 /** Open stores first, then by distance. */

@@ -130,8 +130,10 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   fixture can never be deployed by accident; the deploy job passes the `data` branch's file.
 - The page makes no third-party request until the first search; then the Leaflet chunk is loaded
   and map tiles come from `tile.openstreetmap.org`. No cookies, no storage, no external fonts.
-- Search state lives in the URL (`?plz=76137&r=50`); geolocation results never put coordinates
-  into the URL.
+- Two tabs: *Umkreissuche* (radius search with map) and *Alle Extra-Filialen* (all stores with a
+  current or upcoming Extra leaflet, sortable by PLZ). State lives in the URL
+  (`?plz=76137&r=50&tab=all&sort=plz-desc`); geolocation results never put coordinates into it.
+- The footer is one shared partial (`partials/footer.html`) included into every page at build time.
 - XSS: all data is rendered through `h()` (`src/dom.ts`), which only creates text nodes and refuses
   `on*` attributes and non-http(s) URLs; ESLint forbids `innerHTML` & co. Leaflet tooltips get DOM
   nodes, not strings. A CSP meta tag (production build) allows only same-origin resources plus OSM

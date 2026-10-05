@@ -1,26 +1,36 @@
 import { describe, expect, it } from "vitest";
-import { buildQuery, isPlz, parseQuery } from "../src/url";
+import { buildQuery, isPlz, parseQuery, type QueryState } from "../src/url";
+
+const DEFAULTS: QueryState = { plz: null, radius: 25, tab: "search", sort: "plz-asc" };
 
 describe("parseQuery", () => {
-  it("reads PLZ and radius", () => {
-    expect(parseQuery("?plz=76137&r=50")).toEqual({ plz: "76137", radius: 50 });
+  it("reads PLZ, radius, tab and sort order", () => {
+    expect(parseQuery("?plz=76137&r=50&tab=all&sort=plz-desc")).toEqual({
+      plz: "76137",
+      radius: 50,
+      tab: "all",
+      sort: "plz-desc",
+    });
   });
 
   it("falls back to defaults for invalid values", () => {
-    expect(parseQuery("?plz=7613&r=30")).toEqual({ plz: null, radius: 25 });
-    expect(parseQuery("?plz=<script>&r=abc")).toEqual({ plz: null, radius: 25 });
-    expect(parseQuery("")).toEqual({ plz: null, radius: 25 });
+    expect(parseQuery("?plz=7613&r=30&tab=x&sort=name")).toEqual(DEFAULTS);
+    expect(parseQuery("?plz=<script>&r=abc")).toEqual(DEFAULTS);
+    expect(parseQuery("")).toEqual(DEFAULTS);
   });
 });
 
 describe("buildQuery", () => {
   it("omits defaults", () => {
-    expect(buildQuery({ plz: "76137", radius: 25 })).toBe("?plz=76137");
-    expect(buildQuery({ plz: null, radius: 25 })).toBe("");
+    expect(buildQuery({ ...DEFAULTS, plz: "76137" })).toBe("?plz=76137");
+    expect(buildQuery(DEFAULTS)).toBe("");
+    expect(buildQuery({ ...DEFAULTS, tab: "all", sort: "plz-desc" })).toBe(
+      "?tab=all&sort=plz-desc",
+    );
   });
 
   it("round-trips", () => {
-    const state = { plz: "01814", radius: 100 } as const;
+    const state: QueryState = { plz: "01814", radius: 100, tab: "all", sort: "plz-desc" };
     expect(parseQuery(buildQuery(state))).toEqual(state);
   });
 });

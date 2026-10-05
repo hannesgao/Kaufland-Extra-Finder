@@ -24,120 +24,131 @@
           </p>
         </div>
       </div>
+      <div class="wrap">
+        <div class="tabs" id="tabs" role="tablist" aria-label="Ansicht">
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            id="tab-search"
+            data-tab="search"
+            aria-controls="panel-search"
+            aria-selected="true"
+          >
+            <span data-icon="near_me"></span>Umkreissuche
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            id="tab-all"
+            data-tab="all"
+            aria-controls="panel-all"
+            aria-selected="false"
+            tabindex="-1"
+          >
+            <span data-icon="format_list_bulleted"></span>Alle Extra-Filialen
+          </button>
+        </div>
+      </div>
     </header>
 
     <main class="wrap">
-      <section class="card search-card" aria-label="Suche">
-        <form id="search-form" novalidate>
-          <div class="search-row">
-            <div class="search-row__field">
-              <div class="text-field">
-                <input
-                  id="plz"
-                  name="plz"
-                  type="text"
-                  inputmode="numeric"
-                  autocomplete="postal-code"
-                  pattern="[0-9]{5}"
-                  maxlength="5"
-                  placeholder=" "
-                  required
-                  aria-describedby="plz-hint plz-error"
-                />
-                <label for="plz">Postleitzahl</label>
+      <div id="panel-search" role="tabpanel" aria-labelledby="tab-search">
+        <section class="card search-card" aria-label="Suche">
+          <form id="search-form" novalidate>
+            <div class="search-row">
+              <div class="search-row__field">
+                <div class="text-field">
+                  <input
+                    id="plz"
+                    name="plz"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="postal-code"
+                    pattern="[0-9]{5}"
+                    maxlength="5"
+                    placeholder=" "
+                    required
+                    aria-describedby="plz-hint plz-error"
+                  />
+                  <label for="plz">Postleitzahl</label>
+                </div>
+                <p id="plz-hint" class="supporting-text">5-stellig, z. B. 76137</p>
+                <p id="plz-error" class="supporting-text supporting-text--error" hidden></p>
               </div>
-              <p id="plz-hint" class="supporting-text">5-stellig, z. B. 76137</p>
-              <p id="plz-error" class="supporting-text supporting-text--error" hidden></p>
+              <button type="submit" class="btn btn--filled">
+                <span data-icon="search"></span>Suchen
+              </button>
+              <button type="button" id="locate" class="btn btn--tonal">
+                <span data-icon="my_location"></span>Meinen Standort verwenden
+              </button>
             </div>
-            <button type="submit" class="btn btn--filled">
-              <span data-icon="search"></span>Suchen
-            </button>
-            <button type="button" id="locate" class="btn btn--tonal">
-              <span data-icon="my_location"></span>Meinen Standort verwenden
-            </button>
-          </div>
 
-          <fieldset class="segmented">
-            <legend class="segmented__legend">Umkreis</legend>
-            <div class="segmented__group">
-              <label class="segment">
-                <input type="radio" name="radius" value="10" />
-                <span class="segment__check" data-icon="check"></span>10 km
-              </label>
-              <label class="segment">
-                <input type="radio" name="radius" value="25" checked />
-                <span class="segment__check" data-icon="check"></span>25 km
-              </label>
-              <label class="segment">
-                <input type="radio" name="radius" value="50" />
-                <span class="segment__check" data-icon="check"></span>50 km
-              </label>
-              <label class="segment">
-                <input type="radio" name="radius" value="100" />
-                <span class="segment__check" data-icon="check"></span>100 km
-              </label>
-            </div>
-          </fieldset>
-        </form>
-      </section>
+            <fieldset class="segmented">
+              <legend class="segmented__legend">Umkreis</legend>
+              <div class="segmented__group">
+                <label class="segment">
+                  <input type="radio" name="radius" value="10" />
+                  <span class="segment__check" data-icon="check"></span>10 km
+                </label>
+                <label class="segment">
+                  <input type="radio" name="radius" value="25" checked />
+                  <span class="segment__check" data-icon="check"></span>25 km
+                </label>
+                <label class="segment">
+                  <input type="radio" name="radius" value="50" />
+                  <span class="segment__check" data-icon="check"></span>50 km
+                </label>
+                <label class="segment">
+                  <input type="radio" name="radius" value="100" />
+                  <span class="segment__check" data-icon="check"></span>100 km
+                </label>
+              </div>
+            </fieldset>
+          </form>
+        </section>
 
-      <div class="status-bar">
-        <p id="status" class="status" role="status" aria-live="polite">Daten werden geladen …</p>
-        <p id="data-age" class="data-age"></p>
+        <div class="status-bar">
+          <p id="status" class="status" role="status" aria-live="polite">Daten werden geladen …</p>
+          <p id="data-age" class="data-age"></p>
+        </div>
+
+        <section id="results" class="results" aria-label="Ergebnisse" tabindex="-1">
+          <div id="map" class="map" role="region" aria-label="Karte der Filialen" hidden></div>
+          <ol id="list" class="list"></ol>
+        </section>
       </div>
 
-      <section id="results" class="results" aria-label="Ergebnisse" tabindex="-1">
-        <div id="map" class="map" role="region" aria-label="Karte der Filialen" hidden></div>
-        <ol id="list" class="list"></ol>
-      </section>
+      <div id="panel-all" role="tabpanel" aria-labelledby="tab-all" hidden>
+        <section class="card list-card" aria-labelledby="all-title">
+          <div class="list-card__header">
+            <div>
+              <h2 id="all-title" class="list-card__title">Alle Extra-Filialen</h2>
+              <p id="all-meta" class="list-card__meta">Daten werden geladen …</p>
+            </div>
+            <fieldset class="segmented segmented--inline">
+              <legend class="segmented__legend">Sortierung</legend>
+              <div class="segmented__group" id="sort">
+                <label class="segment">
+                  <input type="radio" name="sort" value="plz-asc" checked />
+                  <span class="segment__check" data-icon="check"></span>
+                  <span data-icon="arrow_upward"></span>PLZ aufsteigend
+                </label>
+                <label class="segment">
+                  <input type="radio" name="sort" value="plz-desc" />
+                  <span class="segment__check" data-icon="check"></span>
+                  <span data-icon="arrow_downward"></span>PLZ absteigend
+                </label>
+              </div>
+            </fieldset>
+          </div>
+          <ol id="all-list" class="rows"></ol>
+        </section>
+      </div>
     </main>
 
-    <footer class="site-footer">
-      <div class="wrap site-footer__info">
-        <p class="disclaimer">
-          <strong>Inoffizielles Projekt.</strong> Nicht mit Kaufland verbunden. Alle Angaben ohne
-          Gewähr – maßgeblich ist der Prospekt der jeweiligen Filiale.
-        </p>
-        <ul class="attributions" aria-label="Datenquellen und Lizenzen">
-          <li>Filial- und Prospektdaten: © Kaufland, von öffentlichen Webseiten</li>
-          <li>
-            Karte: ©
-            <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende
-          </li>
-          <li>
-            PLZ-Koordinaten: <a href="https://www.geonames.org/">GeoNames</a>,
-            <a href="https://creativecommons.org/licenses/by/4.0/deed.de">CC BY 4.0</a>, je PLZ
-            zusammengefasst
-          </li>
-          <li>
-            Icons:
-            <a href="https://github.com/google/material-design-icons">Material Symbols</a> von
-            Google, <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>
-          </li>
-        </ul>
-      </div>
-      <div class="site-footer__bar">
-        <div class="wrap credits">
-          <span class="credit">© 2026 Hannes Gao</span>
-          <a
-            class="credit"
-            href="https://github.com/hannesgao/Kaufland-Extra-Finder/blob/main/LICENSE"
-            title="Die Lizenz lesen"
-            >MIT-Lizenz</a
-          >
-          <span class="credit credit--mono">v%KEF_VERSION%</span>
-          <span class="credit" title="Gebaut %KEF_BUILD_ISO% (UTC)">%KEF_BUILD_STAMP%</span>
-          <a
-            class="credit"
-            href="https://github.com/hannesgao/Kaufland-Extra-Finder"
-            title="Kaufland Extra Finder auf GitHub"
-            ><span data-icon="github"></span>GitHub</a
-          >
-          <a class="credit" href="impressum.html">Impressum</a>
-          <a class="credit" href="datenschutz.html">Datenschutz</a>
-        </div>
-      </div>
-    </footer>
+    <!-- include:footer -->
 
     <script type="module" src="/src/main.ts"></script>
   </body>
