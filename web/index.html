@@ -148,46 +148,55 @@
       </div>
 
       <div id="panel-all" role="tabpanel" aria-labelledby="tab-all" hidden>
-        <section class="card list-card" aria-labelledby="all-title">
-          <div class="list-card__header">
-            <div>
-              <h2 id="all-title" class="list-card__title">Alle Extra-Filialen</h2>
-              <p id="all-meta" class="list-card__meta">Daten werden geladen …</p>
-            </div>
-            <div class="list-card__controls">
-              <fieldset class="outlined segmented segmented--inline">
-                <legend class="outlined__label">Sortierung</legend>
-                <div class="segmented__group" id="sort">
-                  <label class="segment">
-                    <input type="radio" name="sort" value="plz-asc" checked />
-                    <span class="segment__check" data-icon="check"></span>
-                    <span data-icon="arrow_upward"></span>PLZ aufsteigend
-                  </label>
-                  <label class="segment">
-                    <input type="radio" name="sort" value="plz-desc" />
-                    <span class="segment__check" data-icon="check"></span>
-                    <span data-icon="arrow_downward"></span>PLZ absteigend
-                  </label>
-                </div>
-              </fieldset>
-              <fieldset class="outlined switch-field">
-                <legend class="outlined__label">PDF-Prüfung</legend>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    role="switch"
-                    class="switch__input"
-                    id="pdf-only-all"
-                    checked
-                  />
-                  <span class="switch__label">Nur laut PDF gültige Filialen</span>
-                  <span class="switch__track" aria-hidden="true"
-                    ><span class="switch__thumb"></span
-                  ></span>
+        <section class="card search-card" aria-labelledby="all-title">
+          <h2 id="all-title" class="visually-hidden">Alle Extra-Filialen</h2>
+          <div class="search-options search-options--first">
+            <fieldset class="outlined segmented segmented--inline">
+              <legend class="outlined__label">Sortierung</legend>
+              <div class="segmented__group" id="sort">
+                <label class="segment">
+                  <input type="radio" name="sort" value="plz-asc" checked />
+                  <span class="segment__check" data-icon="check"></span>
+                  <span data-icon="arrow_upward"></span>PLZ aufsteigend
                 </label>
-              </fieldset>
-            </div>
+                <label class="segment">
+                  <input type="radio" name="sort" value="plz-desc" />
+                  <span class="segment__check" data-icon="check"></span>
+                  <span data-icon="arrow_downward"></span>PLZ absteigend
+                </label>
+              </div>
+            </fieldset>
+            <fieldset class="outlined switch-field">
+              <legend class="outlined__label">PDF-Prüfung</legend>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  role="switch"
+                  class="switch__input"
+                  id="pdf-only-all"
+                  checked
+                />
+                <span class="switch__label">Nur laut PDF gültige Filialen</span>
+                <span class="switch__track" aria-hidden="true"
+                  ><span class="switch__thumb"></span
+                ></span>
+              </label>
+            </fieldset>
           </div>
+        </section>
+
+        <div class="status-bar">
+          <div class="banner" id="all-status-box">
+            <span class="banner__icon" data-icon="format_list_bulleted"></span>
+            <p id="all-meta" role="status" aria-live="polite">Daten werden geladen …</p>
+          </div>
+          <div class="banner" id="all-age-box">
+            <span class="banner__icon" data-icon="schedule"></span>
+            <p id="all-age">Wird geladen …</p>
+          </div>
+        </div>
+
+        <section class="card list-card" aria-label="Liste der Extra-Filialen">
           <ol id="all-list" class="rows"></ol>
         </section>
       </div>

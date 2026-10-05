@@ -35,10 +35,15 @@ const status = byId("status", HTMLParagraphElement);
 const dataAge = byId("data-age", HTMLParagraphElement);
 const statusBox = byId("status-box", HTMLDivElement);
 const dataAgeBox = byId("data-age-box", HTMLDivElement);
+const dataAgeBoxes: [HTMLParagraphElement, HTMLDivElement][] = [
+  [dataAge, dataAgeBox],
+  [byId("all-age", HTMLParagraphElement), byId("all-age-box", HTMLDivElement)],
+];
 const mapContainer = byId("map", HTMLDivElement);
 const list = byId("list", HTMLOListElement);
 const allList = byId("all-list", HTMLOListElement);
 const allMeta = byId("all-meta", HTMLParagraphElement);
+const allStatusBox = byId("all-status-box", HTMLDivElement);
 const sortGroup = byId("sort", HTMLDivElement);
 const tablist = byId("tabs", HTMLDivElement);
 const pdfSwitches = [
@@ -180,15 +185,7 @@ function renderAll(): void {
     hidden: pdfOnly ? listAll(data.extra, today, sort).length - views.length : 0,
     unchecked: countUnchecked(views),
   };
-  replaceChildren(
-    allMeta,
-    `${listSummary(counts, pdfOnly)} · Stand der Daten: `,
-    h(
-      "time",
-      { datetime: data.extra.generatedAt.toISOString() },
-      formatStamp(data.extra.generatedAt),
-    ),
-  );
+  allMeta.textContent = `${listSummary(counts, pdfOnly)}.`;
 }
 
 /** Both tabs have a switch for the same setting; keep them in sync. */
@@ -320,20 +317,23 @@ function applyQuery(): void {
   searchPlz(plz, false);
 }
 
+/** Same "Stand der Daten" box in both tabs; red when the data is stale. */
 function showDataAge(extra: ExtraData): void {
-  const stamp = h(
-    "time",
-    { datetime: extra.generatedAt.toISOString() },
-    formatStamp(extra.generatedAt),
-  );
-  replaceChildren(dataAge, "Stand der Daten: ", stamp);
   const stale = isStale(extra.generatedAt, new Date());
-  dataAgeBox.classList.toggle("banner--error", stale);
-  if (stale) {
-    dataAge.append(
-      " ",
-      h("strong", null, `Älter als ${String(STALE_AFTER_DAYS)} Tage, möglicherweise veraltet.`),
+  for (const [text, box] of dataAgeBoxes) {
+    const stamp = h(
+      "time",
+      { datetime: extra.generatedAt.toISOString() },
+      formatStamp(extra.generatedAt),
     );
+    replaceChildren(text, "Stand der Daten: ", stamp);
+    box.classList.toggle("banner--error", stale);
+    if (stale) {
+      text.append(
+        " ",
+        h("strong", null, `Älter als ${String(STALE_AFTER_DAYS)} Tage, möglicherweise veraltet.`),
+      );
+    }
   }
 }
 
@@ -366,4 +366,5 @@ loadData(import.meta.env.BASE_URL)
     console.error(err);
     setStatus("Die Daten konnten nicht geladen werden. Bitte später erneut versuchen.", "error");
     allMeta.textContent = "Die Daten konnten nicht geladen werden.";
+    allStatusBox.classList.add("banner--error");
   });

@@ -447,6 +447,11 @@ a {
   margin-top: 16px;
 }
 
+/* First row of a card (list tab): no gap to the card's top padding. */
+.search-options--first {
+  margin-top: 0;
+}
+
 .segmented__group {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -644,6 +649,7 @@ a {
 /* ---------- Results ---------- */
 .results {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* never wider than the screen */
   gap: 16px;
 }
 
@@ -666,6 +672,7 @@ a {
 
 .list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   margin: 0;
   padding: 0;
@@ -837,6 +844,16 @@ a {
   line-height: 1.25rem;
 }
 
+/* Store-level labels may wrap on narrow screens instead of sticking out of the card. */
+.chip--foreign,
+.chip--closed {
+  height: auto;
+  min-height: 32px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  white-space: normal;
+}
+
 .chip--foreign {
   margin-top: 12px;
   background: var(--md-error);
@@ -860,6 +877,7 @@ a {
 
 .leaflets {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   margin: 16px 0 0;
   padding: 0;
@@ -1040,6 +1058,13 @@ a {
   text-decoration: line-through;
 }
 
+/* Very small phones: the ring marks today; the word "heute" would not fit. */
+@media (max-width: 359px) {
+  .cal__day.is-today:not(.is-closed):not(.is-special) .cal__note {
+    font-size: 0; /* keeps the row height (min-height), takes no width */
+  }
+}
+
 @media (max-width: 479px) {
   .cal,
   .cal__row {
@@ -1056,7 +1081,12 @@ a {
   }
 
   .cal__note {
-    font-size: 0.625rem;
+    font-size: 0.5625rem;
+    letter-spacing: -0.01em;
+  }
+
+  .leaflet {
+    padding: 12px;
   }
 }
 
@@ -1420,49 +1450,15 @@ a.credit:hover,
 
 /* ---------- All stores list ---------- */
 .list-card {
-  margin: 24px 0 16px;
   overflow: hidden;
   border-radius: var(--shape-2xl);
   background: var(--md-surface-container-lowest);
   box-shadow: var(--elevation-1);
 }
 
-.list-card__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 24px 20px 20px;
-  border-bottom: 1px solid var(--md-outline-variant);
-}
-
-.list-card__title {
-  margin: 0;
-  font-size: 1.375rem;
-  font-weight: 500;
-  line-height: 1.75rem;
-}
-
-.list-card__meta {
-  margin: 2px 0 0;
-  color: var(--md-on-surface-variant);
-  font-size: 0.875rem;
-}
-
-.list-card__controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 16px 12px;
-}
-
+/* Sort order: two equal segments across its half, like the radius control. */
 .segmented--inline .segmented__group {
-  grid-template-columns: repeat(2, auto);
-}
-
-.segmented--inline .segment {
-  padding: 0 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .segment .icon:not(.segment__check) {
@@ -1502,9 +1498,15 @@ a.credit:hover,
 }
 
 @media (max-width: 479px) {
+  /* Phones: PLZ badge above the content, so the calendar gets the full width. */
   .row {
-    gap: 12px;
-    padding: 16px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 16px 12px;
+  }
+
+  .row__plz {
+    justify-self: start;
   }
 
   .row__plz {
