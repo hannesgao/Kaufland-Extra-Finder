@@ -60,6 +60,7 @@ class TestWriteAtomic:
         write_text_atomic(target, "two")
         assert target.read_text() == "two"
         assert [p.name for p in target.parent.iterdir()] == ["b.json"]
+        assert target.stat().st_mode & 0o777 == 0o644
 
 
 class TestHistory:

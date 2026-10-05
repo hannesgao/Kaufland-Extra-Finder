@@ -1,0 +1,24 @@
+# Tool configuration only; scripts run standalone (PEP 723) and are checked with the
+# scraper's dev environment: `uv run --project ../scraper <tool>` from this directory.
+
+[tool.ruff]
+extend = "../scraper/pyproject.toml"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["build_plz", "conftest"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+files = ["build_plz.py", "tests"]
+mypy_path = "."
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+xfail_strict = true
+filterwarnings = ["error"]

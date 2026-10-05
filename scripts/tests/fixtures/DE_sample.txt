@@ -1,0 +1,42 @@
+DE	10875	Mercedes-Benz Vertrieb NFZ GmbH	Baden-Württemberg	01	Regierungsbezirk Stuttgart	081	Stadtkreis Stuttgart	08111	48.7239	9.1699	
+DE	10875	Mercedes-Benz Vertrieb PKW GmbH	Baden-Württemberg	01	Regierungsbezirk Stuttgart	081	Stadtkreis Stuttgart	08111	48.7239	9.1699	
+DE	10875	Daimler Vorsorge und Versicherungsdienst GmbH	Baden-Württemberg	01	Regierungsbezirk Stuttgart	081	Stadtkreis Stuttgart	08111	48.8103	9.1807	
+DE	10875	Mercedes-Benz. io GmbH	Baden-Württemberg	01	Regierungsbezirk Stuttgart	081	Stadtkreis Stuttgart	08111	48.7794	9.1679	
+DE	10875	LAB1886 GmbH	Baden-Württemberg	01	Regierungsbezirk Stuttgart	081	Stadtkreis Stuttgart	08111	48.7239	9.1699	
+DE	10875	Daimler Brand und IP Management GmbH & Co.KG	Baden-Württemberg	01	Regierungsbezirk Stuttgart	081	Stadtkreis Stuttgart	08111	48.7239	9.1699	
+DE	10875	Daimler Insurance Services GmbH	Baden-Württemberg	01	Regierungsbezirk Stuttgart	081	Stadtkreis Stuttgart	08111	48.8103	9.1807	
+DE	10875	Mercedes-Benz Versicherung AG	Baden-Württemberg	01	Regierungsbezirk Stuttgart	081	Stadtkreis Stuttgart	08111	48.8103	9.1807	
+DE	10875	Fünfte Vermögensverwaltungsgesellschaft Zeus mbH	Baden-Württemberg	01	Regierungsbezirk Stuttgart	081	Stadtkreis Stuttgart	08111	48.7239	9.1699	
+DE	10875	GVG Daimler AG & Co. Epsilon OHG	Brandenburg	11			Landkreis Dahme-Spreewald	12061	52.3891	13.4988	
+DE	10875	GVG Daimler AG & Co. Beta OHG	Brandenburg	11			Landkreis Dahme-Spreewald	12061	52.3891	13.4988	
+DE	10875	GVG Daimler AG & Co. Alpha OHG	Brandenburg	11			Landkreis Dahme-Spreewald	12061	52.3891	13.4988	
+DE	10875	Daimler Grund Services GmbH (DGS)	Brandenburg	11			Landkreis Dahme-Spreewald	12061	52.3891	13.4988	
+DE	10875	Daimler Verwaltungsgesellschaft (DGrund)	Brandenburg	11			Landkreis Dahme-Spreewald	12061	52.3891	13.4988	
+DE	10875	GVG Daimler AG & Co. Delta OHG	Brandenburg	11			Landkreis Dahme-Spreewald	12061	52.3891	13.4988	
+DE	10875	GVG Daimler AG & Co. Gamma OHG	Brandenburg	11			Landkreis Dahme-Spreewald	12061	52.3891	13.4988	
+DE	10875	Li-Tec Battery GmbH	Saxony	13			Landkreis Bautzen	14625	51.298	14.0982	
+DE	10875	Daimler Real Estate GmbH	Land Berlin	16			Berlin, Stadt	11000	52.5078	13.3751	
+DE	10875	debis Assekuranz Makler GmbH Zentrale	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis Assekuranz Makler GmbH Niederlassung Berlin	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis Risk Consult GmbH	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	DaimlerChrysler Corporate Audit	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis Re Insurance Brokers GmbH	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	DaimlerChrysler Services AG	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis AG Betriebsrat	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis Systemhaus sfi Systemhaus für Informationsverarbeitung GmbH, Büro PPP	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis Finanzdienstleistungs GmbH	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis Customer Management GmbH	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debitel Kommunikationstechnik GmbH & Co.KG Filiale Berlin	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis Leasing GmbH	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis International Trading GmbH	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis Aviation Leasing GmbH Büro Berlin	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	DITGAS Handelshaus GmbH	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	Daimler-Benz AG Showroom der Mercedes-Niederlassung Berlin	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	debis Gesellschaft für Potsdamer Platz und Immobilienmanagement mbH	Land Berlin	16			Berlin, Stadt	11000	52.5064	13.3731	
+DE	10875	Anota Fahrzeug Service- und Vertriebsgesellschaft mbH	Land Berlin	16			Berlin, Stadt	11000	52.5068	13.4381	
+DE	76137	Karlsruhe	Baden-Württemberg	BW	Karlsruhe Region	082	Karlsruhe	08212	49.0019	8.4287	4
+DE	34125	Kassel	Hessen	HE	Regierungsbezirk Kassel	066	Kassel, documenta-Stadt	06611	51.3195	9.5163	4
+DE	01814	Bad Schandau	Sachsen	SN		00	Landkreis Sächsische Schweiz	14628	50.9174	14.1549	4
+DE	01814	Porschdorf	Sachsen	SN		00	Landkreis Sächsische Schweiz	14628	50.9418	14.1269	4
+DE	01814	Rathmannsdorf	Sachsen	SN		00	Landkreis Sächsische Schweiz	14628	50.9299	14.1422	4
+DE	01814	Reinhardtsdorf-Schöna	Sachsen	SN		00	Landkreis Sächsische Schweiz	14628	50.895	14.2	
