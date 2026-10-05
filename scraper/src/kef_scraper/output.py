@@ -14,6 +14,7 @@ from typing import Any
 
 from kef_scraper.build import SCHEMA_VERSION
 from kef_scraper.models import ScanResult
+from kef_scraper.pdfcheck import PARSER_VERSION, PdfCheck
 
 HISTORY_FIELDS = (
     "first_seen",
@@ -76,6 +77,40 @@ def build_snapshot(
         "clusters": extra["clusters"],
         "unusual": unusual,
     }
+
+
+def read_pdf_checks(path: Path) -> dict[str, PdfCheck]:
+    """Cached store lines per PDF id (`pdf_checks.json`); unreadable files are ignored."""
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    if not isinstance(raw, dict) or raw.get("parser") != PARSER_VERSION:
+        return {}  # older parser: recompute everything
+    checks = raw.get("checks")
+    if not isinstance(checks, dict):
+        return {}
+    return {
+        k: PdfCheck(store_line=v["store_line"])
+        for k, v in checks.items()
+        if isinstance(v, dict) and isinstance(v.get("store_line"), str)
+    }
+
+
+def render_pdf_checks(checks: dict[str, PdfCheck]) -> str:
+    """Only successful checks are cached (failed downloads are retried next run)."""
+    ok = {k: {"store_line": c.store_line} for k, c in sorted(checks.items()) if c.store_line}
+    return dump_json({"parser": PARSER_VERSION, "checks": ok})
+
+
+def pdf_mismatches(extra: dict[str, Any]) -> list[str]:
+    """One line per store whose Extra PDF names a different store."""
+    return [
+        f"{s['name']} ({s['plz']}): PDF says NUR IN {lf['pdf_store']}"
+        for s in extra["stores"]
+        for lf in s["leaflets"]
+        if lf.get("pdf_store_match") is False
+    ]
 
 
 def read_history(path: Path) -> list[dict[str, str]]:
@@ -202,7 +237,10 @@ def render_report(result: ScanResult, extra: dict[str, Any], diff: Diff | None) 
         for r in result.results
         for t in r.unusual
     ]
+    mismatches = pdf_mismatches(extra)
     out = [headline, status, *changes]
+    if mismatches:
+        out += ["", "PDF names a different store:", *(f"  {m}" for m in mismatches)]
     if unusual:
         out += ["", "Other non-standard leaflets:", *unusual]
     if result.failed_count:
@@ -223,4 +261,8 @@ def render_summary_md(
     out += ["", status]
     if changes:
         out += ["", "```diff", *changes, "```"]
+    mismatches = pdf_mismatches(extra)
+    if mismatches:
+        out += ["", f"**PDF names a different store ({len(mismatches)}):**", ""]
+        out += [f"- {m}" for m in mismatches]
     return "\n".join(out) + "\n"
