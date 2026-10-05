@@ -500,6 +500,74 @@ a {
   outline-offset: -3px;
 }
 
+/* ---------- Switch (M3) ---------- */
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.search-card .switch {
+  margin-top: 12px;
+}
+
+.switch__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.switch__track {
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 32px;
+  border: 2px solid var(--md-outline);
+  border-radius: var(--shape-full);
+  background: var(--md-surface-container-high);
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.switch__thumb {
+  position: absolute;
+  top: 50%;
+  left: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--md-outline);
+  transform: translateY(-50%);
+  transition:
+    left 150ms ease,
+    width 150ms ease,
+    height 150ms ease,
+    background 150ms ease;
+}
+
+.switch__input:checked + .switch__track {
+  border-color: var(--md-primary);
+  background: var(--md-primary);
+}
+
+.switch__input:checked + .switch__track .switch__thumb {
+  left: 22px;
+  width: 24px;
+  height: 24px;
+  background: var(--md-on-primary);
+}
+
+.switch__input:focus-visible + .switch__track {
+  outline: 3px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
 /* ---------- Banners (status, data age, footer notice): one shared look ---------- */
 .banner {
   display: flex;
@@ -811,6 +879,7 @@ a {
 }
 
 .validity__prefix {
+  justify-self: end; /* "Neuester Extra-Prospekt ab" / "bis" end at the same x */
   font-weight: 700;
 }
 
@@ -891,7 +960,7 @@ a {
   color: var(--md-on-surface-variant);
 }
 
-.leaflet__actions {
+.actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -925,12 +994,15 @@ a {
   color: var(--md-on-surface-variant);
 }
 
+/* Store buttons: same size and style as the leaflet buttons, with the leaflet panel's inset so
+   both button rows start at the same x. */
 .store__actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 4px;
-  margin: 8px 0 0 -12px; /* text buttons: align the first icon with the card content */
+  margin-top: 12px;
+  padding: 0 14px 4px;
+}
+
+.store__actions:empty {
+  display: none;
 }
 
 /* ---------- Footer ----------
@@ -1198,6 +1270,13 @@ a.credit:hover,
   font-size: 0.875rem;
 }
 
+.list-card__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 24px;
+}
+
 .segmented--inline {
   margin: 0;
 }
@@ -1254,23 +1333,11 @@ a.credit:hover,
     height: 36px;
     font-size: 0.875rem;
   }
-
-  .row__leaflet {
-    column-gap: 8px;
-  }
 }
 
 .row--closed .row__plz {
   background: var(--md-surface-container-high);
   color: var(--md-on-surface-variant);
-}
-
-.row__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 4px 12px;
 }
 
 .row__title {
@@ -1280,6 +1347,15 @@ a.credit:hover,
   line-height: 1.5rem;
 }
 
+.row .leaflets {
+  margin-top: 12px;
+}
+
+.row .chip--closed,
+.row .chip--foreign {
+  margin-top: 8px;
+}
+
 .row__address {
   margin: 0;
   color: var(--md-on-surface-variant);
@@ -1287,76 +1363,8 @@ a.credit:hover,
   line-height: 1.25rem;
 }
 
-.row .chip--closed {
-  margin-top: 8px;
-}
-
-.row__leaflets {
-  display: grid;
-  gap: 8px;
-  margin: 10px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.row__leaflet {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 12px;
-}
-
-.row__leaflet .chip {
-  height: 28px;
-  font-size: 0.8125rem;
-}
-
 .row--foreign {
   box-shadow: inset 4px 0 0 var(--md-error);
-}
-
-.row__foreign {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: var(--shape-sm);
-  background: var(--md-error-container);
-  color: var(--md-on-error-container);
-  font-size: 0.8125rem;
-  font-weight: 700;
-}
-
-.row__foreign .icon {
-  width: 16px;
-  height: 16px;
-  color: var(--md-error);
-}
-
-.row__warn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--md-error);
-  font-size: 0.8125rem;
-  font-weight: 500;
-}
-
-.row__warn .icon {
-  width: 16px;
-  height: 16px;
-}
-
-.row__links {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-@media (min-width: 720px) {
-  .row__links {
-    margin-left: auto;
-  }
 }
 
 /* ---------- Static pages ---------- */

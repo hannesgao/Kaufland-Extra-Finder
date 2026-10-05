@@ -1,20 +1,27 @@
 import { describe, expect, it } from "vitest";
 import { buildQuery, DEFAULT_PLZ, isPlz, parseQuery, type QueryState } from "../src/url";
 
-const DEFAULTS: QueryState = { plz: null, radius: 25, tab: "search", sort: "plz-asc" };
+const DEFAULTS: QueryState = {
+  plz: null,
+  radius: 25,
+  tab: "search",
+  sort: "plz-asc",
+  pdfOnly: false,
+};
 
 describe("parseQuery", () => {
   it("reads PLZ, radius, tab and sort order", () => {
-    expect(parseQuery("?plz=76137&r=50&tab=all&sort=plz-desc")).toEqual({
+    expect(parseQuery("?plz=76137&r=50&tab=all&sort=plz-desc&pdf=only")).toEqual({
       plz: "76137",
       radius: 50,
       tab: "all",
       sort: "plz-desc",
+      pdfOnly: true,
     });
   });
 
   it("falls back to defaults for invalid values", () => {
-    expect(parseQuery("?plz=7613&r=30&tab=x&sort=name")).toEqual(DEFAULTS);
+    expect(parseQuery("?plz=7613&r=30&tab=x&sort=name&pdf=yes")).toEqual(DEFAULTS);
     expect(parseQuery("?plz=<script>&r=abc")).toEqual(DEFAULTS);
     expect(parseQuery("")).toEqual(DEFAULTS);
   });
@@ -29,12 +36,22 @@ describe("buildQuery", () => {
     );
   });
 
+  it("adds the PDF switch only when on", () => {
+    expect(buildQuery({ ...DEFAULTS, pdfOnly: true })).toBe("?pdf=only");
+  });
+
   it("omits the default PLZ (searched on page load anyway)", () => {
     expect(buildQuery({ ...DEFAULTS, plz: DEFAULT_PLZ, radius: 50 })).toBe("?r=50");
   });
 
   it("round-trips", () => {
-    const state: QueryState = { plz: "01814", radius: 100, tab: "all", sort: "plz-desc" };
+    const state: QueryState = {
+      plz: "01814",
+      radius: 100,
+      tab: "all",
+      sort: "plz-desc",
+      pdfOnly: true,
+    };
     expect(parseQuery(buildQuery(state))).toEqual(state);
   });
 });

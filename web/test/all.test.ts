@@ -36,6 +36,28 @@ describe("listAll", () => {
   });
 });
 
+describe("listAll with the PDF switch", () => {
+  it("hides stores whose leaflets all name a different store", () => {
+    const all = listAll(fixture(), MONDAY, "plz-asc");
+    const confirmed = listAll(fixture(), MONDAY, "plz-asc", { pdfOnly: true });
+    expect(all).toHaveLength(6);
+    expect(confirmed.map((v) => v.store.id)).toEqual(["DE4453", "DE4313", "DE4443", "DE4733"]);
+  });
+
+  it("keeps a store with one own and one foreign leaflet, showing only the own one", () => {
+    const data = edgeCases();
+    const kassel = nth(data.stores.filter((s) => s.id === "DE4453"));
+    const [current, next] = kassel.leaflets;
+    if (!current || !next) throw new Error("fixture changed");
+    current.pdfStoreMatch = false;
+    const view = listAll(data, MONDAY, "plz-asc", { pdfOnly: true }).find(
+      (v) => v.store.id === "DE4453",
+    );
+    expect(view?.leaflets.map((l) => l.leaflet.validFrom)).toEqual(["2026-10-08"]);
+    expect(view?.foreignOnly).toBe(false);
+  });
+});
+
 describe("renderRow", () => {
   it("shows PLZ, name, address, store link and per-leaflet links", () => {
     const view = nth(listAll(edgeCases(), MONDAY, "plz-asc"));
@@ -44,26 +66,44 @@ describe("renderRow", () => {
     expect(row.querySelector(".row__plz")?.textContent).toBe("34125");
     expect(row.querySelector(".row__title")?.textContent).toBe("Kassel-Wesertor");
     expect(row.querySelector(".row__address")?.textContent).toBe("Franzgraben 40-42, 34125 Kassel");
-    const labels = [...row.querySelectorAll(".row__leaflet .chip")].map((c) => c.textContent);
-    expect(labels).toEqual(["Diese Woche", "Ab Donnerstag"]);
+    const headings = [...row.querySelectorAll(".validity .validity__prefix")].map(
+      (c) => c.textContent,
+    );
+    expect(headings).toEqual([
+      "Aktueller Extra-Prospekt seit",
+      "bis",
+      "Neuester Extra-Prospekt ab",
+      "bis",
+    ]);
+    // Same buttons as the cards: per leaflet, then the store page (no map in this tab).
     const links = [...row.querySelectorAll("a")].map((a) => a.textContent);
-    expect(links).toEqual(["Filialseite", "Prospekt", "PDF", "Prospekt", "PDF"]);
+    expect(links).toEqual([
+      "Extra-Prospekt ansehen",
+      "PDF",
+      "Extra-Prospekt ansehen",
+      "PDF",
+      "Filialseite",
+    ]);
+    expect(row.querySelector("button")).toBeNull();
   });
 
   it("flags leaflets whose PDF names a different store", () => {
     const view = listAll(fixture(), MONDAY, "plz-asc").find((v) => v.store.id === "DE8530");
     const row = renderRow(nth(view ? [view] : []));
     expect(row.classList.contains("row--foreign")).toBe(true);
-    expect(row.querySelector(".row__foreign")?.textContent).toBe(
-      "Laut PDF nur in KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+    expect(row.querySelector(".chip--foreign")?.textContent).toBe(
+      "Extra-Prospekt einer anderen Filiale",
+    );
+    expect(row.querySelector(".pdf-warning__text")?.textContent).toBe(
+      "Im PDF steht: „NUR IN KARLSRUHE-OSTSTADT, IM DURLACH CENTER“",
     );
     const own = listAll(fixture(), MONDAY, "plz-asc").find((v) => v.store.id === "DE4443");
-    expect(renderRow(nth(own ? [own] : [])).querySelector(".row__foreign")).toBeNull();
+    expect(renderRow(nth(own ? [own] : [])).querySelector(".pdf-warning")).toBeNull();
   });
 
   it("flags closure days", () => {
     const view = listAll(edgeCases(), MONDAY, "plz-asc").find((v) => v.store.id === "DE8530");
-    expect(renderRow(nth(view ? [view] : [])).textContent).toContain("geschlossen 09.10.");
+    expect(renderRow(nth(view ? [view] : [])).textContent).toContain("Geschlossen am 09.10.");
   });
 
   it("never interprets scraped data as HTML", () => {

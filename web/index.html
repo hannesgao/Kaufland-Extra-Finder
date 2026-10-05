@@ -106,6 +106,14 @@
                 </label>
               </div>
             </fieldset>
+
+            <label class="switch">
+              <input type="checkbox" role="switch" class="switch__input" id="pdf-only-search" />
+              <span class="switch__track" aria-hidden="true"
+                ><span class="switch__thumb"></span
+              ></span>
+              <span class="switch__label">Nur Filialen, für die der Prospekt laut PDF gilt</span>
+            </label>
           </form>
         </section>
 
@@ -133,21 +141,30 @@
               <h2 id="all-title" class="list-card__title">Alle Extra-Filialen</h2>
               <p id="all-meta" class="list-card__meta">Daten werden geladen …</p>
             </div>
-            <fieldset class="segmented segmented--inline">
-              <legend class="segmented__legend">Sortierung</legend>
-              <div class="segmented__group" id="sort">
-                <label class="segment">
-                  <input type="radio" name="sort" value="plz-asc" checked />
-                  <span class="segment__check" data-icon="check"></span>
-                  <span data-icon="arrow_upward"></span>PLZ aufsteigend
-                </label>
-                <label class="segment">
-                  <input type="radio" name="sort" value="plz-desc" />
-                  <span class="segment__check" data-icon="check"></span>
-                  <span data-icon="arrow_downward"></span>PLZ absteigend
-                </label>
-              </div>
-            </fieldset>
+            <div class="list-card__controls">
+              <fieldset class="segmented segmented--inline">
+                <legend class="segmented__legend">Sortierung</legend>
+                <div class="segmented__group" id="sort">
+                  <label class="segment">
+                    <input type="radio" name="sort" value="plz-asc" checked />
+                    <span class="segment__check" data-icon="check"></span>
+                    <span data-icon="arrow_upward"></span>PLZ aufsteigend
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="sort" value="plz-desc" />
+                    <span class="segment__check" data-icon="check"></span>
+                    <span data-icon="arrow_downward"></span>PLZ absteigend
+                  </label>
+                </div>
+              </fieldset>
+              <label class="switch">
+                <input type="checkbox" role="switch" class="switch__input" id="pdf-only-all" />
+                <span class="switch__track" aria-hidden="true"
+                  ><span class="switch__thumb"></span
+                ></span>
+                <span class="switch__label">Nur Filialen, für die der Prospekt laut PDF gilt</span>
+              </label>
+            </div>
           </div>
           <ol id="all-list" class="rows"></ol>
         </section>

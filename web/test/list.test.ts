@@ -28,11 +28,11 @@ describe("renderHit", () => {
       [...c.children].map((cell) => cell.textContent),
     );
     expect(chips).toEqual([
-      ["Ab", "Donnerstag", "(08.10.2026)"],
-      ["Bis", "Mittwoch", "(14.10.2026)"],
+      ["Neuester Extra-Prospekt ab", "Donnerstag", "(08.10.2026)"],
+      ["bis", "Mittwoch", "(14.10.2026)"],
     ]);
     expect(li.querySelector(".validity")?.getAttribute("aria-label")).toBe(
-      "Gültig ab Donnerstag, 08.10.2026, bis Mittwoch, 14.10.2026",
+      "Neuester Extra-Prospekt ab Donnerstag, 08.10.2026, bis Mittwoch, 14.10.2026",
     );
     expect(li.querySelector(".siblings__title")?.textContent).toBe(
       "Gleicher Extra-Prospekt auch in",
@@ -140,8 +140,8 @@ describe("renderHit", () => {
       v.querySelector(".validity__chip")?.textContent,
     ]);
     expect(starts).toEqual([
-      ["validity validity--now", "SeitDonnerstag(01.10.2026)"],
-      ["validity validity--upcoming", "AbDonnerstag(08.10.2026)"],
+      ["validity validity--now", "Aktueller Extra-Prospekt seitDonnerstag(01.10.2026)"],
+      ["validity validity--upcoming", "Neuester Extra-Prospekt abDonnerstag(08.10.2026)"],
     ]);
 
     const grunwinkel = hitsFor(data, PLZ_KARLSRUHE).find((h) => h.store.id === "DE8530");

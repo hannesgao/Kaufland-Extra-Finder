@@ -9,6 +9,7 @@ import { listAll, search, SORT_ORDERS, type Hit, type SortOrder } from "./search
 import { renderHit, renderRow } from "./ui/list";
 import type { MapView } from "./ui/map";
 import { setupTabs } from "./ui/tabs";
+import { countUnchecked, emptyStatus, listSummary, nearestStatus, radiusStatus } from "./summary";
 import {
   buildQuery,
   DEFAULT_PLZ,
@@ -40,6 +41,10 @@ const allList = byId("all-list", HTMLOListElement);
 const allMeta = byId("all-meta", HTMLParagraphElement);
 const sortGroup = byId("sort", HTMLDivElement);
 const tablist = byId("tabs", HTMLDivElement);
+const pdfSwitches = [
+  byId("pdf-only-search", HTMLInputElement),
+  byId("pdf-only-all", HTMLInputElement),
+];
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -48,6 +53,7 @@ let origin: Origin | null = null;
 let radius = parseQuery(location.search).radius;
 let tab: Tab = parseQuery(location.search).tab;
 let sort: SortOrder = parseQuery(location.search).sort;
+let pdfOnly = parseQuery(location.search).pdfOnly;
 let mapView: Promise<MapView> | null = null;
 let lastMap: { point: LatLng; radius: number; shown: Hit[] } | null = null;
 const items = new Map<string, HTMLLIElement>();
@@ -68,7 +74,7 @@ function radioFor(value: number): HTMLInputElement | null {
 }
 
 function syncUrl(push: boolean): void {
-  const state: QueryState = { plz: origin?.plz ?? null, radius, tab, sort };
+  const state: QueryState = { plz: origin?.plz ?? null, radius, tab, sort, pdfOnly };
   const url = `${location.pathname}${buildQuery(state)}`;
   if (push) history.pushState(null, "", url);
   else history.replaceState(null, "", url);
@@ -127,25 +133,27 @@ function render(shown: Hit[], note?: string): void {
 function runSearch(): void {
   if (!data || !origin) return;
   const t0 = performance.now();
-  const result = search(data.extra, origin.point, radius, berlinToday(new Date()));
+  const today = berlinToday(new Date());
+  const result = search(data.extra, origin.point, radius, today, { pdfOnly });
+  // Unfiltered count, so the status can say how many stores the switch hides.
+  const unfiltered = pdfOnly ? search(data.extra, origin.point, radius, today).hits.length : 0;
 
   const shown = result.hits.length > 0 ? result.hits : result.nearest ? [result.nearest] : [];
   const count = result.hits.length;
   if (count > 0) {
     render(shown);
-    setStatus(
-      `${String(count)} ${count === 1 ? "Extra-Filiale" : "Extra-Filialen"} im Umkreis von ` +
-        `${String(radius)} km ${origin.label}.`,
-    );
+    const counts = {
+      shown: count,
+      hidden: pdfOnly ? unfiltered - count : 0,
+      unchecked: countUnchecked(result.hits),
+    };
+    setStatus(radiusStatus(counts, radius, origin.label, pdfOnly));
   } else if (result.nearest) {
     render(shown, "Nächste Extra-Filiale außerhalb des Umkreises");
-    setStatus(
-      `Keine Extra-Filiale im Umkreis von ${String(radius)} km ${origin.label}. ` +
-        `Die nächste ist ${formatKm(result.nearest.distanceKm)} entfernt.`,
-    );
+    setStatus(nearestStatus(formatKm(result.nearest.distanceKm), radius, origin.label, pdfOnly));
   } else {
     render([]);
-    setStatus("Derzeit ist keine Filiale mit Extra-Angeboten bekannt.");
+    setStatus(emptyStatus(pdfOnly));
   }
   if (import.meta.env.DEV) console.debug(`search took ${(performance.now() - t0).toFixed(1)} ms`);
 
@@ -164,18 +172,34 @@ function drawMap(): void {
 
 function renderAll(): void {
   if (!data) return;
-  const views = listAll(data.extra, berlinToday(new Date()), sort);
+  const today = berlinToday(new Date());
+  const views = listAll(data.extra, today, sort, { pdfOnly });
   replaceChildren(allList, ...views.map(renderRow));
-  const count = views.length;
+  const counts = {
+    shown: views.length,
+    hidden: pdfOnly ? listAll(data.extra, today, sort).length - views.length : 0,
+    unchecked: countUnchecked(views),
+  };
   replaceChildren(
     allMeta,
-    `${String(count)} ${count === 1 ? "Filiale" : "Filialen"} mit Extra-Prospekt · Stand der Daten: `,
+    `${listSummary(counts, pdfOnly)} · Stand der Daten: `,
     h(
       "time",
       { datetime: data.extra.generatedAt.toISOString() },
       formatStamp(data.extra.generatedAt),
     ),
   );
+}
+
+/** Both tabs have a switch for the same setting; keep them in sync. */
+function onPdfOnlyChange(event: Event): void {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  pdfOnly = target.checked;
+  for (const box of pdfSwitches) box.checked = pdfOnly;
+  syncUrl(false);
+  runSearch();
+  if (tab === "all") renderAll();
 }
 
 function isSortOrder(value: string): value is SortOrder {
@@ -283,6 +307,8 @@ function applyQuery(): void {
   const radio = radioFor(radius);
   if (radio) radio.checked = true;
   sort = query.sort;
+  pdfOnly = query.pdfOnly;
+  for (const box of pdfSwitches) box.checked = pdfOnly;
   const sortRadio = sortGroup.querySelector<HTMLInputElement>(`input[value="${sort}"]`);
   if (sortRadio) sortRadio.checked = true;
   tab = query.tab;
@@ -315,6 +341,7 @@ hydrateIcons();
 form.addEventListener("submit", onSubmit);
 form.addEventListener("change", onRadiusChange);
 sortGroup.addEventListener("change", onSortChange);
+for (const box of pdfSwitches) box.addEventListener("change", onPdfOnlyChange);
 locateButton.addEventListener("click", onLocate);
 plzInput.addEventListener("input", () => {
   showPlzError(null);
@@ -326,6 +353,7 @@ plzInput.value = initial.plz ?? DEFAULT_PLZ;
 const initialRadio = radioFor(initial.radius);
 if (initialRadio) initialRadio.checked = true;
 tabs.select(initial.tab);
+for (const box of pdfSwitches) box.checked = initial.pdfOnly;
 
 loadData(import.meta.env.BASE_URL)
   .then((loaded) => {

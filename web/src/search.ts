@@ -15,6 +15,8 @@ export interface DayLabel {
 export interface LeafletView {
   leaflet: Leaflet;
   label: string; // "Diese Woche" / "Ab Donnerstag"
+  /** "Aktueller Extra-Prospekt seit" (running) or "Neuester Extra-Prospekt ab" (upcoming). */
+  heading: string;
   range: string; // "08.10.–14.10.2026"
   /** Already valid today (otherwise it starts in the future). */
   running: boolean;
@@ -45,6 +47,11 @@ export interface Hit extends StoreView {
   distanceKm: number;
 }
 
+export interface SearchOptions {
+  /** Hide leaflets whose PDF names a different store (unknown checks are kept). */
+  pdfOnly?: boolean;
+}
+
 export const SORT_ORDERS = ["plz-asc", "plz-desc"] as const;
 export type SortOrder = (typeof SORT_ORDERS)[number];
 
@@ -67,6 +74,8 @@ function viewLeaflet(store: Store, leaflet: Leaflet, today: IsoDate, data: Extra
   return {
     leaflet,
     label: leafletLabel(leaflet.validFrom, today),
+    heading:
+      leaflet.validFrom <= today ? "Aktueller Extra-Prospekt seit" : "Neuester Extra-Prospekt ab",
     range: formatRange(leaflet.validFrom, leaflet.validTo),
     running: leaflet.validFrom <= today,
     from: { weekday: weekdayName(leaflet.validFrom), date: formatDate(leaflet.validFrom) },
@@ -79,9 +88,14 @@ function viewLeaflet(store: Store, leaflet: Leaflet, today: IsoDate, data: Extra
 }
 
 /** A store with its non-expired leaflets, or null if all of them have expired. */
-export function describeStore(store: Store, today: IsoDate, data: ExtraData): StoreView | null {
+export function describeStore(
+  store: Store,
+  today: IsoDate,
+  data: ExtraData,
+  options: SearchOptions = {},
+): StoreView | null {
   const leaflets = store.leaflets
-    .filter((l) => l.validTo >= today)
+    .filter((l) => l.validTo >= today && !(options.pdfOnly && l.pdfStoreMatch === false))
     .sort((a, b) => a.validFrom.localeCompare(b.validFrom))
     .map((l) => viewLeaflet(store, l, today, data));
   if (leaflets.length === 0) return null;
@@ -93,16 +107,27 @@ export function describeStore(store: Store, today: IsoDate, data: ExtraData): St
   };
 }
 
-export function toHit(store: Store, origin: LatLng, today: IsoDate, data: ExtraData): Hit | null {
-  const view = describeStore(store, today, data);
+export function toHit(
+  store: Store,
+  origin: LatLng,
+  today: IsoDate,
+  data: ExtraData,
+  options: SearchOptions = {},
+): Hit | null {
+  const view = describeStore(store, today, data, options);
   return view && { ...view, distanceKm: distanceKm(origin, [store.lat, store.lng]) };
 }
 
 /** All stores with a current or upcoming Extra leaflet, sorted by PLZ (then name). */
-export function listAll(data: ExtraData, today: IsoDate, order: SortOrder): StoreView[] {
+export function listAll(
+  data: ExtraData,
+  today: IsoDate,
+  order: SortOrder,
+  options: SearchOptions = {},
+): StoreView[] {
   const direction = order === "plz-asc" ? 1 : -1;
   return data.stores
-    .map((s) => describeStore(s, today, data))
+    .map((s) => describeStore(s, today, data, options))
     .filter((v): v is StoreView => v !== null)
     .sort(
       (a, b) =>
@@ -121,9 +146,10 @@ export function search(
   origin: LatLng,
   radiusKm: number,
   today: IsoDate,
+  options: SearchOptions = {},
 ): SearchResult {
   const all = data.stores
-    .map((s) => toHit(s, origin, today, data))
+    .map((s) => toHit(s, origin, today, data, options))
     .filter((h): h is Hit => h !== null);
   const hits = all.filter((h) => h.distanceKm <= radiusKm).sort(compareHits);
   if (hits.length > 0) return { hits, nearest: null };

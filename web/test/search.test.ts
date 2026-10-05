@@ -43,6 +43,13 @@ describe("search", () => {
     ]);
   });
 
+  it("hides foreign leaflets with the PDF switch", () => {
+    const ids = search(data, PLZ_KARLSRUHE, 10, MONDAY, { pdfOnly: true }).hits.map(
+      (h) => h.store.id,
+    );
+    expect(ids).toEqual(["DE4443"]);
+  });
+
   it("does not mark stores whose PDF check is unknown", () => {
     const store = nth(data.stores.filter((s) => s.id === "DE8530"));
     const leaflets = store.leaflets.map((l) => {
