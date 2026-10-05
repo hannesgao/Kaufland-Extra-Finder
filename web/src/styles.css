@@ -215,7 +215,8 @@ a {
 /*
  * Text field and buttons share the same 56px height and top edge, so they line up.
  * Narrow screens: field + "Suchen" in one row, the location button full width below.
- * Wide screens: all three in one row.
+ * Wide screens: two equal columns, shared with .search-options below — the PLZ field takes the left
+ * half; "Suchen" starts at the midline, exactly above the PDF switch box.
  */
 .search-row {
   display: grid;
@@ -224,17 +225,27 @@ a {
   gap: 8px 12px;
 }
 
+.search-row__buttons {
+  display: contents; /* narrow: the buttons are grid items of .search-row */
+}
+
 .search-row #locate {
   grid-column: 1 / -1;
 }
 
 @media (min-width: 720px) {
-  .search-row {
-    grid-template-columns: minmax(0, 1fr) auto auto;
+  .search-row,
+  .search-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .search-row__buttons {
+    display: flex;
+    gap: 12px;
   }
 
   .search-row #locate {
-    grid-column: auto;
+    flex: 1; /* fills the right half, so its right edge meets the switch box below */
   }
 }
 
@@ -428,24 +439,12 @@ a {
   line-height: 1rem;
 }
 
-/* Below the PLZ row: radius on the left, PDF switch on the right edge. */
+/* Below the PLZ row: radius in the left half, PDF switch in the right half (same columns). */
 .search-options {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
+  display: grid;
+  align-items: end;
   gap: 16px 12px;
   margin-top: 16px;
-}
-
-.search-options > .outlined {
-  flex: 1 1 100%;
-}
-
-@media (min-width: 720px) {
-  .search-options > .outlined {
-    flex: 0 1 auto;
-  }
 }
 
 .segmented__group {
@@ -455,12 +454,6 @@ a {
   margin-top: -7px; /* the legend takes 16px; start right below the top border */
   overflow: hidden;
   border-radius: var(--shape-full);
-}
-
-@media (min-width: 720px) {
-  .segmented__group {
-    grid-template-columns: repeat(4, minmax(6rem, auto));
-  }
 }
 
 .segment {
@@ -918,6 +911,7 @@ a {
   padding: 0 10px;
   font-size: 0.875rem;
   line-height: 1.25rem;
+  margin-left: auto; /* stays on the right, also when it wraps below the date range */
 }
 
 /* Second header line: date range and relative time share size and centre line. */
@@ -925,6 +919,7 @@ a {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 4px 10px;
 }
 
