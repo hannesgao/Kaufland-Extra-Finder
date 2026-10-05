@@ -531,10 +531,18 @@ a {
   font-weight: 500;
 }
 
+/* Switch on the left, text flush right (user request). */
 .switch-field .switch {
+  display: flex;
+  width: 100%;
   height: 54px;
   margin-top: -7px;
   padding: 0 24px 0 16px;
+}
+
+.switch-field .switch__label {
+  margin-left: auto;
+  text-align: right;
 }
 
 .switch__input {
