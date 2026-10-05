@@ -70,10 +70,38 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, �
 
 Expired leaflets are not filtered by the scraper; consumers compare `valid_to` with today's date.
 
+### Postcode coordinates (`web/public/plz.json`)
+
+`plz.json` maps every German PLZ to one coordinate: `{"76137":[49.0019,8.4287], …}`, one PLZ per
+line, ~87 KB gzipped. It rarely changes and is committed to `main`. To regenerate it:
+
+```sh
+uv run scripts/build_plz.py                   # downloads GeoNames DE.zip, writes web/public/plz.json
+uv run scripts/build_plz.py --source DE.zip   # or use a local DE.zip / DE.txt
+```
+
+GeoNames has one row per PLZ *and place*, so a PLZ covering several villages has several rows; each
+PLZ is reduced to the median latitude/longitude of its rows. The script refuses to write the file if
+fewer than 8,000 PLZ or more than 1 % invalid rows are found.
+
+Checks for `scripts/` reuse the scraper's dev environment:
+
+```sh
+cd scripts
+uv run --project ../scraper ruff check . && uv run --project ../scraper ruff format --check .
+uv run --project ../scraper mypy
+uv run --project ../scraper pytest
+```
+
 ## Data & attribution
 
 - Store and leaflet data: © Kaufland, retrieved from public web pages. Not covered by this repository's license.
-- Postcode coordinates: [GeoNames](https://www.geonames.org/), CC BY 4.0.
+- Postcode coordinates: `web/public/plz.json` is derived from the
+  [GeoNames](https://www.geonames.org/) postal code dataset
+  ([download](https://download.geonames.org/export/zip/)) by GeoNames, licensed under
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Changes: rows aggregated to one
+  coordinate per PLZ (median of all places), rounded to 4 decimals. The derived file is likewise
+  available under CC BY 4.0, not under this repository's MIT license.
 - Map tiles: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
 
 ## License

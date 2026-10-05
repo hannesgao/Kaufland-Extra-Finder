@@ -34,6 +34,7 @@ def write_text_atomic(path: Path, text: str) -> None:
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="") as f:
             f.write(text)
+        Path(tmp).chmod(0o644)  # mkstemp creates 0600; outputs are published as-is
         Path(tmp).replace(path)
     except BaseException:
         Path(tmp).unlink(missing_ok=True)
