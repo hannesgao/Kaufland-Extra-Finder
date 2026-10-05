@@ -85,35 +85,42 @@
               </button>
             </div>
 
-            <fieldset class="segmented">
-              <legend class="segmented__legend">Umkreis</legend>
-              <div class="segmented__group">
-                <label class="segment">
-                  <input type="radio" name="radius" value="10" />
-                  <span class="segment__check" data-icon="check"></span>10 km
-                </label>
-                <label class="segment">
-                  <input type="radio" name="radius" value="25" checked />
-                  <span class="segment__check" data-icon="check"></span>25 km
-                </label>
-                <label class="segment">
-                  <input type="radio" name="radius" value="50" />
-                  <span class="segment__check" data-icon="check"></span>50 km
-                </label>
-                <label class="segment">
-                  <input type="radio" name="radius" value="100" />
-                  <span class="segment__check" data-icon="check"></span>100 km
-                </label>
-              </div>
-            </fieldset>
+            <div class="search-options">
+              <fieldset class="outlined segmented">
+                <legend class="outlined__label">Umkreis</legend>
+                <div class="segmented__group">
+                  <label class="segment">
+                    <input type="radio" name="radius" value="10" />
+                    <span class="segment__check" data-icon="check"></span>10 km
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="radius" value="25" checked />
+                    <span class="segment__check" data-icon="check"></span>25 km
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="radius" value="50" />
+                    <span class="segment__check" data-icon="check"></span>50 km
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="radius" value="100" />
+                    <span class="segment__check" data-icon="check"></span>100 km
+                  </label>
+                </div>
+              </fieldset>
 
-            <label class="switch">
-              <input type="checkbox" role="switch" class="switch__input" id="pdf-only-search" />
-              <span class="switch__track" aria-hidden="true"
-                ><span class="switch__thumb"></span
-              ></span>
-              <span class="switch__label">Nur Filialen, für die der Prospekt laut PDF gilt</span>
-            </label>
+              <fieldset class="outlined switch-field">
+                <legend class="outlined__label">PDF-Prüfung</legend>
+                <label class="switch">
+                  <input type="checkbox" role="switch" class="switch__input" id="pdf-only-search" />
+                  <span class="switch__track" aria-hidden="true"
+                    ><span class="switch__thumb"></span
+                  ></span>
+                  <span class="switch__label"
+                    >Nur Filialen, für die der Prospekt laut PDF gilt</span
+                  >
+                </label>
+              </fieldset>
+            </div>
           </form>
         </section>
 
@@ -142,8 +149,8 @@
               <p id="all-meta" class="list-card__meta">Daten werden geladen …</p>
             </div>
             <div class="list-card__controls">
-              <fieldset class="segmented segmented--inline">
-                <legend class="segmented__legend">Sortierung</legend>
+              <fieldset class="outlined segmented segmented--inline">
+                <legend class="outlined__label">Sortierung</legend>
                 <div class="segmented__group" id="sort">
                   <label class="segment">
                     <input type="radio" name="sort" value="plz-asc" checked />
@@ -157,13 +164,18 @@
                   </label>
                 </div>
               </fieldset>
-              <label class="switch">
-                <input type="checkbox" role="switch" class="switch__input" id="pdf-only-all" />
-                <span class="switch__track" aria-hidden="true"
-                  ><span class="switch__thumb"></span
-                ></span>
-                <span class="switch__label">Nur Filialen, für die der Prospekt laut PDF gilt</span>
-              </label>
+              <fieldset class="outlined switch-field">
+                <legend class="outlined__label">PDF-Prüfung</legend>
+                <label class="switch">
+                  <input type="checkbox" role="switch" class="switch__input" id="pdf-only-all" />
+                  <span class="switch__track" aria-hidden="true"
+                    ><span class="switch__thumb"></span
+                  ></span>
+                  <span class="switch__label"
+                    >Nur Filialen, für die der Prospekt laut PDF gilt</span
+                  >
+                </label>
+              </fieldset>
             </div>
           </div>
           <ol id="all-list" class="rows"></ol>

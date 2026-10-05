@@ -405,34 +405,61 @@ a {
   height: 18px;
 }
 
-/* ---------- Segmented button (radius) ---------- */
-.segmented {
+/* ---------- Outlined groups (radius, sort order, PDF switch) ----------
+ * Same shape and label as the PLZ field: a 56px pill whose label sits on the border.
+ */
+.outlined {
   min-width: 0;
-  margin: 16px 0 0;
+  margin: 0;
   padding: 0;
-  border: 0;
+  border: 1px solid var(--md-outline);
+  border-radius: var(--shape-full);
 }
 
-.segmented__legend {
-  margin-bottom: 8px;
-  padding: 0;
+/* Floating label, matching ".text-field input:not(:placeholder-shown) + label" */
+.outlined__label {
+  position: relative;
+  z-index: 1; /* above a selected first segment, with the card colour behind it like the PLZ label */
+  margin-left: 19px; /* + 1px border = the PLZ label's 20px */
+  padding: 0 4px;
+  background: var(--md-surface-container-lowest);
   color: var(--md-on-surface-variant);
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+/* Below the PLZ row: radius on the left, PDF switch on the right edge. */
+.search-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 12px;
+  margin-top: 16px;
+}
+
+.search-options > .outlined {
+  flex: 1 1 100%;
+}
+
+@media (min-width: 720px) {
+  .search-options > .outlined {
+    flex: 0 1 auto;
+  }
 }
 
 .segmented__group {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: 54px; /* 56px with the border, like the PLZ field */
+  margin-top: -7px; /* the legend takes 16px; start right below the top border */
   overflow: hidden;
-  border: 1px solid var(--md-outline);
   border-radius: var(--shape-full);
 }
 
 @media (min-width: 720px) {
   .segmented__group {
-    display: inline-grid;
-    grid-template-columns: repeat(4, minmax(6.5rem, auto));
+    grid-template-columns: repeat(4, minmax(6rem, auto));
   }
 }
 
@@ -511,8 +538,10 @@ a {
   font-weight: 500;
 }
 
-.search-card .switch {
-  margin-top: 12px;
+.switch-field .switch {
+  height: 54px;
+  margin-top: -7px;
+  padding: 0 24px 0 16px;
 }
 
 .switch__input {
@@ -1274,16 +1303,15 @@ a.credit:hover,
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 8px 24px;
-}
-
-.segmented--inline {
-  margin: 0;
+  gap: 16px 12px;
 }
 
 .segmented--inline .segmented__group {
-  display: inline-grid;
   grid-template-columns: repeat(2, auto);
+}
+
+.segmented--inline .segment {
+  padding: 0 16px;
 }
 
 .segment .icon:not(.segment__check) {
