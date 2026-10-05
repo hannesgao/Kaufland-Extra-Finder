@@ -5,11 +5,12 @@ import datetime as dt
 import pytest
 
 from conftest import fixture_text, store_list_sample
-from kef_scraper.models import Tile
+from kef_scraper.models import SpecialDay, Tile
 from kef_scraper.parse import (
     ParseError,
     is_extra,
     is_standard,
+    parse_special_days,
     parse_stores,
     parse_tiles,
     parse_validity,
@@ -73,6 +74,49 @@ class TestParseStores:
         del raw[1]["sn"]
         _, errors = parse_stores(raw)
         assert errors == ["store #1: missing field 'sn'"]
+
+
+class TestSpecialDays:
+    def test_from_store_list(self) -> None:
+        stores, _ = parse_stores(store_list_sample())
+        by_id = {s.id: s for s in stores}
+        assert by_id["DE4453"].special_days == ()
+        closed = by_id["DE1530"].special_days
+        assert [d.date.isoformat() for d in closed] == [f"2026-10-{d:02d}" for d in range(5, 12)]
+        assert all(d.closed for d in closed)
+
+    def test_shortened_hours_and_closed(self) -> None:
+        days = parse_special_days(
+            "DE5090", ["2025-12-26|00:00|00:00", "2025-12-24|07:00|13:30", "2025-12-25|00:00|00:00"]
+        )
+        assert days == (
+            SpecialDay(dt.date(2025, 12, 24), "07:00", "13:30"),
+            SpecialDay(dt.date(2025, 12, 25)),
+            SpecialDay(dt.date(2025, 12, 26)),
+        )
+        assert [d.closed for d in days] == [False, True, True]
+
+    def test_missing_field(self) -> None:
+        assert parse_special_days("DE1", None) == ()
+
+    @pytest.mark.parametrize(
+        "entry",
+        ["2026-13-01|00:00|00:00", "2026-10-05|25:00|26:00", "05.10.2026|07:00|20:00", "", 42],
+    )
+    def test_malformed_entry_is_skipped(
+        self, entry: object, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        days = parse_special_days("DE1", [entry, "2026-10-06|00:00|00:00"])
+        assert days == (SpecialDay(dt.date(2026, 10, 6)),)
+        assert "DE1: ignoring special opening day" in caplog.text
+
+    def test_wrong_type_is_ignored(self, caplog: pytest.LogCaptureFixture) -> None:
+        assert parse_special_days("DE1", "2026-10-06|00:00|00:00") == ()
+        assert "of type str" in caplog.text
+
+    def test_duplicate_dates_keep_last(self) -> None:
+        days = parse_special_days("DE1", ["2026-10-06|00:00|00:00", "2026-10-06|08:00|12:00"])
+        assert days == (SpecialDay(dt.date(2026, 10, 6), "08:00", "12:00"),)
 
 
 class TestParseTiles:
