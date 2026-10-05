@@ -168,7 +168,7 @@ describe("renderHit", () => {
     expect(card.querySelector(".cal__day.is-sunday .cal__date")?.textContent).toBe("11");
     // The calendar is visual only; screen readers get the same facts as text.
     expect(card.querySelector(".cal")?.getAttribute("aria-hidden")).toBe("true");
-    expect(card.querySelector(".store__body > .visually-hidden")?.textContent).toBe(
+    expect(card.querySelector(".cal-card > .visually-hidden")?.textContent).toBe(
       "Geschlossen am 09.10. Sonderöffnungszeiten: 10.10. 7–14 Uhr.",
     );
   });

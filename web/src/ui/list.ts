@@ -283,8 +283,7 @@ export function renderStoreCard(view: StoreView, options: CardOptions): HTMLLIEl
           icon("warning"),
           "Extra-Prospekt einer anderen Filiale",
         ),
-      calendar(view),
-      calendarSummary(view),
+      h("div", { class: "cal-card" }, calendar(view), calendarSummary(view)),
       h("ul", { class: "leaflets" }, ...view.leaflets.map((l) => leafletPanel(l, store.name))),
       h(
         "div",

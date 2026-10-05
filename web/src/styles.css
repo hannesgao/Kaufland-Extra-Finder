@@ -987,10 +987,17 @@ a {
 }
 
 /* Calendar from today: rows are weeks (KW, Mo–So); leaflet days are filled in the chip colour. */
+/* The calendar sits in its own panel, styled like the leaflet panels below it. */
+.cal-card {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: var(--shape-lg);
+  background: var(--md-surface-container-low);
+}
+
 .cal {
   display: grid;
   gap: 6px;
-  margin-top: 16px;
 }
 
 .cal__row {
@@ -1126,7 +1133,8 @@ a {
     letter-spacing: -0.01em;
   }
 
-  .leaflet {
+  .leaflet,
+  .cal-card {
     padding: 12px;
   }
 }
@@ -1289,32 +1297,45 @@ a {
   line-height: 1.25rem;
 }
 
+/* Each source is its own card; cards in a row share their height. */
 .sources {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
-  gap: 12px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 12px;
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.source dt {
+.source {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--shape-md);
+  background: var(--md-surface-container-lowest);
+}
+
+.source__label {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 2px;
+  gap: 8px;
+  margin: 0;
   color: var(--md-on-surface);
   font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.01em;
+  line-height: 1rem;
 }
 
-.source dt .icon {
+.source__label .icon {
   width: 16px;
   height: 16px;
   color: var(--md-primary);
 }
 
-.source dd {
-  margin: 0 0 0 22px;
+.source__text {
+  margin: 0 0 0 24px; /* aligned with the label text, past the icon */
   font-size: 0.75rem;
   line-height: 1.125rem;
 }

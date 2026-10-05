@@ -14,8 +14,10 @@ export interface MapView {
 }
 
 const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+// Static markup (Leaflet renders attribution strings as HTML); no data goes in here.
 const ATTRIBUTION =
-  '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende';
+  '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">' +
+  "OpenStreetMap</a>-Mitwirkende";
 
 function cssVar(name: string): string {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
