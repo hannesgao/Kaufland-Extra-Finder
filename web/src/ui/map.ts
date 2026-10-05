@@ -36,11 +36,17 @@ export async function createMap(
   const markers = new Map<string, CircleMarker>();
   let selected: string | null = null;
 
-  const style = (isSelected: boolean, closed: boolean) => ({
+  const style = (isSelected: boolean, hit: Hit) => ({
     radius: isSelected ? 11 : 8,
     weight: isSelected ? 3 : 2,
     color: cssVar("--map-marker-stroke"),
-    fillColor: cssVar(closed ? "--map-marker-closed" : "--map-marker"),
+    fillColor: cssVar(
+      hit.closed
+        ? "--map-marker-closed"
+        : hit.foreignOnly
+          ? "--map-marker-foreign"
+          : "--map-marker",
+    ),
     fillOpacity: 0.9,
   });
 
@@ -69,10 +75,7 @@ export async function createMap(
       const bounds = L.latLng(origin).toBounds(radiusKm * 2000);
       for (const hit of hits) {
         const { store } = hit;
-        const marker = L.circleMarker(
-          [store.lat, store.lng],
-          style(store.id === selected, hit.closed),
-        )
+        const marker = L.circleMarker([store.lat, store.lng], style(store.id === selected, hit))
           // Leaflet renders string content with innerHTML; pass an element so names stay text.
           .bindTooltip(h("span", null, store.name))
           .on("click", () => {

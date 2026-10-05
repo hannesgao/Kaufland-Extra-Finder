@@ -9,7 +9,7 @@ interface Shifted {
 describe("dev fixture date shifting", () => {
   it("moves all dates by whole weeks so weekdays stay the same", () => {
     const shifted = JSON.parse(shiftedFixture(new Date("2026-10-21T10:00:00Z"))) as Shifted;
-    expect(shifted.generated_at).toBe("2026-10-19T22:47:58+02:00");
+    expect(shifted.generated_at).toBe("2026-10-19T23:46:36+02:00");
     const kassel = shifted.stores.find((s) => s.id === "DE4453");
     expect(kassel?.leaflets.map((l) => l.valid_from)).toEqual(["2026-10-22"]);
   });
@@ -22,7 +22,7 @@ describe("dev fixture date shifting", () => {
 
   it("leaves the fixture unchanged during its own week", () => {
     const shifted = JSON.parse(shiftedFixture(new Date("2026-10-07T10:00:00Z"))) as Shifted;
-    expect(shifted.generated_at).toBe("2026-10-05T22:47:58+02:00");
+    expect(shifted.generated_at).toBe("2026-10-05T23:46:36+02:00");
   });
 });
 

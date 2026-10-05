@@ -48,6 +48,27 @@ describe("renderHit", () => {
     expect(li.querySelector(".siblings__more")).toBeNull();
   });
 
+  it("warns prominently when the PDF names a different store", () => {
+    const hits = hitsFor(fixture(), PLZ_KARLSRUHE);
+    const grunwinkel = renderHit(nth(hits.filter((h) => h.store.id === "DE8530")), vi.fn());
+    expect(grunwinkel.classList.contains("store--foreign")).toBe(true);
+    expect(grunwinkel.querySelector(".chip--foreign")?.textContent).toBe(
+      "Extra-Prospekt einer anderen Filiale",
+    );
+    const warning = grunwinkel.querySelector(".pdf-warning");
+    expect(warning?.getAttribute("role")).toBe("note");
+    expect(warning?.textContent).toBe(
+      "Achtung: Laut PDF gilt dieser Extra-Prospekt nicht für diese Filiale." +
+        "Im PDF steht: „NUR IN KARLSRUHE-OSTSTADT, IM DURLACH CENTER“",
+    );
+    // The leaflet panel starts with the warning, before the dates.
+    expect(grunwinkel.querySelector(".leaflet")?.firstElementChild?.className).toBe("pdf-warning");
+
+    const oststadt = renderHit(nth(hits.filter((h) => h.store.id === "DE4443")), vi.fn());
+    expect(oststadt.querySelector(".pdf-warning, .chip--foreign")).toBeNull();
+    expect(oststadt.classList.contains("store--foreign")).toBe(false);
+  });
+
   it("lists at most five siblings and counts the rest", () => {
     const data = fixture();
     const cluster = nth(nth(data.stores.filter((s) => s.id === "DE4443")).leaflets).cluster;

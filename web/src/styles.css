@@ -32,6 +32,7 @@
 
   --map-marker: #006a60;
   --map-marker-closed: #8a9491;
+  --map-marker-foreign: #d9480f;
   --map-marker-stroke: #ffffff;
   --map-origin: #3b5ba9;
   --map-radius: #3b5ba9;
@@ -83,6 +84,7 @@
 
     --map-marker: #82d5c8;
     --map-marker-closed: #6f7976;
+    --map-marker-foreign: #ff8a50;
     --map-marker-stroke: #0e1513;
     --map-origin: #afc6ff;
     --map-radius: #afc6ff;
@@ -707,6 +709,59 @@ a {
   color: var(--md-on-error-container);
 }
 
+/* PDF names a different store: the most prominent element of the card. */
+.pdf-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border: 2px solid var(--md-error);
+  border-radius: var(--shape-md);
+  background: var(--md-error-container);
+  color: var(--md-on-error-container);
+}
+
+.pdf-warning__icon {
+  width: 24px;
+  height: 24px;
+  color: var(--md-error);
+}
+
+.pdf-warning__title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.375rem;
+}
+
+.pdf-warning__text {
+  margin: 2px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.chip--foreign {
+  margin-top: 12px;
+  background: var(--md-error);
+  color: var(--md-on-primary);
+  font-weight: 700;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chip--foreign {
+    color: #690005;
+  }
+}
+
+.store.store--foreign:not(.is-selected) {
+  border: 2px solid var(--md-error);
+}
+
+.store.store--foreign:not(.is-selected) .store__body {
+  padding: 19px 19px 11px;
+}
+
 .leaflets {
   display: grid;
   gap: 12px;
@@ -1254,6 +1309,28 @@ a.credit:hover,
 .row__leaflet .chip {
   height: 28px;
   font-size: 0.8125rem;
+}
+
+.row--foreign {
+  box-shadow: inset 4px 0 0 var(--md-error);
+}
+
+.row__foreign {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--shape-sm);
+  background: var(--md-error-container);
+  color: var(--md-on-error-container);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.row__foreign .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--md-error);
 }
 
 .row__warn {

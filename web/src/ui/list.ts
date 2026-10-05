@@ -40,6 +40,27 @@ function validityChip(prefix: string, day: DayLabel): HTMLSpanElement {
   );
 }
 
+/** Prominent notice when the PDF itself names a different store. */
+function pdfWarning(view: LeafletView): HTMLDivElement | false {
+  const { pdfStore, pdfStoreMatch } = view.leaflet;
+  if (pdfStoreMatch !== false || !pdfStore) return false;
+  return h(
+    "div",
+    { class: "pdf-warning", role: "note" },
+    icon("warning", "icon pdf-warning__icon"),
+    h(
+      "div",
+      null,
+      h(
+        "p",
+        { class: "pdf-warning__title" },
+        "Achtung: Laut PDF gilt dieser Extra-Prospekt nicht für diese Filiale.",
+      ),
+      h("p", { class: "pdf-warning__text" }, `Im PDF steht: „NUR IN ${pdfStore}“`),
+    ),
+  );
+}
+
 function renderLeaflet(view: LeafletView, storeName: string): HTMLLIElement {
   const { leaflet, closedDays, specialHours, siblings } = view;
   const more = siblings.length - MAX_SIBLINGS;
@@ -47,6 +68,7 @@ function renderLeaflet(view: LeafletView, storeName: string): HTMLLIElement {
   return h(
     "li",
     { class: "leaflet" },
+    pdfWarning(view),
     h(
       "div",
       {
@@ -133,7 +155,12 @@ export function renderHit(hit: Hit, onSelect: (id: string) => void, note?: strin
   };
   return h(
     "li",
-    { class: hit.closed ? "store store--closed" : "store", "data-id": store.id },
+    {
+      class: ["store", hit.closed && "store--closed", hit.foreignOnly && "store--foreign"]
+        .filter(Boolean)
+        .join(" "),
+      "data-id": store.id,
+    },
     h(
       "article",
       { class: "store__body", "aria-labelledby": headingId },
@@ -170,6 +197,13 @@ export function renderHit(hit: Hit, onSelect: (id: string) => void, note?: strin
       ),
       hit.closed &&
         h("p", { class: "chip chip--closed" }, icon("event_busy"), "Vorübergehend geschlossen"),
+      hit.foreignOnly &&
+        h(
+          "p",
+          { class: "chip chip--foreign" },
+          icon("warning"),
+          "Extra-Prospekt einer anderen Filiale",
+        ),
       h("ul", { class: "leaflets" }, ...hit.leaflets.map((l) => renderLeaflet(l, store.name))),
       h(
         "div",
@@ -193,7 +227,12 @@ export function renderRow(view: StoreView): HTMLLIElement {
   const headingId = `row-${store.id}`;
   return h(
     "li",
-    { class: view.closed ? "row row--closed" : "row", "data-id": store.id },
+    {
+      class: ["row", view.closed && "row--closed", view.foreignOnly && "row--foreign"]
+        .filter(Boolean)
+        .join(" "),
+      "data-id": store.id,
+    },
     h("span", { class: "row__plz", "aria-hidden": "true" }, store.plz),
     h(
       "article",
@@ -226,6 +265,14 @@ export function renderRow(view: StoreView): HTMLLIElement {
               l.label,
             ),
             h("span", { class: "leaflet__range" }, l.range),
+            l.leaflet.pdfStoreMatch === false &&
+              l.leaflet.pdfStore &&
+              h(
+                "span",
+                { class: "row__foreign" },
+                icon("warning"),
+                `Laut PDF nur in ${l.leaflet.pdfStore}`,
+              ),
             l.closedDays.length > 0 &&
               h(
                 "span",

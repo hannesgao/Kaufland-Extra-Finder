@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-05T22:47:58+02:00",
-  "store_count": 6,
+  "generated_at": "2026-10-05T23:46:36+02:00",
+  "store_count": 788,
   "failed_count": 0,
   "stores": [
     {
@@ -19,7 +19,9 @@
           "valid_to": "2026-10-14",
           "cluster": "01a0e6b0-9528-7e77-9edf-c7c4f8775c36",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4313_D41-H/ar/4313",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-9528-7e77-9edf-c7c4f8775c36/Extra-Angebote-08-10-2026-14-10-2026-00.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-9528-7e77-9edf-c7c4f8775c36/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "GÖ-WESTSTADT, ELLIEHÄUSER WEG 23 • GÖ-GRONE, IM KAUF PARK • GÖ-WEENDE, GROSSE BREITE 6",
+          "pdf_store_match": true
         }
       ]
     },
@@ -38,7 +40,9 @@
           "valid_to": "2026-10-14",
           "cluster": "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4443_D41-H/ar/4443",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+          "pdf_store_match": true
         }
       ]
     },
@@ -57,7 +61,9 @@
           "valid_to": "2026-10-14",
           "cluster": "01a0e6b0-7f24-7ff4-89fd-aa2e11127632",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4453_D41-H/ar/4453",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7f24-7ff4-89fd-aa2e11127632/Extra-Angebote-08-10-2026-14-10-2026-00.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7f24-7ff4-89fd-aa2e11127632/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KASSEL-WESERTOR, FRANZGRABEN 40-42",
+          "pdf_store_match": true
         }
       ]
     },
@@ -76,7 +82,9 @@
           "valid_to": "2026-10-14",
           "cluster": "01a0e6b0-44df-7773-b9d3-a22ae9e28c58",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4733_D41-H/ar/4733",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-44df-7773-b9d3-a22ae9e28c58/Extra-Angebote-08-10-2026-14-10-2026-00.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-44df-7773-b9d3-a22ae9e28c58/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "RASTATT, RAUENTALER STRASSE 65",
+          "pdf_store_match": true
         }
       ]
     },
@@ -95,7 +103,9 @@
           "valid_to": "2026-10-14",
           "cluster": "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_5443_D41-H/ar/5443",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+          "pdf_store_match": false
         }
       ]
     },
@@ -114,7 +124,9 @@
           "valid_to": "2026-10-14",
           "cluster": "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_8530_D41-H/ar/8530",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+          "pdf_store_match": false
         }
       ]
     }

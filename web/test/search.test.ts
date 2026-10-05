@@ -34,6 +34,27 @@ describe("search", () => {
     expect(view.siblings.map((s) => s.id)).toEqual(["DE5443", "DE8530"]);
   });
 
+  it("marks stores whose leaflets all name a different store", () => {
+    const hits = search(data, PLZ_KARLSRUHE, 10, MONDAY).hits;
+    expect(hits.map((h) => [h.store.id, h.foreignOnly])).toEqual([
+      ["DE4443", false],
+      ["DE5443", true],
+      ["DE8530", true],
+    ]);
+  });
+
+  it("does not mark stores whose PDF check is unknown", () => {
+    const store = nth(data.stores.filter((s) => s.id === "DE8530"));
+    const leaflets = store.leaflets.map((l) => {
+      const copy = { ...l };
+      delete copy.pdfStore;
+      delete copy.pdfStoreMatch;
+      return copy;
+    });
+    const hit = search(replaceStore(data, "DE8530", { leaflets }), PLZ_KARLSRUHE, 10, MONDAY).hits;
+    expect(hit.find((h) => h.store.id === "DE8530")?.foreignOnly).toBe(false);
+  });
+
   it("has no siblings for a leaflet only one store has", () => {
     const hit = nth(search(data, PLZ_KASSEL, 10, MONDAY).hits);
     expect(nth(hit.leaflets).siblings).toEqual([]);

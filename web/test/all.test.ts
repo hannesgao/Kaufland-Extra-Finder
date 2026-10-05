@@ -50,6 +50,17 @@ describe("renderRow", () => {
     expect(links).toEqual(["Filialseite", "Prospekt", "PDF", "Prospekt", "PDF"]);
   });
 
+  it("flags leaflets whose PDF names a different store", () => {
+    const view = listAll(fixture(), MONDAY, "plz-asc").find((v) => v.store.id === "DE8530");
+    const row = renderRow(nth(view ? [view] : []));
+    expect(row.classList.contains("row--foreign")).toBe(true);
+    expect(row.querySelector(".row__foreign")?.textContent).toBe(
+      "Laut PDF nur in KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+    );
+    const own = listAll(fixture(), MONDAY, "plz-asc").find((v) => v.store.id === "DE4443");
+    expect(renderRow(nth(own ? [own] : [])).querySelector(".row__foreign")).toBeNull();
+  });
+
   it("flags closure days", () => {
     const view = listAll(edgeCases(), MONDAY, "plz-asc").find((v) => v.store.id === "DE8530");
     expect(renderRow(nth(view ? [view] : [])).textContent).toContain("geschlossen 09.10.");

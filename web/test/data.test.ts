@@ -21,11 +21,35 @@ describe("parseExtra", () => {
       "DE5443",
       "DE8530",
     ]);
-    expect(data.generatedAt.toISOString()).toBe("2026-10-05T20:47:58.000Z");
+    expect(data.generatedAt.toISOString()).toBe("2026-10-05T21:46:36.000Z");
     expect(data.storesById.get("DE4453")?.url).toBe(
       "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html",
     );
     expect(data.clusters.get(KARLSRUHE_CLUSTER)).toEqual(["DE4443", "DE5443", "DE8530"]);
+  });
+
+  it("parses the PDF check", () => {
+    const data = parseExtra(fixtureJson());
+    const own = nth(data.storesById.get("DE4443")?.leaflets ?? []);
+    const foreign = nth(data.storesById.get("DE8530")?.leaflets ?? []);
+    expect([own.pdfStore, own.pdfStoreMatch]).toEqual([
+      "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+      true,
+    ]);
+    expect(foreign.pdfStoreMatch).toBe(false);
+    const unknown = withStore((s) => {
+      const leaflet = nth(s.leaflets as Json[]);
+      delete leaflet.pdf_store;
+      delete leaflet.pdf_store_match;
+    });
+    const first = nth(nth(parseExtra(unknown).stores).leaflets);
+    expect(first.pdfStore).toBeUndefined();
+    expect(first.pdfStoreMatch).toBeUndefined();
+  });
+
+  it("rejects a non-boolean pdf_store_match", () => {
+    const json = withStore((s) => (nth(s.leaflets as Json[]).pdf_store_match = "no"));
+    expect(() => parseExtra(json)).toThrow(DataError);
   });
 
   it("parses special days", () => {

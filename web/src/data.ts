@@ -11,6 +11,10 @@ export interface Leaflet {
   cluster: string;
   viewer: string;
   pdf: string;
+  /** The PDF's own "NUR IN …" block, if the scraper could read it. */
+  pdfStore?: string;
+  /** Whether that block names this store; undefined when unknown. */
+  pdfStoreMatch?: boolean;
 }
 
 export interface Store {
@@ -97,13 +101,20 @@ function httpsUrl(obj: Json, key: string, where: string): string {
 
 function parseLeaflet(raw: unknown, where: string): Leaflet {
   if (!isObject(raw)) throw new DataError(`${where}: leaflet must be an object`);
-  const leaflet = {
+  const leaflet: Leaflet = {
     validFrom: isoDate(raw, "valid_from", where),
     validTo: isoDate(raw, "valid_to", where),
     cluster: str(raw, "cluster", where),
     viewer: httpsUrl(raw, "viewer", where),
     pdf: httpsUrl(raw, "pdf", where),
   };
+  if (raw.pdf_store !== undefined) leaflet.pdfStore = str(raw, "pdf_store", where);
+  if (raw.pdf_store_match !== undefined) {
+    if (typeof raw.pdf_store_match !== "boolean") {
+      throw new DataError(`${where}: "pdf_store_match" must be a boolean`);
+    }
+    leaflet.pdfStoreMatch = raw.pdf_store_match;
+  }
   if (leaflet.validTo < leaflet.validFrom) throw new DataError(`${where}: valid_to < valid_from`);
   return leaflet;
 }

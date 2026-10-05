@@ -37,6 +37,8 @@ export interface StoreView {
   leaflets: LeafletView[];
   /** Closed for the whole remaining validity of all its leaflets. */
   closed: boolean;
+  /** Every leaflet's PDF names a different store (see the scraper's PDF check). */
+  foreignOnly: boolean;
 }
 
 export interface Hit extends StoreView {
@@ -83,7 +85,12 @@ export function describeStore(store: Store, today: IsoDate, data: ExtraData): St
     .sort((a, b) => a.validFrom.localeCompare(b.validFrom))
     .map((l) => viewLeaflet(store, l, today, data));
   if (leaflets.length === 0) return null;
-  return { store, leaflets, closed: leaflets.every((l) => l.unusable) };
+  return {
+    store,
+    leaflets,
+    closed: leaflets.every((l) => l.unusable),
+    foreignOnly: leaflets.every((l) => l.leaflet.pdfStoreMatch === false),
+  };
 }
 
 export function toHit(store: Store, origin: LatLng, today: IsoDate, data: ExtraData): Hit | null {
