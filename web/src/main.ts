@@ -179,13 +179,34 @@ function renderAll(): void {
   if (!data) return;
   const today = berlinToday(new Date());
   const views = listAll(data.extra, today, sort, { pdfOnly });
-  replaceChildren(allList, ...views.map(renderRow));
+  replaceChildren(allList, ...views.map((v) => renderRow(v, showInSearch)));
   const counts = {
     shown: views.length,
     hidden: pdfOnly ? listAll(data.extra, today, sort).length - views.length : 0,
     unchecked: countUnchecked(views),
   };
   allMeta.textContent = `${listSummary(counts, pdfOnly)}.`;
+}
+
+/** "In Umkreissuche zeigen": search around the store's PLZ and select it on the map. */
+function showInSearch(id: string): void {
+  const store = data?.extra.storesById.get(id);
+  if (!data || !store) return;
+  tab = "search";
+  tabs.select(tab);
+  showPlzError(null);
+  const point = data.plz.get(store.plz);
+  if (point) {
+    plzInput.value = store.plz;
+    origin = { point, label: `um PLZ ${store.plz}`, plz: store.plz };
+  } else {
+    // PLZ not in plz.json: search around the store itself (not written into the URL).
+    plzInput.value = "";
+    origin = { point: [store.lat, store.lng], label: `um ${store.name}`, plz: null };
+  }
+  syncUrl(true);
+  runSearch();
+  select(id);
 }
 
 /** Both tabs have a switch for the same setting; keep them in sync. */

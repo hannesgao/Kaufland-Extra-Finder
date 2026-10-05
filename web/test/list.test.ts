@@ -147,13 +147,17 @@ describe("renderHit", () => {
     expect(titles).toEqual(["Laufender Extra-Prospekt", "Aktuellster Extra-Prospekt"]);
     const relative = [...kassel.querySelectorAll(".lp-head__relative")].map((t) => t.textContent);
     expect(relative).toEqual(["noch 3 Tage gültig", "startet in 3 Tagen"]);
-    // Running leaflet 01.–07.10. ends this week: one row, starting today (Monday 05.10.).
-    const [current, next] = [...kassel.querySelectorAll(".cal")];
-    expect(current?.querySelectorAll(".cal__row:not(.cal__row--head)")).toHaveLength(1);
-    const valid = [...(current?.querySelectorAll(".cal__day.is-valid .cal__date") ?? [])];
-    expect(valid.map((d) => d.textContent)).toEqual(["05", "06", "07"]);
-    expect(current?.querySelector(".is-today .cal__note")?.textContent).toBe("heute");
-    expect(next?.querySelectorAll(".cal__row:not(.cal__row--head)")).toHaveLength(2);
+    // One calendar for both leaflets: running days green, upcoming days blue.
+    expect(kassel.querySelectorAll(".cal")).toHaveLength(1);
+    expect(kassel.querySelectorAll(".cal__row:not(.cal__row--head)")).toHaveLength(2);
+    const tone = (t: string) =>
+      [...kassel.querySelectorAll(`.cal__day.tone-${t} .cal__date`)].map((d) => d.textContent);
+    expect(tone("now")).toEqual(["05", "06", "07"]);
+    expect(tone("upcoming")).toEqual(["08", "09", "10", "11", "12", "13", "14"]);
+    expect(kassel.querySelector(".is-today .cal__note")?.textContent).toBe("heute");
+    // Leaflet titles carry the same colours as their days.
+    const heads = [...kassel.querySelectorAll(".lp-head")].map((h) => h.className);
+    expect(heads).toEqual(["lp-head tone-now", "lp-head tone-upcoming"]);
 
     const grunwinkel = hitsFor(data, PLZ_KARLSRUHE).find((h) => h.store.id === "DE8530");
     const card = renderHit(nth(grunwinkel ? [grunwinkel] : []), vi.fn());
@@ -164,8 +168,8 @@ describe("renderHit", () => {
     expect(card.querySelector(".cal__day.is-sunday .cal__date")?.textContent).toBe("11");
     // The calendar is visual only; screen readers get the same facts as text.
     expect(card.querySelector(".cal")?.getAttribute("aria-hidden")).toBe("true");
-    expect(card.querySelector(".leaflet .visually-hidden")?.textContent).toBe(
-      "Geschlossen am 09.10. Sonderöffnungszeiten: 10.10. 07:00–14:00 Uhr.",
+    expect(card.querySelector(".store__body > .visually-hidden")?.textContent).toBe(
+      "Geschlossen am 09.10. Sonderöffnungszeiten: 10.10. 7–14 Uhr.",
     );
   });
 

@@ -24,13 +24,16 @@ export interface DayLabel {
   date: string;
 }
 
+/** Running leaflets are shown green ("now"), future ones blue ("upcoming"). */
+export type Tone = "now" | "upcoming";
+
 /** One calendar day (from today on). */
 export interface DayView {
   iso: IsoDate;
   day: string; // "08"
   today: boolean;
-  /** Inside the leaflet's validity. */
-  valid: boolean;
+  /** Which leaflet covers the day: "now" (running) or "upcoming"; null outside any validity. */
+  tone: Tone | null;
   closed: boolean;
   /** Shortened/extended hours, e.g. "7–14". */
   hours?: string;
@@ -52,8 +55,7 @@ export interface LeafletView {
   rangeText: string;
   /** "startet in 2 Tagen" / "noch 3 Tage gültig" */
   relative: string;
-  /** Today's week, then the weeks of the validity (no gap weeks in between). */
-  weeks: WeekView[];
+  tone: Tone;
   range: string; // "08.10.–14.10.2026"
   /** Already valid today (otherwise it starts in the future). */
   running: boolean;
@@ -78,6 +80,8 @@ export interface StoreView {
   closed: boolean;
   /** Every leaflet's PDF names a different store (see the scraper's PDF check). */
   foreignOnly: boolean;
+  /** One calendar for all leaflets: today's week, then the validity weeks (no gap weeks). */
+  weeks: WeekView[];
 }
 
 export interface Hit extends StoreView {
@@ -100,28 +104,34 @@ export interface SearchResult {
 
 const shortHour = (time: string) => time.replace(/^0/, "").replace(/:00$/, "");
 
-function calendar(store: Store, leaflet: Leaflet, today: IsoDate): WeekView[] {
+function calendar(store: Store, leaflets: LeafletView[], today: IsoDate): WeekView[] {
   const special = new Map(store.specialDays.map((d) => [d.date, d]));
-  const mondays = new Set([mondayOf(today)]);
-  for (let m = mondayOf(leaflet.validFrom); m <= leaflet.validTo; m = addDays(m, 7)) {
-    if (m >= mondayOf(today)) mondays.add(m);
+  const thisWeek = mondayOf(today);
+  const mondays = new Set([thisWeek]);
+  for (const { leaflet } of leaflets) {
+    for (let m = mondayOf(leaflet.validFrom); m <= leaflet.validTo; m = addDays(m, 7)) {
+      if (m >= thisWeek) mondays.add(m);
+    }
   }
+  // Later leaflets win if validities ever overlap.
+  const toneOf = (iso: IsoDate): Tone | null =>
+    leaflets.findLast((l) => iso >= l.leaflet.validFrom && iso <= l.leaflet.validTo)?.tone ?? null;
   return [...mondays].sort().map((monday) => ({
     kw: isoWeek(monday),
     days: Array.from({ length: 7 }, (_, i) => {
       const iso = addDays(monday, i);
       if (iso < today) return null;
       const sd = special.get(iso);
-      const valid = iso >= leaflet.validFrom && iso <= leaflet.validTo;
+      const tone = toneOf(iso);
       const view: DayView = {
         iso,
         day: iso.slice(8, 10),
         today: iso === today,
-        valid,
-        closed: valid && sd?.closed === true,
+        tone,
+        closed: tone !== null && sd?.closed === true,
         sunday: i === 6,
       };
-      if (valid && sd && !sd.closed) view.hours = `${shortHour(sd.open)}–${shortHour(sd.close)}`;
+      if (tone && sd && !sd.closed) view.hours = `${shortHour(sd.open)}–${shortHour(sd.close)}`;
       return view;
     }),
   }));
@@ -152,7 +162,7 @@ function viewLeaflet(
       `Gültig von ${weekdayShort(leaflet.validFrom)},\u00a0${formatDay(leaflet.validFrom)} ` +
       `bis ${weekdayShort(leaflet.validTo)},\u00a0${formatDate(leaflet.validTo)}`,
     relative: relativeValidity(leaflet.validFrom, leaflet.validTo, today),
-    weeks: calendar(store, leaflet, today),
+    tone: leaflet.validFrom <= today ? "now" : "upcoming",
     range: formatRange(leaflet.validFrom, leaflet.validTo),
     running: leaflet.validFrom <= today,
     from: { weekday: weekdayName(leaflet.validFrom), date: formatDate(leaflet.validFrom) },
@@ -181,6 +191,7 @@ export function describeStore(
     leaflets,
     closed: leaflets.every((l) => l.unusable),
     foreignOnly: leaflets.every((l) => l.leaflet.pdfStoreMatch === false),
+    weeks: calendar(store, leaflets, today),
   };
 }
 

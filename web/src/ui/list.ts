@@ -1,16 +1,21 @@
 /**
- * Store cards (radius search) and rows (all stores). Both share the leaflet panel, so dates,
- * warnings and buttons look the same in both tabs. All data goes through h() into text nodes.
+ * One store card for both tabs (radius search and all stores). They differ only in the leading
+ * element (store icon + distance vs. PLZ badge) and the second store button. All data goes through
+ * h() into text nodes.
  */
 
 import { formatDay } from "../dates";
 import { h } from "../dom";
 import { formatKm } from "../geo";
 import { icon } from "../icons";
-import type { Store } from "../data";
 import type { DayView, Hit, LeafletView, StoreView } from "../search";
 
 const MAX_SIBLINGS = 5;
+const WEEKDAYS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+
+function classes(...names: (string | false)[]): string {
+  return names.filter(Boolean).join(" ");
+}
 
 function externalButton(
   href: string,
@@ -33,26 +38,7 @@ function externalButton(
   );
 }
 
-/** Title on its own line; below it "Gültig von … bis …" and the relative time, same size. */
-function leafletHeader(view: LeafletView): HTMLDivElement {
-  return h(
-    "div",
-    { class: "lp-head" },
-    h("p", { class: "lp-head__title" }, view.heading),
-    h(
-      "div",
-      { class: "lp-head__line" },
-      h("p", { class: "lp-head__range" }, view.rangeText),
-      h(
-        "span",
-        { class: `chip ${view.running ? "chip--now" : "chip--upcoming"} lp-head__relative` },
-        view.relative,
-      ),
-    ),
-  );
-}
-
-const WEEKDAYS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+/* ---------- Calendar (one per store) ---------- */
 
 function dayNote(day: DayView): string {
   if (day.closed) return "zu";
@@ -66,7 +52,7 @@ function dayCell(day: DayView | null): HTMLSpanElement {
     {
       class: classes(
         "cal__day",
-        day.valid && "is-valid",
+        day.tone !== null && `is-valid tone-${day.tone}`,
         day.today && "is-today",
         day.closed && "is-closed",
         day.hours !== undefined && "is-special",
@@ -79,13 +65,14 @@ function dayCell(day: DayView | null): HTMLSpanElement {
 }
 
 /**
- * Calendar from today: one row per week (Mo–So) up to the end of the leaflet; leaflet days are
- * filled. Visual only — the header text and the hidden summary carry the same facts.
+ * From today: one row per week (Mo–So) up to the end of the last leaflet. Days of a running leaflet
+ * are green, days of an upcoming one blue — the same colours as the leaflet titles below.
+ * Visual only: the leaflet headers and the hidden summary carry the same facts.
  */
-function calendar(view: LeafletView): HTMLDivElement {
+function calendar(view: StoreView): HTMLDivElement {
   return h(
     "div",
-    { class: `cal ${view.running ? "cal--now" : "cal--upcoming"}`, "aria-hidden": "true" },
+    { class: "cal", "aria-hidden": "true" },
     h(
       "div",
       { class: "cal__row cal__row--head" },
@@ -99,6 +86,39 @@ function calendar(view: LeafletView): HTMLDivElement {
         h("span", { class: "cal__kw" }, `KW ${String(week.kw)}`),
         ...week.days.map(dayCell),
       ),
+    ),
+  );
+}
+
+/** Closures and special hours as text for screen readers (the calendar is aria-hidden). */
+function calendarSummary(view: StoreView): HTMLParagraphElement | false {
+  const days = view.weeks.flatMap((w) => w.days).filter((d): d is DayView => d !== null);
+  const closed = days.filter((d) => d.closed).map((d) => formatDay(d.iso));
+  const special = days
+    .filter((d) => d.hours)
+    .map((d) => `${formatDay(d.iso)} ${d.hours ?? ""} Uhr`);
+  if (closed.length === 0 && special.length === 0) return false;
+  return h(
+    "p",
+    { class: "visually-hidden" },
+    closed.length > 0 && `Geschlossen am ${closed.join(", ")} `, // dates end with "."
+    special.length > 0 && `Sonderöffnungszeiten: ${special.join(", ")}.`,
+  );
+}
+
+/* ---------- Leaflet panel ---------- */
+
+/** Title (in the leaflet's calendar colour), then "Gültig von … bis …" and the relative time. */
+function leafletHeader(view: LeafletView): HTMLDivElement {
+  return h(
+    "div",
+    { class: `lp-head tone-${view.tone}` },
+    h("p", { class: "lp-head__title" }, view.heading),
+    h(
+      "div",
+      { class: "lp-head__line" },
+      h("p", { class: "lp-head__range" }, view.rangeText),
+      h("span", { class: "chip lp-head__relative" }, view.relative),
     ),
   );
 }
@@ -160,16 +180,14 @@ function siblingsCard(view: LeafletView): HTMLElement | false {
   );
 }
 
-/** One leaflet: warning, dates, closures, (siblings), buttons. Same panel in cards and rows. */
-function leafletPanel(view: LeafletView, storeName: string, withSiblings: boolean): HTMLLIElement {
-  const { leaflet, closedDays, specialHours } = view;
+/** One leaflet: warning, dates, siblings, buttons. */
+function leafletPanel(view: LeafletView, storeName: string): HTMLLIElement {
   const description = `Extra-Angebote ${storeName}, ${view.range}`;
   return h(
     "li",
     { class: "leaflet" },
     pdfWarning(view),
     leafletHeader(view),
-    calendar(view),
     view.unusable &&
       h(
         "p",
@@ -177,79 +195,46 @@ function leafletPanel(view: LeafletView, storeName: string, withSiblings: boolea
         icon("event_busy"),
         "Filiale in diesem Zeitraum geschlossen.",
       ),
-    // The week strip is aria-hidden; screen readers get closures and special hours as text.
-    (closedDays.length > 0 || specialHours.length > 0) &&
-      h(
-        "p",
-        { class: "visually-hidden" },
-        closedDays.length > 0 && `Geschlossen am ${closedDays.map(formatDay).join(", ")} `, // dates end with "."
-        specialHours.length > 0 &&
-          `Sonderöffnungszeiten: ${specialHours
-            .map((d) => `${formatDay(d.date)} ${d.open}–${d.close} Uhr`)
-            .join(", ")}.`,
-      ),
-    withSiblings && siblingsCard(view),
+    siblingsCard(view),
     h(
       "div",
       { class: "actions" },
       externalButton(
-        leaflet.viewer,
+        view.leaflet.viewer,
         "Extra-Prospekt ansehen",
         description,
         "btn--tonal",
         "open_in_new",
       ),
-      externalButton(leaflet.pdf, "PDF", description, "btn--outlined", "download"),
+      externalButton(view.leaflet.pdf, "PDF", description, "btn--outlined", "download"),
     ),
   );
 }
 
-/** Store-level chips shared by cards and rows. */
-function storeChips(view: StoreView) {
-  return [
-    view.closed &&
-      h("p", { class: "chip chip--closed" }, icon("event_busy"), "Vorübergehend geschlossen"),
-    view.foreignOnly &&
-      h(
-        "p",
-        { class: "chip chip--foreign" },
-        icon("warning"),
-        "Extra-Prospekt einer anderen Filiale",
-      ),
-  ];
+/* ---------- Store card ---------- */
+
+export interface CardOptions {
+  /** Radius search: distance chip next to the name; otherwise the PLZ badge leads. */
+  distanceKm?: number;
+  /** Second store button: "Auf Karte zeigen" (search) or "In Umkreissuche zeigen" (list). */
+  action: { label: string; icon: Parameters<typeof icon>[0]; onClick: () => void };
+  /** Click on the store name (search: select on the map). */
+  onTitleClick?: () => void;
+  note?: string;
 }
 
-/** Store-level buttons, styled and aligned like the leaflet buttons above them. */
-function storeActions(store: Store, onShowOnMap?: () => void): HTMLDivElement {
-  return h(
-    "div",
-    { class: "actions store__actions" },
-    store.url &&
-      externalButton(store.url, "Filialseite", store.name, "btn--outlined", "storefront"),
-    onShowOnMap &&
-      h(
-        "button",
-        { type: "button", class: "btn btn--sm btn--outlined", on: { click: onShowOnMap } },
-        icon("map"),
-        "Auf Karte zeigen",
-      ),
-  );
-}
-
-function classes(...names: (string | false)[]): string {
-  return names.filter(Boolean).join(" ");
-}
-
-export function renderHit(hit: Hit, onSelect: (id: string) => void, note?: string): HTMLLIElement {
-  const { store } = hit;
+export function renderStoreCard(view: StoreView, options: CardOptions): HTMLLIElement {
+  const { store } = view;
   const headingId = `store-${store.id}`;
-  const select = () => {
-    onSelect(store.id);
-  };
+  const { distanceKm, action, onTitleClick, note } = options;
+  const lead =
+    distanceKm === undefined
+      ? h("span", { class: "store__plz", "aria-hidden": "true" }, store.plz)
+      : icon("storefront", "icon store__avatar");
   return h(
     "li",
     {
-      class: classes("store", hit.closed && "store--closed", hit.foreignOnly && "store--foreign"),
+      class: classes("store", view.closed && "store--closed", view.foreignOnly && "store--foreign"),
       "data-id": store.id,
     },
     h(
@@ -259,63 +244,86 @@ export function renderHit(hit: Hit, onSelect: (id: string) => void, note?: strin
       h(
         "div",
         { class: "store__header" },
-        icon("storefront", "icon store__avatar"),
+        lead,
         h(
           "div",
           { class: "store__heading" },
           h(
             "h3",
             { class: "store__title", id: headingId },
-            h(
-              "button",
-              {
-                type: "button",
-                class: "store__select",
-                title: "Auf der Karte zeigen",
-                on: { click: select },
-              },
-              store.name,
-            ),
+            onTitleClick
+              ? h(
+                  "button",
+                  {
+                    type: "button",
+                    class: "store__select",
+                    title: "Auf der Karte zeigen",
+                    on: { click: onTitleClick },
+                  },
+                  store.name,
+                )
+              : store.name,
           ),
           h("p", { class: "store__address" }, `${store.street}, ${store.plz} ${store.city}`),
         ),
+        distanceKm !== undefined &&
+          h(
+            "span",
+            { class: "chip chip--distance", "aria-label": `Entfernung ${formatKm(distanceKm)}` },
+            icon("location_on"),
+            formatKm(distanceKm),
+          ),
+      ),
+      view.closed &&
+        h("p", { class: "chip chip--closed" }, icon("event_busy"), "Vorübergehend geschlossen"),
+      view.foreignOnly &&
         h(
-          "span",
-          { class: "chip chip--distance", "aria-label": `Entfernung ${formatKm(hit.distanceKm)}` },
-          icon("location_on"),
-          formatKm(hit.distanceKm),
+          "p",
+          { class: "chip chip--foreign" },
+          icon("warning"),
+          "Extra-Prospekt einer anderen Filiale",
+        ),
+      calendar(view),
+      calendarSummary(view),
+      h("ul", { class: "leaflets" }, ...view.leaflets.map((l) => leafletPanel(l, store.name))),
+      h(
+        "div",
+        { class: "actions store__actions" },
+        store.url &&
+          externalButton(store.url, "Filialseite", store.name, "btn--outlined", "storefront"),
+        h(
+          "button",
+          { type: "button", class: "btn btn--sm btn--outlined", on: { click: action.onClick } },
+          icon(action.icon),
+          action.label,
         ),
       ),
-      ...storeChips(hit),
-      h("ul", { class: "leaflets" }, ...hit.leaflets.map((l) => leafletPanel(l, store.name, true))),
-      storeActions(store, select),
     ),
   );
 }
 
-/** Row for the "Alle Extra-Filialen" list: same panels and buttons as the cards, no map. */
-export function renderRow(view: StoreView): HTMLLIElement {
-  const { store } = view;
-  const headingId = `row-${store.id}`;
-  return h(
-    "li",
-    {
-      class: classes("row", view.closed && "row--closed", view.foreignOnly && "row--foreign"),
-      "data-id": store.id,
+/** Radius search card: store icon, distance, "Auf Karte zeigen". */
+export function renderHit(hit: Hit, onSelect: (id: string) => void, note?: string): HTMLLIElement {
+  const select = () => {
+    onSelect(hit.store.id);
+  };
+  return renderStoreCard(hit, {
+    distanceKm: hit.distanceKm,
+    action: { label: "Auf Karte zeigen", icon: "map", onClick: select },
+    onTitleClick: select,
+    ...(note !== undefined && { note }),
+  });
+}
+
+/** "Alle Extra-Filialen" card: PLZ badge, "In Umkreissuche zeigen". */
+export function renderRow(view: StoreView, onShowInSearch: (id: string) => void): HTMLLIElement {
+  return renderStoreCard(view, {
+    action: {
+      label: "In Umkreissuche zeigen",
+      icon: "near_me",
+      onClick: () => {
+        onShowInSearch(view.store.id);
+      },
     },
-    h("span", { class: "row__plz", "aria-hidden": "true" }, store.plz),
-    h(
-      "article",
-      { class: "row__main", "aria-labelledby": headingId },
-      h("h3", { class: "row__title", id: headingId }, store.name),
-      h("p", { class: "row__address" }, `${store.street}, ${store.plz} ${store.city}`),
-      ...storeChips(view),
-      h(
-        "ul",
-        { class: "leaflets" },
-        ...view.leaflets.map((l) => leafletPanel(l, store.name, false)),
-      ),
-      storeActions(store),
-    ),
-  );
+  });
 }

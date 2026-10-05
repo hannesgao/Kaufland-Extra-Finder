@@ -14,6 +14,7 @@
   --md-on-primary-container: #00201c;
   --md-secondary-container: #cce8e2;
   --md-on-secondary-container: #05201c;
+  --md-tertiary: #3b5ba9;
   --md-tertiary-container: #cde5ff;
   --md-on-tertiary-container: #001d32;
   --md-error: #ba1a1a;
@@ -67,6 +68,7 @@
     --md-on-primary-container: #9ef2e4;
     --md-secondary-container: #334b47;
     --md-on-secondary-container: #cce8e2;
+    --md-tertiary: #afc6ff;
     --md-tertiary-container: #2f4a63;
     --md-on-tertiary-container: #cde5ff;
     --md-error: #ffb4ab;
@@ -724,6 +726,28 @@ a {
   gap: 12px;
 }
 
+/* List tab: the PLZ takes the place of the store icon; body font with even-width digits. */
+.store__plz {
+  display: grid;
+  flex: none;
+  place-items: center;
+  min-width: 4rem;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: var(--shape-full);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  font-size: 1rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.store--closed .store__plz {
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+}
+
 .store__avatar {
   width: 40px;
   height: 40px;
@@ -915,7 +939,6 @@ a {
 
 .lp-head__title {
   margin: 0;
-  color: var(--md-primary);
   font-size: 0.875rem;
   font-weight: 700;
   line-height: 1.25rem;
@@ -936,6 +959,24 @@ a {
   margin-left: auto; /* stays on the right, also when it wraps below the date range */
 }
 
+.lp-head.tone-now .lp-head__title {
+  color: var(--md-primary);
+}
+
+.lp-head.tone-upcoming .lp-head__title {
+  color: var(--md-tertiary);
+}
+
+.lp-head.tone-now .lp-head__relative {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+.lp-head.tone-upcoming .lp-head__relative {
+  background: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
+}
+
 /* Second header line: date range and relative time share size and centre line. */
 .lp-head__line {
   display: flex;
@@ -949,7 +990,7 @@ a {
 .cal {
   display: grid;
   gap: 6px;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .cal__row {
@@ -1011,13 +1052,13 @@ a {
   font-weight: 400;
 }
 
-.cal--upcoming .cal__day.is-valid {
+.cal__day.tone-upcoming {
   border-color: transparent;
   background: var(--md-tertiary-container);
   color: var(--md-on-tertiary-container);
 }
 
-.cal--now .cal__day.is-valid {
+.cal__day.tone-now {
   border-color: transparent;
   background: var(--md-primary-container);
   color: var(--md-on-primary-container);
@@ -1044,7 +1085,7 @@ a {
   color: var(--md-primary);
 }
 
-.cal--now .cal__day.is-today.is-valid .cal__note {
+.cal__day.is-today.tone-now .cal__note {
   color: var(--md-on-primary-container);
 }
 
@@ -1449,12 +1490,6 @@ a.credit:hover,
 }
 
 /* ---------- All stores list ---------- */
-.list-card {
-  overflow: hidden;
-  border-radius: var(--shape-2xl);
-  background: var(--md-surface-container-lowest);
-  box-shadow: var(--elevation-1);
-}
 
 /* Sort order: two equal segments across its half, like the radius control. */
 .segmented--inline .segmented__group {
@@ -1464,88 +1499,6 @@ a.credit:hover,
 .segment .icon:not(.segment__check) {
   width: 18px;
   height: 18px;
-}
-
-.rows {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 16px;
-  padding: 16px 20px;
-}
-
-.row + .row {
-  border-top: 1px solid var(--md-outline-variant);
-}
-
-.row__plz {
-  display: grid;
-  place-items: center;
-  width: 4.5rem;
-  height: 40px;
-  border-radius: var(--shape-md);
-  background: var(--md-secondary-container);
-  color: var(--md-on-secondary-container);
-  font-family: var(--font-mono);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-}
-
-@media (max-width: 479px) {
-  /* Phones: PLZ badge above the content, so the calendar gets the full width. */
-  .row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
-    padding: 16px 12px;
-  }
-
-  .row__plz {
-    justify-self: start;
-  }
-
-  .row__plz {
-    width: 3.75rem;
-    height: 36px;
-    font-size: 0.875rem;
-  }
-}
-
-.row--closed .row__plz {
-  background: var(--md-surface-container-high);
-  color: var(--md-on-surface-variant);
-}
-
-.row__title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.5rem;
-}
-
-.row .leaflets {
-  margin-top: 12px;
-}
-
-.row .chip--closed,
-.row .chip--foreign {
-  margin-top: 8px;
-}
-
-.row__address {
-  margin: 0;
-  color: var(--md-on-surface-variant);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.row--foreign {
-  box-shadow: inset 4px 0 0 var(--md-error);
 }
 
 /* ---------- Static pages ---------- */

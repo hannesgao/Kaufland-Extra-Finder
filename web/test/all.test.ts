@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { ExtraData, Store } from "../src/data";
 import { listAll } from "../src/search";
 import { renderRow } from "../src/ui/list";
@@ -58,19 +58,23 @@ describe("listAll with the PDF switch", () => {
   });
 });
 
-describe("renderRow", () => {
-  it("shows PLZ, name, address, store link and per-leaflet links", () => {
+describe("renderRow (list tab card)", () => {
+  it("is a store card led by the PLZ, with one calendar and two store buttons", () => {
     const view = nth(listAll(edgeCases(), MONDAY, "plz-asc"));
-    const row = renderRow(view);
-    expect(row.dataset.id).toBe("DE4453");
-    expect(row.querySelector(".row__plz")?.textContent).toBe("34125");
-    expect(row.querySelector(".row__title")?.textContent).toBe("Kassel-Wesertor");
-    expect(row.querySelector(".row__address")?.textContent).toBe("Franzgraben 40-42, 34125 Kassel");
-    const titles = [...row.querySelectorAll(".lp-head__title")].map((t) => t.textContent);
+    const onShow = vi.fn();
+    const card = renderRow(view, onShow);
+    expect(card.classList.contains("store")).toBe(true);
+    expect(card.dataset.id).toBe("DE4453");
+    expect(card.querySelector(".store__plz")?.textContent).toBe("34125");
+    expect(card.querySelector(".store__avatar, .chip--distance")).toBeNull();
+    expect(card.querySelector(".store__title")?.textContent).toBe("Kassel-Wesertor");
+    expect(card.querySelector(".store__address")?.textContent).toBe(
+      "Franzgraben 40-42, 34125 Kassel",
+    );
+    const titles = [...card.querySelectorAll(".lp-head__title")].map((t) => t.textContent);
     expect(titles).toEqual(["Laufender Extra-Prospekt", "Aktuellster Extra-Prospekt"]);
-    expect(row.querySelectorAll(".cal")).toHaveLength(2);
-    // Same buttons as the cards: per leaflet, then the store page (no map in this tab).
-    const links = [...row.querySelectorAll("a")].map((a) => a.textContent);
+    expect(card.querySelectorAll(".cal")).toHaveLength(1);
+    const links = [...card.querySelectorAll("a")].map((a) => a.textContent);
     expect(links).toEqual([
       "Extra-Prospekt ansehen",
       "PDF",
@@ -78,26 +82,31 @@ describe("renderRow", () => {
       "PDF",
       "Filialseite",
     ]);
-    expect(row.querySelector("button")).toBeNull();
+    const button = card.querySelector<HTMLButtonElement>(".store__actions button");
+    expect(button?.textContent).toBe("In Umkreissuche zeigen");
+    button?.click();
+    expect(onShow).toHaveBeenCalledWith("DE4453");
   });
 
   it("flags leaflets whose PDF names a different store", () => {
     const view = listAll(fixture(), MONDAY, "plz-asc").find((v) => v.store.id === "DE8530");
-    const row = renderRow(nth(view ? [view] : []));
-    expect(row.classList.contains("row--foreign")).toBe(true);
-    expect(row.querySelector(".chip--foreign")?.textContent).toBe(
+    const card = renderRow(nth(view ? [view] : []), vi.fn());
+    expect(card.classList.contains("store--foreign")).toBe(true);
+    expect(card.querySelector(".chip--foreign")?.textContent).toBe(
       "Extra-Prospekt einer anderen Filiale",
     );
-    expect(row.querySelector(".pdf-warning__text")?.textContent).toBe(
+    expect(card.querySelector(".pdf-warning__text")?.textContent).toBe(
       "Im PDF steht: „NUR IN KARLSRUHE-OSTSTADT, IM DURLACH CENTER“",
     );
     const own = listAll(fixture(), MONDAY, "plz-asc").find((v) => v.store.id === "DE4443");
-    expect(renderRow(nth(own ? [own] : [])).querySelector(".pdf-warning")).toBeNull();
+    expect(renderRow(nth(own ? [own] : []), vi.fn()).querySelector(".pdf-warning")).toBeNull();
   });
 
   it("flags closure days", () => {
     const view = listAll(edgeCases(), MONDAY, "plz-asc").find((v) => v.store.id === "DE8530");
-    expect(renderRow(nth(view ? [view] : [])).textContent).toContain("Geschlossen am 09.10.");
+    expect(renderRow(nth(view ? [view] : []), vi.fn()).textContent).toContain(
+      "Geschlossen am 09.10.",
+    );
   });
 
   it("never interprets scraped data as HTML", () => {
@@ -110,9 +119,9 @@ describe("renderRow", () => {
       storesById: new Map(stores.map((s) => [s.id, s])),
     };
     for (const view of listAll(patched, MONDAY, "plz-asc")) {
-      const row = renderRow(view);
-      expect(row.querySelector("img, script")).toBeNull();
-      expect(row.textContent).toContain(payload);
+      const card = renderRow(view, vi.fn());
+      expect(card.querySelector("img, script")).toBeNull();
+      expect(card.textContent).toContain(payload);
     }
   });
 });

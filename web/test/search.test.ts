@@ -63,24 +63,24 @@ describe("search", () => {
   });
 
   it("builds the calendar from today's week through the end of the leaflet", () => {
-    const view = nth(nth(search(data, PLZ_KASSEL, 10, "2026-10-06").hits).leaflets);
+    const view = nth(search(data, PLZ_KASSEL, 10, "2026-10-06").hits);
     expect(view.weeks.map((w) => w.kw)).toEqual([41, 42]);
     const first = nth(view.weeks).days;
     expect(first[0]).toBeNull(); // Monday 05.10. is before today
     expect(first[1]?.today).toBe(true);
-    expect(first.map((d) => d?.valid ?? null)).toEqual([
+    expect(first.map((d) => (d ? d.tone : "-"))).toEqual([
+      "-",
       null,
-      false,
-      false,
-      true,
-      true,
-      true,
-      true,
+      null,
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "upcoming",
     ]);
   });
 
   it("shows one row when the leaflet ends this week", () => {
-    const view = nth(nth(search(data, PLZ_KASSEL, 10, "2026-10-13").hits).leaflets);
+    const view = nth(search(data, PLZ_KASSEL, 10, "2026-10-13").hits);
     expect(view.weeks.map((w) => w.kw)).toEqual([42]);
     expect(nth(view.weeks).days.map((d) => d?.day ?? null)).toEqual([
       null,
@@ -93,6 +93,28 @@ describe("search", () => {
     ]);
   });
 
+  it("merges running and upcoming leaflets into one calendar", () => {
+    const view = nth(search(edgeCases(), PLZ_KASSEL, 10, "2026-10-06").hits);
+    expect(view.weeks.map((w) => w.kw)).toEqual([41, 42]);
+    const tones = view.weeks.flatMap((w) => w.days).map((d) => (d ? d.tone : "-"));
+    expect(tones).toEqual([
+      "-",
+      "now",
+      "now",
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      null,
+      null,
+      null,
+      null,
+    ]);
+  });
+
   it("skips empty weeks between today and a later leaflet", () => {
     const store = nth(data.stores.filter((s) => s.id === "DE4453"));
     const leaflets = store.leaflets.map((l) => ({
@@ -101,7 +123,7 @@ describe("search", () => {
       validTo: "2026-10-28",
     }));
     const patched = replaceStore(data, "DE4453", { leaflets });
-    const view = nth(nth(search(patched, PLZ_KASSEL, 10, "2026-10-06").hits).leaflets);
+    const view = nth(search(patched, PLZ_KASSEL, 10, "2026-10-06").hits);
     expect(view.weeks.map((w) => w.kw)).toEqual([41, 43, 44]);
   });
 
