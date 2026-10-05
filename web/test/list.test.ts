@@ -60,9 +60,9 @@ describe("renderHit", () => {
     const hits = hitsFor(fixture(), PLZ_KARLSRUHE);
     const grunwinkel = renderHit(nth(hits.filter((h) => h.store.id === "DE8530")), vi.fn());
     expect(grunwinkel.classList.contains("store--foreign")).toBe(true);
-    expect(grunwinkel.querySelector(".chip--foreign")?.textContent).toBe(
-      "Extra-Prospekt einer anderen Filiale",
-    );
+    // One notice only: the warning in the leaflet panel (no extra label on the card).
+    expect(grunwinkel.querySelector(".chip--foreign")).toBeNull();
+    expect(grunwinkel.querySelectorAll(".pdf-warning")).toHaveLength(1);
     const warning = grunwinkel.querySelector(".pdf-warning");
     expect(warning?.getAttribute("role")).toBe("note");
     expect(warning?.textContent).toBe(
@@ -73,7 +73,7 @@ describe("renderHit", () => {
     expect(grunwinkel.querySelector(".leaflet")?.firstElementChild?.className).toBe("pdf-warning");
 
     const oststadt = renderHit(nth(hits.filter((h) => h.store.id === "DE4443")), vi.fn());
-    expect(oststadt.querySelector(".pdf-warning, .chip--foreign")).toBeNull();
+    expect(oststadt.querySelector(".pdf-warning")).toBeNull();
     expect(oststadt.classList.contains("store--foreign")).toBe(false);
   });
 

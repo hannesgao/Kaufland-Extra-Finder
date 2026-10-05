@@ -276,13 +276,6 @@ export function renderStoreCard(view: StoreView, options: CardOptions): HTMLLIEl
       ),
       view.closed &&
         h("p", { class: "chip chip--closed" }, icon("event_busy"), "Vorübergehend geschlossen"),
-      view.foreignOnly &&
-        h(
-          "p",
-          { class: "chip chip--foreign" },
-          icon("warning"),
-          "Extra-Prospekt einer anderen Filiale",
-        ),
       h("div", { class: "cal-card" }, calendar(view), calendarSummary(view)),
       h("ul", { class: "leaflets" }, ...view.leaflets.map((l) => leafletPanel(l, store.name))),
       h(

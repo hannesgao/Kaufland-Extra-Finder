@@ -92,9 +92,8 @@ describe("renderRow (list tab card)", () => {
     const view = listAll(fixture(), MONDAY, "plz-asc").find((v) => v.store.id === "DE8530");
     const card = renderRow(nth(view ? [view] : []), vi.fn());
     expect(card.classList.contains("store--foreign")).toBe(true);
-    expect(card.querySelector(".chip--foreign")?.textContent).toBe(
-      "Extra-Prospekt einer anderen Filiale",
-    );
+    expect(card.querySelector(".chip--foreign")).toBeNull();
+    expect(card.querySelectorAll(".pdf-warning")).toHaveLength(1);
     expect(card.querySelector(".pdf-warning__text")?.textContent).toBe(
       "Im PDF steht: „NUR IN KARLSRUHE-OSTSTADT, IM DURLACH CENTER“",
     );

@@ -869,26 +869,12 @@ a {
 }
 
 /* Store-level labels may wrap on narrow screens instead of sticking out of the card. */
-.chip--foreign,
 .chip--closed {
   height: auto;
   min-height: 32px;
   padding-top: 4px;
   padding-bottom: 4px;
   white-space: normal;
-}
-
-.chip--foreign {
-  margin-top: 12px;
-  background: var(--md-error);
-  color: var(--md-on-primary);
-  font-weight: 700;
-}
-
-@media (prefers-color-scheme: dark) {
-  .chip--foreign {
-    color: #690005;
-  }
 }
 
 .store.store--foreign:not(.is-selected) {
