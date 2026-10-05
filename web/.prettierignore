@@ -1,0 +1,4 @@
+dist/
+coverage/
+public/plz.json
+package-lock.json

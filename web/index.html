@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Kaufland-Filialen mit Extra-Angebote-Prospekt in der Nähe finden. Inoffizielles Projekt."
+    />
+    <title>Kaufland Extra Finder (inoffiziell)</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#results">Zu den Ergebnissen springen</a>
+    <header class="site-header">
+      <div class="wrap">
+        <h1>Kaufland Extra Finder</h1>
+        <p class="lead">
+          Kaufland-Filialen in der Nähe finden, die gerade einen
+          <strong>Extra-Angebote</strong>-Prospekt haben. Inoffiziell.
+        </p>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <form id="search-form" class="search" novalidate>
+        <div class="field">
+          <label for="plz">Postleitzahl</label>
+          <div class="field__row">
+            <input
+              id="plz"
+              name="plz"
+              type="text"
+              inputmode="numeric"
+              autocomplete="postal-code"
+              pattern="[0-9]{5}"
+              maxlength="5"
+              required
+              aria-describedby="plz-hint plz-error"
+            />
+            <button type="submit" class="button">Suchen</button>
+          </div>
+          <p id="plz-hint" class="hint">5-stellig, z. B. 76137</p>
+          <p id="plz-error" class="error" hidden></p>
+        </div>
+
+        <button type="button" id="locate" class="button button--secondary">
+          Meinen Standort verwenden
+        </button>
+
+        <fieldset class="radius">
+          <legend>Umkreis</legend>
+          <label><input type="radio" name="radius" value="10" /> 10 km</label>
+          <label><input type="radio" name="radius" value="25" checked /> 25 km</label>
+          <label><input type="radio" name="radius" value="50" /> 50 km</label>
+          <label><input type="radio" name="radius" value="100" /> 100 km</label>
+        </fieldset>
+      </form>
+
+      <p id="status" class="status" role="status" aria-live="polite">Daten werden geladen …</p>
+      <p id="data-age" class="data-age"></p>
+
+      <section id="results" class="results" aria-label="Ergebnisse" tabindex="-1">
+        <div id="map" class="map" role="region" aria-label="Karte der Filialen" hidden></div>
+        <ol id="list" class="list"></ol>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>
+          <strong>Inoffizielles Projekt.</strong> Nicht mit Kaufland verbunden. Alle Angaben ohne
+          Gewähr – maßgeblich ist der Prospekt der jeweiligen Filiale.
+        </p>
+        <p>
+          Filial- und Prospektdaten: Kaufland (öffentliche Webseiten). Karte: ©
+          <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende.
+          PLZ-Koordinaten: <a href="https://www.geonames.org/">GeoNames</a>,
+          <a href="https://creativecommons.org/licenses/by/4.0/deed.de">CC BY 4.0</a>
+          (je PLZ zusammengefasst).
+        </p>
+        <nav aria-label="Rechtliches">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <a href="https://github.com/hannesgao/Kaufland-Extra-Finder">Quellcode</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
