@@ -9,16 +9,45 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
-    <header class="site-header">
-      <div class="wrap">
-        <p class="site-header__back"><a href="./">← Zurück zur Suche</a></p>
-        <h1>Impressum</h1>
+    <header class="app-bar">
+      <div class="wrap app-bar__inner">
+        <span class="app-bar__mark" data-icon="location_on"></span>
+        <div>
+          <h1 class="app-bar__title">Impressum</h1>
+          <a class="app-bar__back" href="./">← Zurück zur Suche</a>
+        </div>
       </div>
     </header>
+
     <main class="wrap prose">
       <!-- Placeholder: the content of this page is written by the site owner. -->
       <p>Dieser Text wird noch ergänzt.</p>
     </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__bar">
+        <div class="wrap credits">
+          <span class="credit">© 2026 Hannes Gao</span>
+          <a
+            class="credit"
+            href="https://github.com/hannesgao/Kaufland-Extra-Finder/blob/main/LICENSE"
+            title="Die Lizenz lesen"
+            >MIT-Lizenz</a
+          >
+          <span class="credit credit--mono">v%KEF_VERSION%</span>
+          <span class="credit" title="Gebaut %KEF_BUILD_ISO% (UTC)">%KEF_BUILD_STAMP%</span>
+          <a
+            class="credit"
+            href="https://github.com/hannesgao/Kaufland-Extra-Finder"
+            title="Kaufland Extra Finder auf GitHub"
+            ><span data-icon="github"></span>GitHub</a
+          >
+          <a class="credit" href="impressum.html">Impressum</a>
+          <a class="credit" href="datenschutz.html">Datenschutz</a>
+        </div>
+      </div>
+    </footer>
+
     <script type="module" src="/src/page.ts"></script>
   </body>
 </html>

@@ -3,57 +3,90 @@ import { describe, expect, it, vi } from "vitest";
 import type { ExtraData, LatLng, Store } from "../src/data";
 import { search } from "../src/search";
 import { renderHit } from "../src/ui/list";
-import { fixture, PLZ_KARLSRUHE, PLZ_KASSEL, TUESDAY } from "./helpers";
+import { edgeCases, fixture, MONDAY, nth, PLZ_KARLSRUHE, PLZ_KASSEL } from "./helpers";
 
 const PAYLOAD = '<img src=x onerror="alert(1)">';
 
 function hitsFor(data: ExtraData, origin: LatLng) {
-  return search(data, origin, 10, TUESDAY).hits;
+  return search(data, origin, 10, MONDAY).hits;
+}
+
+function linkTexts(el: Element) {
+  return [...el.querySelectorAll("a")].map((a) => [a.textContent, a.getAttribute("href")]);
 }
 
 describe("renderHit", () => {
-  it("renders store, distance, address, label, links and siblings", () => {
-    const [hit] = hitsFor(fixture(), PLZ_KARLSRUHE);
-    if (!hit) throw new Error("no hit");
-    const li = renderHit(hit, vi.fn());
+  it("renders name, address, distance, label and siblings", () => {
+    const li = renderHit(nth(hitsFor(fixture(), PLZ_KARLSRUHE)), vi.fn());
     expect(li.dataset.id).toBe("DE4443");
-    expect(li.querySelector("h3")?.textContent).toBe("Karlsruhe-Oststadt1,5 km");
+    expect(li.querySelector(".store__title")?.textContent).toBe("Karlsruhe-Oststadt");
     expect(li.querySelector(".store__address")?.textContent).toBe(
       "Durlacher Allee 111, 76137 Karlsruhe",
     );
-    expect(li.querySelector(".badge")?.textContent).toBe("Ab Donnerstag");
-    expect(li.querySelector(".siblings")?.textContent).toBe(
-      "Gleicher Prospekt auch in: Ettlingen (76275), Karlsruhe-Beiertheim-Bulach (76135)",
+    expect(li.querySelector(".chip--distance")?.textContent).toBe("1,5 km");
+    expect(li.querySelector(".leaflet .chip")?.textContent).toBe("Ab Donnerstag");
+    expect(li.querySelector(".leaflet .notice--muted")?.textContent).toBe(
+      "Gleicher Prospekt auch in: Karlsruhe-Beiertheim-Bulac (76135), Karlsruhe-Grünwinkel (76185)",
     );
-    const links = [...li.querySelectorAll("a")];
-    expect(links.map((a) => a.textContent)).toEqual(["Prospekt ansehen", "PDF"]);
-    for (const a of links) {
+  });
+
+  it("links the Extra leaflet, its PDF and the store page", () => {
+    const li = renderHit(nth(hitsFor(fixture(), PLZ_KARLSRUHE)), vi.fn());
+    expect(linkTexts(li)).toEqual([
+      [
+        "Extra-Prospekt ansehen",
+        "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4443_D41-H/ar/4443",
+      ],
+      [
+        "PDF",
+        "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+      ],
+      ["Filialseite", "https://filiale.kaufland.de/service/filiale/karlsruhe-oststadt-4443.html"],
+    ]);
+    for (const a of li.querySelectorAll("a")) {
       expect(a.getAttribute("rel")).toBe("noopener noreferrer");
       expect(a.getAttribute("target")).toBe("_blank");
-      expect(a.getAttribute("href")).toMatch(/^https:\/\//);
+      expect(a.getAttribute("aria-label")).toMatch(/\(neues Fenster\)$/);
     }
   });
 
-  it("selects the store when its name is clicked", () => {
-    const [hit] = hitsFor(fixture(), PLZ_KARLSRUHE);
-    if (!hit) throw new Error("no hit");
+  it("omits the store page link when the data has none", () => {
+    const store = { ...nth(fixture().stores.filter((s) => s.id === "DE4443")) };
+    delete store.url;
+    const data = fixture();
+    const stores = data.stores.map((s) => (s.id === store.id ? store : s));
+    const patched = { ...data, stores, storesById: new Map(stores.map((s) => [s.id, s])) };
+    const li = renderHit(nth(hitsFor(patched, PLZ_KARLSRUHE)), vi.fn());
+    expect(linkTexts(li).map(([text]) => text)).toEqual(["Extra-Prospekt ansehen", "PDF"]);
+  });
+
+  it("selects the store from its name and from the map button", () => {
     const onSelect = vi.fn();
-    renderHit(hit, onSelect).querySelector("button")?.click();
+    const li = renderHit(nth(hitsFor(fixture(), PLZ_KARLSRUHE)), onSelect);
+    const buttons = [...li.querySelectorAll("button")];
+    expect(buttons.map((b) => b.textContent)).toEqual(["Karlsruhe-Oststadt", "Auf Karte zeigen"]);
+    for (const b of buttons) b.click();
+    expect(onSelect).toHaveBeenCalledTimes(2);
     expect(onSelect).toHaveBeenCalledWith("DE4443");
   });
 
   it("shows both validity periods and closure notices", () => {
-    const data = fixture();
-    const kassel = hitsFor(data, PLZ_KASSEL)[0];
-    if (!kassel) throw new Error("no hit");
-    const badges = [...renderHit(kassel, vi.fn()).querySelectorAll(".leaflet .badge")];
-    expect(badges.map((b) => b.textContent)).toEqual(["Diese Woche", "Ab Donnerstag"]);
+    const data = edgeCases();
+    const kassel = renderHit(nth(hitsFor(data, PLZ_KASSEL)), vi.fn());
+    const labels = [...kassel.querySelectorAll(".leaflet .chip")].map((c) => c.textContent);
+    expect(labels).toEqual(["Diese Woche", "Ab Donnerstag"]);
 
     const grunwinkel = hitsFor(data, PLZ_KARLSRUHE).find((h) => h.store.id === "DE8530");
-    if (!grunwinkel) throw new Error("no hit");
-    const text = renderHit(grunwinkel, vi.fn()).textContent;
+    const text = renderHit(nth(grunwinkel ? [grunwinkel] : []), vi.fn()).textContent;
     expect(text).toContain("Geschlossen am 09.10.");
     expect(text).toContain("Sonderöffnungszeiten: 10.10. 07:00–14:00 Uhr");
+  });
+
+  it("uses decorative, hidden icons", () => {
+    const li = renderHit(nth(hitsFor(fixture(), PLZ_KARLSRUHE)), vi.fn());
+    const icons = [...li.querySelectorAll("svg")];
+    expect(icons.length).toBeGreaterThan(3);
+    for (const svg of icons) expect(svg.getAttribute("aria-hidden")).toBe("true");
   });
 
   it("never interprets scraped data as HTML", () => {

@@ -21,6 +21,8 @@ export interface Store {
   street: string;
   lat: number;
   lng: number;
+  /** Store page on filiale.kaufland.de (optional in the data). */
+  url?: string;
   leaflets: Leaflet[];
   specialDays: SpecialDay[];
 }
@@ -128,6 +130,7 @@ function parseStore(raw: unknown, index: number): Store {
   if (Math.abs(lat) > 90 || Math.abs(lng) > 180)
     throw new DataError(`${where}: invalid coordinates`);
   const special = raw.special_days === undefined ? [] : arr(raw, "special_days", where);
+  const url = raw.url === undefined ? undefined : httpsUrl(raw, "url", where);
   return {
     id: str(raw, "id", where),
     name: str(raw, "name", where),
@@ -136,6 +139,7 @@ function parseStore(raw: unknown, index: number): Store {
     street: str(raw, "street", where),
     lat,
     lng,
+    ...(url && { url }),
     leaflets: arr(raw, "leaflets", where).map((l) => parseLeaflet(l, where)),
     specialDays: special.map((d) => parseSpecialDay(d, where)),
   };

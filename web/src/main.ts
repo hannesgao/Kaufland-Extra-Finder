@@ -3,6 +3,7 @@ import "./styles.css";
 import { loadData, type ExtraData, type LatLng, type PlzIndex } from "./data";
 import { berlinToday, formatStamp, isStale, STALE_AFTER_DAYS } from "./dates";
 import { byId, h, replaceChildren } from "./dom";
+import { hydrateIcons, icon } from "./icons";
 import { formatKm } from "./geo";
 import { search, type Hit } from "./search";
 import { renderHit } from "./ui/list";
@@ -236,7 +237,7 @@ function showDataAge(extra: ExtraData): void {
     { datetime: extra.generatedAt.toISOString() },
     formatStamp(extra.generatedAt),
   );
-  replaceChildren(dataAge, "Stand der Daten: ", stamp);
+  replaceChildren(dataAge, icon("schedule"), "Stand der Daten: ", stamp);
   if (isStale(extra.generatedAt, new Date())) {
     dataAge.append(
       " ",
@@ -249,6 +250,7 @@ function showDataAge(extra: ExtraData): void {
   }
 }
 
+hydrateIcons();
 form.addEventListener("submit", onSubmit);
 form.addEventListener("change", onRadiusChange);
 locateButton.addEventListener("click", onLocate);

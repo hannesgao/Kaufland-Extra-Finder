@@ -2,88 +2,90 @@ import { describe, expect, it } from "vitest";
 import type { ExtraData, Store } from "../src/data";
 import { dateRange } from "../src/dates";
 import { search } from "../src/search";
-import { fixture, nth, PLZ_HAMBURG, PLZ_KARLSRUHE, PLZ_KASSEL, TUESDAY } from "./helpers";
+import { edgeCases, fixture, MONDAY, nth, PLZ_HAMBURG, PLZ_KARLSRUHE, PLZ_KASSEL } from "./helpers";
 
 const ids = (...args: Parameters<typeof search>) => search(...args).hits.map((h) => h.store.id);
+
+function replaceStore(data: ExtraData, id: string, patch: Partial<Store>): ExtraData {
+  const stores = data.stores.map((s) => (s.id === id ? { ...s, ...patch } : s));
+  return { ...data, stores, storesById: new Map(stores.map((s) => [s.id, s])) };
+}
 
 describe("search", () => {
   const data = fixture();
 
   it("finds stores within the radius, nearest first", () => {
-    expect(ids(data, PLZ_KARLSRUHE, 10, TUESDAY)).toEqual(["DE4443", "DE5443", "DE8530", "DE4233"]);
-    expect(ids(data, PLZ_KARLSRUHE, 5, TUESDAY)).toEqual(["DE4443", "DE5443"]);
+    expect(ids(data, PLZ_KARLSRUHE, 10, MONDAY)).toEqual(["DE4443", "DE5443", "DE8530"]);
+    expect(ids(data, PLZ_KARLSRUHE, 25, MONDAY)).toEqual(["DE4443", "DE5443", "DE8530", "DE4733"]);
+    expect(ids(data, PLZ_KARLSRUHE, 5, MONDAY)).toEqual(["DE4443", "DE5443"]);
   });
 
   it("includes the radius boundary", () => {
-    const [hit] = search(data, PLZ_KARLSRUHE, 10, TUESDAY).hits;
-    expect(hit).toBeDefined();
-    const exact = hit?.distanceKm ?? 0;
-    expect(ids(data, PLZ_KARLSRUHE, exact, TUESDAY)).toContain("DE4443");
+    const exact = nth(search(data, PLZ_KARLSRUHE, 10, MONDAY).hits).distanceKm;
+    expect(ids(data, PLZ_KARLSRUHE, exact, MONDAY)).toEqual(["DE4443"]);
   });
 
-  it("describes leaflets: label, range and cluster siblings", () => {
-    const hit = search(data, PLZ_KARLSRUHE, 10, TUESDAY).hits[0];
-    expect(hit?.store.id).toBe("DE4443");
-    const [view] = hit?.leaflets ?? [];
-    expect(view?.label).toBe("Ab Donnerstag");
-    expect(view?.range).toBe("08.10.–14.10.2026");
-    expect(view?.siblings.map((s) => s.name)).toEqual(["Ettlingen", "Karlsruhe-Beiertheim-Bulach"]);
+  it("labels and groups leaflets by PDF (real Karlsruhe cluster)", () => {
+    const hit = nth(search(data, PLZ_KARLSRUHE, 10, MONDAY).hits);
+    expect(hit.store.id).toBe("DE4443");
+    const view = nth(hit.leaflets);
+    expect(view.label).toBe("Ab Donnerstag");
+    expect(view.range).toBe("08.10.–14.10.2026");
+    expect(view.siblings.map((s) => s.id)).toEqual(["DE5443", "DE8530"]);
   });
 
-  it("shows current and next week's leaflet, current first", () => {
-    const hit = search(data, PLZ_KASSEL, 10, TUESDAY).hits[0];
-    expect(hit?.leaflets.map((l) => l.label)).toEqual(["Diese Woche", "Ab Donnerstag"]);
-    expect(hit?.leaflets[1]?.siblings.map((s) => s.id)).toEqual(["DE4313"]);
+  it("has no siblings for a leaflet only one store has", () => {
+    const hit = nth(search(data, PLZ_KASSEL, 10, MONDAY).hits);
+    expect(nth(hit.leaflets).siblings).toEqual([]);
+  });
+
+  it("shows current and next week's leaflet, current first, each with its own cluster", () => {
+    const hit = nth(search(edgeCases(), PLZ_KASSEL, 10, MONDAY).hits);
+    expect(hit.leaflets.map((l) => l.label)).toEqual(["Diese Woche", "Ab Donnerstag"]);
+    expect(hit.leaflets.map((l) => l.siblings.map((s) => s.id))).toEqual([["DE4313"], []]);
   });
 
   it("drops expired leaflets and stores", () => {
     const thursday = "2026-10-08";
-    const hit = search(data, PLZ_KASSEL, 10, thursday).hits[0];
-    expect(hit?.leaflets.map((l) => l.label)).toEqual(["Diese Woche"]);
+    const hit = nth(search(edgeCases(), PLZ_KASSEL, 10, thursday).hits);
+    expect(hit.leaflets.map((l) => l.range)).toEqual(["08.10.–14.10.2026"]);
+    expect(nth(hit.leaflets).label).toBe("Diese Woche");
     expect(search(data, PLZ_KASSEL, 100, "2026-10-15")).toEqual({ hits: [], nearest: null });
   });
 
   it("reports closure days and special hours within the validity", () => {
-    const hit = search(data, PLZ_KARLSRUHE, 10, TUESDAY).hits.find((h) => h.store.id === "DE8530");
-    const view = hit?.leaflets[0];
-    expect(view?.closedDays).toEqual(["2026-10-09"]);
-    expect(view?.specialHours).toEqual([
+    const hit = search(edgeCases(), PLZ_KARLSRUHE, 10, MONDAY).hits.find(
+      (h) => h.store.id === "DE8530",
+    );
+    const view = nth(hit?.leaflets ?? []);
+    expect(view.closedDays).toEqual(["2026-10-09"]);
+    expect(view.specialHours).toEqual([
       { date: "2026-10-10", closed: false, open: "07:00", close: "14:00" },
     ]);
-    expect(view?.unusable).toBe(false);
+    expect(view.unusable).toBe(false);
     expect(hit?.closed).toBe(false);
   });
 
   it("ignores closure days that have already passed", () => {
-    const hit = search(data, PLZ_KARLSRUHE, 10, "2026-10-11").hits.find(
+    const hit = search(edgeCases(), PLZ_KARLSRUHE, 10, "2026-10-11").hits.find(
       (h) => h.store.id === "DE8530",
     );
-    expect(hit?.leaflets[0]?.closedDays).toEqual([]);
+    expect(nth(hit?.leaflets ?? []).closedDays).toEqual([]);
   });
 
   it("puts stores closed for the whole validity last", () => {
     const closedAllWeek: Store["specialDays"] = dateRange("2026-10-08", "2026-10-14").map(
-      (date) => ({
-        date,
-        closed: true,
-      }),
+      (date) => ({ date, closed: true }),
     );
-    const stores = data.stores.map((s) =>
-      s.id === "DE4443" ? { ...s, specialDays: closedAllWeek } : s,
-    );
-    const patched: ExtraData = {
-      ...data,
-      stores,
-      storesById: new Map(stores.map((s) => [s.id, s])),
-    };
-    const hits = search(patched, PLZ_KARLSRUHE, 10, TUESDAY).hits;
-    expect(hits.map((h) => h.store.id)).toEqual(["DE5443", "DE8530", "DE4233", "DE4443"]);
+    const patched = replaceStore(data, "DE4443", { specialDays: closedAllWeek });
+    const hits = search(patched, PLZ_KARLSRUHE, 10, MONDAY).hits;
+    expect(hits.map((h) => h.store.id)).toEqual(["DE5443", "DE8530", "DE4443"]);
     expect(hits.at(-1)?.closed).toBe(true);
-    expect(hits.at(-1)?.leaflets[0]?.unusable).toBe(true);
+    expect(nth(hits.at(-1)?.leaflets ?? []).unusable).toBe(true);
   });
 
   it("suggests the nearest store when nothing is within the radius", () => {
-    const result = search(data, PLZ_HAMBURG, 100, TUESDAY);
+    const result = search(data, PLZ_HAMBURG, 100, MONDAY);
     expect(result.hits).toEqual([]);
     expect(result.nearest?.store.id).toBe("DE4313");
     expect(result.nearest?.distanceKm).toBeGreaterThan(100);
@@ -99,7 +101,7 @@ describe("search", () => {
     }));
     const big: ExtraData = { ...data, stores, storesById: new Map(stores.map((s) => [s.id, s])) };
     const t0 = performance.now();
-    search(big, PLZ_KARLSRUHE, 100, TUESDAY);
+    search(big, PLZ_KARLSRUHE, 100, MONDAY);
     expect(performance.now() - t0).toBeLessThan(100);
   });
 });

@@ -137,6 +137,11 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   nodes, not strings. A CSP meta tag (production build) allows only same-origin resources plus OSM
   tiles.
 - `impressum.html` and `datenschutz.html` are placeholders to be filled in by the site owner.
+- Look and feel follow Material Design 3 (hand-written CSS with M3 colour roles, shape, elevation
+  and state layers; no component library). Icons are Material Symbols path data built with
+  `createElementNS` (`src/icons.ts`).
+- `fixtures/extra.json` is real scraper output for 6 stores; edge cases (two validity periods,
+  closure days) are derived from it in the tests.
 
 ## Data & attribution
 
@@ -148,6 +153,8 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   coordinate per PLZ (median of all places), rounded to 4 decimals. The derived file is likewise
   available under CC BY 4.0, not under this repository's MIT license.
 - Map tiles: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
+- Icons: [Material Symbols](https://github.com/google/material-design-icons) by Google,
+  [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ## License
 
