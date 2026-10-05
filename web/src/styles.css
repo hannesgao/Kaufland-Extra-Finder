@@ -786,6 +786,8 @@ a {
 }
 
 .chip--distance {
+  height: 24px;
+  padding: 0 10px;
   border: 1px solid var(--md-outline-variant);
   color: var(--md-on-surface-variant);
 }
@@ -827,9 +829,9 @@ a {
 
 .pdf-warning__title {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 700;
-  line-height: 1.375rem;
+  line-height: 1.25rem;
 }
 
 .pdf-warning__text {
@@ -890,36 +892,139 @@ a {
   font-weight: 500;
 }
 
-/* Validity: two chips ("Ab Donnerstag (08.10.2026)" / "Bis Mittwoch (14.10.2026)") whose
-   prefix, weekday and date share columns via subgrid, so they line up. */
-.validity {
-  display: inline-grid;
-  grid-template-columns: auto auto auto;
-  row-gap: 6px;
-  margin: 0;
-}
-
-.validity__chip {
+/* Leaflet header: title + "gültig von … bis …" on the left, relative time on the right. */
+.lp-head {
   display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
-  column-gap: 6px;
-  justify-content: start;
+  gap: 4px;
 }
 
-.validity__prefix {
-  justify-self: end; /* "Neuester Extra-Prospekt ab" / "bis" end at the same x */
+.lp-head__title {
+  margin: 0;
+  color: var(--md-primary);
+  font-size: 0.875rem;
   font-weight: 700;
+  line-height: 1.25rem;
 }
 
-.validity--now .validity__chip {
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
+.lp-head__range {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
 }
 
-.validity--upcoming .validity__chip {
-  background: var(--md-tertiary-container);
+.lp-head__relative {
+  height: 24px;
+  padding: 0 10px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+/* Second header line: date range and relative time share size and centre line. */
+.lp-head__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+
+/* Week strip: one cell per day of validity. */
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.week__day {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 6px 0 5px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--shape-md);
+  background: var(--md-surface-container-lowest);
+}
+
+.week__weekday {
+  color: var(--md-on-surface-variant);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+}
+
+.week__date {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+}
+
+.week__note {
+  min-height: 1rem;
+  color: var(--md-on-surface-variant);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+
+.week__day.is-sunday {
+  border-style: dashed;
+}
+
+.week__day.is-past {
+  opacity: 0.45;
+}
+
+.week__day.is-sunday .week__date {
+  color: var(--md-on-surface-variant);
+}
+
+.week__day.is-today {
+  border: 2px solid var(--md-primary);
+  padding: 5px 0 4px;
+}
+
+.week__day.is-today .week__note {
+  color: var(--md-primary);
+}
+
+.week__day.is-special .week__note {
   color: var(--md-on-tertiary-container);
+}
+
+.week__day.is-special {
+  background: var(--md-tertiary-container);
+  border-color: transparent;
+}
+
+.week__day.is-closed {
+  background: var(--md-error-container);
+  border-color: transparent;
+  color: var(--md-on-error-container);
+}
+
+.week__day.is-closed .week__date {
+  text-decoration: line-through;
+}
+
+.week__day.is-closed .week__weekday,
+.week__day.is-closed .week__note {
+  color: var(--md-on-error-container);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .siblings {
@@ -936,8 +1041,9 @@ a {
   gap: 8px;
   margin: 0 0 8px;
   color: var(--md-on-surface-variant);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 500;
+  line-height: 1.25rem;
 }
 
 .siblings__title .icon {

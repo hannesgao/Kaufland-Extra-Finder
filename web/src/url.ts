@@ -1,5 +1,5 @@
 /**
- * Search state <-> URL query (`?plz=76137&r=25&tab=all&sort=plz-desc&pdf=only`).
+ * Search state <-> URL query (`?plz=76137&r=25&tab=all&sort=plz-desc&pdf=all`).
  * Defaults are omitted. Coordinates are never put into the URL.
  */
 
@@ -17,7 +17,7 @@ export interface QueryState {
   radius: Radius;
   tab: Tab;
   sort: SortOrder;
-  /** Only leaflets that the PDF itself confirms for the store (`?pdf=only`). */
+  /** Only leaflets that the PDF itself confirms for the store. On by default; `?pdf=all` turns it off. */
   pdfOnly: boolean;
 }
 
@@ -42,7 +42,7 @@ export function parseQuery(search: string): QueryState {
     radius: isRadius(radius) ? radius : DEFAULT_RADIUS,
     tab: oneOf(TABS, params.get("tab"), "search"),
     sort: oneOf(SORT_ORDERS, params.get("sort"), "plz-asc"),
-    pdfOnly: params.get("pdf") === "only",
+    pdfOnly: params.get("pdf") !== "all",
   };
 }
 
@@ -52,7 +52,7 @@ export function buildQuery(state: QueryState): string {
   if (state.radius !== DEFAULT_RADIUS) params.set("r", String(state.radius));
   if (state.tab !== "search") params.set("tab", state.tab);
   if (state.sort !== "plz-asc") params.set("sort", state.sort);
-  if (state.pdfOnly) params.set("pdf", "only");
+  if (!state.pdfOnly) params.set("pdf", "all");
   const query = params.toString();
   return query ? `?${query}` : "";
 }

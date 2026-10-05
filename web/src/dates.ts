@@ -55,6 +55,13 @@ export function weekdayName(iso: IsoDate): string {
   return weekdayFormat.format(new Date(utc(iso)));
 }
 
+const weekdayShortFormat = new Intl.DateTimeFormat("de-DE", { weekday: "short", timeZone: "UTC" });
+
+/** "Do" */
+export function weekdayShort(iso: IsoDate): string {
+  return weekdayShortFormat.format(new Date(utc(iso))).replace(/\.$/, "");
+}
+
 /** "08.10.2026" */
 export function formatDate(iso: IsoDate): string {
   return `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
@@ -77,6 +84,17 @@ export function leafletLabel(validFrom: IsoDate, today: IsoDate): string {
     return `Ab ${weekdayName(validFrom)}`;
   }
   return `Ab ${formatDay(validFrom)}`;
+}
+
+/** "startet morgen", "startet in 2 Tagen", "noch 3 Tage gültig", "letzter Tag heute" */
+export function relativeValidity(validFrom: IsoDate, validTo: IsoDate, today: IsoDate): string {
+  if (validFrom > today) {
+    const days = daysBetween(today, validFrom);
+    return days === 1 ? "startet morgen" : `startet in ${String(days)} Tagen`;
+  }
+  const left = daysBetween(today, validTo) + 1; // including today
+  if (left <= 1) return "letzter Tag heute";
+  return left === 2 ? "noch bis morgen gültig" : `noch ${String(left)} Tage gültig`;
 }
 
 export const STALE_AFTER_DAYS = 4;

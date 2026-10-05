@@ -9,7 +9,9 @@ import {
   formatStamp,
   isStale,
   leafletLabel,
+  relativeValidity,
   weekdayName,
+  weekdayShort,
 } from "../src/dates";
 
 describe("berlinToday", () => {
@@ -69,6 +71,23 @@ describe("formatting", () => {
 
   it("formats the data timestamp in Berlin time", () => {
     expect(formatStamp(new Date("2026-10-06T04:31:12Z"))).toBe("06.10.2026, 06:31 Uhr");
+  });
+});
+
+describe("relativeValidity", () => {
+  it.each([
+    ["2026-10-06", "startet in 2 Tagen"],
+    ["2026-10-07", "startet morgen"],
+    ["2026-10-08", "noch 7 Tage gültig"],
+    ["2026-10-13", "noch bis morgen gültig"],
+    ["2026-10-14", "letzter Tag heute"],
+  ])("on %s", (today, text) => {
+    expect(relativeValidity("2026-10-08", "2026-10-14", today)).toBe(text);
+  });
+
+  it("abbreviates weekdays without a dot", () => {
+    expect(weekdayShort("2026-10-08")).toBe("Do");
+    expect(weekdayShort("2026-10-11")).toBe("So");
   });
 });
 

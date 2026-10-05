@@ -24,16 +24,26 @@ describe("renderHit", () => {
       "Durlacher Allee 111, 76137 Karlsruhe",
     );
     expect(li.querySelector(".chip--distance")?.textContent).toBe("1,5 km");
-    const chips = [...li.querySelectorAll(".validity__chip")].map((c) =>
-      [...c.children].map((cell) => cell.textContent),
+    expect(li.querySelector(".lp-head__title")?.textContent).toBe("Aktuellster Extra-Prospekt");
+    expect(li.querySelector(".lp-head__range")?.textContent).toBe(
+      "Gültig von Do,\u00a008.10. bis Mi,\u00a014.10.2026",
     );
-    expect(chips).toEqual([
-      ["Neuester Extra-Prospekt ab", "Donnerstag", "(08.10.2026)"],
-      ["bis", "Mittwoch", "(14.10.2026)"],
+    expect(li.querySelector(".lp-head__relative")?.textContent).toBe("startet in 3 Tagen");
+    const days = [...li.querySelectorAll(".week__day")].map((d) => [
+      d.querySelector(".week__weekday")?.textContent,
+      d.querySelector(".week__date")?.textContent,
     ]);
-    expect(li.querySelector(".validity")?.getAttribute("aria-label")).toBe(
-      "Neuester Extra-Prospekt ab Donnerstag, 08.10.2026, bis Mittwoch, 14.10.2026",
-    );
+    expect(days).toEqual([
+      ["Do", "08"],
+      ["Fr", "09"],
+      ["Sa", "10"],
+      ["So", "11"],
+      ["Mo", "12"],
+      ["Di", "13"],
+      ["Mi", "14"],
+    ]);
+    // Today (Monday 05.10.) lies before the leaflet: nothing is marked as today.
+    expect(li.querySelector(".week__day.is-today")).toBeNull();
     expect(li.querySelector(".siblings__title")?.textContent).toBe(
       "Gleicher Extra-Prospekt auch in",
     );
@@ -135,19 +145,32 @@ describe("renderHit", () => {
   it("shows both validity periods and closure notices", () => {
     const data = edgeCases();
     const kassel = renderHit(nth(hitsFor(data, PLZ_KASSEL)), vi.fn());
-    const starts = [...kassel.querySelectorAll(".validity")].map((v) => [
-      v.className,
-      v.querySelector(".validity__chip")?.textContent,
-    ]);
-    expect(starts).toEqual([
-      ["validity validity--now", "Aktueller Extra-Prospekt seitDonnerstag(01.10.2026)"],
-      ["validity validity--upcoming", "Neuester Extra-Prospekt abDonnerstag(08.10.2026)"],
-    ]);
+    const titles = [...kassel.querySelectorAll(".lp-head__title")].map((t) => t.textContent);
+    expect(titles).toEqual(["Laufender Extra-Prospekt", "Aktuellster Extra-Prospekt"]);
+    const relative = [...kassel.querySelectorAll(".lp-head__relative")].map((t) => t.textContent);
+    expect(relative).toEqual(["noch 3 Tage gültig", "startet in 3 Tagen"]);
+    // Running leaflet 01.–07.10.: days before Monday 05.10. are past, 05.10. is today.
+    const current = kassel.querySelector(".leaflet");
+    const past = [...(current?.querySelectorAll(".week__day.is-past .week__date") ?? [])];
+    expect(past.map((d) => d.textContent)).toEqual(["01", "02", "03", "04"]);
+    expect(current?.querySelector(".week__day.is-today .week__date")?.textContent).toBe("05");
+    expect(current?.querySelector(".week__day.is-today .week__note")?.textContent).toBe("heute");
 
     const grunwinkel = hitsFor(data, PLZ_KARLSRUHE).find((h) => h.store.id === "DE8530");
-    const text = renderHit(nth(grunwinkel ? [grunwinkel] : []), vi.fn()).textContent;
-    expect(text).toContain("Geschlossen am 09.10.");
-    expect(text).toContain("Sonderöffnungszeiten: 10.10. 07:00–14:00 Uhr");
+    const card = renderHit(nth(grunwinkel ? [grunwinkel] : []), vi.fn());
+    const closed = card.querySelector(".week__day.is-closed");
+    expect([closed?.querySelector(".week__date")?.textContent, closed?.textContent]).toEqual([
+      "09",
+      "Fr09zu",
+    ]);
+    const special = card.querySelector(".week__day.is-special");
+    expect(special?.querySelector(".week__note")?.textContent).toBe("7–14");
+    expect(card.querySelector(".week__day.is-sunday .week__date")?.textContent).toBe("11");
+    // The strip is visual only; screen readers get the same facts as text.
+    expect(card.querySelector(".week")?.getAttribute("aria-hidden")).toBe("true");
+    expect(card.querySelector(".leaflet .visually-hidden")?.textContent).toBe(
+      "Geschlossen am 09.10. Sonderöffnungszeiten: 10.10. 07:00–14:00 Uhr.",
+    );
   });
 
   it("uses decorative, hidden icons", () => {

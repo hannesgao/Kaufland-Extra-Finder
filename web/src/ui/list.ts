@@ -8,7 +8,7 @@ import { h } from "../dom";
 import { formatKm } from "../geo";
 import { icon } from "../icons";
 import type { Store } from "../data";
-import type { DayLabel, Hit, LeafletView, StoreView } from "../search";
+import type { DayView, Hit, LeafletView, StoreView } from "../search";
 
 const MAX_SIBLINGS = 5;
 
@@ -33,28 +33,53 @@ function externalButton(
   );
 }
 
-/** "Neuester Extra-Prospekt ab | Donnerstag | (08.10.2026)" — cells line up across both chips. */
-function validityChip(prefix: string, day: DayLabel): HTMLSpanElement {
+/** Title on its own line; below it "Gültig von … bis …" and the relative time, same size. */
+function leafletHeader(view: LeafletView): HTMLDivElement {
   return h(
-    "span",
-    { class: "chip validity__chip", "aria-hidden": "true" },
-    h("span", { class: "validity__prefix" }, prefix),
-    h("span", null, day.weekday),
-    h("span", { class: "validity__date" }, `(${day.date})`),
+    "div",
+    { class: "lp-head" },
+    h("p", { class: "lp-head__title" }, view.heading),
+    h(
+      "div",
+      { class: "lp-head__line" },
+      h("p", { class: "lp-head__range" }, view.rangeText),
+      h(
+        "span",
+        { class: `chip ${view.running ? "chip--now" : "chip--upcoming"} lp-head__relative` },
+        view.relative,
+      ),
+    ),
   );
 }
 
-function validity(view: LeafletView): HTMLDivElement {
-  const { heading, from, to } = view;
+function dayNote(day: DayView): string {
+  if (day.closed) return "zu";
+  return day.hours ?? (day.today ? "heute" : "");
+}
+
+/** One cell per day of validity; closures, special hours and today are marked. Visual only. */
+function weekStrip(view: LeafletView): HTMLOListElement {
   return h(
-    "div",
-    {
-      class: `validity ${view.running ? "validity--now" : "validity--upcoming"}`,
-      role: "group",
-      "aria-label": `${heading} ${from.weekday}, ${from.date}, bis ${to.weekday}, ${to.date}`,
-    },
-    validityChip(heading, from),
-    validityChip("bis", to),
+    "ol",
+    { class: "week", "aria-hidden": "true" },
+    ...view.days.map((day) =>
+      h(
+        "li",
+        {
+          class: classes(
+            "week__day",
+            day.past && "is-past",
+            day.today && "is-today",
+            day.closed && "is-closed",
+            day.hours !== undefined && "is-special",
+            day.sunday && "is-sunday",
+          ),
+        },
+        h("span", { class: "week__weekday" }, day.weekday),
+        h("span", { class: "week__date" }, day.day),
+        h("span", { class: "week__note" }, dayNote(day)),
+      ),
+    ),
   );
 }
 
@@ -123,28 +148,25 @@ function leafletPanel(view: LeafletView, storeName: string, withSiblings: boolea
     "li",
     { class: "leaflet" },
     pdfWarning(view),
-    validity(view),
-    view.unusable
-      ? h(
-          "p",
-          { class: "notice notice--error" },
-          icon("event_busy"),
-          "Filiale in diesem Zeitraum geschlossen.",
-        )
-      : closedDays.length > 0 &&
-          h(
-            "p",
-            { class: "notice notice--error" },
-            icon("event_busy"),
-            `Geschlossen am ${closedDays.map(formatDay).join(", ")}`,
-          ),
-    specialHours.length > 0 &&
+    leafletHeader(view),
+    weekStrip(view),
+    view.unusable &&
       h(
         "p",
-        { class: "notice" },
-        icon("schedule"),
-        "Sonderöffnungszeiten: ",
-        specialHours.map((d) => `${formatDay(d.date)} ${d.open}–${d.close} Uhr`).join(", "),
+        { class: "notice notice--error" },
+        icon("event_busy"),
+        "Filiale in diesem Zeitraum geschlossen.",
+      ),
+    // The week strip is aria-hidden; screen readers get closures and special hours as text.
+    (closedDays.length > 0 || specialHours.length > 0) &&
+      h(
+        "p",
+        { class: "visually-hidden" },
+        closedDays.length > 0 && `Geschlossen am ${closedDays.map(formatDay).join(", ")} `, // dates end with "."
+        specialHours.length > 0 &&
+          `Sonderöffnungszeiten: ${specialHours
+            .map((d) => `${formatDay(d.date)} ${d.open}–${d.close} Uhr`)
+            .join(", ")}.`,
       ),
     withSiblings && siblingsCard(view),
     h(

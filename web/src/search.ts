@@ -1,7 +1,16 @@
 /** Pure search logic: which Extra stores are near a point, and what to show for each. */
 
 import type { ExtraData, IsoDate, LatLng, Leaflet, SpecialDay, Store } from "./data";
-import { dateRange, formatDate, formatRange, leafletLabel, weekdayName } from "./dates";
+import {
+  dateRange,
+  formatDate,
+  formatDay,
+  formatRange,
+  leafletLabel,
+  relativeValidity,
+  weekdayName,
+  weekdayShort,
+} from "./dates";
 import { distanceKm } from "./geo";
 
 export const RADII = [10, 25, 50, 100] as const;
@@ -12,11 +21,29 @@ export interface DayLabel {
   date: string;
 }
 
+/** One day of a leaflet's validity, for the week strip. */
+export interface DayView {
+  iso: IsoDate;
+  weekday: string; // "Do"
+  day: string; // "08"
+  past: boolean;
+  today: boolean;
+  closed: boolean;
+  /** Shortened/extended hours, e.g. "7–14". */
+  hours?: string;
+  sunday: boolean;
+}
+
 export interface LeafletView {
   leaflet: Leaflet;
   label: string; // "Diese Woche" / "Ab Donnerstag"
-  /** "Aktueller Extra-Prospekt seit" (running) or "Neuester Extra-Prospekt ab" (upcoming). */
+  /** "Aktuellster Extra-Prospekt" for the newest leaflet, "Laufender Extra-Prospekt" otherwise. */
   heading: string;
+  /** "Gültig von Do, 08.10. bis Mi, 14.10.2026" */
+  rangeText: string;
+  /** "startet in 2 Tagen" / "noch 3 Tage gültig" */
+  relative: string;
+  days: DayView[];
   range: string; // "08.10.–14.10.2026"
   /** Already valid today (otherwise it starts in the future). */
   running: boolean;
@@ -61,7 +88,33 @@ export interface SearchResult {
   nearest: Hit | null;
 }
 
-function viewLeaflet(store: Store, leaflet: Leaflet, today: IsoDate, data: ExtraData): LeafletView {
+const shortHour = (time: string) => time.replace(/^0/, "").replace(/:00$/, "");
+
+function dayViews(store: Store, leaflet: Leaflet, today: IsoDate): DayView[] {
+  const special = new Map(store.specialDays.map((d) => [d.date, d]));
+  return dateRange(leaflet.validFrom, leaflet.validTo).map((iso) => {
+    const sd = special.get(iso);
+    const view: DayView = {
+      iso,
+      weekday: weekdayShort(iso),
+      day: iso.slice(8, 10),
+      past: iso < today,
+      today: iso === today,
+      closed: sd?.closed === true,
+      sunday: new Date(`${iso}T00:00:00Z`).getUTCDay() === 0,
+    };
+    if (sd && !sd.closed) view.hours = `${shortHour(sd.open)}–${shortHour(sd.close)}`;
+    return view;
+  });
+}
+
+function viewLeaflet(
+  store: Store,
+  leaflet: Leaflet,
+  today: IsoDate,
+  data: ExtraData,
+  newest: boolean,
+): LeafletView {
   const start = leaflet.validFrom > today ? leaflet.validFrom : today;
   const days = new Set(dateRange(start, leaflet.validTo));
   const relevant = store.specialDays.filter((d) => days.has(d.date));
@@ -74,8 +127,13 @@ function viewLeaflet(store: Store, leaflet: Leaflet, today: IsoDate, data: Extra
   return {
     leaflet,
     label: leafletLabel(leaflet.validFrom, today),
-    heading:
-      leaflet.validFrom <= today ? "Aktueller Extra-Prospekt seit" : "Neuester Extra-Prospekt ab",
+    heading: newest ? "Aktuellster Extra-Prospekt" : "Laufender Extra-Prospekt",
+    // Non-breaking spaces keep "Do, 08.10." together; lines only break around "von"/"bis".
+    rangeText:
+      `Gültig von ${weekdayShort(leaflet.validFrom)},\u00a0${formatDay(leaflet.validFrom)} ` +
+      `bis ${weekdayShort(leaflet.validTo)},\u00a0${formatDate(leaflet.validTo)}`,
+    relative: relativeValidity(leaflet.validFrom, leaflet.validTo, today),
+    days: dayViews(store, leaflet, today),
     range: formatRange(leaflet.validFrom, leaflet.validTo),
     running: leaflet.validFrom <= today,
     from: { weekday: weekdayName(leaflet.validFrom), date: formatDate(leaflet.validFrom) },
@@ -97,7 +155,7 @@ export function describeStore(
   const leaflets = store.leaflets
     .filter((l) => l.validTo >= today && !(options.pdfOnly && l.pdfStoreMatch === false))
     .sort((a, b) => a.validFrom.localeCompare(b.validFrom))
-    .map((l) => viewLeaflet(store, l, today, data));
+    .map((l, i, all) => viewLeaflet(store, l, today, data, i === all.length - 1));
   if (leaflets.length === 0) return null;
   return {
     store,

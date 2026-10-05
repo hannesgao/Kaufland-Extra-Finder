@@ -66,15 +66,9 @@ describe("renderRow", () => {
     expect(row.querySelector(".row__plz")?.textContent).toBe("34125");
     expect(row.querySelector(".row__title")?.textContent).toBe("Kassel-Wesertor");
     expect(row.querySelector(".row__address")?.textContent).toBe("Franzgraben 40-42, 34125 Kassel");
-    const headings = [...row.querySelectorAll(".validity .validity__prefix")].map(
-      (c) => c.textContent,
-    );
-    expect(headings).toEqual([
-      "Aktueller Extra-Prospekt seit",
-      "bis",
-      "Neuester Extra-Prospekt ab",
-      "bis",
-    ]);
+    const titles = [...row.querySelectorAll(".lp-head__title")].map((t) => t.textContent);
+    expect(titles).toEqual(["Laufender Extra-Prospekt", "Aktuellster Extra-Prospekt"]);
+    expect(row.querySelectorAll(".week")).toHaveLength(2);
     // Same buttons as the cards: per leaflet, then the store page (no map in this tab).
     const links = [...row.querySelectorAll("a")].map((a) => a.textContent);
     expect(links).toEqual([
