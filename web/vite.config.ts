@@ -90,16 +90,35 @@ export function buildStamp(date: Date): string {
   return `${get("day")}.${get("month")}.${get("year")} ${get("hour")}:${get("minute")}`;
 }
 
-/** Fills %KEF_VERSION%, %KEF_BUILD_STAMP% and %KEF_BUILD_ISO% in the HTML pages. */
+/**
+ * The footer's date: the publish time of this version's GitHub Release when the deploy job passes
+ * it in `KEF_RELEASED_AT` (ISO 8601), otherwise the build time, labelled as such.
+ */
+export function footerStamp(
+  releasedAt: string | undefined,
+  now: Date,
+): { label: string; stamp: string; iso: string } {
+  const isoMinute = (date: Date) => date.toISOString().slice(0, 16).replace("T", " ");
+  if (releasedAt) {
+    const date = new Date(releasedAt);
+    if (Number.isNaN(date.getTime()))
+      throw new Error(`KEF_RELEASED_AT is not a date: ${releasedAt}`);
+    return { label: "Released", stamp: buildStamp(date), iso: isoMinute(date) };
+  }
+  return { label: "Build", stamp: buildStamp(now), iso: isoMinute(now) };
+}
+
+/** Fills %KEF_VERSION%, %KEF_STAMP_LABEL%, %KEF_STAMP% and %KEF_STAMP_ISO% in the HTML pages. */
 function buildInfo(): Plugin {
   const pkg = JSON.parse(readFileSync(resolve(import.meta.dirname, "package.json"), "utf-8")) as {
     version: string;
   };
-  const now = new Date();
+  const stamp = footerStamp(process.env.KEF_RELEASED_AT, new Date());
   const values: Record<string, string> = {
     KEF_VERSION: pkg.version,
-    KEF_BUILD_STAMP: buildStamp(now),
-    KEF_BUILD_ISO: now.toISOString().slice(0, 16).replace("T", " "),
+    KEF_STAMP_LABEL: stamp.label,
+    KEF_STAMP: stamp.stamp,
+    KEF_STAMP_ISO: stamp.iso,
   };
   return {
     name: "kef-build-info",

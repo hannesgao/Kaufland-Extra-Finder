@@ -166,7 +166,8 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 | Workflow | Trigger | What it does |
 |---|---|---|
 | `ci.yml` | pull requests, push to `main` | Scraper and scripts (ruff, mypy, pytest) and web (lint, typecheck, format, tests, build with the fixture). The job `ci` sums them up and is the required check for `main`. |
-| `scrape-and-deploy.yml` | schedule, manual, push to `main` | Scrapes all stores, commits the output to the `data` branch and deploys the site to GitHub Pages. On push to `main` it only redeploys with the current data. |
+| `scrape-and-deploy.yml` | schedule, manual, push to `main` | Scrapes all stores, commits the output to the `data` branch and deploys the site to GitHub Pages. On push to `main`, and when run manually with `mode=deploy`, it only redeploys with the current data. |
+| `release.yml` | GitHub Release published, manual | Checks that the release tag matches the versions of web and scraper, then starts a deploy-only run so the footer shows the release date. |
 
 **Schedule.** Mon–Wed 06:30 and Thu 05:30 Berlin time: next week's leaflets appear on Monday and
 become valid on Thursday. GitHub cron runs in UTC, so every time is listed twice (CEST and CET);
@@ -180,7 +181,8 @@ run's summary page. Without `extra.json` on the `data` branch, deploy is skipped
 Run a scrape and deploy by hand:
 
 ```sh
-gh workflow run scrape-and-deploy.yml
+gh workflow run scrape-and-deploy.yml                # scrape and deploy
+gh workflow run scrape-and-deploy.yml -f mode=deploy # only rebuild and deploy
 gh run watch
 ```
 
@@ -193,6 +195,23 @@ SHA pinning). uv is installed with `pip --require-hashes` from `.github/uv/requi
 Dependabot updates actions, uv, the scraper's and the web's dependencies weekly. Every job gets
 the minimal `permissions`: only the scrape job may push (to `data`), only the deploy job may
 deploy to Pages.
+
+## Releasing
+
+Every merge to `main` deploys; a release marks a version worth naming. The footer shows the
+version and when it was released (Berlin time): the deploy job looks up the GitHub Release
+`v<version>` and passes its publish time to the build (`KEF_RELEASED_AT`). A version without a
+release shows its build time instead ("Build: …").
+
+1. Open a pull request that sets the same `version` in `web/package.json` and
+   `scraper/pyproject.toml`, and merge it.
+2. Publish a GitHub Release with the tag `v<version>` on `main`, named
+   "Kaufland Extra Finder <version>", with notes (what changed, known limitations). Create the
+   tag on GitHub (web UI or `gh release create v<version> --target main`), not locally.
+3. Publishing runs `release.yml`: it fails if the tag does not match both versions, otherwise it
+   starts a deploy-only run of `scrape-and-deploy.yml` on `main` (the Pages environment only
+   deploys from `main`), and the footer switches to "Released: <date>". It can also be run by
+   hand for an existing tag.
 
 ## Data & attribution
 
