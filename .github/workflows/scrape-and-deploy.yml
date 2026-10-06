@@ -3,7 +3,8 @@ name: Scrape and deploy
 # Scrape: Mon–Wed 06:30 and Thu 05:30 Berlin time (next week's leaflets appear on Monday and
 # become valid on Thursday). Cron runs in UTC, so each time has a CEST and a CET entry; the gate
 # job keeps the one that matches Berlin's current offset.
-# Deploy: after every scrape, and on push to main (code changes, no scrape).
+# Deploy: after every scrape, on push to main (code changes, no scrape), and deploy-only when
+# release.yml starts it after a GitHub Release is published (footer shows the release date).
 on:
   schedule:
     - cron: "30 4 * * 1-3" # 06:30 CEST
@@ -11,6 +12,12 @@ on:
     - cron: "30 3 * * 4" # 05:30 CEST
     - cron: "30 4 * * 4" # 05:30 CET
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Scrape and deploy, or only rebuild and deploy with the current data
+        type: choice
+        options: [scrape-and-deploy, deploy]
+        default: scrape-and-deploy
   push:
     branches: [main]
 
@@ -29,15 +36,21 @@ jobs:
     permissions: {}
     outputs:
       scrape: ${{ steps.decide.outputs.scrape }}
+      deploy_only: ${{ steps.decide.outputs.deploy_only }}
     steps:
       - id: decide
         env:
           EVENT: ${{ github.event_name }}
           SCHEDULE: ${{ github.event.schedule }}
+          MODE: ${{ inputs.mode }}
         run: |
           scrape=false
+          deploy_only=false
           case "$EVENT" in
-            workflow_dispatch) scrape=true ;;
+            push) deploy_only=true ;;
+            workflow_dispatch)
+              if [ "$MODE" = deploy ]; then deploy_only=true; else scrape=true; fi
+              ;;
             schedule)
               offset=$(TZ=Europe/Berlin date +%z)
               case "$SCHEDULE" in
@@ -52,6 +65,7 @@ jobs:
               ;;
           esac
           echo "scrape=$scrape" >> "$GITHUB_OUTPUT"
+          echo "deploy_only=$deploy_only" >> "$GITHUB_OUTPUT"
 
   scrape:
     name: Scrape
@@ -103,10 +117,10 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: [gate, scrape]
-    # After a successful scrape, or on push to main (no scrape).
+    # After a successful scrape, or without one on push to main and deploy-only runs.
     if: >-
       !cancelled() && (needs.scrape.result == 'success' ||
-      (github.event_name == 'push' && needs.scrape.result == 'skipped'))
+      (needs.gate.outputs.deploy_only == 'true' && needs.scrape.result == 'skipped'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -134,6 +148,17 @@ jobs:
             echo "::notice::No extra.json on the data branch yet; nothing to deploy. Run this workflow manually to scrape first."
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
+      # The footer shows when this version was released; unreleased versions show the build time.
+      - name: Look up the release of this version
+        id: release
+        if: steps.data.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(jq -r .version web/package.json)"
+          published="$(gh release view "v$version" --repo "$GITHUB_REPOSITORY" --json publishedAt --jq '.publishedAt // ""' 2>/dev/null || true)"
+          echo "v$version released: ${published:-not yet}"
+          echo "published_at=$published" >> "$GITHUB_OUTPUT"
       # No dependency cache in the release build.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         if: steps.data.outputs.found == 'true'
@@ -145,6 +170,7 @@ jobs:
         working-directory: web
         env:
           KEF_EXTRA_JSON: ${{ github.workspace }}/data-branch/extra.json
+          KEF_RELEASED_AT: ${{ steps.release.outputs.published_at }}
         run: |
           npm ci
           npm run build

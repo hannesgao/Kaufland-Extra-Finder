@@ -1,0 +1,46 @@
+name: Release
+
+# Runs when a GitHub Release is published (or by hand for an existing tag): checks that the tag
+# matches the versions in web/package.json and scraper/pyproject.toml, then starts a deploy-only
+# run of scrape-and-deploy.yml on main, so the footer shows this release's date. (The Pages
+# environment only accepts deployments from main, not from a tag.)
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag, such as v0.1.0
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  release:
+    name: Check versions and redeploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read # checkout
+      actions: write # start the deploy-only run
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.TAG }}
+          persist-credentials: false
+      - name: Check that the tag matches both versions
+        run: |
+          web="$(jq -r .version web/package.json)"
+          scraper="$(sed -n 's/^version = "\(.*\)"$/\1/p' scraper/pyproject.toml)"
+          echo "tag $TAG, web $web, scraper $scraper"
+          if [ "$TAG" != "v$web" ] || [ "$TAG" != "v$scraper" ]; then
+            echo "::error::Tag $TAG does not match web/package.json ($web) and scraper/pyproject.toml ($scraper)"
+            exit 1
+          fi
+      - name: Redeploy from main with the release date
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run scrape-and-deploy.yml --repo "$GITHUB_REPOSITORY" --ref main -f mode=deploy
