@@ -34,6 +34,10 @@
   --caution: #7c5800;
   --caution-container: #ffdea3;
   --on-caution-container: #261900;
+  /* Warning yellow: store listed on kaufland.de but not named in the PDF */
+  --warning: #806a00;
+  --warning-container: #ffe76b;
+  --on-warning-container: #231b00;
   --md-shadow: 0 0 0;
 
   --map-marker: #006a60;
@@ -92,6 +96,9 @@
     --caution: #f9bc4a;
     --caution-container: #5d4200;
     --on-caution-container: #ffdea3;
+    --warning: #f2cc2e;
+    --warning-container: #534600;
+    --on-warning-container: #ffe76b;
 
     --map-marker: #82d5c8;
     --map-marker-closed: #6f7976;
@@ -677,6 +684,110 @@ a {
   color: var(--md-on-error-container);
 }
 
+/* "Woher stammen die Angaben?": collapsed explanation of the data source and the PDF check.
+   The flex row sits inside <summary> (a block), so the toggle stays right in every browser. */
+.source-note {
+  margin: 0 0 12px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--shape-lg);
+  background: var(--md-surface-container-lowest);
+}
+
+.source-note > summary {
+  display: block;
+  list-style: none;
+  border-radius: var(--shape-lg);
+  cursor: pointer;
+}
+
+.source-note > summary::-webkit-details-marker {
+  display: none;
+}
+
+.source-note > summary:focus-visible {
+  outline: 3px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+.source-note__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 12px 8px 16px;
+}
+
+.source-note__icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: var(--md-tertiary);
+}
+
+.source-note__title {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.source-note__toggle {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--shape-full);
+  background: var(--md-surface-container);
+  color: var(--md-on-surface-variant);
+}
+
+.source-note > summary:hover .source-note__toggle {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.source-note__toggle .icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 150ms ease;
+}
+
+.source-note[open] .source-note__toggle .icon {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .source-note__toggle .icon {
+    transition: none;
+  }
+}
+
+.source-note__body {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0 20px 16px 56px;
+  color: var(--md-on-surface-variant);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.source-note__body strong {
+  color: var(--md-on-surface);
+  font-weight: 600;
+}
+
+.source-note__body li::marker {
+  color: var(--md-tertiary);
+}
+
+@media (max-width: 479px) {
+  .source-note__body {
+    padding: 0 16px 16px 36px;
+  }
+}
+
 /* Status and data age: two boxes, same height; side by side on wide screens. */
 .status-bar {
   display: grid;
@@ -1248,15 +1359,81 @@ a {
   color: var(--md-primary);
 }
 
+.siblings__store {
+  flex: 1;
+  min-width: 0;
+}
+
 .siblings__name {
   display: block;
   font-weight: 500;
 }
 
-.siblings__place {
-  display: block;
+/* Store rows: icon | name + place | PDF label, the label aligned with the name line. */
+.siblings__item {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  row-gap: 0;
+  align-items: start;
+}
+
+.siblings__item > .icon {
+  margin-top: 1px; /* centred on the 20px name line */
+}
+
+/* Boxed PDF label: green = named in the PDF, yellow = PDF names another store, grey = not checked. */
+.siblings__pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px 1px 6px;
+  border: 1px solid transparent;
+  border-radius: var(--shape-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+
+.siblings__item .siblings__pdf .icon {
+  width: 14px;
+  height: 14px;
+  color: inherit;
+}
+
+.siblings__pdf.is-named {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+
+.siblings__pdf.is-not-named {
+  border-color: var(--warning);
+  background: var(--warning-container);
+  color: var(--on-warning-container);
+}
+
+.siblings__pdf.is-not-named .icon {
+  color: var(--warning);
+}
+
+.siblings__pdf.is-unchecked {
+  border-color: var(--md-outline-variant);
+  background: var(--md-surface-container);
   color: var(--md-on-surface-variant);
-  font-size: 0.8125rem;
+}
+
+/* Phones: the label goes under the store name. */
+@media (max-width: 479px) {
+  .siblings__item {
+    grid-template-columns: 18px minmax(0, 1fr);
+  }
+
+  .siblings__pdf {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 4px;
+    white-space: normal;
+  }
 }
 
 .siblings__more {
