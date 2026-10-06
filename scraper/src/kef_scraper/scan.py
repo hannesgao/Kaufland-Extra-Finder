@@ -57,7 +57,9 @@ def scan(
     )
 
 
-PDF_DELAY_S = 2.0  # between PDF downloads (~6 MB each); the CDN answers 503 when hurried
+PDF_DELAY_S = 5.0  # between PDF downloads (~6 MB each); the CDN answers 503 when hurried
+PDF_RETRY_PAUSE_S = 60.0  # before the second pass over PDFs whose download failed
+PDF_RETRY_DELAY_S = 15.0  # between downloads in the second pass (no 503 seen at this pace)
 
 
 def check_pdfs(
@@ -66,17 +68,38 @@ def check_pdfs(
     cache: dict[str, PdfCheck],
     *,
     delay: float = PDF_DELAY_S,
+    retry_pause: float = PDF_RETRY_PAUSE_S,
+    retry_delay: float = PDF_RETRY_DELAY_S,
 ) -> dict[str, PdfCheck]:
     """Read the store line of every Extra PDF not in `cache`, one download at a time.
 
-    Returns checks for all PDFs of this scan. Download errors are reported but not cached, so the
-    PDF is tried again on the next run.
+    Failed downloads get a second, slower pass after a pause. Returns checks for all PDFs of this
+    scan. Errors are reported but not cached, so the PDF is tried again on the next run.
     """
     pdfs = {lf.cluster: lf.pdf for r in result.extra for lf in r.leaflets}
     checks = {cluster: cache[cluster] for cluster in pdfs if cluster in cache}
     todo = sorted(set(pdfs) - set(checks))
     log.info("Checking %d new PDFs (%d cached) ...", len(todo), len(checks))
-    for i, cluster in enumerate(todo):
+    failed = _check_each(fetcher, pdfs, todo, checks, delay)
+    if failed:
+        log.info("Retrying %d failed PDFs in %.0f s ...", len(failed), retry_pause)
+        time.sleep(retry_pause)
+        failed = _check_each(fetcher, pdfs, failed, checks, retry_delay)
+    if failed:
+        log.warning("%d PDFs could not be downloaded; retried next run", len(failed))
+    return checks
+
+
+def _check_each(
+    fetcher: Fetcher,
+    pdfs: dict[str, str],
+    clusters: list[str],
+    checks: dict[str, PdfCheck],
+    delay: float,
+) -> list[str]:
+    """Check `clusters` one at a time into `checks`; returns those whose download failed."""
+    failed = []
+    for i, cluster in enumerate(clusters):
         if i:
             time.sleep(delay)
         try:
@@ -84,7 +107,8 @@ def check_pdfs(
         except FetchError as e:
             log.warning("PDF %s: %s", cluster, e)
             checks[cluster] = PdfCheck(store_line=None, error=str(e))
+            failed.append(cluster)
             continue
-        if checks[cluster].error:
+        if checks[cluster].error:  # unreadable PDF: a second download would not help
             log.warning("PDF %s: %s", cluster, checks[cluster].error)
-    return checks
+    return failed

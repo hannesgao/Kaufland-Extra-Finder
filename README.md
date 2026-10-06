@@ -82,11 +82,12 @@ Expired leaflets are not filtered by the scraper; consumers compare `valid_to` w
 
 Page 1 of every Extra PDF names the store(s) it is valid in ("NUR IN KARLSRUHE-OSTSTADT, IM DURLACH
 CENTER"; several stores are separated by "•"). Kaufland also serves such a PDF to neighbouring
-stores that the PDF does not name. The scraper downloads every **new** PDF once (2 s apart, ~6 MB
+stores that the PDF does not name. The scraper downloads every **new** PDF once (5 s apart, ~6 MB
 each), reads that block (`pypdf`) and sets `pdf_store` / `pdf_store_match` per leaflet. Results are
-cached per PDF in `pdf_checks.json` next to `extra.json`; failed downloads are retried on the next
-run and leave both fields out. `--skip-pdf-check` disables the downloads (cached results are still
-used). The footer code in the PDF ("1_D41-H_8530_TS") does not identify the store reliably.
+cached per PDF in `pdf_checks.json` next to `extra.json`. The PDF host answers 503 when hurried:
+failed downloads get a second pass in the same run (after 60 s, 15 s apart); what still fails is
+retried on the next run and leaves both fields out, which the web page shows as "PDF-Prüfung
+ausstehend". `--skip-pdf-check` disables the downloads (cached results are still used). The footer code in the PDF ("1_D41-H_8530_TS") does not identify the store reliably.
 
 ### Postcode coordinates (`web/public/plz.json`)
 
@@ -128,15 +129,23 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 - `data/extra.json` is served from `fixtures/extra.json` in development (a sample; dates are shifted
   by whole weeks so it always looks current). Production builds **require** `KEF_EXTRA_JSON`, so a
   fixture can never be deployed by accident; the deploy job passes the `data` branch's file.
-- The page makes no third-party request until the first search; then the Leaflet chunk is loaded
-  and map tiles come from `tile.openstreetmap.org`. No cookies, no storage, no external fonts.
-- Search state lives in the URL (`?plz=76137&r=50`); geolocation results never put coordinates
-  into the URL.
+- On page load the default PLZ 76131 (25 km) is searched, so the map and the store cards show
+  right away. Map tiles therefore come from `tile.openstreetmap.org` on every visit of the search
+  tab (the *Alle Extra-Filialen* tab loads no map). No cookies, no storage, no external fonts.
+- Two tabs: *Umkreissuche* (radius search with map) and *Alle Extra-Filialen* (all stores with a
+  current or upcoming Extra leaflet, sortable by PLZ). State lives in the URL
+  (`?plz=76137&r=50&tab=all&sort=plz-desc`); geolocation results never put coordinates into it.
+- The footer is one shared partial (`partials/footer.html`) included into every page at build time.
 - XSS: all data is rendered through `h()` (`src/dom.ts`), which only creates text nodes and refuses
   `on*` attributes and non-http(s) URLs; ESLint forbids `innerHTML` & co. Leaflet tooltips get DOM
   nodes, not strings. A CSP meta tag (production build) allows only same-origin resources plus OSM
   tiles.
 - `impressum.html` and `datenschutz.html` are placeholders to be filled in by the site owner.
+- Look and feel follow Material Design 3 (hand-written CSS with M3 colour roles, shape, elevation
+  and state layers; no component library). Icons are Material Symbols path data built with
+  `createElementNS` (`src/icons.ts`).
+- `fixtures/extra.json` is real scraper output for 6 stores; edge cases (two validity periods,
+  closure days) are derived from it in the tests.
 
 ## Data & attribution
 
@@ -148,6 +157,8 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   coordinate per PLZ (median of all places), rounded to 4 decimals. The derived file is likewise
   available under CC BY 4.0, not under this repository's MIT license.
 - Map tiles: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
+- Icons: [Material Symbols](https://github.com/google/material-design-icons) by Google,
+  [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ## License
 

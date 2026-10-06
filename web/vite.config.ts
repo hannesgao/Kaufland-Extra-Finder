@@ -64,6 +64,50 @@ export function shiftedFixture(now: Date): string {
   return text.replace(/\b(\d{4}-\d{2}-\d{2})(?=[T"])/g, (iso) => shift(iso));
 }
 
+/** Replaces `<!-- include:name -->` with `partials/name.html`, so all pages share one footer. */
+function partials(): Plugin {
+  return {
+    name: "kef-partials",
+    transformIndexHtml: (html) =>
+      html.replace(/<!-- include:([a-z-]+) -->/g, (_match, name: string) =>
+        readFileSync(resolve(import.meta.dirname, "partials", `${name}.html`), "utf-8"),
+      ),
+  };
+}
+
+/** "05.10.2026 22:50" in Berlin time, like the author's other projects. */
+export function buildStamp(date: Date): string {
+  const parts = new Intl.DateTimeFormat("de-DE", {
+    timeZone: "Europe/Berlin",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  return `${get("day")}.${get("month")}.${get("year")} ${get("hour")}:${get("minute")}`;
+}
+
+/** Fills %KEF_VERSION%, %KEF_BUILD_STAMP% and %KEF_BUILD_ISO% in the HTML pages. */
+function buildInfo(): Plugin {
+  const pkg = JSON.parse(readFileSync(resolve(import.meta.dirname, "package.json"), "utf-8")) as {
+    version: string;
+  };
+  const now = new Date();
+  const values: Record<string, string> = {
+    KEF_VERSION: pkg.version,
+    KEF_BUILD_STAMP: buildStamp(now),
+    KEF_BUILD_ISO: now.toISOString().slice(0, 16).replace("T", " "),
+  };
+  return {
+    name: "kef-build-info",
+    transformIndexHtml: (html) =>
+      html.replace(/%(KEF_[A-Z_]+)%/g, (match, key: string) => values[key] ?? match),
+  };
+}
+
 function contentSecurityPolicy(): Plugin {
   return {
     name: "kef-csp",
@@ -80,7 +124,7 @@ function contentSecurityPolicy(): Plugin {
 
 export default defineConfig({
   base: BASE,
-  plugins: [extraJson(), contentSecurityPolicy()],
+  plugins: [extraJson(), partials(), buildInfo(), contentSecurityPolicy()],
   build: {
     rolldownOptions: {
       input: {

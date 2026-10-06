@@ -1,27 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-06T06:31:12+02:00",
+  "generated_at": "2026-10-05T23:46:36+02:00",
   "store_count": 788,
   "failed_count": 0,
   "stores": [
-    {
-      "id": "DE4233",
-      "name": "Ettlingen",
-      "plz": "76275",
-      "city": "Ettlingen",
-      "street": "Zehntwiesenstraße 47",
-      "lat": 48.945798,
-      "lng": 8.389512,
-      "leaflets": [
-        {
-          "valid_from": "2026-10-08",
-          "valid_to": "2026-10-14",
-          "cluster": "00000000-0000-4000-8000-00000000000a",
-          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4233_D41-H/ar/4233",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/00000000-0000-4000-8000-00000000000a/Extra-Angebote-sample.pdf"
-        }
-      ]
-    },
     {
       "id": "DE4313",
       "name": "Göttingen-Grone",
@@ -30,13 +12,16 @@
       "street": "Am Kauf Park 2",
       "lat": 51.5280807,
       "lng": 9.8828881,
+      "url": "https://filiale.kaufland.de/service/filiale/goettingen-grone-4313.html",
       "leaflets": [
         {
           "valid_from": "2026-10-08",
           "valid_to": "2026-10-14",
-          "cluster": "00000000-0000-4000-8000-00000000000d",
+          "cluster": "01a0e6b0-9528-7e77-9edf-c7c4f8775c36",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4313_D41-H/ar/4313",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/00000000-0000-4000-8000-00000000000d/Extra-Angebote-sample.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-9528-7e77-9edf-c7c4f8775c36/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "GÖ-WESTSTADT, ELLIEHÄUSER WEG 23 • GÖ-GRONE, IM KAUF PARK • GÖ-WEENDE, GROSSE BREITE 6",
+          "pdf_store_match": true
         }
       ]
     },
@@ -48,13 +33,16 @@
       "street": "Durlacher Allee 111",
       "lat": 49.0039646,
       "lng": 8.4493277,
+      "url": "https://filiale.kaufland.de/service/filiale/karlsruhe-oststadt-4443.html",
       "leaflets": [
         {
           "valid_from": "2026-10-08",
           "valid_to": "2026-10-14",
-          "cluster": "00000000-0000-4000-8000-00000000000a",
+          "cluster": "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4443_D41-H/ar/4443",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/00000000-0000-4000-8000-00000000000a/Extra-Angebote-sample.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+          "pdf_store_match": true
         }
       ]
     },
@@ -66,38 +54,58 @@
       "street": "Franzgraben 40-42",
       "lat": 51.321132,
       "lng": 9.517428,
+      "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html",
       "leaflets": [
-        {
-          "valid_from": "2026-10-01",
-          "valid_to": "2026-10-07",
-          "cluster": "00000000-0000-4000-8000-00000000000c",
-          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4453_D41-H/ar/4453",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/00000000-0000-4000-8000-00000000000c/Extra-Angebote-sample.pdf"
-        },
         {
           "valid_from": "2026-10-08",
           "valid_to": "2026-10-14",
-          "cluster": "00000000-0000-4000-8000-00000000000d",
+          "cluster": "01a0e6b0-7f24-7ff4-89fd-aa2e11127632",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4453_D41-H/ar/4453",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/00000000-0000-4000-8000-00000000000d/Extra-Angebote-sample.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7f24-7ff4-89fd-aa2e11127632/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KASSEL-WESERTOR, FRANZGRABEN 40-42",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4733",
+      "name": "Rastatt",
+      "plz": "76437",
+      "city": "Rastatt",
+      "street": "Rauentaler Straße 65",
+      "lat": 48.860253,
+      "lng": 8.2352115,
+      "url": "https://filiale.kaufland.de/service/filiale/rastatt-4733.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-10-08",
+          "valid_to": "2026-10-14",
+          "cluster": "01a0e6b0-44df-7773-b9d3-a22ae9e28c58",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4733_D41-H/ar/4733",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-44df-7773-b9d3-a22ae9e28c58/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "RASTATT, RAUENTALER STRASSE 65",
+          "pdf_store_match": true
         }
       ]
     },
     {
       "id": "DE5443",
-      "name": "Karlsruhe-Beiertheim-Bulach",
+      "name": "Karlsruhe-Beiertheim-Bulac",
       "plz": "76135",
       "city": "Karlsruhe",
       "street": "Ortenbergstraße 8",
       "lat": 48.9915525,
       "lng": 8.3762258,
+      "url": "https://filiale.kaufland.de/service/filiale/karlsruhe-beiertheim-bulac-5443.html",
       "leaflets": [
         {
           "valid_from": "2026-10-08",
           "valid_to": "2026-10-14",
-          "cluster": "00000000-0000-4000-8000-00000000000a",
+          "cluster": "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_5443_D41-H/ar/5443",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/00000000-0000-4000-8000-00000000000a/Extra-Angebote-sample.pdf"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+          "pdf_store_match": false
         }
       ]
     },
@@ -109,32 +117,24 @@
       "street": "Carl-Metz-Straße 7",
       "lat": 49.0101522,
       "lng": 8.3525396,
+      "url": "https://filiale.kaufland.de/service/filiale/karlsruhe-gruenwinkel-8530.html",
       "leaflets": [
         {
           "valid_from": "2026-10-08",
           "valid_to": "2026-10-14",
-          "cluster": "00000000-0000-4000-8000-00000000000b",
+          "cluster": "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_8530_D41-H/ar/8530",
-          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/00000000-0000-4000-8000-00000000000b/Extra-Angebote-sample.pdf"
-        }
-      ],
-      "special_days": [
-        {
-          "date": "2026-10-09",
-          "closed": true
-        },
-        {
-          "date": "2026-10-10",
-          "open": "07:00",
-          "close": "14:00"
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+          "pdf_store_match": false
         }
       ]
     }
   ],
   "clusters": {
-    "00000000-0000-4000-8000-00000000000a": ["DE4233", "DE4443", "DE5443"],
-    "00000000-0000-4000-8000-00000000000b": ["DE8530"],
-    "00000000-0000-4000-8000-00000000000c": ["DE4453"],
-    "00000000-0000-4000-8000-00000000000d": ["DE4313", "DE4453"]
+    "01a0e6b0-44df-7773-b9d3-a22ae9e28c58": ["DE4733"],
+    "01a0e6b0-7f24-7ff4-89fd-aa2e11127632": ["DE4453"],
+    "01a0e6b0-9528-7e77-9edf-c7c4f8775c36": ["DE4313"],
+    "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8": ["DE4443", "DE5443", "DE8530"]
   }
 }

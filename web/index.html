@@ -13,80 +13,204 @@
   </head>
   <body>
     <a class="skip-link" href="#results">Zu den Ergebnissen springen</a>
-    <header class="site-header">
+
+    <header class="app-bar">
+      <div class="wrap app-bar__inner">
+        <span class="app-bar__mark" data-icon="location_on"></span>
+        <div class="app-bar__text">
+          <h1 class="app-bar__title">Kaufland Extra Finder</h1>
+          <p class="app-bar__subtitle">
+            Filialen mit <strong>Extra-Angebote</strong>-Prospekt in der Nähe · inoffiziell
+          </p>
+        </div>
+        <nav class="app-bar__actions" aria-label="Projekt">
+          <a
+            class="btn btn--sm btn--sponsor"
+            href="https://github.com/sponsors/hannesgao"
+            title="Das Projekt über GitHub Sponsors unterstützen"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span data-icon="favorite"></span><span class="btn__label">Unterstützen</span></a
+          >
+        </nav>
+      </div>
       <div class="wrap">
-        <h1>Kaufland Extra Finder</h1>
-        <p class="lead">
-          Kaufland-Filialen in der Nähe finden, die gerade einen
-          <strong>Extra-Angebote</strong>-Prospekt haben. Inoffiziell.
-        </p>
+        <div class="tabs" id="tabs" role="tablist" aria-label="Ansicht">
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            id="tab-search"
+            data-tab="search"
+            aria-controls="panel-search"
+            aria-selected="true"
+          >
+            <span data-icon="near_me"></span>Umkreissuche
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            id="tab-all"
+            data-tab="all"
+            aria-controls="panel-all"
+            aria-selected="false"
+            tabindex="-1"
+          >
+            <span data-icon="format_list_bulleted"></span>Alle Extra-Filialen
+          </button>
+        </div>
       </div>
     </header>
 
     <main class="wrap">
-      <form id="search-form" class="search" novalidate>
-        <div class="field">
-          <label for="plz">Postleitzahl</label>
-          <div class="field__row">
-            <input
-              id="plz"
-              name="plz"
-              type="text"
-              inputmode="numeric"
-              autocomplete="postal-code"
-              pattern="[0-9]{5}"
-              maxlength="5"
-              required
-              aria-describedby="plz-hint plz-error"
-            />
-            <button type="submit" class="button">Suchen</button>
+      <div id="panel-search" role="tabpanel" aria-labelledby="tab-search">
+        <section class="card search-card" aria-label="Suche">
+          <form id="search-form" novalidate>
+            <div class="search-row">
+              <div class="search-row__field">
+                <div class="text-field">
+                  <input
+                    id="plz"
+                    name="plz"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="postal-code"
+                    pattern="[0-9]{5}"
+                    maxlength="5"
+                    placeholder=" "
+                    required
+                    aria-describedby="plz-hint plz-error"
+                  />
+                  <label for="plz">Postleitzahl</label>
+                </div>
+                <p id="plz-hint" class="supporting-text">5-stellig, z. B. 76137</p>
+                <p id="plz-error" class="supporting-text supporting-text--error" hidden></p>
+              </div>
+              <div class="search-row__buttons">
+                <button type="submit" class="btn btn--filled">
+                  <span data-icon="search"></span>Suchen
+                </button>
+                <button type="button" id="locate" class="btn btn--tonal">
+                  <span data-icon="my_location"></span>Meinen Standort verwenden
+                </button>
+              </div>
+            </div>
+
+            <div class="search-options">
+              <fieldset class="outlined segmented">
+                <legend class="outlined__label">Umkreis</legend>
+                <div class="segmented__group">
+                  <label class="segment">
+                    <input type="radio" name="radius" value="10" />
+                    <span class="segment__check" data-icon="check"></span>10 km
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="radius" value="25" checked />
+                    <span class="segment__check" data-icon="check"></span>25 km
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="radius" value="50" />
+                    <span class="segment__check" data-icon="check"></span>50 km
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="radius" value="100" />
+                    <span class="segment__check" data-icon="check"></span>100 km
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="outlined switch-field">
+                <legend class="outlined__label">PDF-Prüfung</legend>
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    role="switch"
+                    class="switch__input"
+                    id="pdf-only-search"
+                    checked
+                  />
+                  <span class="switch__label">Nur laut PDF gültige Filialen</span>
+                  <span class="switch__track" aria-hidden="true"
+                    ><span class="switch__thumb"></span
+                  ></span>
+                </label>
+              </fieldset>
+            </div>
+          </form>
+        </section>
+
+        <div class="status-bar">
+          <div class="banner" id="status-box">
+            <span class="banner__icon" data-icon="search"></span>
+            <p id="status" role="status" aria-live="polite">Daten werden geladen …</p>
           </div>
-          <p id="plz-hint" class="hint">5-stellig, z. B. 76137</p>
-          <p id="plz-error" class="error" hidden></p>
+          <div class="banner" id="data-age-box">
+            <span class="banner__icon" data-icon="schedule"></span>
+            <p id="data-age">Wird geladen …</p>
+          </div>
         </div>
 
-        <button type="button" id="locate" class="button button--secondary">
-          Meinen Standort verwenden
-        </button>
+        <section id="results" class="results" aria-label="Ergebnisse" tabindex="-1">
+          <div id="map" class="map" role="region" aria-label="Karte der Filialen" hidden></div>
+          <ol id="list" class="list"></ol>
+        </section>
+      </div>
 
-        <fieldset class="radius">
-          <legend>Umkreis</legend>
-          <label><input type="radio" name="radius" value="10" /> 10 km</label>
-          <label><input type="radio" name="radius" value="25" checked /> 25 km</label>
-          <label><input type="radio" name="radius" value="50" /> 50 km</label>
-          <label><input type="radio" name="radius" value="100" /> 100 km</label>
-        </fieldset>
-      </form>
+      <div id="panel-all" role="tabpanel" aria-labelledby="tab-all" hidden>
+        <section class="card search-card" aria-labelledby="all-title">
+          <h2 id="all-title" class="visually-hidden">Alle Extra-Filialen</h2>
+          <div class="search-options search-options--first">
+            <fieldset class="outlined segmented segmented--inline">
+              <legend class="outlined__label">Sortierung</legend>
+              <div class="segmented__group" id="sort">
+                <label class="segment">
+                  <input type="radio" name="sort" value="plz-asc" checked />
+                  <span class="segment__check" data-icon="check"></span>
+                  <span data-icon="arrow_upward"></span>PLZ aufsteigend
+                </label>
+                <label class="segment">
+                  <input type="radio" name="sort" value="plz-desc" />
+                  <span class="segment__check" data-icon="check"></span>
+                  <span data-icon="arrow_downward"></span>PLZ absteigend
+                </label>
+              </div>
+            </fieldset>
+            <fieldset class="outlined switch-field">
+              <legend class="outlined__label">PDF-Prüfung</legend>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  role="switch"
+                  class="switch__input"
+                  id="pdf-only-all"
+                  checked
+                />
+                <span class="switch__label">Nur laut PDF gültige Filialen</span>
+                <span class="switch__track" aria-hidden="true"
+                  ><span class="switch__thumb"></span
+                ></span>
+              </label>
+            </fieldset>
+          </div>
+        </section>
 
-      <p id="status" class="status" role="status" aria-live="polite">Daten werden geladen …</p>
-      <p id="data-age" class="data-age"></p>
+        <div class="status-bar">
+          <div class="banner" id="all-status-box">
+            <span class="banner__icon" data-icon="format_list_bulleted"></span>
+            <p id="all-meta" role="status" aria-live="polite">Daten werden geladen …</p>
+          </div>
+          <div class="banner" id="all-age-box">
+            <span class="banner__icon" data-icon="schedule"></span>
+            <p id="all-age">Wird geladen …</p>
+          </div>
+        </div>
 
-      <section id="results" class="results" aria-label="Ergebnisse" tabindex="-1">
-        <div id="map" class="map" role="region" aria-label="Karte der Filialen" hidden></div>
-        <ol id="list" class="list"></ol>
-      </section>
+        <ol id="all-list" class="list" aria-label="Liste der Extra-Filialen"></ol>
+      </div>
     </main>
 
-    <footer class="site-footer">
-      <div class="wrap">
-        <p>
-          <strong>Inoffizielles Projekt.</strong> Nicht mit Kaufland verbunden. Alle Angaben ohne
-          Gewähr – maßgeblich ist der Prospekt der jeweiligen Filiale.
-        </p>
-        <p>
-          Filial- und Prospektdaten: Kaufland (öffentliche Webseiten). Karte: ©
-          <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende.
-          PLZ-Koordinaten: <a href="https://www.geonames.org/">GeoNames</a>,
-          <a href="https://creativecommons.org/licenses/by/4.0/deed.de">CC BY 4.0</a>
-          (je PLZ zusammengefasst).
-        </p>
-        <nav aria-label="Rechtliches">
-          <a href="impressum.html">Impressum</a>
-          <a href="datenschutz.html">Datenschutz</a>
-          <a href="https://github.com/hannesgao/Kaufland-Extra-Finder">Quellcode</a>
-        </nav>
-      </div>
-    </footer>
+    <!-- include:footer -->
 
     <script type="module" src="/src/main.ts"></script>
   </body>

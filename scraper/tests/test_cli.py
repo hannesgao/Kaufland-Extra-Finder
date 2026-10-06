@@ -20,8 +20,21 @@ MONDAY = dt.datetime(2026, 10, 5, 6, 30, tzinfo=ZoneInfo("Europe/Berlin"))
 TUESDAY = MONDAY + dt.timedelta(days=1)
 
 
+NO_PDF_PAUSES = ("--pdf-delay", "0", "--pdf-retry-pause", "0", "--pdf-retry-delay", "0")
+
+
+class FlakyPdfFetcher(FakeFetcher):
+    """Answers the first download of every PDF with a 503, like the CDN when hurried."""
+
+    def pdf(self, url: str) -> bytes:
+        if url not in self.pdf_requests:
+            self.pdf_requests.append(url)
+            raise FetchError("HTTP 503")
+        return super().pdf(url)
+
+
 def _run(fetcher: FakeFetcher, out: Path, *extra_args: str, now: dt.datetime = MONDAY) -> int:
-    args = ["--out", str(out), "--delay", "0", "--pdf-delay", "0", *extra_args]
+    args = ["--out", str(out), "--delay", "0", *NO_PDF_PAUSES, *extra_args]
     return main(args, fetcher=fetcher, now=now)
 
 
@@ -186,11 +199,34 @@ def test_pdf_failures_do_not_fail_the_scan(tmp_path: Path, pages: dict[str, str]
     out = tmp_path / "data"
     fetcher = FakeFetcher(store_list_sample(), pages, pdfs=pdfs)
     assert _run(fetcher, out, "--stores", "DE4453,DE8530") == EXIT_OK
+    # The failed download is tried twice; the unreadable PDF is not downloaded again.
+    assert sorted(fetcher.pdf_requests) == sorted([DE4453_PDF, DE4453_PDF, DE8530_PDF])
     for store_id in ("DE4453", "DE8530"):
         assert "pdf_store" not in _leaflet(out, store_id)
         assert "pdf_store_match" not in _leaflet(out, store_id)
     cache = json.loads((out / "pdf_checks.json").read_text())
     assert cache == {"parser": PARSER_VERSION, "checks": {}}  # retried next run
+
+
+def test_failed_pdf_downloads_get_a_second_slower_pass(
+    tmp_path: Path, pages: dict[str, str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    sleeps: list[float] = []
+    monkeypatch.setattr("kef_scraper.scan.time.sleep", sleeps.append)
+    pdfs: dict[str, bytes | Exception] = {
+        DE4453_PDF: make_pdf(["NUR IN KASSEL-WESERTOR, FRANZGRABEN 40-42"]),
+        DE8530_PDF: make_pdf(["NUR IN KARLSRUHE-OSTSTADT, IM DURLACH CENTER"]),
+    }
+    fetcher = FlakyPdfFetcher(store_list_sample(), pages, pdfs=pdfs)
+    out = tmp_path / "data"
+    args = ["--out", str(out), "--delay", "0", "--stores", "DE4453,DE8530"]
+    pauses = ["--pdf-delay", "5", "--pdf-retry-pause", "60", "--pdf-retry-delay", "15"]
+    assert main([*args, *pauses], fetcher=fetcher, now=MONDAY) == EXIT_OK
+    assert sorted(fetcher.pdf_requests) == sorted([DE4453_PDF, DE8530_PDF] * 2)
+    assert sleeps == [5.0, 60.0, 15.0]  # first pass, pause, second pass
+    assert _leaflet(out, "DE4453")["pdf_store_match"] is True
+    assert _leaflet(out, "DE8530")["pdf_store_match"] is False
+    assert len(json.loads((out / "pdf_checks.json").read_text())["checks"]) == 2
 
 
 def test_cache_from_an_older_parser_is_ignored(tmp_path: Path, pages: dict[str, str]) -> None:

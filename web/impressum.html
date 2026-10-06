@@ -9,16 +9,134 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
-    <header class="site-header">
-      <div class="wrap">
-        <p class="site-header__back"><a href="./">← Zurück zur Suche</a></p>
-        <h1>Impressum</h1>
+    <header class="app-bar">
+      <div class="wrap app-bar__inner">
+        <span class="app-bar__mark" data-icon="location_on"></span>
+        <div class="app-bar__text">
+          <h1 class="app-bar__title">Impressum</h1>
+          <p class="app-bar__subtitle">Kaufland Extra Finder · privates Open-Source-Projekt</p>
+        </div>
+        <nav class="app-bar__actions" aria-label="Seite">
+          <a
+            class="btn btn--sm btn--sponsor"
+            href="https://github.com/sponsors/hannesgao"
+            title="Das Projekt über GitHub Sponsors unterstützen"
+            target="_blank"
+            rel="noopener noreferrer"
+            ><span data-icon="favorite"></span><span class="btn__label">Unterstützen</span></a
+          >
+          <a class="btn btn--sm btn--filled" href="./" target="_blank" rel="noopener noreferrer"
+            ><span data-icon="search"></span>Zurück zur Suche</a
+          >
+        </nav>
       </div>
     </header>
-    <main class="wrap prose">
-      <!-- Placeholder: the content of this page is written by the site owner. -->
-      <p>Dieser Text wird noch ergänzt.</p>
+
+    <main class="wrap legal">
+      <div class="legal__pair">
+        <section class="legal-card" aria-labelledby="anbieter">
+          <h2 class="legal-card__title" id="anbieter"><span data-icon="person"></span>Anbieter</h2>
+          <address class="legal-card__address">
+            Hannes Gao<br />
+            Striederstr. 23<br />
+            76131 Karlsruhe<br />
+            Deutschland
+          </address>
+        </section>
+
+        <section class="legal-card" aria-labelledby="kontakt">
+          <h2 class="legal-card__title" id="kontakt"><span data-icon="mail"></span>Kontakt</h2>
+          <dl class="legal-card__facts">
+            <dt>E-Mail</dt>
+            <dd><a href="mailto:me@hannesgao.de">me@hannesgao.de</a></dd>
+            <dt>Fehler und Vorschläge</dt>
+            <dd>
+              <a
+                href="https://github.com/hannesgao/Kaufland-Extra-Finder/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub-Issues</a
+              >
+            </dd>
+          </dl>
+        </section>
+      </div>
+
+      <section class="legal-card" aria-labelledby="projekt">
+        <h2 class="legal-card__title" id="projekt">
+          <span data-icon="info"></span>Über dieses Projekt
+        </h2>
+        <p>
+          Kaufland Extra Finder ist ein privates, nicht-kommerzielles Open-Source-Projekt. Es gibt
+          keine Werbung, keine Bezahlinhalte und keine Benutzerkonten; der gesamte Quellcode ist
+          öffentlich auf
+          <a
+            href="https://github.com/hannesgao/Kaufland-Extra-Finder"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub</a
+          >
+          einsehbar.
+        </p>
+        <p>
+          Wer das Projekt unterstützen möchte, kann das freiwillig über
+          <a href="https://github.com/sponsors/hannesgao" target="_blank" rel="noopener noreferrer"
+            >GitHub Sponsors</a
+          >
+          tun. Eine Unterstützung ist keine Gegenleistung für Inhalte oder Funktionen; die Website
+          bleibt für alle gleich und kostenlos.
+        </p>
+        <p>
+          Das Projekt steht in keiner Verbindung zu Kaufland oder zu anderen Unternehmen der Schwarz
+          Gruppe und wird von diesen weder unterstützt noch geprüft. „Kaufland“ ist eine Marke ihrer
+          jeweiligen Inhaberin.
+        </p>
+      </section>
+
+      <section class="legal-card" aria-labelledby="inhalte">
+        <h2 class="legal-card__title" id="inhalte">
+          <span data-icon="fact_check"></span>Haftung für Inhalte
+        </h2>
+        <p>
+          Die angezeigten Filial- und Prospektdaten werden automatisch von öffentlich zugänglichen
+          Webseiten von Kaufland gelesen und mehrmals pro Woche aktualisiert. Sie können
+          unvollständig, veraltet oder fehlerhaft sein. Alle Angaben erfolgen ohne Gewähr;
+          maßgeblich ist ausschließlich der Prospekt der jeweiligen Filiale.
+        </p>
+      </section>
+
+      <section class="legal-card" aria-labelledby="links">
+        <h2 class="legal-card__title" id="links">
+          <span data-icon="link"></span>Haftung für Links
+        </h2>
+        <p>
+          Diese Website verlinkt auf Webseiten Dritter, insbesondere auf Prospekte und Filialseiten
+          von Kaufland. Auf deren Inhalte habe ich keinen Einfluss; für sie ist der jeweilige
+          Anbieter verantwortlich. Bei Bekanntwerden von Rechtsverletzungen entferne ich
+          entsprechende Links umgehend.
+        </p>
+      </section>
+
+      <section class="legal-card" aria-labelledby="lizenzen">
+        <h2 class="legal-card__title" id="lizenzen">
+          <span data-icon="copyright"></span>Urheberrecht und Lizenzen
+        </h2>
+        <p>
+          Der Quellcode dieser Website steht unter der
+          <a
+            href="https://github.com/hannesgao/Kaufland-Extra-Finder/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener noreferrer"
+            >MIT-Lizenz</a
+          >. Prospekte, Filialdaten und Marken gehören Kaufland; diese Website verlinkt nur auf sie
+          und stellt keine Prospekte bereit. Kartendaten © OpenStreetMap-Mitwirkende (ODbL),
+          PLZ-Koordinaten von GeoNames (CC BY 4.0), Icons: Material Symbols von Google (Apache 2.0).
+        </p>
+      </section>
     </main>
+
+    <!-- include:footer -->
+
     <script type="module" src="/src/page.ts"></script>
   </body>
 </html>

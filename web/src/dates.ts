@@ -38,6 +38,19 @@ export function daysBetween(from: IsoDate, to: IsoDate): number {
   return Math.round((utc(to) - utc(from)) / DAY_MS);
 }
 
+/** Monday of the ISO week that contains `iso`. */
+export function mondayOf(iso: IsoDate): IsoDate {
+  const weekday = (new Date(utc(iso)).getUTCDay() + 6) % 7; // Monday = 0
+  return addDays(iso, -weekday);
+}
+
+/** ISO 8601 week number ("KW"), e.g. 41 for 2026-10-06. */
+export function isoWeek(iso: IsoDate): number {
+  const thursday = addDays(mondayOf(iso), 3); // the week belongs to the year of its Thursday
+  const jan1 = `${thursday.slice(0, 4)}-01-01`;
+  return Math.floor(daysBetween(jan1, thursday) / 7) + 1;
+}
+
 /** Inclusive list of dates from `from` to `to`. */
 export function dateRange(from: IsoDate, to: IsoDate): IsoDate[] {
   const out: IsoDate[] = [];
@@ -48,6 +61,23 @@ export function dateRange(from: IsoDate, to: IsoDate): IsoDate[] {
 /** "08.10." */
 export function formatDay(iso: IsoDate): string {
   return `${iso.slice(8, 10)}.${iso.slice(5, 7)}.`;
+}
+
+/** "Donnerstag" */
+export function weekdayName(iso: IsoDate): string {
+  return weekdayFormat.format(new Date(utc(iso)));
+}
+
+const weekdayShortFormat = new Intl.DateTimeFormat("de-DE", { weekday: "short", timeZone: "UTC" });
+
+/** "Do" */
+export function weekdayShort(iso: IsoDate): string {
+  return weekdayShortFormat.format(new Date(utc(iso))).replace(/\.$/, "");
+}
+
+/** "08.10.2026" */
+export function formatDate(iso: IsoDate): string {
+  return `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 }
 
 /** "08.10.–14.10.2026" */
@@ -64,9 +94,20 @@ export function formatStamp(date: Date): string {
 export function leafletLabel(validFrom: IsoDate, today: IsoDate): string {
   if (validFrom <= today) return "Diese Woche";
   if (daysBetween(today, validFrom) <= 6) {
-    return `Ab ${weekdayFormat.format(new Date(utc(validFrom)))}`;
+    return `Ab ${weekdayName(validFrom)}`;
   }
   return `Ab ${formatDay(validFrom)}`;
+}
+
+/** "startet morgen", "startet in 2 Tagen", "noch 3 Tage gültig", "letzter Tag heute" */
+export function relativeValidity(validFrom: IsoDate, validTo: IsoDate, today: IsoDate): string {
+  if (validFrom > today) {
+    const days = daysBetween(today, validFrom);
+    return days === 1 ? "startet morgen" : `startet in ${String(days)} Tagen`;
+  }
+  const left = daysBetween(today, validTo) + 1; // including today
+  if (left <= 1) return "letzter Tag heute";
+  return left === 2 ? "noch bis morgen gültig" : `noch ${String(left)} Tage gültig`;
 }
 
 export const STALE_AFTER_DAYS = 4;
