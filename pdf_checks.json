@@ -1,0 +1,140 @@
+{
+  "parser": 2,
+  "checks": {
+    "01a0e6b0-35c0-7f02-bfe8-c44848301527": {
+      "store_line": "PADERBORN, IM SÜDRING-CENTER, HUSENER STRASSE 121"
+    },
+    "01a0e6b0-3882-7f78-976e-9736a56af957": {
+      "store_line": "SOEST, SENATOR-SCHWARTZ-RING 24"
+    },
+    "01a0e6b0-3b1b-7af1-a3c5-c93181048ba7": {
+      "store_line": "MAINZ-BRETZENHEIM, IM GUTENBERG-CENTER"
+    },
+    "01a0e6b0-3ddd-77ca-88e8-df982eae6494": {
+      "store_line": "MG-EICKEN, KREFELDER STR. 131 • MG, REYERHÜTTE 1"
+    },
+    "01a0e6b0-4058-7500-a69d-ca3823ba682f": {
+      "store_line": "LANGENFELD/RHEINLAND, RHEINDORFER STR. 48-56"
+    },
+    "01a0e6b0-42ac-75b6-a903-069e6ef1423e": {
+      "store_line": "AACHEN, BRESLAUER STRASSE 35"
+    },
+    "01a0e6b0-44df-7773-b9d3-a22ae9e28c58": {
+      "store_line": "RASTATT, RAUENTALER STRASSE 65"
+    },
+    "01a0e6b0-46f0-7b61-8185-1203ab459e47": {
+      "store_line": "STEINHEIM A. D. MURR, STEINBEISSTRASSE 15"
+    },
+    "01a0e6b0-4a2e-7e90-8b45-869355a44d4d": {
+      "store_line": "LUDWIGSBURG, SCHWIEBERDINGER STRASSE 94"
+    },
+    "01a0e6b0-4d3e-7b56-804a-777c7df305b7": {
+      "store_line": "NECKARSULM, RÖTELSTRASSE 35"
+    },
+    "01a0e6b0-4f44-7ca1-9698-4ec9052b46c6": {
+      "store_line": "AHRENSFELDE-EICHE, IM KAUFPARK • BERLIN, IM BIESDORF-CENTER"
+    },
+    "01a0e6b0-5177-76da-8f9d-5fb8a98a3a71": {
+      "store_line": "LEIPZIG-PAUNSDORF, IM PAUNSDORF-CENTER"
+    },
+    "01a0e6b0-5485-7b76-a081-ef58752aa63a": {
+      "store_line": "COTTBUS-SCHMELLWITZ, IM COTTBUS-CENTER"
+    },
+    "01a0e6b0-577c-7173-95ec-f107d7ba9f60": {
+      "store_line": "DALLGOW-DÖBERITZ, IM HAVEL-PARK"
+    },
+    "01a0e6b0-5cc2-7b54-b01b-7108e4daaed3": {
+      "store_line": "FREIBERG/SACHSEN, HÄUERSTEIG 2"
+    },
+    "01a0e6b0-5f4e-75a0-8f12-db8cf13a840a": {
+      "store_line": "BENTWISCH, IM HANSE CENTER"
+    },
+    "01a0e6b0-620c-78bd-9609-cda0ceb0a694": {
+      "store_line": "CELLE, AN DER HASENBAHN 3"
+    },
+    "01a0e6b0-6547-7b95-98a2-7ccd05c280c1": {
+      "store_line": "DREIEICH-SPRENDLINGEN, IM DREIEICH-NORDPARK"
+    },
+    "01a0e6b0-681a-7b47-8d7f-3682f6720e0e": {
+      "store_line": "DÜREN, AM ELLERNBUSCH 22"
+    },
+    "01a0e6b0-6aae-79ea-a1ad-feed05837ffa": {
+      "store_line": "DÜSSELDORF-FRIEDRICHSTADT, FRIEDRICHSTRASSE 152"
+    },
+    "01a0e6b0-6d23-734c-80c7-5dbeb34977be": {
+      "store_line": "GARBSEN, IM NORD-WEST-ZENTRUM"
+    },
+    "01a0e6b0-7023-7194-af4b-3e33311abfc8": {
+      "store_line": "GIFHORN, EYSSELHEIDEWEG 5"
+    },
+    "01a0e6b0-7211-73b1-990c-03a11b2a77eb": {
+      "store_line": "GREIFSWALD, IM ELISEN PARK"
+    },
+    "01a0e6b0-7462-7553-8c0e-e7ba1a71a649": {
+      "store_line": "MÜNCHEN-NEUPERLACH, OLLENHAUERSTRASSE 4"
+    },
+    "01a0e6b0-7710-7c2a-aed7-50ef05ee789e": {
+      "store_line": "HEINSBERG, HUMBOLDTSTRASSE 26"
+    },
+    "01a0e6b0-79ca-732f-b7f7-eabe28110cb1": {
+      "store_line": "BERLIN-HEINERSDORF, ROMAIN-ROLLAND-STRASSE 13"
+    },
+    "01a0e6b0-7c5a-744e-a66d-75a6c14d03b0": {
+      "store_line": "DORTMUND-OESPEL, IM INDUPARK-CENTER"
+    },
+    "01a0e6b0-7f24-7ff4-89fd-aa2e11127632": {
+      "store_line": "KASSEL-WESERTOR, FRANZGRABEN 40-42"
+    },
+    "01a0e6b0-80ee-7c03-84d4-15047606f430": {
+      "store_line": "BHV-FISCHEREIHAFEN, BOHMSIEL 1 • BHV-LEHE, PFERDEBADE 6"
+    },
+    "01a0e6b0-838d-7884-af7f-9248d5eddbc1": {
+      "store_line": "MÜNCHEN-SCHWABING-FREIMANN, IM SUMA-CENTER"
+    },
+    "01a0e6b0-85f3-717b-aa3f-4100d08c2969": {
+      "store_line": "OSTSTEINBEK, IM OSTKREUZ CENTER"
+    },
+    "01a0e6b0-886f-73a9-9db3-4b385a09e6a8": {
+      "store_line": "LIMBURG, WESTERWALDSTRASSE 111-113"
+    },
+    "01a0e6b0-8b08-7d08-b6ae-ae1cbb987e34": {
+      "store_line": "AMBERG, AM BERGSTEIG 1"
+    },
+    "01a0e6b0-8d32-7fd4-be75-a39df4575ed8": {
+      "store_line": "WOLFSBURG, BRANDGEHAEGE 9"
+    },
+    "01a0e6b0-9029-74ee-bd0f-c0c393fbb9c9": {
+      "store_line": "WILDAU, IM A10-CENTER"
+    },
+    "01a0e6b0-930d-7837-92f1-080bfdecbb2e": {
+      "store_line": "FREIBURG I. BREISGAU-HASLACH, IM BREISGAU-CENTER"
+    },
+    "01a0e6b0-9528-7e77-9edf-c7c4f8775c36": {
+      "store_line": "GÖ-WESTSTADT, ELLIEHÄUSER WEG 23 • GÖ-GRONE, IM KAUF PARK • GÖ-WEENDE, GROSSE BREITE 6"
+    },
+    "01a0e6b0-974b-7538-8490-ee0701e5bfcf": {
+      "store_line": "FLENSBURG-SÜDSTADT, IM FÖRDE PARK"
+    },
+    "01a0e6b0-997c-719f-a941-32189c0f830a": {
+      "store_line": "WIESBADEN, IM ÄPPELALLEE-CENTER"
+    },
+    "01a0e6b0-9c27-79c3-b06b-5abdfc79cfb6": {
+      "store_line": "GERLINGEN, WEILIMDORFER STR. 93-95"
+    },
+    "01a0e6b0-9ecc-7067-b27a-79f18c693f98": {
+      "store_line": "WEISSENBURG, EICHSTÄTTER STRASSE 29"
+    },
+    "01a0e6b0-a144-7d9f-b3e4-eb4803583ab7": {
+      "store_line": "ROSENHEIM-HAPPING, KUFSTEINER STRASSE 124"
+    },
+    "01a0e6b0-a300-7d33-b369-bd725b44e24e": {
+      "store_line": "SCHWERIN-KREBSFÖRDEN, IM SIEBEN SEEN CENTER"
+    },
+    "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8": {
+      "store_line": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER"
+    },
+    "01a0e755-031f-7143-aaed-3e9a98d5b530": {
+      "store_line": "HAGEN-HOHENLIMBURG, AUF DEM LÖLFERT 50 • HAGEN-NORD, FREILIGRATHSTRASSE 51"
+    }
+  }
+}
