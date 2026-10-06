@@ -1,5 +1,5 @@
 /**
- * Search state <-> URL query (`?plz=76137&r=25&tab=all&sort=plz-desc&pdf=all`).
+ * Search state <-> URL query (`?plz=76137&r=25&tab=all&sort=plz-desc&pdf=all`, `tab=cards`).
  * Defaults are omitted. Coordinates are never put into the URL.
  */
 
@@ -8,7 +8,7 @@ import { RADII, SORT_ORDERS, type Radius, type SortOrder } from "./search";
 /** Searched on page load when the URL has no PLZ (Karlsruhe city centre). */
 export const DEFAULT_PLZ = "76131";
 export const DEFAULT_RADIUS: Radius = 25;
-export const TABS = ["search", "all"] as const;
+export const TABS = ["search", "all", "cards"] as const;
 export type Tab = (typeof TABS)[number];
 const PLZ = /^\d{5}$/;
 

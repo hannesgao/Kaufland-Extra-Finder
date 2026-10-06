@@ -6,12 +6,26 @@
 import type { CircleMarker, LayerGroup, Map as LeafletMap } from "leaflet";
 import type { LatLng } from "../data";
 import { h } from "../dom";
-import type { Hit } from "../search";
+
+/** A store on the map; `kind` picks the marker colour. */
+export interface MapMarker {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  kind: "default" | "closed" | "foreign";
+}
 
 export interface MapView {
-  show(origin: LatLng, radiusKm: number, hits: readonly Hit[]): void;
+  show(origin: LatLng, radiusKm: number, markers: readonly MapMarker[]): void;
   select(id: string | null): void;
 }
+
+const MARKER_COLOUR: Record<MapMarker["kind"], string> = {
+  default: "--map-marker",
+  closed: "--map-marker-closed",
+  foreign: "--map-marker-foreign",
+};
 
 const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 // Static markup (Leaflet renders attribution strings as HTML); no data goes in here.
@@ -38,22 +52,16 @@ export async function createMap(
   const markers = new Map<string, CircleMarker>();
   let selected: string | null = null;
 
-  const style = (isSelected: boolean, hit: Hit) => ({
+  const style = (isSelected: boolean, marker: MapMarker) => ({
     radius: isSelected ? 11 : 8,
     weight: isSelected ? 3 : 2,
     color: cssVar("--map-marker-stroke"),
-    fillColor: cssVar(
-      hit.closed
-        ? "--map-marker-closed"
-        : hit.foreignOnly
-          ? "--map-marker-foreign"
-          : "--map-marker",
-    ),
+    fillColor: cssVar(MARKER_COLOUR[marker.kind]),
     fillOpacity: 0.9,
   });
 
   return {
-    show([lat, lng], radiusKm, hits) {
+    show([lat, lng], radiusKm, points) {
       const origin: [number, number] = [lat, lng];
       layers.clearLayers();
       markers.clear();
@@ -75,16 +83,15 @@ export async function createMap(
 
       // Computed from coordinates: Circle#getBounds() needs a map that already has a view.
       const bounds = L.latLng(origin).toBounds(radiusKm * 2000);
-      for (const hit of hits) {
-        const { store } = hit;
-        const marker = L.circleMarker([store.lat, store.lng], style(store.id === selected, hit))
+      for (const point of points) {
+        const marker = L.circleMarker([point.lat, point.lng], style(point.id === selected, point))
           // Leaflet renders string content with innerHTML; pass an element so names stay text.
-          .bindTooltip(h("span", null, store.name))
+          .bindTooltip(h("span", null, point.name))
           .on("click", () => {
-            onSelect(store.id);
+            onSelect(point.id);
           })
           .addTo(layers);
-        markers.set(store.id, marker);
+        markers.set(point.id, marker);
         bounds.extend(marker.getLatLng());
       }
       map.invalidateSize();

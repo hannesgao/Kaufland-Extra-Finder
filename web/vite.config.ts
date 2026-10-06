@@ -6,15 +6,16 @@ import { defineConfig } from "vitest/config";
 // GitHub Pages project site: https://hannesgao.github.io/Kaufland-Extra-Finder/
 const BASE = "/Kaufland-Extra-Finder/";
 const FIXTURE = resolve(import.meta.dirname, "fixtures/extra.json");
+const CARDS_FIXTURE = resolve(import.meta.dirname, "fixtures/cards.json");
 const DAY_MS = 86_400_000;
 
-// Only same-origin resources, plus OSM tiles (loaded after the first search). Applied to the
-// production build only: the dev server injects inline styles for hot reloading.
+// Only same-origin resources, plus OSM tiles and product thumbnails from Kaufland's image server
+// (Pokémon tab). Applied to the production build only: the dev server injects inline styles.
 const CSP = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self'",
-  "img-src 'self' data: https://tile.openstreetmap.org",
+  "img-src 'self' data: https://tile.openstreetmap.org https://kaufland.media.schwarz",
   "connect-src 'self'",
   "font-src 'self'",
   "object-src 'none'",
@@ -53,9 +54,40 @@ function extraJson(): Plugin {
   };
 }
 
-/** Shift every date in the fixture by whole weeks so its generated_at falls in the current week. */
-export function shiftedFixture(now: Date): string {
-  const text = readFileSync(FIXTURE, "utf-8");
+/**
+ * Serves `data/cards.json` (trading-card offers). Unlike extra.json it is optional:
+ * - dev: the fixture (dates shifted like extra.json's), or $KEF_CARDS_JSON
+ * - build: emitted only when $KEF_CARDS_JSON is set; without it the tab says there is no data yet
+ */
+function cardsJson(): Plugin {
+  return {
+    name: "kef-cards-json",
+    configureServer(server) {
+      server.middlewares.use(`${BASE}data/cards.json`, (_req, res) => {
+        const source = process.env.KEF_CARDS_JSON;
+        const body = source
+          ? readFileSync(source, "utf-8")
+          : shiftedFixture(new Date(), CARDS_FIXTURE);
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        res.end(body);
+      });
+    },
+    generateBundle() {
+      const source = process.env.KEF_CARDS_JSON;
+      if (!source) return;
+      const text = readFileSync(source, "utf-8");
+      const parsed = JSON.parse(text) as { schema_version?: unknown };
+      if (parsed.schema_version !== 1) {
+        this.error(`${source}: unsupported schema_version ${String(parsed.schema_version)}`);
+      }
+      this.emitFile({ type: "asset", fileName: "data/cards.json", source: text });
+    },
+  };
+}
+
+/** Shift every date in a fixture by whole weeks so its generated_at falls in the current week. */
+export function shiftedFixture(now: Date, path = FIXTURE): string {
+  const text = readFileSync(path, "utf-8");
   const generated = /"generated_at": "(\d{4}-\d{2}-\d{2})/.exec(text)?.[1];
   if (!generated) throw new Error("fixture has no generated_at");
   const weeks = Math.floor((now.getTime() - Date.parse(generated)) / (7 * DAY_MS));
@@ -143,7 +175,7 @@ function contentSecurityPolicy(): Plugin {
 
 export default defineConfig({
   base: BASE,
-  plugins: [extraJson(), partials(), buildInfo(), contentSecurityPolicy()],
+  plugins: [extraJson(), cardsJson(), partials(), buildInfo(), contentSecurityPolicy()],
   build: {
     rolldownOptions: {
       input: {
