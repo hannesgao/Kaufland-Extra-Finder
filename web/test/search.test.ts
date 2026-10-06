@@ -193,8 +193,14 @@ describe("search", () => {
       lng: 6 + Math.floor(i / 70) / 1.5,
     }));
     const big: ExtraData = { ...data, stores, storesById: new Map(stores.map((s) => [s.id, s])) };
-    const t0 = performance.now();
+    // Guards against an accidental O(n²), not a benchmark: shared CI runners are slow and noisy,
+    // so warm up once and take the best of five runs.
     search(big, PLZ_KARLSRUHE, 100, MONDAY);
-    expect(performance.now() - t0).toBeLessThan(100);
+    const times = Array.from({ length: 5 }, () => {
+      const t0 = performance.now();
+      search(big, PLZ_KARLSRUHE, 100, MONDAY);
+      return performance.now() - t0;
+    });
+    expect(Math.min(...times)).toBeLessThan(100);
   });
 });
