@@ -2,9 +2,23 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { parseCards, searchCards, viewOffer, type CardProduct } from "../src/cards";
+import {
+  parseCards,
+  searchCards,
+  storesFor,
+  summarizeArticles,
+  viewOffer,
+  type CardProduct,
+} from "../src/cards";
 import { DataError, type LatLng } from "../src/data";
-import { formatPrice, offerUrl, renderCardStore } from "../src/ui/cards";
+import {
+  formatPrice,
+  offerUrl,
+  renderArticle,
+  renderArticleStrip,
+  renderCardStore,
+  storeCount,
+} from "../src/ui/cards";
 import { shiftedFixture } from "../vite.config";
 import { nth, PLZ_KARLSRUHE } from "./helpers";
 
@@ -185,7 +199,7 @@ describe("renderCardStore", () => {
   });
 
   it("shows a note for the nearest store outside the radius", () => {
-    const li = renderCardStore(hit, vi.fn(), "Nächste Filiale");
+    const li = renderCardStore(hit, vi.fn(), { note: "Nächste Filiale" });
     expect(li.querySelector(".store__note")?.textContent).toBe("Nächste Filiale");
   });
 });
@@ -212,5 +226,89 @@ describe("cards fixture date shifting", () => {
     const cards = parseCards(shifted);
     expect(cards.generatedAt.toISOString()).toBe("2026-10-20T18:35:10.000Z");
     expect(cards.products.get("20973783|2026-10-18")?.salesFrom).toBe("2026-10-26");
+  });
+});
+
+describe("articles", () => {
+  const cards = parseCards(cardsJson());
+
+  it("lists current articles, fewest stores first", () => {
+    const summaries = summarizeArticles(cards, TUESDAY);
+    expect(summaries.map((s) => [s.offer.product.key, s.storeIds.length])).toEqual([
+      [DOPPELPACK, 2],
+      [BOOSTER, 6],
+      [TOP_TRAINER, 6],
+    ]);
+    expect(summarizeArticles(cards, "2026-10-15").map((s) => s.offer.product.key)).toEqual([
+      DOPPELPACK,
+      TOP_TRAINER,
+    ]);
+  });
+
+  it("sorts an article's stores by distance, without a radius", () => {
+    const doppelpack = nth(summarizeArticles(cards, TUESDAY));
+    const stores = storesFor(cards, doppelpack, PLZ_KARLSRUHE);
+    expect(stores.map((s) => s.store.id)).toEqual(["DE4400", "DE6200"]);
+    expect(nth(stores).distanceKm).toBeGreaterThan(400);
+  });
+
+  it("filters the store search by article", () => {
+    const all = searchCards(cards, BERLIN_BIESDORF, 100, TUESDAY);
+    expect(all.hits).toHaveLength(2);
+    const filtered = searchCards(cards, PLZ_KARLSRUHE, 25, TUESDAY, "20973794");
+    expect(filtered.hits).toEqual([]);
+    expect(filtered.nearest?.store.id).toBe("DE4400");
+    expect(
+      searchCards(cards, PLZ_KARLSRUHE, 25, TUESDAY, "20941886").hits.map((h) => h.store.id),
+    ).toEqual(["DE4443", "DE4733"]);
+  });
+
+  it("renders the article strip as toggles with store counts", () => {
+    const summaries = summarizeArticles(cards, TUESDAY);
+    const onToggle = vi.fn();
+    const items = renderArticleStrip(summaries, new Map([[DOPPELPACK, 3.2]]), "20973794", onToggle);
+    const buttons = items.map((li) => li.querySelector("button"));
+    expect(buttons.map((b) => b?.getAttribute("aria-pressed"))).toEqual(["true", "false", "false"]);
+    expect(buttons[0]?.textContent).toContain("in 2 Filialen · nächste 3,2 km");
+    buttons[1]?.click();
+    expect(onToggle).toHaveBeenCalledWith("20941886");
+  });
+
+  it("renders an article with its nearest stores and a button for the rest", () => {
+    const booster = nth(summarizeArticles(cards, TUESDAY), 1);
+    const stores = storesFor(cards, booster, PLZ_KARLSRUHE);
+    const onExpand = vi.fn();
+    const li = renderArticle(booster, stores, false, onExpand);
+    expect(li.querySelectorAll(".article__store")).toHaveLength(5);
+    expect(li.querySelector(".offer__count")?.textContent).toBe("in 6 Filialen");
+    const first = li.querySelector(".article__store");
+    expect(first?.querySelector(".article__store-name")?.textContent).toBe("Karlsruhe-Oststadt");
+    expect(first?.querySelector("a")?.getAttribute("href")).toContain("storeName=DE4443");
+    li.querySelector<HTMLButtonElement>(".article__more")?.click();
+    expect(onExpand).toHaveBeenCalledWith(BOOSTER);
+    const all = renderArticle(booster, stores, true, onExpand);
+    expect(all.querySelectorAll(".article__store")).toHaveLength(6);
+    expect(all.querySelector(".article__more")).toBeNull();
+  });
+
+  it("shows store counts in store cards and highlights the filtered article", () => {
+    const hit = nth(searchCards(cards, BERLIN_BIESDORF, 25, TUESDAY).hits);
+    const counts = new Map(
+      summarizeArticles(cards, TUESDAY).map((s) => [s.offer.product.key, s.storeIds.length]),
+    );
+    const li = renderCardStore(hit, vi.fn(), { counts, article: "20973794" });
+    expect([...li.querySelectorAll(".offer__count")].map((e) => e.textContent)).toEqual([
+      "in 6 Filialen",
+      "in 6 Filialen",
+      "in 2 Filialen",
+    ]);
+    expect(
+      [...li.querySelectorAll(".offer")].map((o) => o.classList.contains("is-highlighted")),
+    ).toEqual([false, false, true]);
+  });
+
+  it("says Filiale for one store", () => {
+    expect(storeCount(1)).toBe("in 1 Filiale");
+    expect(storeCount(11)).toBe("in 11 Filialen");
   });
 });

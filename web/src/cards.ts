@@ -1,6 +1,6 @@
 /**
  * Trading-card offers (`cards.json`, schema v1): loading, runtime validation and the radius
- * search of the "Pokémon-Angebot-Finder" tab. Pure apart from `loadCards`.
+ * search of the "Pokémon-Angebote" tab. Pure apart from `loadCards`.
  */
 
 import {
@@ -76,6 +76,17 @@ export interface CardHit {
   store: CardStore;
   distanceKm: number;
   offers: OfferView[];
+}
+
+/** One current article and the stores that offer it. */
+export interface ArticleSummary {
+  offer: OfferView;
+  storeIds: readonly string[];
+}
+
+export interface StoreDistance {
+  store: CardStore;
+  distanceKm: number;
 }
 
 export interface CardSearchResult {
@@ -198,20 +209,58 @@ function storeOffers(data: CardsData, store: CardStore, today: IsoDate): OfferVi
     );
 }
 
-/** Stores with current or upcoming card offers within `radiusKm`, nearest first. */
+/**
+ * Stores with current or upcoming card offers within `radiusKm`, nearest first. With `article`
+ * (Kaufland article number), only stores that offer it.
+ */
 export function searchCards(
   data: CardsData,
   origin: LatLng,
   radiusKm: number,
   today: IsoDate,
+  article: string | null = null,
 ): CardSearchResult {
   const all: CardHit[] = [];
   for (const store of data.stores) {
     const offers = storeOffers(data, store, today);
     if (offers.length === 0) continue;
+    if (article && !offers.some((o) => o.product.klNr === article)) continue;
     all.push({ store, distanceKm: distanceKm(origin, [store.lat, store.lng]), offers });
   }
   all.sort((a, b) => a.distanceKm - b.distanceKm);
   const hits = all.filter((h) => h.distanceKm <= radiusKm);
   return { hits, nearest: hits.length === 0 ? (all[0] ?? null) : null };
+}
+
+/** Current and upcoming articles with their stores: fewest stores first, then by start date. */
+export function summarizeArticles(data: CardsData, today: IsoDate): ArticleSummary[] {
+  const stores = new Map<string, string[]>();
+  for (const store of data.stores) {
+    for (const key of store.products) stores.set(key, [...(stores.get(key) ?? []), store.id]);
+  }
+  const summaries: ArticleSummary[] = [];
+  for (const [key, storeIds] of stores) {
+    const product = data.products.get(key);
+    const offer = product && viewOffer(product, today);
+    if (offer) summaries.push({ offer, storeIds });
+  }
+  return summaries.sort(
+    (a, b) =>
+      a.storeIds.length - b.storeIds.length ||
+      a.offer.from.localeCompare(b.offer.from) ||
+      a.offer.product.subtitle.localeCompare(b.offer.product.subtitle, "de"),
+  );
+}
+
+/** The stores offering an article, nearest to `origin` first (no radius: rare articles may be far). */
+export function storesFor(
+  data: CardsData,
+  summary: ArticleSummary,
+  origin: LatLng,
+): StoreDistance[] {
+  const ids = new Set(summary.storeIds);
+  return data.stores
+    .filter((s) => ids.has(s.id))
+    .map((store) => ({ store, distanceKm: distanceKm(origin, [store.lat, store.lng]) }))
+    .sort((a, b) => a.distanceKm - b.distanceKm);
 }

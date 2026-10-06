@@ -7,6 +7,8 @@ const DEFAULTS: QueryState = {
   tab: "search",
   sort: "plz-asc",
   pdfOnly: true, // on by default
+  cardsView: "filialen",
+  article: null,
 };
 
 describe("parseQuery", () => {
@@ -17,6 +19,8 @@ describe("parseQuery", () => {
       tab: "all",
       sort: "plz-desc",
       pdfOnly: false,
+      cardsView: "filialen",
+      article: null,
     });
   });
 
@@ -52,6 +56,8 @@ describe("buildQuery", () => {
       tab: "all",
       sort: "plz-desc",
       pdfOnly: false,
+      cardsView: "artikel",
+      article: "20973794",
     };
     expect(parseQuery(buildQuery(state))).toEqual(state);
   });
@@ -64,6 +70,18 @@ describe("isPlz", () => {
     expect(isPlz("018145")).toBe(false);
     expect(isPlz("0181a")).toBe(false);
   });
+  it("reads the Pokémon view and article filter", () => {
+    expect(parseQuery("?tab=cards&view=artikel&p=20973794")).toMatchObject({
+      tab: "cards",
+      cardsView: "artikel",
+      article: "20973794",
+    });
+    expect(parseQuery("?view=karte&p=abc")).toMatchObject({ cardsView: "filialen", article: null });
+    expect(buildQuery({ ...DEFAULTS, tab: "cards", article: "20941886" })).toBe(
+      "?tab=cards&p=20941886",
+    );
+  });
+
   it("knows the Pokémon tab", () => {
     expect(parseQuery("?tab=cards").tab).toBe("cards");
     expect(buildQuery({ ...DEFAULTS, tab: "cards" })).toBe("?tab=cards");

@@ -834,7 +834,10 @@ a {
   box-shadow: var(--elevation-1);
 }
 
-.map[hidden] {
+.map[hidden],
+.results[hidden],
+.articles[hidden],
+.article-strip[hidden] {
   display: none;
 }
 
@@ -1511,7 +1514,7 @@ a {
   display: none;
 }
 
-/* ---------- Pokémon-Angebot-Finder ----------
+/* ---------- Pokémon-Angebote ----------
  * Same store card as the other tabs without calendar and leaflet panel: header, then one row per
  * offer (thumbnail | brand, name, price, when, link) on the same inset panels as the leaflets.
  */
@@ -1637,6 +1640,277 @@ a {
 .offer__link .icon {
   width: 16px;
   height: 16px;
+}
+
+/* "in 11 Filialen": how many stores offer it nationwide (no rating, users judge themselves). */
+.offer__count {
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+}
+
+/* The row of the article the store list is filtered by. */
+.offer.is-highlighted {
+  box-shadow: inset 0 0 0 2px var(--md-primary);
+}
+
+/* View toggle (Nach Filialen | Nach Artikeln): two segments. */
+.segmented__group--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ---------- Article strip: one toggle per article, filters the store list ---------- */
+/* One card like the search card; the article toggles sit on its surface as tonal tiles. */
+.article-strip {
+  margin: 0 0 16px;
+  padding: 16px 20px 20px;
+  border-radius: var(--shape-2xl);
+  box-shadow: var(--elevation-1);
+  background: var(--md-surface-container-lowest);
+}
+
+.article-strip__title {
+  margin: 0 0 12px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.article-strip__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article-chip {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--shape-lg);
+  background: var(--md-surface-container-low);
+  color: var(--md-on-surface);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.article-chip:hover {
+  background: var(--md-surface-container);
+}
+
+.article-chip:focus-visible {
+  outline: 3px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+.article-chip[aria-pressed="true"] {
+  border-color: var(--md-primary);
+  box-shadow: inset 0 0 0 1px var(--md-primary);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.article-chip__thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--shape-sm);
+  background: #ffffff;
+  object-fit: contain;
+}
+
+.article-chip__thumb--empty {
+  display: grid;
+  place-items: center;
+  background: var(--md-surface-container-high);
+}
+
+.article-chip__body {
+  display: grid;
+  min-width: 0;
+}
+
+.article-chip__brand {
+  color: var(--md-on-surface-variant);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* Up to two lines, then cut. */
+.article-chip__name {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  overflow-wrap: anywhere; /* long compound words such as "Sammelkartenspiel-Doppelpack" */
+  hyphens: auto;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.article-chip__meta {
+  color: var(--md-on-surface-variant);
+  font-size: 0.75rem;
+  line-height: 1.1rem;
+}
+
+.article-chip[aria-pressed="true"] .article-chip__brand,
+.article-chip[aria-pressed="true"] .article-chip__meta {
+  color: inherit;
+}
+
+.article-chip__check {
+  width: 20px;
+  height: 20px;
+  color: var(--md-primary);
+}
+
+/* Phones: the strip scrolls sideways instead of stacking three tall boxes. */
+@media (max-width: 599px) {
+  .article-strip__list {
+    grid-auto-columns: minmax(15rem, 80%);
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
+  }
+
+  .article-strip__list > li {
+    scroll-snap-align: start;
+  }
+}
+
+/* ---------- Article view: one card per article with its stores ---------- */
+.articles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article {
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--shape-xl);
+  background: var(--md-surface-container-lowest);
+}
+
+.article__body {
+  padding: 20px 20px 12px;
+}
+
+.article__head {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+.article__thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--shape-md);
+  background: #ffffff;
+  object-fit: contain;
+}
+
+.article__thumb--empty {
+  display: grid;
+  place-items: center;
+  background: var(--md-surface-container-high);
+}
+
+.article__name {
+  margin: 2px 0 0;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.4rem;
+}
+
+.article__stores {
+  display: grid;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article__store {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 4px;
+  border-top: 1px solid var(--md-outline-variant);
+  font-size: 0.875rem;
+}
+
+.article__store > .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--md-primary);
+}
+
+.article__store-text {
+  display: grid;
+  min-width: 0;
+}
+
+.article__store-name {
+  font-weight: 500;
+}
+
+.article__store-place {
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+}
+
+.article__store-distance {
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.article__more {
+  margin: 4px 0 0;
+}
+
+@media (max-width: 479px) {
+  .article__body {
+    padding: 16px 16px 8px;
+  }
+
+  .article__head {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .article__thumb {
+    width: 56px;
+    height: 56px;
+  }
+
+  /* Name and place on the first line, distance and link below them. */
+  .article__store {
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    row-gap: 2px;
+  }
+
+  .article__store .offer__link {
+    grid-column: 2 / -1;
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 479px) {

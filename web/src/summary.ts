@@ -55,7 +55,7 @@ export function listSummary(counts: Counts, pdfOnly: boolean): string {
   return `${filialen(counts.shown)}, ${GILT}${hiddenNote(counts)}`;
 }
 
-/* ---------- Pokémon-Angebot-Finder ---------- */
+/* ---------- Pokémon-Angebote ---------- */
 
 const mitAngeboten = (n: number) =>
   `${String(n)} ${n === 1 ? "Filiale" : "Filialen"} mit Pokémon-Angeboten`;
@@ -75,3 +75,34 @@ export function cardsNearestStatus(distance: string, radius: number, where: stri
 export const CARDS_EMPTY = "Derzeit sind keine Pokémon-Angebote bekannt.";
 export const CARDS_MISSING =
   "Noch keine Pokémon-Angebote verfügbar. Sie werden montags und donnerstags aktualisiert.";
+
+/** "2 Filialen mit „Sammelkartenspiel-Doppelpack“ im Umkreis von 25 km um PLZ 12683." */
+export function cardsArticleStatus(
+  name: string,
+  count: number,
+  radius: number,
+  where: string,
+): string {
+  const filialen = `${String(count)} ${count === 1 ? "Filiale" : "Filialen"}`;
+  return `${filialen} mit „${name}“ im Umkreis von ${String(radius)} km ${where}.`;
+}
+
+export function cardsArticleNearest(
+  name: string,
+  distance: string,
+  radius: number,
+  where: string,
+): string {
+  return (
+    `Keine Filiale mit „${name}“ im Umkreis von ${String(radius)} km ${where}. ` +
+    `Die nächste ist ${distance} entfernt.`
+  );
+}
+
+/** Article view: "3 Pokémon-Artikel, die mit den wenigsten Filialen zuerst. …" */
+export function articlesStatus(count: number, from: string): string {
+  return (
+    `${String(count)} Pokémon-Artikel, die mit den wenigsten Filialen zuerst. ` +
+    `Filialen nach Entfernung ${from}.`
+  );
+}

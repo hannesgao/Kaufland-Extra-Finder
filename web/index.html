@@ -72,8 +72,7 @@
             aria-selected="false"
             tabindex="-1"
           >
-            <span data-icon="playing_cards"></span
-            ><span class="tab__label">Pokémon-Angebot-Finder</span
+            <span data-icon="playing_cards"></span><span class="tab__label">Pokémon-Angebote</span
             ><span class="tab__label tab__label--short">Pokémon</span>
           </button>
         </div>
@@ -231,7 +230,7 @@
       </div>
 
       <div id="panel-cards" role="tabpanel" aria-labelledby="tab-cards" hidden>
-        <h2 class="visually-hidden">Pokémon-Angebot-Finder</h2>
+        <h2 class="visually-hidden">Pokémon-Angebote</h2>
         <section class="card search-card" aria-label="Suche nach Pokémon-Angeboten">
           <form id="cards-form" novalidate>
             <div class="search-row">
@@ -286,6 +285,20 @@
                   </label>
                 </div>
               </fieldset>
+
+              <fieldset class="outlined segmented" id="cards-view">
+                <legend class="outlined__label">Ansicht</legend>
+                <div class="segmented__group segmented__group--two">
+                  <label class="segment">
+                    <input type="radio" name="cards-view" value="filialen" checked />
+                    <span class="segment__check" data-icon="check"></span>Nach Filialen
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="cards-view" value="artikel" />
+                    <span class="segment__check" data-icon="check"></span>Nach Artikeln
+                  </label>
+                </div>
+              </fieldset>
             </div>
           </form>
         </section>
@@ -311,6 +324,18 @@
             <p id="cards-age">Wird geladen …</p>
           </div>
         </div>
+
+        <section class="article-strip" id="cards-strip" aria-labelledby="cards-strip-title">
+          <h2 class="article-strip__title" id="cards-strip-title">Filter: Pokémon-Artikel</h2>
+          <ul class="article-strip__list" id="cards-strip-list"></ul>
+        </section>
+
+        <ol
+          id="cards-articles"
+          class="articles"
+          aria-label="Pokémon-Artikel und ihre Filialen"
+          hidden
+        ></ol>
 
         <section id="cards-results" class="results" aria-label="Pokémon-Angebote" tabindex="-1">
           <div

@@ -40,16 +40,16 @@ Please don't run full scans locally; they run on a schedule in GitHub Actions.
 
 `kef-scrape` options:
 
-| Option | Default | Meaning |
-|---|---|---|
-| `--out DIR` | `data` | Where `extra.json`, `history.csv`, `snapshots/` (and with `--offers` `cards.json`) are written. |
-| `--previous DIR` | `--out` | Previous run's output (CI: the `data` branch checkout), used for `history.csv` and the diff. |
-| `--stores IDS` | all | Comma-separated store ids; skips the minimum-store-count check. |
-| `--workers N` | 4 | Concurrent requests, 1–4. |
-| `--delay S` | 0.25 | Pause before each request. |
-| `--summary FILE` | – | Append a Markdown report (e.g. `$GITHUB_STEP_SUMMARY`). |
-| `--skip-pdf-check` | off | Don't download new Extra PDFs for the PDF check (see below). |
-| `--offers` | off | Also read every store's offer overview and write `cards.json` (trading cards, see below). |
+| Option             | Default | Meaning                                                                                         |
+| ------------------ | ------- | ----------------------------------------------------------------------------------------------- |
+| `--out DIR`        | `data`  | Where `extra.json`, `history.csv`, `snapshots/` (and with `--offers` `cards.json`) are written. |
+| `--previous DIR`   | `--out` | Previous run's output (CI: the `data` branch checkout), used for `history.csv` and the diff.    |
+| `--stores IDS`     | all     | Comma-separated store ids; skips the minimum-store-count check.                                 |
+| `--workers N`      | 4       | Concurrent requests, 1–4.                                                                       |
+| `--delay S`        | 0.25    | Pause before each request.                                                                      |
+| `--summary FILE`   | –       | Append a Markdown report (e.g. `$GITHUB_STEP_SUMMARY`).                                         |
+| `--skip-pdf-check` | off     | Don't download new Extra PDFs for the PDF check (see below).                                    |
+| `--offers`         | off     | Also read every store's offer overview and write `cards.json` (trading cards, see below).       |
 
 Exit codes: `0` success, `1` error (store list unavailable, unknown store id, …),
 `2` sanity check failed (fewer than 700 stores or more than 5 % failures) — nothing is written.
@@ -59,27 +59,40 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, �
 ```jsonc
 {
   "schema_version": 1,
-  "generated_at": "2026-10-06T06:31:12+02:00",   // Europe/Berlin
-  "store_count": 788,                              // stores scanned
+  "generated_at": "2026-10-06T06:31:12+02:00", // Europe/Berlin
+  "store_count": 788, // stores scanned
   "failed_count": 0,
-  "stores": [                                      // only stores with an Extra leaflet
+  "stores": [
+    // only stores with an Extra leaflet
     {
-      "id": "DE4453", "name": "Kassel-Wesertor", "plz": "34125", "city": "Kassel",
-      "street": "Franzgraben 40-42", "lat": 51.321132, "lng": 9.517428,
-      "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html",  // optional
-      "leaflets": [                                // Mon–Wed often current + next week
-        { "valid_from": "2026-10-08", "valid_to": "2026-10-14",
-          "cluster": "<PDF uuid>", "viewer": "https://leaflets.kaufland.com/…", "pdf": "https://…pdf",
-          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",   // optional, see below
-          "pdf_store_match": false }
+      "id": "DE4453",
+      "name": "Kassel-Wesertor",
+      "plz": "34125",
+      "city": "Kassel",
+      "street": "Franzgraben 40-42",
+      "lat": 51.321132,
+      "lng": 9.517428,
+      "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html", // optional
+      "leaflets": [
+        // Mon–Wed often current + next week
+        {
+          "valid_from": "2026-10-08",
+          "valid_to": "2026-10-14",
+          "cluster": "<PDF uuid>",
+          "viewer": "https://leaflets.kaufland.com/…",
+          "pdf": "https://…pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER", // optional, see below
+          "pdf_store_match": false,
+        },
       ],
-      "special_days": [                            // optional; only today and later
+      "special_days": [
+        // optional; only today and later
         { "date": "2026-10-08", "closed": true },
-        { "date": "2026-12-24", "open": "07:00", "close": "13:30" }
-      ]
-    }
+        { "date": "2026-12-24", "open": "07:00", "close": "13:30" },
+      ],
+    },
   ],
-  "clusters": { "<PDF uuid>": ["DE4453", "…"] }   // stores sharing the identical leaflet
+  "clusters": { "<PDF uuid>": ["DE4453", "…"] }, // stores sharing the identical leaflet
 }
 ```
 
@@ -111,23 +124,39 @@ trading cards but match no keyword (Booster, TCG, Yu-Gi-Oh!, …), so a new bran
   "schema_version": 1,
   "generated_at": "2026-10-06T06:30:00+02:00",
   "keywords": ["pokemon"],
-  "store_count": 784,                 // offer overviews read (stores without offers included)
+  "store_count": 784, // offer overviews read (stores without offers included)
   "products": {
-    "20973783|2026-10-04": {          // article number | first day shown
-      "kl_nr": "20973783", "title": "POKÉMON", "subtitle": "Sammelkartenspiel »Top-Trainer-Box«",
-      "price": "55.00", "unit": "je",
-      "shown_from": "2026-10-04", "shown_to": "2026-10-09",   // advertised on kaufland.de
-      "sales_from": "2026-10-12", "sales_to": "2026-10-17",   // announced offers only: the sale
-      "category": "Vorwerbung", "week": "current",            // where the offer overview lists it
-      "thumbnail": "https://kaufland.media.schwarz/…?…",      // 150 px wide; thumbnail_2x: 322 px
-      "thumbnail_2x": "https://kaufland.media.schwarz/…?…"
-    }
+    "20973783|2026-10-04": {
+      // article number | first day shown
+      "kl_nr": "20973783",
+      "title": "POKÉMON",
+      "subtitle": "Sammelkartenspiel »Top-Trainer-Box«",
+      "price": "55.00",
+      "unit": "je",
+      "shown_from": "2026-10-04",
+      "shown_to": "2026-10-09", // advertised on kaufland.de
+      "sales_from": "2026-10-12",
+      "sales_to": "2026-10-17", // announced offers only: the sale
+      "category": "Vorwerbung",
+      "week": "current", // where the offer overview lists it
+      "thumbnail": "https://kaufland.media.schwarz/…?…", // 150 px wide; thumbnail_2x: 322 px
+      "thumbnail_2x": "https://kaufland.media.schwarz/…?…",
+    },
   },
-  "stores": [                         // only stores with at least one product
-    { "id": "DE4443", "name": "Karlsruhe-Oststadt", "plz": "76137", "city": "Karlsruhe",
-      "street": "…", "lat": 49.0, "lng": 8.4, "url": "https://filiale.kaufland.de/…",
-      "products": ["20941886|2026-10-08", "20973783|2026-10-04"] }
-  ]
+  "stores": [
+    // only stores with at least one product
+    {
+      "id": "DE4443",
+      "name": "Karlsruhe-Oststadt",
+      "plz": "76137",
+      "city": "Karlsruhe",
+      "street": "…",
+      "lat": 49.0,
+      "lng": 8.4,
+      "url": "https://filiale.kaufland.de/…",
+      "products": ["20941886|2026-10-08", "20973783|2026-10-04"],
+    },
+  ],
 }
 ```
 
@@ -146,7 +175,7 @@ uv run scripts/build_plz.py                   # downloads GeoNames DE.zip, write
 uv run scripts/build_plz.py --source DE.zip   # or use a local DE.zip / DE.txt
 ```
 
-GeoNames has one row per PLZ *and place*, so a PLZ covering several villages has several rows; each
+GeoNames has one row per PLZ _and place_, so a PLZ covering several villages has several rows; each
 PLZ is reduced to the median latitude/longitude of its rows. The script refuses to write the file if
 fewer than 8,000 PLZ or more than 1 % invalid rows are found.
 
@@ -178,14 +207,14 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   fixture can never be deployed by accident; the deploy job passes the `data` branch's file.
 - On page load the default PLZ 76131 (25 km) is searched, so the map and the store cards show
   right away. Map tiles therefore come from `tile.openstreetmap.org` on every visit of the search
-  tab (the *Alle Extra-Filialen* tab loads no map). No cookies, no storage, no external fonts.
-- Three tabs: *Umkreissuche* (radius search with map), *Alle Extra-Filialen* (all stores with a
-  current or upcoming Extra leaflet, sortable by PLZ) and *Pokémon-Angebot-Finder* (stores near the
-  PLZ with Pokémon offers, from `cards.json`; on narrow screens the tabs read *Umkreis*,
-  *Extra-Filialen*, *Pokémon*). PLZ and radius are shared by both search forms. State lives in the
+  tab (the _Alle Extra-Filialen_ tab loads no map). No cookies, no storage, no external fonts.
+- Three tabs: _Umkreissuche_ (radius search with map), _Alle Extra-Filialen_ (all stores with a
+  current or upcoming Extra leaflet, sortable by PLZ) and _Pokémon-Angebote_ (stores near the
+  PLZ with Pokémon offers, from `cards.json`; on narrow screens the tabs read _Umkreis_,
+  _Extra-Filialen_, _Pokémon_). PLZ and radius are shared by both search forms. State lives in the
   URL (`?plz=76137&r=50&tab=all&sort=plz-desc`, `tab=cards`); geolocation results never put
   coordinates into it.
-- *Pokémon-Angebot-Finder*: `data/cards.json` is loaded when the tab is first shown. It is
+- _Pokémon-Angebote_: `data/cards.json` is loaded when the tab is first shown. It is
   optional: in development it is served from `fixtures/cards.json` (dates shifted like
   `extra.json`) or `KEF_CARDS_JSON`; a production build includes it only when `KEF_CARDS_JSON` is
   set, otherwise the tab says that no offers are available yet. Each store card lists its offers
@@ -194,6 +223,10 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   (`?kloffer-articleID=<article number>&storeName=<store id>`: Kaufland's page switches the
   visitor's selected store to it and adds category and week itself; without `storeName` the
   article may be missing in whatever store the visitor has selected).
+  Above the store cards, one toggle per article (price, date, "in N Filialen", distance of the
+  nearest store with it) filters the stores by that article (`p=<article number>`). A second view
+  "Nach Artikeln" (`view=artikel`) shows one card per article, fewest stores first, with its stores
+  sorted by distance (no radius; five at first, "Alle … anzeigen" for the rest).
 - The footer is one shared partial (`partials/footer.html`) included into every page at build time.
 - Both tabs show a collapsed note "Woher stammen die Angaben?" (`partials/source-note.html`):
   data comes from Kaufland's store pages, Kaufland lists one Extra PDF at several neighbouring
@@ -217,11 +250,11 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 
 ## CI/CD (`.github/workflows/`)
 
-| Workflow | Trigger | What it does |
-|---|---|---|
-| `ci.yml` | pull requests, push to `main` | Scraper and scripts (ruff, mypy, pytest) and web (lint, typecheck, format, tests, build with the fixture). The job `ci` sums them up and is the required check for `main`. |
+| Workflow                | Trigger                          | What it does                                                                                                                                                                                            |
+| ----------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`                | pull requests, push to `main`    | Scraper and scripts (ruff, mypy, pytest) and web (lint, typecheck, format, tests, build with the fixture). The job `ci` sums them up and is the required check for `main`.                              |
 | `scrape-and-deploy.yml` | schedule, manual, push to `main` | Scrapes all stores, commits the output to the `data` branch and deploys the site to GitHub Pages. On push to `main`, and when run manually with `mode=deploy`, it only redeploys with the current data. |
-| `release.yml` | GitHub Release published, manual | Checks that the release tag matches the versions of web and scraper, then starts a deploy-only run so the footer shows the release date. |
+| `release.yml`           | GitHub Release published, manual | Checks that the release tag matches the versions of web and scraper, then starts a deploy-only run so the footer shows the release date.                                                                |
 
 **Schedule.** Mon–Wed 06:30 and Thu 05:30 Berlin time: next week's leaflets appear on Monday and
 become valid on Thursday. GitHub cron runs in UTC, so every time is listed twice (CEST and CET);
