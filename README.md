@@ -227,6 +227,12 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   nearest store with it) filters the stores by that article (`p=<article number>`). A second view
   "Nach Artikeln" (`view=artikel`) shows one card per article, fewest stores first, with its stores
   sorted by distance (no radius; five at first, "Alle … anzeigen" for the rest).
+- _Alle Extra-Filialen_ can export the list as shown (PDF switch, sort order) as HTML, PNG or PDF
+  (`src/export/`), generated in the browser without libraries or network: a standalone HTML file
+  with inline styles, a canvas-drawn PNG at 2×, and an A4 PDF written by hand (standard fonts
+  Helvetica/Helvetica-Bold in WinAnsiEncoding, text measured with their AFM widths, header row
+  and page numbers on every page). Columns: PLZ, store, street, validity, and "Im PDF genannt"
+  when the PDF switch is off.
 - The footer is one shared partial (`partials/footer.html`) included into every page at build time.
 - Both tabs show a collapsed note "Woher stammen die Angaben?" (`partials/source-note.html`):
   data comes from Kaufland's store pages, Kaufland lists one Extra PDF at several neighbouring
