@@ -122,6 +122,12 @@ def test_pdf_download(monkeypatch: pytest.MonkeyPatch) -> None:
     assert stub.calls[0][1]["timeout"] == 120.0
 
 
+def test_pdf_retries_with_longer_backoff(monkeypatch: pytest.MonkeyPatch) -> None:
+    stub = Stub(monkeypatch, _response(503), _response(200, "%PDF-1.4"))
+    assert _fetcher().pdf("https://assets.leaflets.schwarz/x.pdf") == b"%PDF-1.4"
+    assert stub.sleeps == [0.25, 10.0, 0.25]
+
+
 def test_pdf_too_large(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("kef_scraper.fetch.MAX_PDF_BYTES", 4)
     Stub(monkeypatch, _response(200, "%PDF-1.4"))

@@ -28,7 +28,13 @@ from kef_scraper.output import (
     write_text_atomic,
 )
 from kef_scraper.parse import ParseError, parse_stores
-from kef_scraper.scan import PDF_DELAY_S, check_pdfs, scan
+from kef_scraper.scan import (
+    PDF_DELAY_S,
+    PDF_RETRY_DELAY_S,
+    PDF_RETRY_PAUSE_S,
+    check_pdfs,
+    scan,
+)
 
 log = logging.getLogger("kef_scraper")
 
@@ -70,6 +76,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="do not download new Extra PDFs to check which store they name",
     )
     p.add_argument("--pdf-delay", type=float, default=PDF_DELAY_S, help=argparse.SUPPRESS)
+    p.add_argument(
+        "--pdf-retry-pause", type=float, default=PDF_RETRY_PAUSE_S, help=argparse.SUPPRESS
+    )
+    p.add_argument(
+        "--pdf-retry-delay", type=float, default=PDF_RETRY_DELAY_S, help=argparse.SUPPRESS
+    )
     p.add_argument("--min-stores", type=int, default=MIN_STORES, help=argparse.SUPPRESS)
     p.add_argument(
         "--max-failure-rate", type=float, default=MAX_FAILURE_RATE, help=argparse.SUPPRESS
@@ -125,7 +137,14 @@ def main(
     if args.skip_pdf_check:
         pdf_checks = pdf_cache
     else:
-        pdf_checks = check_pdfs(fetcher, result, pdf_cache, delay=args.pdf_delay)
+        pdf_checks = check_pdfs(
+            fetcher,
+            result,
+            pdf_cache,
+            delay=args.pdf_delay,
+            retry_pause=args.pdf_retry_pause,
+            retry_delay=args.pdf_retry_delay,
+        )
     extra = build_extra(result, now, pdf_checks)
     diff = diff_extra(_load_json(previous_dir / "extra.json"), extra)
     problems = sanity_problems(

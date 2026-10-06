@@ -23,6 +23,7 @@ USER_AGENT = (
 MAX_WORKERS = 4
 MAX_PDF_BYTES = 50_000_000  # Extra PDFs are ~6 MB
 PDF_TIMEOUT_S = 120.0
+PDF_BACKOFF_S = 10.0  # the PDF CDN needs longer to recover from a 503 than the store pages
 _RETRY_STATUS = frozenset({429, 500, 502, 503, 504})
 _MAX_RETRY_AFTER_S = 60.0
 
@@ -94,7 +95,7 @@ class HttpFetcher:
         return resp.text
 
     def pdf(self, url: str) -> bytes:
-        resp = self._get(url, timeout=PDF_TIMEOUT_S)
+        resp = self._get(url, timeout=PDF_TIMEOUT_S, backoff=PDF_BACKOFF_S)
         if len(resp.content) > MAX_PDF_BYTES:
             raise FetchError(f"{url}: PDF larger than {MAX_PDF_BYTES} bytes")
         return resp.content
@@ -105,11 +106,12 @@ class HttpFetcher:
         cookies: dict[str, str] | None = None,
         accept_status: frozenset[int] = frozenset(),
         timeout: float | None = None,
+        backoff: float | None = None,
     ) -> requests.Response:
         last_error = "no attempt made"
         for attempt in range(1, self.retries + 1):
             time.sleep(self.delay)
-            wait = self.backoff * 2 ** (attempt - 1) + random.uniform(0, 0.5)  # noqa: S311
+            wait = (backoff or self.backoff) * 2 ** (attempt - 1) + random.uniform(0, 0.5)  # noqa: S311
             try:
                 resp = self._session().get(url, cookies=cookies, timeout=timeout or self.timeout)
             except requests.RequestException as e:
