@@ -222,8 +222,8 @@ describe("search", () => {
       lng: 6 + Math.floor(i / 70) / 1.5,
     }));
     const big: ExtraData = { ...data, stores, storesById: new Map(stores.map((s) => [s.id, s])) };
-    // Guards against an accidental O(n²), not a benchmark: shared CI runners are slow and noisy,
-    // so warm up once and take the best of five runs.
+    // Guards against regressions, not a benchmark: only stores in range are described, so this
+    // takes a few ms; shared CI runners are slow and noisy, so warm up and take the best of five.
     search(big, PLZ_KARLSRUHE, 100, MONDAY);
     const times = Array.from({ length: 5 }, () => {
       const t0 = performance.now();

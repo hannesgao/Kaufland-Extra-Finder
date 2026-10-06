@@ -250,6 +250,10 @@ function compareHits(a: Hit, b: Hit): number {
   return Number(a.closed) - Number(b.closed) || a.distanceKm - b.distanceKm;
 }
 
+/**
+ * Stores within `radiusKm`, open ones first, then by distance. Only stores in range are described
+ * (calendar, leaflet views); all stores only when none is in range, to find the nearest one.
+ */
 export function search(
   data: ExtraData,
   origin: LatLng,
@@ -257,11 +261,11 @@ export function search(
   today: IsoDate,
   options: SearchOptions = {},
 ): SearchResult {
-  const all = data.stores
-    .map((s) => toHit(s, origin, today, data, options))
-    .filter((h): h is Hit => h !== null);
-  const hits = all.filter((h) => h.distanceKm <= radiusKm).sort(compareHits);
+  const describe = (stores: readonly Store[]) =>
+    stores.map((s) => toHit(s, origin, today, data, options)).filter((h): h is Hit => h !== null);
+  const inRange = data.stores.filter((s) => distanceKm(origin, [s.lat, s.lng]) <= radiusKm);
+  const hits = describe(inRange).sort(compareHits);
   if (hits.length > 0) return { hits, nearest: null };
-  const nearest = all.sort(compareHits)[0] ?? null;
+  const nearest = describe(data.stores).sort(compareHits)[0] ?? null;
   return { hits, nearest };
 }
