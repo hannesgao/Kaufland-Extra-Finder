@@ -1387,8 +1387,10 @@ a {
   align-items: center;
   gap: 4px;
   padding: 1px 8px 1px 6px;
-  border: 1px solid transparent;
+  border: 1px solid var(--label-accent);
   border-radius: var(--shape-sm);
+  background: var(--label-container);
+  color: var(--label-on-container);
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1rem;
@@ -1398,28 +1400,40 @@ a {
 .siblings__item .siblings__pdf .icon {
   width: 14px;
   height: 14px;
-  color: inherit;
+  color: var(--label-accent);
 }
 
+/* All label texts share one grid cell; only the label's own is visible, so the widest text sets
+   the width of every label. */
+.siblings__pdf-text {
+  display: grid;
+}
+
+.siblings__pdf-text > * {
+  grid-area: 1 / 1;
+}
+
+.siblings__pdf-sizer {
+  visibility: hidden;
+}
+
+/* One look, three colour sets: accent = border + icon, container = fill, on-container = text. */
 .siblings__pdf.is-named {
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
+  --label-accent: var(--md-primary);
+  --label-container: var(--md-primary-container);
+  --label-on-container: var(--md-on-primary-container);
 }
 
 .siblings__pdf.is-not-named {
-  border-color: var(--warning);
-  background: var(--warning-container);
-  color: var(--on-warning-container);
-}
-
-.siblings__pdf.is-not-named .icon {
-  color: var(--warning);
+  --label-accent: var(--warning);
+  --label-container: var(--warning-container);
+  --label-on-container: var(--on-warning-container);
 }
 
 .siblings__pdf.is-unchecked {
-  border-color: var(--md-outline-variant);
-  background: var(--md-surface-container);
-  color: var(--md-on-surface-variant);
+  --label-accent: var(--md-outline);
+  --label-container: var(--md-surface-container);
+  --label-on-container: var(--md-on-surface-variant);
 }
 
 /* Phones: the label goes under the store name. */
@@ -1432,6 +1446,7 @@ a {
     grid-column: 2;
     justify-self: start;
     margin-top: 4px;
+    padding: 1px 6px 1px 5px; /* fits one line at 320px */
     white-space: normal;
   }
 }
