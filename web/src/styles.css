@@ -1577,28 +1577,6 @@ a {
   background: var(--md-surface-container-high);
 }
 
-/* Last line of every page: "Made with ♥ in Karlsruhe", centred below the bar. */
-.site-footer__made {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin: 0;
-  padding: 10px 16px 14px;
-  border-top: 1px solid var(--md-outline-variant);
-  background: var(--md-surface-container-high);
-  color: var(--md-on-surface-variant);
-  font-size: 0.75rem;
-  line-height: 1rem;
-  text-align: center;
-}
-
-.site-footer__heart {
-  width: 14px;
-  height: 14px;
-  color: var(--sponsor);
-}
-
 .footer-bar {
   display: flex;
   flex-wrap: wrap;
@@ -1651,6 +1629,12 @@ a {
   height: 13px;
 }
 
+/* "Made with ♥ in Karlsruhe": the heart in the sponsor pink, tight to its words. */
+.credit .credit__heart {
+  margin: 0 -2px;
+  color: var(--sponsor);
+}
+
 /* Project credits come in two groups: one row on wide screens, two right-aligned rows on phones. */
 .credit-group {
   display: inline-flex;
@@ -1673,13 +1657,38 @@ a {
     align-items: flex-end;
   }
 
-  .credit-group + .credit-group > .credit:first-child {
+  .credits--project > .credit-group + .credit-group > .credit:first-child {
     padding-left: 0;
     border-left: 0;
   }
 
-  .credit-group:not(:last-child) > .credit:last-child {
+  .credits--project > .credit-group:not(:last-child) > .credit:last-child {
     padding-right: 0;
+  }
+}
+
+/* Small phones: "Made with ♥ in Karlsruhe" above the legal links, and GitHub on its own line,
+   so no row starts with a divider. */
+@media (max-width: 389px) {
+  .footer-bar > .credits:first-child {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-bar > .credits:first-child > .credit-group + .credit-group > .credit:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .credits--project > .credit-group:last-child {
+    justify-content: flex-end;
+  }
+
+  .credits--project > .credit-group:last-child > .credit:last-child {
+    flex-basis: 100%;
+    justify-content: flex-end;
+    padding-left: 0;
+    border-left: 0;
   }
 }
 
