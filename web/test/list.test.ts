@@ -43,7 +43,7 @@ describe("renderHit", () => {
     ]);
     expect(li.querySelector(".cal__day.is-today .cal__date")?.textContent).toBe("05");
     expect(li.querySelector(".siblings__title")?.textContent).toBe(
-      "Auf kaufland.de auch bei diesen Filialen gelistet",
+      "Dieser Extra-Prospekt ist auf kaufland.de auch bei diesen Filialen gelistet",
     );
     const siblings = [...li.querySelectorAll(".siblings__item")].map((item) => [
       item.querySelector(".siblings__name")?.textContent,
