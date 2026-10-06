@@ -1577,6 +1577,28 @@ a {
   background: var(--md-surface-container-high);
 }
 
+/* Last line of every page: "Made with ♥ in Karlsruhe", centred below the bar. */
+.site-footer__made {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--md-outline-variant);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  text-align: center;
+}
+
+.site-footer__heart {
+  width: 14px;
+  height: 14px;
+  color: var(--sponsor);
+}
+
 .footer-bar {
   display: flex;
   flex-wrap: wrap;
