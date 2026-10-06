@@ -123,24 +123,46 @@ function leafletHeader(view: LeafletView): HTMLDivElement {
   );
 }
 
-/** Prominent notice when the PDF itself names a different store. */
-function pdfWarning(view: LeafletView): HTMLDivElement | false {
-  const { pdfStore, pdfStoreMatch } = view.leaflet;
-  if (pdfStoreMatch !== false || !pdfStore) return false;
+function pdfNotice(
+  variant: "warning" | "pending",
+  iconName: Parameters<typeof icon>[0],
+  title: string,
+  text: string,
+): HTMLDivElement {
   return h(
     "div",
-    { class: "pdf-warning", role: "note" },
-    icon("warning", "icon pdf-warning__icon"),
+    { class: `pdf-warning pdf-warning--${variant}`, role: "note" },
+    icon(iconName, "icon pdf-warning__icon"),
     h(
       "div",
       null,
-      h(
-        "p",
-        { class: "pdf-warning__title" },
-        "Achtung: Laut PDF gilt dieser Extra-Prospekt nicht für diese Filiale.",
-      ),
-      h("p", { class: "pdf-warning__text" }, `Im PDF steht: „NUR IN ${pdfStore}“`),
+      h("p", { class: "pdf-warning__title" }, title),
+      h("p", { class: "pdf-warning__text" }, text),
     ),
+  );
+}
+
+/**
+ * Prominent notice when the PDF itself names a different store, or when the PDF could not be
+ * checked yet (download failed; the scraper retries on its next run).
+ */
+function pdfWarning(view: LeafletView): HTMLDivElement | false {
+  const { pdfStore, pdfStoreMatch } = view.leaflet;
+  if (pdfStoreMatch === undefined) {
+    return pdfNotice(
+      "pending",
+      "schedule",
+      "PDF-Prüfung ausstehend",
+      "Ob dieser Extra-Prospekt für diese Filiale gilt, ist noch nicht geprüft. " +
+        "Bitte im PDF nachsehen, welche Filiale unter „NUR IN …“ genannt ist.",
+    );
+  }
+  if (pdfStoreMatch || !pdfStore) return false;
+  return pdfNotice(
+    "warning",
+    "warning",
+    "Achtung: Laut PDF gilt dieser Extra-Prospekt nicht für diese Filiale.",
+    `Im PDF steht: „NUR IN ${pdfStore}“`,
   );
 }
 

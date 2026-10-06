@@ -30,6 +30,10 @@
   --md-outline: #6f7976;
   --md-outline-variant: #bec9c5;
   --sponsor: #bf3989; /* GitHub Sponsors heart */
+  /* Caution (not in M3's baseline scheme): pending checks */
+  --caution: #7c5800;
+  --caution-container: #ffdea3;
+  --on-caution-container: #261900;
   --md-shadow: 0 0 0;
 
   --map-marker: #006a60;
@@ -85,6 +89,9 @@
     --md-outline: #899390;
     --md-outline-variant: #3f4946;
     --sponsor: #db61a2;
+    --caution: #f9bc4a;
+    --caution-container: #5d4200;
+    --on-caution-container: #ffdea3;
 
     --map-marker: #82d5c8;
     --map-marker-closed: #6f7976;
@@ -894,6 +901,17 @@ a {
   width: 24px;
   height: 24px;
   color: var(--md-error);
+}
+
+/* PDF not checked yet: amber instead of red, same weight so it is not overlooked. */
+.pdf-warning--pending {
+  border-color: var(--caution);
+  background: var(--caution-container);
+  color: var(--on-caution-container);
+}
+
+.pdf-warning--pending .pdf-warning__icon {
+  color: var(--caution);
 }
 
 .pdf-warning__title {

@@ -82,11 +82,12 @@ Expired leaflets are not filtered by the scraper; consumers compare `valid_to` w
 
 Page 1 of every Extra PDF names the store(s) it is valid in ("NUR IN KARLSRUHE-OSTSTADT, IM DURLACH
 CENTER"; several stores are separated by "•"). Kaufland also serves such a PDF to neighbouring
-stores that the PDF does not name. The scraper downloads every **new** PDF once (2 s apart, ~6 MB
+stores that the PDF does not name. The scraper downloads every **new** PDF once (5 s apart, ~6 MB
 each), reads that block (`pypdf`) and sets `pdf_store` / `pdf_store_match` per leaflet. Results are
-cached per PDF in `pdf_checks.json` next to `extra.json`; failed downloads are retried on the next
-run and leave both fields out. `--skip-pdf-check` disables the downloads (cached results are still
-used). The footer code in the PDF ("1_D41-H_8530_TS") does not identify the store reliably.
+cached per PDF in `pdf_checks.json` next to `extra.json`. The PDF host answers 503 when hurried:
+failed downloads get a second pass in the same run (after 60 s, 15 s apart); what still fails is
+retried on the next run and leaves both fields out, which the web page shows as "PDF-Prüfung
+ausstehend". `--skip-pdf-check` disables the downloads (cached results are still used). The footer code in the PDF ("1_D41-H_8530_TS") does not identify the store reliably.
 
 ### Postcode coordinates (`web/public/plz.json`)
 

@@ -70,11 +70,43 @@ describe("renderHit", () => {
         "Im PDF steht: „NUR IN KARLSRUHE-OSTSTADT, IM DURLACH CENTER“",
     );
     // The leaflet panel starts with the warning, before the dates.
-    expect(grunwinkel.querySelector(".leaflet")?.firstElementChild?.className).toBe("pdf-warning");
+    expect(grunwinkel.querySelector(".leaflet")?.firstElementChild?.className).toBe(
+      "pdf-warning pdf-warning--warning",
+    );
 
     const oststadt = renderHit(nth(hits.filter((h) => h.store.id === "DE4443")), vi.fn());
     expect(oststadt.querySelector(".pdf-warning")).toBeNull();
     expect(oststadt.classList.contains("store--foreign")).toBe(false);
+  });
+
+  it("flags leaflets whose PDF has not been checked yet", () => {
+    const data = fixture();
+    const stores = data.stores.map((s) =>
+      s.id === "DE8530"
+        ? {
+            ...s,
+            leaflets: s.leaflets.map((l) => {
+              const copy = { ...l };
+              delete copy.pdfStore;
+              delete copy.pdfStoreMatch;
+              return copy;
+            }),
+          }
+        : s,
+    );
+    const patched = { ...data, stores, storesById: new Map(stores.map((s) => [s.id, s])) };
+    const hits = hitsFor(patched, PLZ_KARLSRUHE);
+    const pending = renderHit(nth(hits.filter((h) => h.store.id === "DE8530")), vi.fn());
+    const notice = pending.querySelector(".pdf-warning");
+    expect(notice?.className).toBe("pdf-warning pdf-warning--pending");
+    expect(notice?.querySelector(".pdf-warning__title")?.textContent).toBe(
+      "PDF-Prüfung ausstehend",
+    );
+    expect(pending.querySelector(".leaflet")?.firstElementChild).toBe(notice);
+    expect(pending.classList.contains("store--foreign")).toBe(false);
+    // Checked stores show no pending notice.
+    const oststadt = renderHit(nth(hits.filter((h) => h.store.id === "DE4443")), vi.fn());
+    expect(oststadt.querySelector(".pdf-warning")).toBeNull();
   });
 
   it("lists at most five siblings and counts the rest", () => {
