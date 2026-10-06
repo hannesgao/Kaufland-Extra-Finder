@@ -53,6 +53,14 @@ def test_leaflet_page_sends_store_cookie(monkeypatch: pytest.MonkeyPatch) -> Non
     assert stub.sleeps == [0.25]  # politeness delay only
 
 
+def test_offers_page_sends_store_cookie(monkeypatch: pytest.MonkeyPatch) -> None:
+    stub = Stub(monkeypatch, _response(200, "<html/>"))
+    assert _fetcher().offers_page("DE4453") == "<html/>"
+    url, kwargs = stub.calls[0]
+    assert url == "https://filiale.kaufland.de/angebote/uebersicht.html"
+    assert kwargs["cookies"] == {"x-aem-variant": "DE4453"}
+
+
 def test_retries_with_exponential_backoff(monkeypatch: pytest.MonkeyPatch) -> None:
     stub = Stub(
         monkeypatch,
@@ -109,7 +117,9 @@ def test_preflight_passes(monkeypatch: pytest.MonkeyPatch, robots: requests.Resp
     assert stub.calls[0][0] == "https://filiale.kaufland.de/robots.txt"
 
 
-@pytest.mark.parametrize("rule", ["Disallow: /", "Disallow: /prospekte.html"])
+@pytest.mark.parametrize(
+    "rule", ["Disallow: /", "Disallow: /prospekte.html", "Disallow: /angebote/uebersicht"]
+)
 def test_preflight_respects_disallow(monkeypatch: pytest.MonkeyPatch, rule: str) -> None:
     Stub(monkeypatch, _response(200, f"User-agent: *\n{rule}\n"))
     with pytest.raises(FetchError, match=r"robots\.txt disallows"):

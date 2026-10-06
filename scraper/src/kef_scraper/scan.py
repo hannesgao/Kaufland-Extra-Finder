@@ -5,17 +5,19 @@ from __future__ import annotations
 import logging
 import time
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import replace
 
 from kef_scraper.fetch import MAX_WORKERS, Fetcher, FetchError
 from kef_scraper.models import Leaflet, ScanResult, Store, StoreResult, Tile
+from kef_scraper.offers import is_card, is_card_like, parse_offers
 from kef_scraper.parse import ParseError, is_extra, is_standard, parse_tiles, to_leaflet
 from kef_scraper.pdfcheck import PdfCheck, check_pdf
 
 log = logging.getLogger(__name__)
 
 
-def scan_store(fetcher: Fetcher, store: Store) -> StoreResult:
-    """Fetch and classify one store. Never raises for expected failures; sets `error` instead."""
+def _leaflets(fetcher: Fetcher, store: Store) -> StoreResult:
+    """Fetch and classify one store's leaflets. Sets `error` instead of raising."""
     try:
         tiles = parse_tiles(fetcher.leaflet_page(store.id))
         if not tiles:
@@ -36,6 +38,30 @@ def scan_store(fetcher: Fetcher, store: Store) -> StoreResult:
     return StoreResult(store=store, leaflets=tuple(ordered), unusual=tuple(unusual))
 
 
+def _with_offers(fetcher: Fetcher, result: StoreResult) -> StoreResult:
+    """Add the store's trading-card offers. Independent of the leaflet result."""
+    store = result.store
+    try:
+        offers = parse_offers(fetcher.offers_page(store.id))
+    except (FetchError, ParseError) as e:
+        log.warning("%s offers: %s", store.id, e)
+        return replace(result, offers_scanned=True, offers_error=str(e))
+    if offers is None:
+        return replace(result, offers_scanned=True, no_offer_page=True)
+    return replace(
+        result,
+        offers_scanned=True,
+        cards=tuple(o for o in offers if is_card(o)),
+        card_like=tuple(o for o in offers if is_card_like(o)),
+    )
+
+
+def scan_store(fetcher: Fetcher, store: Store, *, with_offers: bool = False) -> StoreResult:
+    """Fetch and classify one store. Never raises for expected failures; sets errors instead."""
+    result = _leaflets(fetcher, store)
+    return _with_offers(fetcher, result) if with_offers else result
+
+
 def scan(
     fetcher: Fetcher,
     stores: list[Store],
@@ -43,12 +69,14 @@ def scan(
     workers: int = MAX_WORKERS,
     full_scan: bool,
     list_errors: tuple[str, ...] = (),
+    with_offers: bool = False,
 ) -> ScanResult:
     workers = max(1, min(workers, MAX_WORKERS))
-    log.info("Scanning %d stores with %d workers ...", len(stores), workers)
+    what = "leaflets and offers" if with_offers else "leaflets"
+    log.info("Scanning %s of %d stores with %d workers ...", what, len(stores), workers)
     t0 = time.monotonic()
     with ThreadPoolExecutor(workers) as pool:
-        results = tuple(pool.map(lambda s: scan_store(fetcher, s), stores))
+        results = tuple(pool.map(lambda s: scan_store(fetcher, s, with_offers=with_offers), stores))
     return ScanResult(
         results=results,
         full_scan=full_scan,
