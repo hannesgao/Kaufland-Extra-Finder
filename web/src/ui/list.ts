@@ -168,24 +168,34 @@ function pdfWarning(view: LeafletView): HTMLDivElement | false {
 
 const SIBLINGS_TITLE = "Auf kaufland.de auch bei diesen Filialen gelistet";
 
-/** Whether the PDF names a sibling store: listed on kaufland.de is not the same as valid there. */
+const PDF_LABELS = {
+  named: { cls: "is-named", icon: "check", text: "Filiale steht im PDF" },
+  notNamed: { cls: "is-not-named", icon: "warning", text: "Filiale fehlt im PDF" },
+  unchecked: { cls: "is-unchecked", icon: "schedule", text: "PDF nicht geprüft" },
+} as const;
+
+/**
+ * Whether the PDF names a sibling store: listed on kaufland.de is not the same as valid there.
+ * The other labels' texts sit invisibly in the same grid cell, so every label is exactly as wide
+ * as the longest text, whatever the font.
+ */
 function pdfNamedLabel(named: boolean | undefined): HTMLSpanElement {
-  if (named === undefined) {
-    return h(
+  const key = named === undefined ? "unchecked" : named ? "named" : "notNamed";
+  const label = PDF_LABELS[key];
+  const others = Object.values(PDF_LABELS).filter((l) => l !== label);
+  return h(
+    "span",
+    { class: `siblings__pdf ${label.cls}` },
+    icon(label.icon),
+    h(
       "span",
-      { class: "siblings__pdf is-unchecked" },
-      icon("schedule"),
-      "PDF nicht geprüft",
-    );
-  }
-  return named
-    ? h("span", { class: "siblings__pdf is-named" }, icon("check"), "im PDF genannt")
-    : h(
-        "span",
-        { class: "siblings__pdf is-not-named" },
-        icon("warning"),
-        "Filiale nicht im PDF genannt",
-      );
+      { class: "siblings__pdf-text" },
+      h("span", { class: "siblings__pdf-label" }, label.text),
+      ...others.map((l) =>
+        h("span", { class: "siblings__pdf-sizer", "aria-hidden": "true" }, l.text),
+      ),
+    ),
+  );
 }
 
 /**

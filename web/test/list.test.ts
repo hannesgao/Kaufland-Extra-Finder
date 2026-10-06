@@ -48,11 +48,11 @@ describe("renderHit", () => {
     const siblings = [...li.querySelectorAll(".siblings__item")].map((item) => [
       item.querySelector(".siblings__name")?.textContent,
       item.querySelector(".siblings__place")?.textContent,
-      item.querySelector(".siblings__pdf")?.textContent,
+      item.querySelector(".siblings__pdf-label")?.textContent,
     ]);
     expect(siblings).toEqual([
-      ["Karlsruhe-Beiertheim-Bulac", "76135 Karlsruhe", "Filiale nicht im PDF genannt"],
-      ["Karlsruhe-Grünwinkel", "76185 Karlsruhe", "Filiale nicht im PDF genannt"],
+      ["Karlsruhe-Beiertheim-Bulac", "76135 Karlsruhe", "Filiale fehlt im PDF"],
+      ["Karlsruhe-Grünwinkel", "76185 Karlsruhe", "Filiale fehlt im PDF"],
     ]);
     expect(li.querySelector(".siblings__more")).toBeNull();
   });
@@ -115,7 +115,18 @@ describe("renderHit", () => {
     const li = renderHit(nth(hits.filter((h) => h.store.id === "DE8530")), vi.fn());
     const first = li.querySelector(".siblings__item");
     expect(first?.querySelector(".siblings__name")?.textContent).toBe("Karlsruhe-Oststadt");
-    expect(first?.querySelector(".siblings__pdf.is-named")?.textContent).toBe("im PDF genannt");
+    expect(first?.querySelector(".siblings__pdf.is-named .siblings__pdf-label")?.textContent).toBe(
+      "Filiale steht im PDF",
+    );
+  });
+
+  it("sizes every PDF label by the longest label text, hidden from screen readers", () => {
+    const hits = hitsFor(fixture(), PLZ_KARLSRUHE);
+    const li = renderHit(nth(hits.filter((h) => h.store.id === "DE8530")), vi.fn());
+    const label = li.querySelector(".siblings__pdf.is-named");
+    const sizers = [...(label?.querySelectorAll(".siblings__pdf-sizer") ?? [])];
+    expect(sizers.map((s) => s.textContent)).toEqual(["Filiale fehlt im PDF", "PDF nicht geprüft"]);
+    expect(sizers.every((s) => s.getAttribute("aria-hidden") === "true")).toBe(true);
   });
 
   it("lists at most five siblings and counts the rest", () => {
