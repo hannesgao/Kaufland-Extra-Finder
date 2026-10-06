@@ -1,19 +1,30 @@
 import "./styles.css";
 
-import { loadCards, searchCards, type CardHit, type CardsData } from "./cards";
+import {
+  loadCards,
+  searchCards,
+  storesFor,
+  summarizeArticles,
+  type ArticleSummary,
+  type CardHit,
+  type CardsData,
+} from "./cards";
 import { loadData, type ExtraData, type LatLng, type PlzIndex } from "./data";
 import { berlinToday, formatStamp, isStale, STALE_AFTER_DAYS } from "./dates";
 import { byId, h, replaceChildren } from "./dom";
 import { hydrateIcons } from "./icons";
 import { formatKm } from "./geo";
 import { listAll, search, SORT_ORDERS, type Hit, type SortOrder } from "./search";
-import { renderCardStore } from "./ui/cards";
+import { renderArticle, renderArticleStrip, renderCardStore } from "./ui/cards";
 import { renderHit, renderRow } from "./ui/list";
 import type { MapMarker, MapView } from "./ui/map";
 import { setupTabs } from "./ui/tabs";
 import {
+  articlesStatus,
   CARDS_EMPTY,
   CARDS_MISSING,
+  cardsArticleNearest,
+  cardsArticleStatus,
   cardsNearestStatus,
   cardsStatus,
   countUnchecked,
@@ -28,6 +39,7 @@ import {
   isPlz,
   isRadius,
   parseQuery,
+  type CardsView,
   type QueryState,
   type Tab,
 } from "./url";
@@ -36,6 +48,8 @@ interface Origin {
   point: LatLng;
   /** "um PLZ 76137" / "um den aktuellen Standort" */
   label: string;
+  /** "von PLZ 76137" / "vom aktuellen Standort" (article view: distances) */
+  from: string;
   plz: string | null;
 }
 
@@ -97,6 +111,11 @@ const cardsStatusBox = byId("cards-status-box", HTMLDivElement);
 const cardsAge = byId("cards-age", HTMLParagraphElement);
 const cardsAgeBox = byId("cards-age-box", HTMLDivElement);
 const cardsList = byId("cards-list", HTMLOListElement);
+const cardsViewGroup = byId("cards-view", HTMLFieldSetElement);
+const cardsStrip = byId("cards-strip", HTMLElement);
+const cardsStripList = byId("cards-strip-list", HTMLUListElement);
+const cardsArticles = byId("cards-articles", HTMLOListElement);
+const cardsResults = byId("cards-results", HTMLElement);
 
 const searchMap: MapSlot = {
   container: byId("map", HTMLDivElement),
@@ -124,6 +143,11 @@ let radius = parseQuery(location.search).radius;
 let tab: Tab = parseQuery(location.search).tab;
 let sort: SortOrder = parseQuery(location.search).sort;
 let pdfOnly = parseQuery(location.search).pdfOnly;
+let cardsView: CardsView = parseQuery(location.search).cardsView;
+/** Store view filtered by this article (Kaufland article number). */
+let article: string | null = parseQuery(location.search).article;
+/** Article view: articles whose full store list is shown. */
+const expandedArticles = new Set<string>();
 
 function setStatus(text: string, kind: "info" | "error" = "info"): void {
   status.textContent = text;
@@ -157,7 +181,15 @@ function checkRadius(value: number): void {
 }
 
 function syncUrl(push: boolean): void {
-  const state: QueryState = { plz: origin?.plz ?? null, radius, tab, sort, pdfOnly };
+  const state: QueryState = {
+    plz: origin?.plz ?? null,
+    radius,
+    tab,
+    sort,
+    pdfOnly,
+    cardsView,
+    article,
+  };
   const url = `${location.pathname}${buildQuery(state)}`;
   if (push) history.pushState(null, "", url);
   else history.replaceState(null, "", url);
@@ -301,18 +333,23 @@ function showInSearch(id: string): void {
   const point = data.plz.get(store.plz);
   if (point) {
     setPlzValue(store.plz);
-    origin = { point, label: `um PLZ ${store.plz}`, plz: store.plz };
+    origin = { point, label: `um PLZ ${store.plz}`, from: `von PLZ ${store.plz}`, plz: store.plz };
   } else {
     // PLZ not in plz.json: search around the store itself (not written into the URL).
     setPlzValue("");
-    origin = { point: [store.lat, store.lng], label: `um ${store.name}`, plz: null };
+    origin = {
+      point: [store.lat, store.lng],
+      label: `um ${store.name}`,
+      from: `von ${store.name}`,
+      plz: null,
+    };
   }
   syncUrl(true);
   runSearch();
   select(searchMap, id);
 }
 
-/* ---------- Pokémon-Angebot-Finder ---------- */
+/* ---------- Pokémon-Angebote ---------- */
 
 /** Load cards.json the first time the tab is shown; it is not needed for the other tabs. */
 function ensureCards(): void {
@@ -334,7 +371,7 @@ function ensureCards(): void {
     });
 }
 
-function renderCards(shown: CardHit[], note?: string): void {
+function renderCards(shown: CardHit[], counts: ReadonlyMap<string, number>, note?: string): void {
   cardsMap.items.clear();
   const onSelect = (id: string) => {
     select(cardsMap, id);
@@ -342,36 +379,131 @@ function renderCards(shown: CardHit[], note?: string): void {
   replaceChildren(
     cardsList,
     ...shown.map((hit) => {
-      const item = renderCardStore(hit, onSelect, note);
+      const item = renderCardStore(hit, onSelect, {
+        counts,
+        article,
+        ...(note !== undefined && { note }),
+      });
       cardsMap.items.set(hit.store.id, item);
       return item;
     }),
   );
 }
 
+function articleName(summary: ArticleSummary): string {
+  const { title, subtitle } = summary.offer.product;
+  return subtitle || title;
+}
+
+/** Store view or article view; the map only belongs to the store view. */
+function showCardsView(): void {
+  const stores = cardsView === "filialen";
+  cardsStrip.hidden = !stores || cards === null;
+  cardsResults.hidden = !stores;
+  cardsArticles.hidden = stores;
+}
+
+function onArticleToggle(klNr: string): void {
+  article = article === klNr ? null : klNr;
+  syncUrl(false);
+  runCards();
+}
+
+function onExpandArticle(key: string): void {
+  expandedArticles.add(key);
+  runCards();
+}
+
 function runCards(): void {
   if (cards === undefined) return;
+  showCardsView();
   if (cards === null) {
-    renderCards([]);
+    renderCards([], new Map());
+    replaceChildren(cardsArticles);
     setCardsStatus(CARDS_MISSING);
     return;
   }
   if (!origin) return;
+  const at = origin;
   const today = berlinToday(new Date());
-  const result = searchCards(cards, origin.point, radius, today);
+  const summaries = summarizeArticles(cards, today);
+  const counts = new Map(summaries.map((s) => [s.offer.product.key, s.storeIds.length]));
+  const data = cards;
+
+  if (cardsView === "artikel") {
+    replaceChildren(
+      cardsArticles,
+      ...summaries.map((s) =>
+        renderArticle(
+          s,
+          storesFor(data, s, at.point),
+          expandedArticles.has(s.offer.product.key),
+          onExpandArticle,
+        ),
+      ),
+    );
+    setCardsStatus(summaries.length > 0 ? articlesStatus(summaries.length, at.from) : CARDS_EMPTY);
+    return;
+  }
+
+  // A filter for an article that is no longer offered is dropped.
+  const selected = summaries.find((s) => s.offer.product.klNr === article) ?? null;
+  if (!selected && article) {
+    article = null;
+    syncUrl(false);
+  }
+  const nearestKm = new Map(
+    summaries.map((s) => [s.offer.product.key, storesFor(data, s, at.point)[0]?.distanceKm ?? 0]),
+  );
+  replaceChildren(
+    cardsStripList,
+    ...renderArticleStrip(summaries, nearestKm, article, onArticleToggle),
+  );
+  cardsStrip.hidden = summaries.length === 0;
+
+  const result = searchCards(data, at.point, radius, today, article);
   const shown = result.hits.length > 0 ? result.hits : result.nearest ? [result.nearest] : [];
+  const name = selected ? articleName(selected) : null;
   if (result.hits.length > 0) {
-    renderCards(shown);
-    setCardsStatus(cardsStatus(result.hits.length, radius, origin.label));
+    renderCards(shown, counts);
+    setCardsStatus(
+      name
+        ? cardsArticleStatus(name, result.hits.length, radius, at.label)
+        : cardsStatus(result.hits.length, radius, at.label),
+    );
   } else if (result.nearest) {
-    renderCards(shown, "Nächste Filiale mit Pokémon-Angeboten außerhalb des Umkreises");
-    setCardsStatus(cardsNearestStatus(formatKm(result.nearest.distanceKm), radius, origin.label));
+    const distance = formatKm(result.nearest.distanceKm);
+    renderCards(
+      shown,
+      counts,
+      name
+        ? `Nächste Filiale mit „${name}“ außerhalb des Umkreises`
+        : "Nächste Filiale mit Pokémon-Angeboten außerhalb des Umkreises",
+    );
+    setCardsStatus(
+      name
+        ? cardsArticleNearest(name, distance, radius, at.label)
+        : cardsNearestStatus(distance, radius, at.label),
+    );
   } else {
-    renderCards([]);
+    renderCards([], counts);
     setCardsStatus(CARDS_EMPTY);
   }
-  cardsMap.last = { point: origin.point, radius, markers: shown.map(cardMarker) };
+  cardsMap.last = { point: at.point, radius, markers: shown.map(cardMarker) };
   if (tab === "cards") drawMap(cardsMap);
+}
+
+function onCardsViewChange(event: Event): void {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement) || target.name !== "cards-view") return;
+  cardsView = target.value === "artikel" ? "artikel" : "filialen";
+  syncUrl(false);
+  runCards();
+}
+
+function checkCardsView(): void {
+  const radio = cardsViewGroup.querySelector<HTMLInputElement>(`input[value="${cardsView}"]`);
+  if (radio) radio.checked = true;
 }
 
 function showCardsAge(loaded: CardsData | null): void {
@@ -436,7 +568,7 @@ function showTab(): void {
     renderAll();
   } else if (tab === "cards") {
     ensureCards();
-    drawMap(cardsMap);
+    if (cardsView === "filialen") drawMap(cardsMap);
   } else {
     drawMap(searchMap);
   }
@@ -451,7 +583,7 @@ function searchPlz(plz: string, push: boolean): void {
   }
   showPlzError(null);
   setPlzValue(plz);
-  origin = { point, label: `um PLZ ${plz}`, plz };
+  origin = { point, label: `um PLZ ${plz}`, from: `von PLZ ${plz}`, plz };
   syncUrl(push);
   runSearch();
 }
@@ -504,6 +636,7 @@ function onLocate(): void {
       origin = {
         point: [pos.coords.latitude, pos.coords.longitude],
         label: "um den aktuellen Standort",
+        from: "vom aktuellen Standort",
         plz: null, // never put coordinates into the URL
       };
       syncUrl(true);
@@ -537,6 +670,9 @@ function applyQuery(): void {
   sort = query.sort;
   pdfOnly = query.pdfOnly;
   for (const box of pdfSwitches) box.checked = pdfOnly;
+  cardsView = query.cardsView;
+  article = query.article;
+  checkCardsView();
   const sortRadio = sortGroup.querySelector<HTMLInputElement>(`input[value="${sort}"]`);
   if (sortRadio) sortRadio.checked = true;
   tab = query.tab;
@@ -578,6 +714,7 @@ for (const { form, plz, locate } of forms) {
   });
 }
 sortGroup.addEventListener("change", onSortChange);
+cardsViewGroup.addEventListener("change", onCardsViewChange);
 for (const box of pdfSwitches) box.addEventListener("change", onPdfOnlyChange);
 window.addEventListener("popstate", applyQuery);
 
@@ -586,6 +723,7 @@ setPlzValue(initial.plz ?? DEFAULT_PLZ);
 checkRadius(initial.radius);
 tabs.select(initial.tab);
 for (const box of pdfSwitches) box.checked = initial.pdfOnly;
+checkCardsView();
 
 loadData(import.meta.env.BASE_URL)
   .then((loaded) => {
