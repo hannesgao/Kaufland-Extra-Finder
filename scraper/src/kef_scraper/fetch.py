@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 BASE_URL = "https://filiale.kaufland.de"
 STORE_LIST_PATH = "/.klstorefinder.json"
 LEAFLET_PATH = "/prospekte.html"
+OFFERS_PATH = "/angebote/uebersicht.html"  # ~400 KB compressed, ~5 MB of HTML per store
 USER_AGENT = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/128.0 Safari/537.36"
@@ -40,6 +41,8 @@ class Fetcher(Protocol):
     def store_list(self) -> object: ...
 
     def leaflet_page(self, store_id: str) -> str: ...
+
+    def offers_page(self, store_id: str) -> str: ...
 
     def pdf(self, url: str) -> bytes: ...
 
@@ -79,7 +82,7 @@ class HttpFetcher:
             return
         parser = urllib.robotparser.RobotFileParser(url)
         parser.parse(resp.text.splitlines())
-        for path in (STORE_LIST_PATH, LEAFLET_PATH):
+        for path in (STORE_LIST_PATH, LEAFLET_PATH, OFFERS_PATH):
             if not parser.can_fetch(USER_AGENT, f"{self.base_url}{path}"):
                 raise FetchError(f"robots.txt disallows {path}")
 
@@ -92,6 +95,10 @@ class HttpFetcher:
 
     def leaflet_page(self, store_id: str) -> str:
         resp = self._get(f"{self.base_url}{LEAFLET_PATH}", cookies={"x-aem-variant": store_id})
+        return resp.text
+
+    def offers_page(self, store_id: str) -> str:
+        resp = self._get(f"{self.base_url}{OFFERS_PATH}", cookies={"x-aem-variant": store_id})
         return resp.text
 
     def pdf(self, url: str) -> bytes:

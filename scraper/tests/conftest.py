@@ -52,13 +52,18 @@ class FakeFetcher:
         pages: Mapping[str, str | Exception],
         default: str | Exception | None = None,
         pdfs: Mapping[str, bytes | Exception] | None = None,
+        offer_pages: Mapping[str, str | Exception] | None = None,
+        offer_default: str | Exception | None = None,
     ) -> None:
         self._stores = stores
         self._pages = dict(pages)
         self._default = default
         self._pdfs = dict(pdfs or {})
+        self._offer_pages = dict(offer_pages or {})
+        self._offer_default = offer_default
         self.requested: list[str] = []
         self.pdf_requests: list[str] = []
+        self.offer_requests: list[str] = []
 
     def preflight(self) -> None:
         return None
@@ -75,6 +80,15 @@ class FakeFetcher:
             raise page
         return page
 
+    def offers_page(self, store_id: str) -> str:
+        self.offer_requests.append(store_id)
+        page = self._offer_pages.get(store_id, self._offer_default)
+        if page is None:
+            raise FetchError(f"no offer page fixture for {store_id}")
+        if isinstance(page, Exception):
+            raise page
+        return page
+
     def pdf(self, url: str) -> bytes:
         self.pdf_requests.append(url)
         pdf = self._pdfs.get(url)
@@ -83,6 +97,15 @@ class FakeFetcher:
         if isinstance(pdf, Exception):
             raise pdf
         return pdf
+
+
+# An offer overview without offer data, as for a closed store.
+NO_OFFERS_PAGE = "<html><body><div class='m-offer-tile-empty'></div></body></html>"
+
+
+@pytest.fixture
+def offer_page() -> str:
+    return fixture_text("angebote_DE4443.html")
 
 
 @pytest.fixture

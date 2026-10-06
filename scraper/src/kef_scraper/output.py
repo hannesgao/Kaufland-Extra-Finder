@@ -230,7 +230,50 @@ def _summary_lines(
     return headline, status, changes
 
 
-def render_report(result: ScanResult, extra: dict[str, Any], diff: Diff | None) -> str:
+def cards_lines(result: ScanResult, cards: dict[str, Any] | None, problems: list[str]) -> list[str]:
+    """Report lines about trading-card offers; empty when no offer overview was scanned."""
+    if not result.offers_scanned:
+        return []
+    scanned = sum(1 for r in result.results if r.offers_scanned)
+    out = [
+        f"Offer overviews: {scanned} scanned, {len(result.offers_failures)} failed, "
+        f"{len(result.no_offer_pages)} without offer data"
+    ]
+    if problems or cards is None:
+        out += [f"cards.json NOT updated: {p}" for p in problems]
+        return out
+    counts: dict[str, int] = {}
+    for s in cards["stores"]:
+        for key in s["products"]:
+            counts[key] = counts.get(key, 0) + 1
+    out.append(
+        f"Trading-card offers ({', '.join(cards['keywords'])}): "
+        f"{len(cards['products'])} in {len(cards['stores'])} stores"
+    )
+    for key, p in cards["products"].items():
+        sale = f", sale {p['sales_from']}..{p['sales_to']}" if "sales_from" in p else ""
+        out.append(
+            f"  {p['title']} {p['subtitle']} ({p['kl_nr']}) {p.get('price', '?')}: "
+            f"shown {p['shown_from']}..{p['shown_to']}{sale}, {counts.get(key, 0)} stores"
+        )
+    like: dict[tuple[str, str, str], int] = {}
+    for r in result.results:
+        for o in r.card_like:
+            k = (o.kl_nr, o.title, o.subtitle)
+            like[k] = like.get(k, 0) + 1
+    if like:
+        out.append("Card-like offers matching no keyword (add a keyword in offers.py?):")
+        out += [f"  {t} {st} ({k}): {n} stores" for (k, t, st), n in sorted(like.items())]
+    return out
+
+
+def render_report(
+    result: ScanResult,
+    extra: dict[str, Any],
+    diff: Diff | None,
+    cards: dict[str, Any] | None = None,
+    offers_problems: list[str] | None = None,
+) -> str:
     headline, status, changes = _summary_lines(result, extra, diff)
     unusual = [
         f"  {r.store.name} ({r.store.plz}): {t.subcategory} {t.title}"
@@ -243,6 +286,9 @@ def render_report(result: ScanResult, extra: dict[str, Any], diff: Diff | None) 
         out += ["", "PDF names a different store:", *(f"  {m}" for m in mismatches)]
     if unusual:
         out += ["", "Other non-standard leaflets:", *unusual]
+    card_lines = cards_lines(result, cards, offers_problems or [])
+    if card_lines:
+        out += ["", *card_lines]
     if result.failed_count:
         out += ["", "Failures:", *(f"  {r.store.id}: {r.error}" for r in result.failures)]
         out += [f"  store list: {e}" for e in result.list_errors]
@@ -250,7 +296,12 @@ def render_report(result: ScanResult, extra: dict[str, Any], diff: Diff | None) 
 
 
 def render_summary_md(
-    result: ScanResult, extra: dict[str, Any], diff: Diff | None, problems: list[str]
+    result: ScanResult,
+    extra: dict[str, Any],
+    diff: Diff | None,
+    problems: list[str],
+    cards: dict[str, Any] | None = None,
+    offers_problems: list[str] | None = None,
 ) -> str:
     """Markdown for $GITHUB_STEP_SUMMARY."""
     headline, status, changes = _summary_lines(result, extra, diff)
@@ -265,4 +316,8 @@ def render_summary_md(
     if mismatches:
         out += ["", f"**PDF names a different store ({len(mismatches)}):**", ""]
         out += [f"- {m}" for m in mismatches]
+    card_lines = cards_lines(result, cards, offers_problems or [])
+    if card_lines:
+        title = "❌ Trading cards not updated" if offers_problems else "🃏 Trading cards"
+        out += ["", f"### {title}", "", "```", *card_lines, "```"]
     return "\n".join(out) + "\n"

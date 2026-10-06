@@ -42,13 +42,14 @@ Please don't run full scans locally; they run on a schedule in GitHub Actions.
 
 | Option | Default | Meaning |
 |---|---|---|
-| `--out DIR` | `data` | Where `extra.json`, `history.csv` and `snapshots/` are written. |
+| `--out DIR` | `data` | Where `extra.json`, `history.csv`, `snapshots/` (and with `--offers` `cards.json`) are written. |
 | `--previous DIR` | `--out` | Previous run's output (CI: the `data` branch checkout), used for `history.csv` and the diff. |
 | `--stores IDS` | all | Comma-separated store ids; skips the minimum-store-count check. |
 | `--workers N` | 4 | Concurrent requests, 1–4. |
 | `--delay S` | 0.25 | Pause before each request. |
 | `--summary FILE` | – | Append a Markdown report (e.g. `$GITHUB_STEP_SUMMARY`). |
 | `--skip-pdf-check` | off | Don't download new Extra PDFs for the PDF check (see below). |
+| `--offers` | off | Also read every store's offer overview and write `cards.json` (trading cards, see below). |
 
 Exit codes: `0` success, `1` error (store list unavailable, unknown store id, …),
 `2` sanity check failed (fewer than 700 stores or more than 5 % failures) — nothing is written.
@@ -94,6 +95,46 @@ cached per PDF in `pdf_checks.json` next to `extra.json`. The PDF host answers 5
 failed downloads get a second pass in the same run (after 60 s, 15 s apart); what still fails is
 retried on the next run and leaves both fields out, which the web page shows as "PDF-Prüfung
 ausstehend". `--skip-pdf-check` disables the downloads (cached results are still used). The footer code in the PDF ("1_D41-H_8530_TS") does not identify the store reliably.
+
+### Trading-card offers (`cards.json`)
+
+With `--offers`, the scraper also reads each store's offer overview
+(`/angebote/uebersicht.html`, cookie `x-aem-variant=<store id>`). The page embeds every offer of
+the current and the next week, plus announced offers ("Vorwerbung", advertised about a week
+before the sale), as JSON; offers differ between stores. Offers whose title or subtitle contains
+a keyword from `CARD_KEYWORDS` in `scraper/src/kef_scraper/offers.py` (accents and case ignored;
+so far only `pokemon`) are written to `cards.json`. The report lists offers that look like
+trading cards but match no keyword (Booster, TCG, Yu-Gi-Oh!, …), so a new brand shows up there.
+
+```jsonc
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-06T06:30:00+02:00",
+  "keywords": ["pokemon"],
+  "store_count": 784,                 // offer overviews read (stores without offers included)
+  "products": {
+    "20973783|2026-10-04": {          // article number | first day shown
+      "kl_nr": "20973783", "title": "POKÉMON", "subtitle": "Sammelkartenspiel »Top-Trainer-Box«",
+      "price": "55.00", "unit": "je",
+      "shown_from": "2026-10-04", "shown_to": "2026-10-09",   // advertised on kaufland.de
+      "sales_from": "2026-10-12", "sales_to": "2026-10-17",   // announced offers only: the sale
+      "category": "Vorwerbung", "week": "current",            // where the offer overview lists it
+      "thumbnail": "https://kaufland.media.schwarz/…?…",      // 150 px wide; thumbnail_2x: 322 px
+      "thumbnail_2x": "https://kaufland.media.schwarz/…?…"
+    }
+  },
+  "stores": [                         // only stores with at least one product
+    { "id": "DE4443", "name": "Karlsruhe-Oststadt", "plz": "76137", "city": "Karlsruhe",
+      "street": "…", "lat": 49.0, "lng": 8.4, "url": "https://filiale.kaufland.de/…",
+      "products": ["20941886|2026-10-08", "20973783|2026-10-04"] }
+  ]
+}
+```
+
+A store whose page has no offer data (e.g. a closed store) counts as a store without offers. If
+more than 5 % of the offer overviews fail or have no offer data, `cards.json` is not written (the
+previous one stays) while `extra.json` is still updated. An offer means the store advertises it,
+not that it is in stock.
 
 ### Postcode coordinates (`web/public/plz.json`)
 
@@ -172,6 +213,9 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 **Schedule.** Mon–Wed 06:30 and Thu 05:30 Berlin time: next week's leaflets appear on Monday and
 become valid on Thursday. GitHub cron runs in UTC, so every time is listed twice (CEST and CET);
 a gate job keeps the entry that matches Berlin's current UTC offset. Scheduled runs can start late.
+The Monday and Thursday runs also scan the offer overviews for trading cards (`--offers`, about
+330 MB more and a few minutes): announced offers appear on Sundays about a week before the sale,
+and the weekly offers start on Thursdays. Manual runs scan them unless `-f offers=false`.
 
 **Data.** The scrape job reads the previous `extra.json`, `pdf_checks.json` and `history.csv` from
 the `data` branch, so only new PDFs are downloaded. If the sanity check fails (exit code 2), the

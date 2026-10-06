@@ -12,8 +12,16 @@ from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from kef_scraper.build import MAX_FAILURE_RATE, MIN_STORES, build_extra, sanity_problems
+from kef_scraper.build import (
+    MAX_FAILURE_RATE,
+    MIN_STORES,
+    build_cards,
+    build_extra,
+    offers_problems,
+    sanity_problems,
+)
 from kef_scraper.fetch import MAX_WORKERS, Fetcher, FetchError, HttpFetcher
+from kef_scraper.offers import CARD_KEYWORDS
 from kef_scraper.output import (
     build_snapshot,
     diff_extra,
@@ -70,6 +78,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--delay", type=float, default=0.25, help="seconds to wait before each request")
     p.add_argument("--summary", type=Path, help="append a Markdown summary to this file")
+    p.add_argument(
+        "--offers",
+        action="store_true",
+        help="also read each store's offer overview and write cards.json (trading-card offers)",
+    )
     p.add_argument(
         "--skip-pdf-check",
         action="store_true",
@@ -130,7 +143,12 @@ def main(
         list_errors = []
 
     result = scan(
-        fetcher, stores, workers=args.workers, full_scan=full_scan, list_errors=tuple(list_errors)
+        fetcher,
+        stores,
+        workers=args.workers,
+        full_scan=full_scan,
+        list_errors=tuple(list_errors),
+        with_offers=args.offers,
     )
     now = now or dt.datetime.now(TZ)
     pdf_cache = read_pdf_checks(previous_dir / "pdf_checks.json")
@@ -150,12 +168,18 @@ def main(
     problems = sanity_problems(
         result, min_stores=args.min_stores, max_failure_rate=args.max_failure_rate
     )
+    # Trading cards are published separately: a bad offer scan keeps the previous cards.json
+    # but does not hold back extra.json.
+    card_problems = (
+        offers_problems(result, max_failure_rate=args.max_failure_rate) if args.offers else []
+    )
+    cards = build_cards(result, now, CARD_KEYWORDS) if args.offers and not card_problems else None
 
-    sys.stdout.write(render_report(result, extra, diff))
+    sys.stdout.write(render_report(result, extra, diff, cards, card_problems))
     if args.summary:
         args.summary.parent.mkdir(parents=True, exist_ok=True)
         with args.summary.open("a", encoding="utf-8") as f:
-            f.write(render_summary_md(result, extra, diff, problems))
+            f.write(render_summary_md(result, extra, diff, problems, cards, card_problems))
 
     if problems:
         for p in problems:
@@ -172,6 +196,11 @@ def main(
     write_text_atomic(out / "pdf_checks.json", render_pdf_checks(pdf_checks))
     write_text_atomic(out / "extra.json", dump_json(extra))
     log.info("wrote %s", out / "extra.json")
+    for p in card_problems:
+        log.warning("offer scan: %s; cards.json not updated", p)
+    if cards is not None:
+        write_text_atomic(out / "cards.json", dump_json(cards))
+        log.info("wrote %s", out / "cards.json")
     return EXIT_OK
 
 
