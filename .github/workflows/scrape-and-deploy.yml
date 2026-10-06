@@ -1,0 +1,157 @@
+name: Scrape and deploy
+
+# Scrape: Mon–Wed 06:30 and Thu 05:30 Berlin time (next week's leaflets appear on Monday and
+# become valid on Thursday). Cron runs in UTC, so each time has a CEST and a CET entry; the gate
+# job keeps the one that matches Berlin's current offset.
+# Deploy: after every scrape, and on push to main (code changes, no scrape).
+on:
+  schedule:
+    - cron: "30 4 * * 1-3" # 06:30 CEST
+    - cron: "30 5 * * 1-3" # 06:30 CET
+    - cron: "30 3 * * 4" # 05:30 CEST
+    - cron: "30 4 * * 4" # 05:30 CET
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions: {}
+
+# Never two scrapes or deploys at once; a running scrape is not cancelled.
+concurrency:
+  group: scrape-and-deploy
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    name: Decide
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    outputs:
+      scrape: ${{ steps.decide.outputs.scrape }}
+    steps:
+      - id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          scrape=false
+          case "$EVENT" in
+            workflow_dispatch) scrape=true ;;
+            schedule)
+              offset=$(TZ=Europe/Berlin date +%z)
+              case "$SCHEDULE" in
+                "30 4 * * 1-3" | "30 3 * * 4") expected=+0200 ;; # CEST entries
+                *) expected=+0100 ;; # CET entries
+              esac
+              if [ "$offset" = "$expected" ]; then
+                scrape=true
+              else
+                echo "::notice::Cron '$SCHEDULE' is for the other DST period (Berlin is UTC$offset); skipping."
+              fi
+              ;;
+          esac
+          echo "scrape=$scrape" >> "$GITHUB_OUTPUT"
+
+  scrape:
+    name: Scrape
+    needs: gate
+    if: needs.gate.outputs.scrape == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write # push to the data branch
+    env:
+      UV_LOCKED: "1"
+      UV_PYTHON_DOWNLOADS: never
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Previous output (extra.json, pdf_checks.json, history.csv) and push target.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: data
+          path: data-branch
+          persist-credentials: true # needed for the push below; no artifacts are uploaded
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version-file: scraper/.python-version
+      - name: Install uv
+        run: python -m pip install --require-hashes --no-deps -r .github/uv/requirements.txt
+      - name: Install scraper
+        working-directory: scraper
+        run: uv sync --no-dev
+      # Exit code 2 (sanity check failed) writes nothing and fails the job: the site keeps the
+      # previous data.
+      - name: Scan all stores
+        working-directory: scraper
+        run: uv run --no-dev kef-scrape --out ../data-branch --summary "$GITHUB_STEP_SUMMARY"
+      - name: Commit to the data branch
+        working-directory: data-branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes."
+            exit 0
+          fi
+          git commit -q -m "data: scan $(TZ=Europe/Berlin date '+%Y-%m-%d %H:%M')"
+          git push origin HEAD:data
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: [gate, scrape]
+    # After a successful scrape, or on push to main (no scrape).
+    if: >-
+      !cancelled() && (needs.scrape.result == 'success' ||
+      (github.event_name == 'push' && needs.scrape.result == 'skipped'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read # checkout
+      pages: write # deploy to Pages
+      id-token: write # OIDC token for the Pages deployment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: data
+          path: data-branch
+          persist-credentials: false
+      - name: Check for data
+        id: data
+        run: |
+          if [ -f data-branch/extra.json ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::No extra.json on the data branch yet; nothing to deploy. Run this workflow manually to scrape first."
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+      # No dependency cache in the release build.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        if: steps.data.outputs.found == 'true'
+        with:
+          node-version-file: web/.nvmrc
+          package-manager-cache: false
+      - name: Build
+        if: steps.data.outputs.found == 'true'
+        working-directory: web
+        env:
+          KEF_EXTRA_JSON: ${{ github.workspace }}/data-branch/extra.json
+        run: |
+          npm ci
+          npm run build
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        if: steps.data.outputs.found == 'true'
+        with:
+          path: web/dist
+      - id: deployment
+        if: steps.data.outputs.found == 'true'
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

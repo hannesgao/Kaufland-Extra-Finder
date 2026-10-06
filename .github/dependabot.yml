@@ -21,3 +21,8 @@ updates:
     groups:
       npm:
         patterns: ["*"]
+  # uv for GitHub Actions (hash-pinned, installed with pip)
+  - package-ecosystem: pip
+    directory: /.github/uv
+    schedule:
+      interval: weekly

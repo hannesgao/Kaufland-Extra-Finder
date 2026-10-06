@@ -147,6 +147,39 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 - `fixtures/extra.json` is real scraper output for 6 stores; edge cases (two validity periods,
   closure days) are derived from it in the tests.
 
+## CI/CD (`.github/workflows/`)
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `ci.yml` | pull requests, push to `main` | Scraper and scripts (ruff, mypy, pytest) and web (lint, typecheck, format, tests, build with the fixture). The job `ci` sums them up and is the required check for `main`. |
+| `scrape-and-deploy.yml` | schedule, manual, push to `main` | Scrapes all stores, commits the output to the `data` branch and deploys the site to GitHub Pages. On push to `main` it only redeploys with the current data. |
+
+**Schedule.** Mon–Wed 06:30 and Thu 05:30 Berlin time: next week's leaflets appear on Monday and
+become valid on Thursday. GitHub cron runs in UTC, so every time is listed twice (CEST and CET);
+a gate job keeps the entry that matches Berlin's current UTC offset. Scheduled runs can start late.
+
+**Data.** The scrape job reads the previous `extra.json`, `pdf_checks.json` and `history.csv` from
+the `data` branch, so only new PDFs are downloaded. If the sanity check fails (exit code 2), the
+job fails, nothing is committed and the site keeps the previous data. The report appears on the
+run's summary page. Without `extra.json` on the `data` branch, deploy is skipped with a notice.
+
+Run a scrape and deploy by hand:
+
+```sh
+gh workflow run scrape-and-deploy.yml
+gh run watch
+```
+
+**60-day limit.** GitHub disables scheduled workflows in public repositories after 60 days without
+repository activity and sends an e-mail beforehand. To re-enable: Actions → "Scrape and deploy" →
+"Enable workflow", or `gh workflow enable scrape-and-deploy.yml`.
+
+**Supply chain.** Only GitHub-owned actions, pinned to full commit SHAs (the repository requires
+SHA pinning). uv is installed with `pip --require-hashes` from `.github/uv/requirements.txt`.
+Dependabot updates actions, uv, the scraper's and the web's dependencies weekly. Every job gets
+the minimal `permissions`: only the scrape job may push (to `data`), only the deploy job may
+deploy to Pages.
+
 ## Data & attribution
 
 - Store and leaflet data: © Kaufland, retrieved from public web pages. Not covered by this repository's license.
