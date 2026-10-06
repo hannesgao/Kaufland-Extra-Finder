@@ -2403,3 +2403,34 @@ a.credit:hover,
     color: var(--md-primary) !important;
   }
 }
+
+/* ---------- Export (list tab): three download buttons in one outlined pill ---------- */
+.export-field {
+  grid-column: 1 / -1;
+}
+
+.segmented__group--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+button.segment {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+button.segment + button.segment {
+  border-left: 1px solid var(--md-outline);
+}
+
+button.segment:focus-visible {
+  outline: 3px solid var(--md-primary);
+  outline-offset: -3px;
+}
+
+button.segment:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}

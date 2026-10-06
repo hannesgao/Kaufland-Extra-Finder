@@ -101,6 +101,7 @@ const allList = byId("all-list", HTMLOListElement);
 const allMeta = byId("all-meta", HTMLParagraphElement);
 const allStatusBox = byId("all-status-box", HTMLDivElement);
 const sortGroup = byId("sort", HTMLDivElement);
+const exportGroup = byId("export", HTMLDivElement);
 const tablist = byId("tabs", HTMLDivElement);
 const pdfSwitches = [
   byId("pdf-only-search", HTMLInputElement),
@@ -321,6 +322,47 @@ function renderAll(): void {
     unchecked: countUnchecked(views),
   };
   allMeta.textContent = `${listSummary(counts, pdfOnly)}.`;
+}
+
+/* ---------- Export ---------- */
+
+const EXPORT_FORMATS = ["html", "png", "pdf"] as const;
+type ExportFormat = (typeof EXPORT_FORMATS)[number];
+
+function isExportFormat(value: string | undefined): value is ExportFormat {
+  return (EXPORT_FORMATS as readonly (string | undefined)[]).includes(value);
+}
+
+/** The list as shown (PDF switch, sort order) as a file; the renderers load on first use. */
+async function exportList(format: ExportFormat): Promise<void> {
+  if (!data) return;
+  const [{ download, exportTable }, renderer] = await Promise.all([
+    import("./export/table"),
+    format === "html"
+      ? import("./export/html").then((m) => m.exportHtml)
+      : format === "png"
+        ? import("./export/png").then((m) => m.exportPng)
+        : import("./export/pdf").then((m) => m.exportPdf),
+  ]);
+  const today = berlinToday(new Date());
+  const views = listAll(data.extra, today, sort, { pdfOnly });
+  const table = exportTable(views, { generatedAt: data.extra.generatedAt, today, pdfOnly, sort });
+  download(await renderer(table), `${table.filename}.${format}`);
+}
+
+function onExportClick(event: Event): void {
+  const button = event.target instanceof Element ? event.target.closest("button") : null;
+  const format = button?.dataset.format;
+  if (!button || !isExportFormat(format) || button.disabled) return;
+  button.disabled = true;
+  exportList(format)
+    .catch((err: unknown) => {
+      console.error(err);
+      allMeta.textContent = "Der Export ist fehlgeschlagen. Bitte erneut versuchen.";
+    })
+    .finally(() => {
+      button.disabled = false;
+    });
 }
 
 /** "In Umkreissuche zeigen": search around the store's PLZ and select it on the map. */
@@ -714,6 +756,7 @@ for (const { form, plz, locate } of forms) {
   });
 }
 sortGroup.addEventListener("change", onSortChange);
+exportGroup.addEventListener("click", onExportClick);
 cardsViewGroup.addEventListener("change", onCardsViewChange);
 for (const box of pdfSwitches) box.addEventListener("change", onPdfOnlyChange);
 window.addEventListener("popstate", applyQuery);
