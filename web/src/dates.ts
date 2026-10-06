@@ -112,6 +112,6 @@ export function relativeValidity(validFrom: IsoDate, validTo: IsoDate, today: Is
 
 export const STALE_AFTER_DAYS = 4;
 
-export function isStale(generatedAt: Date, now: Date): boolean {
-  return now.getTime() - generatedAt.getTime() > STALE_AFTER_DAYS * DAY_MS;
+export function isStale(generatedAt: Date, now: Date, days = STALE_AFTER_DAYS): boolean {
+  return now.getTime() - generatedAt.getTime() > days * DAY_MS;
 }

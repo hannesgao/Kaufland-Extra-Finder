@@ -64,4 +64,8 @@ describe("isPlz", () => {
     expect(isPlz("018145")).toBe(false);
     expect(isPlz("0181a")).toBe(false);
   });
+  it("knows the Pokémon tab", () => {
+    expect(parseQuery("?tab=cards").tab).toBe("cards");
+    expect(buildQuery({ ...DEFAULTS, tab: "cards" })).toBe("?tab=cards");
+  });
 });

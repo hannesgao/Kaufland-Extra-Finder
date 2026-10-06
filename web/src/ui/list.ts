@@ -4,6 +4,7 @@
  * h() into text nodes.
  */
 
+import type { Store } from "../data";
 import { formatDay } from "../dates";
 import { h } from "../dom";
 import { formatKm } from "../geo";
@@ -17,7 +18,7 @@ function classes(...names: (string | false)[]): string {
   return names.filter(Boolean).join(" ");
 }
 
-function externalButton(
+export function externalButton(
   href: string,
   label: string,
   description: string,
@@ -273,6 +274,51 @@ function leafletPanel(view: LeafletView, storeName: string): HTMLLIElement {
 
 /* ---------- Store card ---------- */
 
+type StoreLike = Pick<Store, "name" | "street" | "plz" | "city">;
+
+/** Icon or PLZ badge, name (a button when it selects the store on the map), address, distance. */
+export function storeHeader(
+  store: StoreLike,
+  headingId: string,
+  lead: Element,
+  distanceKm?: number,
+  onTitleClick?: () => void,
+): HTMLDivElement {
+  return h(
+    "div",
+    { class: "store__header" },
+    lead,
+    h(
+      "div",
+      { class: "store__heading" },
+      h(
+        "h3",
+        { class: "store__title", id: headingId },
+        onTitleClick
+          ? h(
+              "button",
+              {
+                type: "button",
+                class: "store__select",
+                title: "Auf der Karte zeigen",
+                on: { click: onTitleClick },
+              },
+              store.name,
+            )
+          : store.name,
+      ),
+      h("p", { class: "store__address" }, `${store.street}, ${store.plz} ${store.city}`),
+    ),
+    distanceKm !== undefined &&
+      h(
+        "span",
+        { class: "chip chip--distance", "aria-label": `Entfernung ${formatKm(distanceKm)}` },
+        icon("location_on"),
+        formatKm(distanceKm),
+      ),
+  );
+}
+
 export interface CardOptions {
   /** Radius search: distance chip next to the name; otherwise the PLZ badge leads. */
   distanceKm?: number;
@@ -301,39 +347,7 @@ export function renderStoreCard(view: StoreView, options: CardOptions): HTMLLIEl
       "article",
       { class: "store__body", "aria-labelledby": headingId },
       note && h("p", { class: "store__note" }, icon("near_me"), note),
-      h(
-        "div",
-        { class: "store__header" },
-        lead,
-        h(
-          "div",
-          { class: "store__heading" },
-          h(
-            "h3",
-            { class: "store__title", id: headingId },
-            onTitleClick
-              ? h(
-                  "button",
-                  {
-                    type: "button",
-                    class: "store__select",
-                    title: "Auf der Karte zeigen",
-                    on: { click: onTitleClick },
-                  },
-                  store.name,
-                )
-              : store.name,
-          ),
-          h("p", { class: "store__address" }, `${store.street}, ${store.plz} ${store.city}`),
-        ),
-        distanceKm !== undefined &&
-          h(
-            "span",
-            { class: "chip chip--distance", "aria-label": `Entfernung ${formatKm(distanceKm)}` },
-            icon("location_on"),
-            formatKm(distanceKm),
-          ),
-      ),
+      storeHeader(store, headingId, lead, distanceKm, onTitleClick),
       view.closed &&
         h("p", { class: "chip chip--closed" }, icon("event_busy"), "Vorübergehend geschlossen"),
       h("div", { class: "cal-card" }, calendar(view), calendarSummary(view)),

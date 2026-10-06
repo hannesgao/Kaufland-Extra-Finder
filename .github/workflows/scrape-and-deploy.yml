@@ -165,6 +165,10 @@ jobs:
             echo "::notice::No extra.json on the data branch yet; nothing to deploy. Run this workflow manually to scrape first."
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
+          # Optional: without cards.json the Pokémon tab says that no offers are available yet.
+          if [ -f data-branch/cards.json ]; then
+            echo "cards=$GITHUB_WORKSPACE/data-branch/cards.json" >> "$GITHUB_OUTPUT"
+          fi
       # The footer shows when this version was released; unreleased versions show the build time.
       - name: Look up the release of this version
         id: release
@@ -187,6 +191,7 @@ jobs:
         working-directory: web
         env:
           KEF_EXTRA_JSON: ${{ github.workspace }}/data-branch/extra.json
+          KEF_CARDS_JSON: ${{ steps.data.outputs.cards }}
           KEF_RELEASED_AT: ${{ steps.release.outputs.published_at }}
         run: |
           npm ci

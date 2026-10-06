@@ -179,9 +179,21 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 - On page load the default PLZ 76131 (25 km) is searched, so the map and the store cards show
   right away. Map tiles therefore come from `tile.openstreetmap.org` on every visit of the search
   tab (the *Alle Extra-Filialen* tab loads no map). No cookies, no storage, no external fonts.
-- Two tabs: *Umkreissuche* (radius search with map) and *Alle Extra-Filialen* (all stores with a
-  current or upcoming Extra leaflet, sortable by PLZ). State lives in the URL
-  (`?plz=76137&r=50&tab=all&sort=plz-desc`); geolocation results never put coordinates into it.
+- Three tabs: *Umkreissuche* (radius search with map), *Alle Extra-Filialen* (all stores with a
+  current or upcoming Extra leaflet, sortable by PLZ) and *Pokémon-Angebot-Finder* (stores near the
+  PLZ with Pokémon offers, from `cards.json`; on narrow screens the tabs read *Umkreis*,
+  *Extra-Filialen*, *Pokémon*). PLZ and radius are shared by both search forms. State lives in the
+  URL (`?plz=76137&r=50&tab=all&sort=plz-desc`, `tab=cards`); geolocation results never put
+  coordinates into it.
+- *Pokémon-Angebot-Finder*: `data/cards.json` is loaded when the tab is first shown. It is
+  optional: in development it is served from `fixtures/cards.json` (dates shifted like
+  `extra.json`) or `KEF_CARDS_JSON`; a production build includes it only when `KEF_CARDS_JSON` is
+  set, otherwise the tab says that no offers are available yet. Each store card lists its offers
+  with a thumbnail (loaded from `kaufland.media.schwarz` without a referrer), price, "ab …" (not on
+  sale yet) or "bis …" (on sale) and a link to Kaufland's offer overview for that store
+  (`?kloffer-articleID=<article number>&storeName=<store id>`: Kaufland's page switches the
+  visitor's selected store to it and adds category and week itself; without `storeName` the
+  article may be missing in whatever store the visitor has selected).
 - The footer is one shared partial (`partials/footer.html`) included into every page at build time.
 - Both tabs show a collapsed note "Woher stammen die Angaben?" (`partials/source-note.html`):
   data comes from Kaufland's store pages, Kaufland lists one Extra PDF at several neighbouring
@@ -191,9 +203,10 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 - XSS: all data is rendered through `h()` (`src/dom.ts`), which only creates text nodes and refuses
   `on*` attributes and non-http(s) URLs; ESLint forbids `innerHTML` & co. Leaflet tooltips get DOM
   nodes, not strings. A CSP meta tag (production build) allows only same-origin resources plus OSM
-  tiles.
+  tiles and images from `kaufland.media.schwarz`.
 - `impressum.html` and `datenschutz.html` (German) describe the actual data flows: GitHub Pages
-  hosting, OSM tiles, local-only geolocation, the PLZ in the URL, GitHub Sponsors as a plain link.
+  hosting, OSM tiles, product thumbnails from Kaufland, local-only geolocation, the PLZ in the URL,
+  GitHub Sponsors as a plain link.
   Update them when a new external service or request is added.
 - External links open in a new tab with `rel="noopener noreferrer"` (except `mailto:`).
 - Look and feel follow Material Design 3 (hand-written CSS with M3 colour roles, shape, elevation
@@ -259,7 +272,8 @@ release shows its build time instead ("Build: …").
 
 ## Data & attribution
 
-- Store and leaflet data: © Kaufland, retrieved from public web pages. Not covered by this repository's license.
+- Store, leaflet and offer data, product images: © Kaufland, retrieved from public web pages. Not
+  covered by this repository's license.
 - Postcode coordinates: `web/public/plz.json` is derived from the
   [GeoNames](https://www.geonames.org/) postal code dataset
   ([download](https://download.geonames.org/export/zip/)) by GeoNames, licensed under

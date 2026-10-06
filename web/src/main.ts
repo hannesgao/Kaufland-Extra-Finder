@@ -1,15 +1,27 @@
 import "./styles.css";
 
+import { loadCards, searchCards, type CardHit, type CardsData } from "./cards";
 import { loadData, type ExtraData, type LatLng, type PlzIndex } from "./data";
 import { berlinToday, formatStamp, isStale, STALE_AFTER_DAYS } from "./dates";
 import { byId, h, replaceChildren } from "./dom";
 import { hydrateIcons } from "./icons";
 import { formatKm } from "./geo";
 import { listAll, search, SORT_ORDERS, type Hit, type SortOrder } from "./search";
+import { renderCardStore } from "./ui/cards";
 import { renderHit, renderRow } from "./ui/list";
-import type { MapView } from "./ui/map";
+import type { MapMarker, MapView } from "./ui/map";
 import { setupTabs } from "./ui/tabs";
-import { countUnchecked, emptyStatus, listSummary, nearestStatus, radiusStatus } from "./summary";
+import {
+  CARDS_EMPTY,
+  CARDS_MISSING,
+  cardsNearestStatus,
+  cardsStatus,
+  countUnchecked,
+  emptyStatus,
+  listSummary,
+  nearestStatus,
+  radiusStatus,
+} from "./summary";
 import {
   buildQuery,
   DEFAULT_PLZ,
@@ -27,10 +39,41 @@ interface Origin {
   plz: string | null;
 }
 
-const form = byId("search-form", HTMLFormElement);
-const plzInput = byId("plz", HTMLInputElement);
-const plzError = byId("plz-error", HTMLParagraphElement);
-const locateButton = byId("locate", HTMLButtonElement);
+/** The radius search and the Pokémon tab each have a search form; PLZ and radius are shared. */
+interface SearchForm {
+  form: HTMLFormElement;
+  plz: HTMLInputElement;
+  error: HTMLParagraphElement;
+  locate: HTMLButtonElement;
+}
+
+/** One lazily created Leaflet map per tab, with the list items it selects. */
+interface MapSlot {
+  container: HTMLDivElement;
+  /** Where a "map could not be loaded" message goes. */
+  errorTarget: HTMLElement;
+  view: Promise<MapView> | null;
+  items: Map<string, HTMLLIElement>;
+  last: { point: LatLng; radius: number; markers: MapMarker[] } | null;
+}
+
+/** Offers are updated on Mondays and Thursdays, so allow a long weekend before warning. */
+const CARDS_STALE_AFTER_DAYS = 5;
+
+const forms: SearchForm[] = [
+  {
+    form: byId("search-form", HTMLFormElement),
+    plz: byId("plz", HTMLInputElement),
+    error: byId("plz-error", HTMLParagraphElement),
+    locate: byId("locate", HTMLButtonElement),
+  },
+  {
+    form: byId("cards-form", HTMLFormElement),
+    plz: byId("cards-plz", HTMLInputElement),
+    error: byId("cards-plz-error", HTMLParagraphElement),
+    locate: byId("cards-locate", HTMLButtonElement),
+  },
+];
 const status = byId("status", HTMLParagraphElement);
 const dataAge = byId("data-age", HTMLParagraphElement);
 const statusBox = byId("status-box", HTMLDivElement);
@@ -39,7 +82,6 @@ const dataAgeBoxes: [HTMLParagraphElement, HTMLDivElement][] = [
   [dataAge, dataAgeBox],
   [byId("all-age", HTMLParagraphElement), byId("all-age-box", HTMLDivElement)],
 ];
-const mapContainer = byId("map", HTMLDivElement);
 const list = byId("list", HTMLOListElement);
 const allList = byId("all-list", HTMLOListElement);
 const allMeta = byId("all-meta", HTMLParagraphElement);
@@ -50,32 +92,68 @@ const pdfSwitches = [
   byId("pdf-only-search", HTMLInputElement),
   byId("pdf-only-all", HTMLInputElement),
 ];
+const cardsStatusText = byId("cards-status", HTMLParagraphElement);
+const cardsStatusBox = byId("cards-status-box", HTMLDivElement);
+const cardsAge = byId("cards-age", HTMLParagraphElement);
+const cardsAgeBox = byId("cards-age-box", HTMLDivElement);
+const cardsList = byId("cards-list", HTMLOListElement);
+
+const searchMap: MapSlot = {
+  container: byId("map", HTMLDivElement),
+  errorTarget: dataAge,
+  view: null,
+  items: new Map(),
+  last: null,
+};
+const cardsMap: MapSlot = {
+  container: byId("cards-map", HTMLDivElement),
+  errorTarget: cardsAge,
+  view: null,
+  items: new Map(),
+  last: null,
+};
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 let data: { extra: ExtraData; plz: PlzIndex } | null = null;
+/** undefined: not loaded yet; null: no cards.json published yet. */
+let cards: CardsData | null | undefined;
+let cardsLoading = false;
 let origin: Origin | null = null;
 let radius = parseQuery(location.search).radius;
 let tab: Tab = parseQuery(location.search).tab;
 let sort: SortOrder = parseQuery(location.search).sort;
 let pdfOnly = parseQuery(location.search).pdfOnly;
-let mapView: Promise<MapView> | null = null;
-let lastMap: { point: LatLng; radius: number; shown: Hit[] } | null = null;
-const items = new Map<string, HTMLLIElement>();
 
 function setStatus(text: string, kind: "info" | "error" = "info"): void {
   status.textContent = text;
   statusBox.classList.toggle("banner--error", kind === "error");
 }
 
-function showPlzError(message: string | null): void {
-  plzError.hidden = message === null;
-  plzError.textContent = message ?? "";
-  plzInput.setAttribute("aria-invalid", String(message !== null));
+function setCardsStatus(text: string, kind: "info" | "error" = "info"): void {
+  cardsStatusText.textContent = text;
+  cardsStatusBox.classList.toggle("banner--error", kind === "error");
 }
 
-function radioFor(value: number): HTMLInputElement | null {
-  return form.querySelector<HTMLInputElement>(`input[name="radius"][value="${String(value)}"]`);
+function showPlzError(message: string | null): void {
+  for (const { plz, error } of forms) {
+    error.hidden = message === null;
+    error.textContent = message ?? "";
+    plz.setAttribute("aria-invalid", String(message !== null));
+  }
+}
+
+function setPlzValue(value: string): void {
+  for (const { plz } of forms) plz.value = value;
+}
+
+function checkRadius(value: number): void {
+  for (const { form } of forms) {
+    const radio = form.querySelector<HTMLInputElement>(
+      `input[name="radius"][value="${String(value)}"]`,
+    );
+    if (radio) radio.checked = true;
+  }
 }
 
 function syncUrl(push: boolean): void {
@@ -85,27 +163,33 @@ function syncUrl(push: boolean): void {
   else history.replaceState(null, "", url);
 }
 
-function getMap(): Promise<MapView> {
-  if (!mapView) {
-    mapContainer.hidden = false;
-    mapView = import("./ui/map").then(({ createMap }) => createMap(mapContainer, select));
+/* ---------- Maps ---------- */
+
+function getMap(slot: MapSlot): Promise<MapView> {
+  if (!slot.view) {
+    slot.container.hidden = false;
+    slot.view = import("./ui/map").then(({ createMap }) =>
+      createMap(slot.container, (id) => {
+        select(slot, id);
+      }),
+    );
   }
-  return mapView;
+  return slot.view;
 }
 
 /** Run `action` on the map; the list stays usable if the map fails. */
-function withMap(action: (map: MapView) => void): void {
-  getMap()
+function withMap(slot: MapSlot, action: (map: MapView) => void): void {
+  getMap(slot)
     .then(action)
     .catch((err: unknown) => {
       console.error(err);
-      mapContainer.hidden = true;
-      dataAge.append(" ", h("strong", null, "Die Karte konnte nicht geladen werden."));
+      slot.container.hidden = true;
+      slot.errorTarget.append(" ", h("strong", null, "Die Karte konnte nicht geladen werden."));
     });
 }
 
-function select(id: string): void {
-  for (const [storeId, item] of items) {
+function select(slot: MapSlot, id: string): void {
+  for (const [storeId, item] of slot.items) {
     const isSelected = storeId === id;
     item.classList.toggle("is-selected", isSelected);
     if (isSelected) {
@@ -118,18 +202,43 @@ function select(id: string): void {
       item.removeAttribute("aria-current");
     }
   }
-  withMap((map) => {
+  withMap(slot, (map) => {
     map.select(id);
   });
 }
 
+/** Draw the slot's last search; only while its tab is visible (Leaflet needs a size). */
+function drawMap(slot: MapSlot): void {
+  if (!slot.last) return;
+  const { point, radius: r, markers } = slot.last;
+  withMap(slot, (map) => {
+    map.show(point, r, markers);
+  });
+}
+
+function hitMarker(hit: Hit): MapMarker {
+  const { id, name, lat, lng } = hit.store;
+  const kind = hit.closed ? "closed" : hit.foreignOnly ? "foreign" : "default";
+  return { id, name, lat, lng, kind };
+}
+
+function cardMarker(hit: CardHit): MapMarker {
+  const { id, name, lat, lng } = hit.store;
+  return { id, name, lat, lng, kind: "default" };
+}
+
+/* ---------- Radius search (Extra leaflets) ---------- */
+
 function render(shown: Hit[], note?: string): void {
-  items.clear();
+  searchMap.items.clear();
+  const onSelect = (id: string) => {
+    select(searchMap, id);
+  };
   replaceChildren(
     list,
     ...shown.map((hit) => {
-      const item = renderHit(hit, select, note);
-      items.set(hit.store.id, item);
+      const item = renderHit(hit, onSelect, note);
+      searchMap.items.set(hit.store.id, item);
       return item;
     }),
   );
@@ -162,18 +271,12 @@ function runSearch(): void {
   }
   if (import.meta.env.DEV) console.debug(`search took ${(performance.now() - t0).toFixed(1)} ms`);
 
-  lastMap = { point: origin.point, radius, shown };
-  if (tab === "search") drawMap();
+  searchMap.last = { point: origin.point, radius, markers: shown.map(hitMarker) };
+  if (tab === "search") drawMap(searchMap);
+  runCards();
 }
 
-/** Draw the last search on the map; only while the search tab is visible (Leaflet needs a size). */
-function drawMap(): void {
-  if (!lastMap) return;
-  const { point, radius: r, shown } = lastMap;
-  withMap((map) => {
-    map.show(point, r, shown);
-  });
-}
+/* ---------- All Extra stores ---------- */
 
 function renderAll(): void {
   if (!data) return;
@@ -197,17 +300,106 @@ function showInSearch(id: string): void {
   showPlzError(null);
   const point = data.plz.get(store.plz);
   if (point) {
-    plzInput.value = store.plz;
+    setPlzValue(store.plz);
     origin = { point, label: `um PLZ ${store.plz}`, plz: store.plz };
   } else {
     // PLZ not in plz.json: search around the store itself (not written into the URL).
-    plzInput.value = "";
+    setPlzValue("");
     origin = { point: [store.lat, store.lng], label: `um ${store.name}`, plz: null };
   }
   syncUrl(true);
   runSearch();
-  select(id);
+  select(searchMap, id);
 }
+
+/* ---------- Pokémon-Angebot-Finder ---------- */
+
+/** Load cards.json the first time the tab is shown; it is not needed for the other tabs. */
+function ensureCards(): void {
+  if (cardsLoading) return;
+  cardsLoading = true;
+  loadCards(import.meta.env.BASE_URL)
+    .then((loaded) => {
+      cards = loaded;
+      showCardsAge(loaded);
+      runCards();
+    })
+    .catch((err: unknown) => {
+      console.error(err);
+      setCardsStatus(
+        "Die Pokémon-Angebote konnten nicht geladen werden. Bitte später erneut versuchen.",
+        "error",
+      );
+      cardsAge.textContent = "Nicht verfügbar.";
+    });
+}
+
+function renderCards(shown: CardHit[], note?: string): void {
+  cardsMap.items.clear();
+  const onSelect = (id: string) => {
+    select(cardsMap, id);
+  };
+  replaceChildren(
+    cardsList,
+    ...shown.map((hit) => {
+      const item = renderCardStore(hit, onSelect, note);
+      cardsMap.items.set(hit.store.id, item);
+      return item;
+    }),
+  );
+}
+
+function runCards(): void {
+  if (cards === undefined) return;
+  if (cards === null) {
+    renderCards([]);
+    setCardsStatus(CARDS_MISSING);
+    return;
+  }
+  if (!origin) return;
+  const today = berlinToday(new Date());
+  const result = searchCards(cards, origin.point, radius, today);
+  const shown = result.hits.length > 0 ? result.hits : result.nearest ? [result.nearest] : [];
+  if (result.hits.length > 0) {
+    renderCards(shown);
+    setCardsStatus(cardsStatus(result.hits.length, radius, origin.label));
+  } else if (result.nearest) {
+    renderCards(shown, "Nächste Filiale mit Pokémon-Angeboten außerhalb des Umkreises");
+    setCardsStatus(cardsNearestStatus(formatKm(result.nearest.distanceKm), radius, origin.label));
+  } else {
+    renderCards([]);
+    setCardsStatus(CARDS_EMPTY);
+  }
+  cardsMap.last = { point: origin.point, radius, markers: shown.map(cardMarker) };
+  if (tab === "cards") drawMap(cardsMap);
+}
+
+function showCardsAge(loaded: CardsData | null): void {
+  if (!loaded) {
+    cardsAge.textContent = "Noch keine Daten.";
+    return;
+  }
+  const stale = isStale(loaded.generatedAt, new Date(), CARDS_STALE_AFTER_DAYS);
+  const stamp = h(
+    "time",
+    { datetime: loaded.generatedAt.toISOString() },
+    formatStamp(loaded.generatedAt),
+  );
+  replaceChildren(cardsAge, "Stand der Angebote: ", stamp);
+  cardsAgeBox.classList.toggle("banner--error", stale);
+  if (stale) {
+    cardsAge.append(
+      " ",
+      h(
+        "strong",
+        null,
+        `Älter als ${String(CARDS_STALE_AFTER_DAYS)} Tage, möglicherweise veraltet.`,
+      ),
+    );
+  }
+}
+
+/* ---------- Controls ---------- */
 
 /** Both tabs have a switch for the same setting; keep them in sync. */
 function onPdfOnlyChange(event: Event): void {
@@ -238,10 +430,16 @@ const tabs = setupTabs(tablist, (selected) => {
   showTab();
 });
 
-/** Render what the visible tab needs (the map must re-measure after being hidden). */
+/** Render what the visible tab needs (a map must re-measure after being hidden). */
 function showTab(): void {
-  if (tab === "all") renderAll();
-  else drawMap();
+  if (tab === "all") {
+    renderAll();
+  } else if (tab === "cards") {
+    ensureCards();
+    drawMap(cardsMap);
+  } else {
+    drawMap(searchMap);
+  }
 }
 
 function searchPlz(plz: string, push: boolean): void {
@@ -252,17 +450,19 @@ function searchPlz(plz: string, push: boolean): void {
     return;
   }
   showPlzError(null);
+  setPlzValue(plz);
   origin = { point, label: `um PLZ ${plz}`, plz };
   syncUrl(push);
   runSearch();
 }
 
-function onSubmit(event: SubmitEvent): void {
+function onSubmit(this: HTMLFormElement, event: SubmitEvent): void {
   event.preventDefault();
-  const plz = plzInput.value.trim();
+  const input = forms.find((f) => f.form === this)?.plz;
+  const plz = input?.value.trim() ?? "";
   if (!isPlz(plz)) {
     showPlzError("Bitte eine 5-stellige Postleitzahl eingeben.");
-    plzInput.focus();
+    input?.focus();
     return;
   }
   if (!data) {
@@ -278,19 +478,29 @@ const GEO_ERRORS: Record<number, string> = {
   3: "Die Standortbestimmung hat zu lange gedauert.",
 };
 
+/** Location messages go to the status of the tab the button is on. */
+function locateStatus(text: string, kind: "info" | "error" = "info"): void {
+  if (tab === "cards") setCardsStatus(text, kind);
+  else setStatus(text, kind);
+}
+
+function setLocating(busy: boolean): void {
+  for (const { locate } of forms) locate.disabled = busy;
+}
+
 function onLocate(): void {
   if (!("geolocation" in navigator)) {
-    setStatus("Dieser Browser unterstützt keine Standortbestimmung.", "error");
+    locateStatus("Dieser Browser unterstützt keine Standortbestimmung.", "error");
     return;
   }
-  locateButton.disabled = true;
-  setStatus("Standort wird ermittelt …");
+  setLocating(true);
+  locateStatus("Standort wird ermittelt …");
   navigator.geolocation.getCurrentPosition(
     (pos) => {
-      locateButton.disabled = false;
+      setLocating(false);
       if (!data) return;
       showPlzError(null);
-      plzInput.value = "";
+      setPlzValue("");
       origin = {
         point: [pos.coords.latitude, pos.coords.longitude],
         label: "um den aktuellen Standort",
@@ -300,8 +510,8 @@ function onLocate(): void {
       runSearch();
     },
     (err) => {
-      locateButton.disabled = false;
-      setStatus(GEO_ERRORS[err.code] ?? "Der Standort konnte nicht ermittelt werden.", "error");
+      setLocating(false);
+      locateStatus(GEO_ERRORS[err.code] ?? "Der Standort konnte nicht ermittelt werden.", "error");
     },
     { enableHighAccuracy: false, timeout: 15_000, maximumAge: 300_000 },
   );
@@ -313,6 +523,7 @@ function onRadiusChange(event: Event): void {
   const value = Number(target.value);
   if (!isRadius(value)) return;
   radius = value;
+  checkRadius(value);
   if (origin) {
     syncUrl(false);
     runSearch();
@@ -322,8 +533,7 @@ function onRadiusChange(event: Event): void {
 function applyQuery(): void {
   const query = parseQuery(location.search);
   radius = query.radius;
-  const radio = radioFor(radius);
-  if (radio) radio.checked = true;
+  checkRadius(radius);
   sort = query.sort;
   pdfOnly = query.pdfOnly;
   for (const box of pdfSwitches) box.checked = pdfOnly;
@@ -334,11 +544,11 @@ function applyQuery(): void {
   showTab();
   // Without a PLZ in the URL the default PLZ is searched, so the map and cards show right away.
   const plz = query.plz ?? DEFAULT_PLZ;
-  plzInput.value = plz;
+  setPlzValue(plz);
   searchPlz(plz, false);
 }
 
-/** Same "Stand der Daten" box in both tabs; red when the data is stale. */
+/** Same "Stand der Daten" box in both Extra tabs; red when the data is stale. */
 function showDataAge(extra: ExtraData): void {
   const stale = isStale(extra.generatedAt, new Date());
   for (const [text, box] of dataAgeBoxes) {
@@ -359,20 +569,21 @@ function showDataAge(extra: ExtraData): void {
 }
 
 hydrateIcons();
-form.addEventListener("submit", onSubmit);
-form.addEventListener("change", onRadiusChange);
+for (const { form, plz, locate } of forms) {
+  form.addEventListener("submit", onSubmit);
+  form.addEventListener("change", onRadiusChange);
+  locate.addEventListener("click", onLocate);
+  plz.addEventListener("input", () => {
+    showPlzError(null);
+  });
+}
 sortGroup.addEventListener("change", onSortChange);
 for (const box of pdfSwitches) box.addEventListener("change", onPdfOnlyChange);
-locateButton.addEventListener("click", onLocate);
-plzInput.addEventListener("input", () => {
-  showPlzError(null);
-});
 window.addEventListener("popstate", applyQuery);
 
 const initial = parseQuery(location.search);
-plzInput.value = initial.plz ?? DEFAULT_PLZ;
-const initialRadio = radioFor(initial.radius);
-if (initialRadio) initialRadio.checked = true;
+setPlzValue(initial.plz ?? DEFAULT_PLZ);
+checkRadius(initial.radius);
 tabs.select(initial.tab);
 for (const box of pdfSwitches) box.checked = initial.pdfOnly;
 
@@ -388,4 +599,5 @@ loadData(import.meta.env.BASE_URL)
     setStatus("Die Daten konnten nicht geladen werden. Bitte später erneut versuchen.", "error");
     allMeta.textContent = "Die Daten konnten nicht geladen werden.";
     allStatusBox.classList.add("banner--error");
+    setCardsStatus("Die Daten konnten nicht geladen werden.", "error");
   });

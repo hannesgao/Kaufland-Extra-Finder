@@ -45,7 +45,8 @@
             aria-controls="panel-search"
             aria-selected="true"
           >
-            <span data-icon="near_me"></span>Umkreissuche
+            <span data-icon="near_me"></span><span class="tab__label">Umkreissuche</span
+            ><span class="tab__label tab__label--short">Umkreis</span>
           </button>
           <button
             type="button"
@@ -57,7 +58,23 @@
             aria-selected="false"
             tabindex="-1"
           >
-            <span data-icon="format_list_bulleted"></span>Alle Extra-Filialen
+            <span data-icon="format_list_bulleted"></span
+            ><span class="tab__label">Alle Extra-Filialen</span
+            ><span class="tab__label tab__label--short">Extra-Filialen</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            id="tab-cards"
+            data-tab="cards"
+            aria-controls="panel-cards"
+            aria-selected="false"
+            tabindex="-1"
+          >
+            <span data-icon="playing_cards"></span
+            ><span class="tab__label">Pokémon-Angebot-Finder</span
+            ><span class="tab__label tab__label--short">Pokémon</span>
           </button>
         </div>
       </div>
@@ -91,7 +108,7 @@
                 <button type="submit" class="btn btn--filled">
                   <span data-icon="search"></span>Suchen
                 </button>
-                <button type="button" id="locate" class="btn btn--tonal">
+                <button type="button" id="locate" class="btn btn--tonal search-row__locate">
                   <span data-icon="my_location"></span>Meinen Standort verwenden
                 </button>
               </div>
@@ -211,6 +228,100 @@
         </div>
 
         <ol id="all-list" class="list" aria-label="Liste der Extra-Filialen"></ol>
+      </div>
+
+      <div id="panel-cards" role="tabpanel" aria-labelledby="tab-cards" hidden>
+        <h2 class="visually-hidden">Pokémon-Angebot-Finder</h2>
+        <section class="card search-card" aria-label="Suche nach Pokémon-Angeboten">
+          <form id="cards-form" novalidate>
+            <div class="search-row">
+              <div class="search-row__field">
+                <div class="text-field">
+                  <input
+                    id="cards-plz"
+                    name="plz"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="postal-code"
+                    pattern="[0-9]{5}"
+                    maxlength="5"
+                    placeholder=" "
+                    required
+                    aria-describedby="cards-plz-hint cards-plz-error"
+                  />
+                  <label for="cards-plz">Postleitzahl</label>
+                </div>
+                <p id="cards-plz-hint" class="supporting-text">5-stellig, z. B. 76137</p>
+                <p id="cards-plz-error" class="supporting-text supporting-text--error" hidden></p>
+              </div>
+              <div class="search-row__buttons">
+                <button type="submit" class="btn btn--filled">
+                  <span data-icon="search"></span>Suchen
+                </button>
+                <button type="button" id="cards-locate" class="btn btn--tonal search-row__locate">
+                  <span data-icon="my_location"></span>Meinen Standort verwenden
+                </button>
+              </div>
+            </div>
+
+            <div class="search-options">
+              <fieldset class="outlined segmented">
+                <legend class="outlined__label">Umkreis</legend>
+                <div class="segmented__group">
+                  <label class="segment">
+                    <input type="radio" name="radius" value="10" />
+                    <span class="segment__check" data-icon="check"></span>10 km
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="radius" value="25" checked />
+                    <span class="segment__check" data-icon="check"></span>25 km
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="radius" value="50" />
+                    <span class="segment__check" data-icon="check"></span>50 km
+                  </label>
+                  <label class="segment">
+                    <input type="radio" name="radius" value="100" />
+                    <span class="segment__check" data-icon="check"></span>100 km
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+          </form>
+        </section>
+
+        <!-- include:source-note-cards -->
+
+        <div class="banner banner--caution cards-stock" role="note">
+          <span class="banner__icon" data-icon="warning"></span>
+          <p>
+            <strong>Angebot heißt nicht vorrätig.</strong> Die Liste zeigt, welche Filialen einen
+            Artikel laut Kaufland im Angebot haben. Ob er noch da ist, steht nirgends; beliebte
+            Pokémon-Artikel sind oft schnell vergriffen.
+          </p>
+        </div>
+
+        <div class="status-bar">
+          <div class="banner" id="cards-status-box">
+            <span class="banner__icon" data-icon="search"></span>
+            <p id="cards-status" role="status" aria-live="polite">Daten werden geladen …</p>
+          </div>
+          <div class="banner" id="cards-age-box">
+            <span class="banner__icon" data-icon="schedule"></span>
+            <p id="cards-age">Wird geladen …</p>
+          </div>
+        </div>
+
+        <section id="cards-results" class="results" aria-label="Pokémon-Angebote" tabindex="-1">
+          <div
+            id="cards-map"
+            class="map"
+            role="region"
+            aria-label="Karte der Filialen mit Pokémon-Angeboten"
+            hidden
+          ></div>
+          <ol id="cards-list" class="list"></ol>
+        </section>
       </div>
     </main>
 

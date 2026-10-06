@@ -54,3 +54,24 @@ export function listSummary(counts: Counts, pdfOnly: boolean): string {
   if (!pdfOnly) return `${filialen(counts.shown)} mit Extra-Prospekt`;
   return `${filialen(counts.shown)}, ${GILT}${hiddenNote(counts)}`;
 }
+
+/* ---------- Pokémon-Angebot-Finder ---------- */
+
+const mitAngeboten = (n: number) =>
+  `${String(n)} ${n === 1 ? "Filiale" : "Filialen"} mit Pokémon-Angeboten`;
+
+/** "3 Filialen mit Pokémon-Angeboten im Umkreis von 25 km um PLZ 76131." */
+export function cardsStatus(count: number, radius: number, where: string): string {
+  return `${mitAngeboten(count)} im Umkreis von ${String(radius)} km ${where}.`;
+}
+
+export function cardsNearestStatus(distance: string, radius: number, where: string): string {
+  return (
+    `Keine Filiale mit Pokémon-Angeboten im Umkreis von ${String(radius)} km ${where}. ` +
+    `Die nächste ist ${distance} entfernt.`
+  );
+}
+
+export const CARDS_EMPTY = "Derzeit sind keine Pokémon-Angebote bekannt.";
+export const CARDS_MISSING =
+  "Noch keine Pokémon-Angebote verfügbar. Sie werden montags und donnerstags aktualisiert.";

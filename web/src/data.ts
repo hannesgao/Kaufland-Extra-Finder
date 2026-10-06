@@ -50,13 +50,13 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME = /^\d{2}:\d{2}$/;
 const PLZ = /^\d{5}$/;
 
-type Json = Record<string, unknown>;
+export type Json = Record<string, unknown>;
 
-function isObject(value: unknown): value is Json {
+export function isObject(value: unknown): value is Json {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function str(obj: Json, key: string, where: string): string {
+export function str(obj: Json, key: string, where: string): string {
   const value = obj[key];
   if (typeof value !== "string" || value === "") {
     throw new DataError(`${where}: "${key}" must be a non-empty string`);
@@ -64,7 +64,7 @@ function str(obj: Json, key: string, where: string): string {
   return value;
 }
 
-function num(obj: Json, key: string, where: string): number {
+export function num(obj: Json, key: string, where: string): number {
   const value = obj[key];
   if (typeof value !== "number" || !Number.isFinite(value)) {
     throw new DataError(`${where}: "${key}" must be a number`);
@@ -72,13 +72,13 @@ function num(obj: Json, key: string, where: string): number {
   return value;
 }
 
-function arr(obj: Json, key: string, where: string): unknown[] {
+export function arr(obj: Json, key: string, where: string): unknown[] {
   const value = obj[key];
   if (!Array.isArray(value)) throw new DataError(`${where}: "${key}" must be an array`);
   return value;
 }
 
-function isoDate(obj: Json, key: string, where: string): IsoDate {
+export function isoDate(obj: Json, key: string, where: string): IsoDate {
   const value = str(obj, key, where);
   if (!ISO_DATE.test(value) || Number.isNaN(Date.parse(value))) {
     throw new DataError(`${where}: "${key}" must be a date (YYYY-MM-DD)`);
@@ -87,7 +87,7 @@ function isoDate(obj: Json, key: string, where: string): IsoDate {
 }
 
 /** Links end up in href attributes: only allow https URLs (no javascript:, data:, ...). */
-function httpsUrl(obj: Json, key: string, where: string): string {
+export function httpsUrl(obj: Json, key: string, where: string): string {
   const value = str(obj, key, where);
   let url: URL;
   try {
@@ -203,7 +203,7 @@ export function parsePlz(raw: unknown): PlzIndex {
   return index;
 }
 
-async function fetchJson(url: string): Promise<unknown> {
+export async function fetchJson(url: string): Promise<unknown> {
   const res = await fetch(url, { cache: "no-cache" });
   if (!res.ok) throw new DataError(`${url}: HTTP ${res.status}`);
   return res.json();
