@@ -1315,20 +1315,23 @@ a {
   background: var(--md-surface-container-lowest);
 }
 
+/* May wrap to two lines; the icon stays beside the first. */
 .siblings__title {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   margin: 0 0 8px;
   color: var(--md-on-surface-variant);
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.25rem;
+  text-wrap: balance; /* two even lines instead of one word on the second */
 }
 
 .siblings__title .icon {
   width: 18px;
   height: 18px;
+  margin-top: 1px; /* centred on the 20px first line */
 }
 
 .siblings__list {
@@ -1913,7 +1916,7 @@ a.credit:hover,
 /* ---------- Wide screens: list left, map right ---------- */
 @media (min-width: 960px) {
   .results:has(.map:not([hidden])) {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* store cards and map: half each */
     align-items: start;
   }
 

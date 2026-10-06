@@ -166,7 +166,8 @@ function pdfWarning(view: LeafletView): HTMLDivElement | false {
   );
 }
 
-const SIBLINGS_TITLE = "Auf kaufland.de auch bei diesen Filialen gelistet";
+const SIBLINGS_TITLE =
+  "Dieser Extra-Prospekt ist auf kaufland.de auch bei diesen Filialen gelistet";
 
 const PDF_LABELS = {
   named: { cls: "is-named", icon: "check", text: "Filiale steht im PDF" },
