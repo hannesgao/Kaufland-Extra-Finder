@@ -3,6 +3,9 @@
 Find Kaufland stores near your postcode (PLZ) that currently publish an **Extra-Angebote** leaflet —
 the store-specific offers that mydealz users call "Kaufland Extra Filialen".
 
+**→ [hannesgao.github.io/Kaufland-Extra-Finder](https://hannesgao.github.io/Kaufland-Extra-Finder/)**
+(German UI; data updated Mon–Wed 06:30 and Thu 05:30, Berlin time)
+
 > **Unofficial project.** Not affiliated with, endorsed by, or connected to Kaufland.
 > "Kaufland" is a trademark of its respective owner. Data may be incomplete or outdated —
 > always check the official leaflet before shopping.
@@ -10,10 +13,13 @@ the store-specific offers that mydealz users call "Kaufland Extra Filialen".
 ## How it works
 
 1. A scheduled GitHub Actions job scans every store's leaflet page on `filiale.kaufland.de`
-   (a few times per week, low concurrency).
-2. Stores with an Extra leaflet are written to `extra.json` on the `data` branch.
+   (four times a week, low concurrency).
+2. Stores with an Extra leaflet are written to `extra.json` on the `data` branch. Each new Extra
+   PDF is downloaded once to read which store(s) it names ("NUR IN …"): Kaufland also shows such a
+   leaflet to neighbouring stores it does not apply to.
 3. A static frontend (GitHub Pages) loads that JSON and filters by distance from your PLZ —
-   entirely in your browser. No tracking, no cookies, no backend.
+   entirely in your browser. No tracking, no cookies, no backend. By default it lists only stores
+   whose PDF names them.
 
 ## Development
 
@@ -140,7 +146,10 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   `on*` attributes and non-http(s) URLs; ESLint forbids `innerHTML` & co. Leaflet tooltips get DOM
   nodes, not strings. A CSP meta tag (production build) allows only same-origin resources plus OSM
   tiles.
-- `impressum.html` and `datenschutz.html` are placeholders to be filled in by the site owner.
+- `impressum.html` and `datenschutz.html` (German) describe the actual data flows: GitHub Pages
+  hosting, OSM tiles, local-only geolocation, the PLZ in the URL, GitHub Sponsors as a plain link.
+  Update them when a new external service or request is added.
+- External links open in a new tab with `rel="noopener noreferrer"` (except `mailto:`).
 - Look and feel follow Material Design 3 (hand-written CSS with M3 colour roles, shape, elevation
   and state layers; no component library). Icons are Material Symbols path data built with
   `createElementNS` (`src/icons.ts`).
@@ -192,6 +201,12 @@ deploy to Pages.
 - Map tiles: © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
 - Icons: [Material Symbols](https://github.com/google/material-design-icons) by Google,
   [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+## Support
+
+The project is private, non-commercial and open source. If it saves you a trip, you can support it
+via [GitHub Sponsors](https://github.com/sponsors/hannesgao). Bugs and ideas:
+[issues](https://github.com/hannesgao/Kaufland-Extra-Finder/issues).
 
 ## License
 
