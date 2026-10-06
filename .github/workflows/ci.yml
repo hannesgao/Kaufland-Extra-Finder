@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  python:
+    name: Python (scraper, scripts)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      UV_LOCKED: "1" # fail if uv.lock is out of date
+      UV_PYTHON_DOWNLOADS: never # use the Python from setup-python
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version-file: scraper/.python-version
+      - name: Install uv
+        run: python -m pip install --require-hashes --no-deps -r .github/uv/requirements.txt
+      - name: Install scraper dependencies
+        working-directory: scraper
+        run: uv sync
+      - name: Scraper
+        working-directory: scraper
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run mypy
+          uv run pytest
+      - name: Scripts
+        working-directory: scripts
+        run: |
+          uv run --project ../scraper ruff check .
+          uv run --project ../scraper ruff format --check .
+          uv run --project ../scraper mypy
+          uv run --project ../scraper pytest
+
+  web:
+    name: Web
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run format:check
+      - run: npm test
+      - name: Build with the fixture data
+        run: npm run build
+        env:
+          KEF_EXTRA_JSON: fixtures/extra.json
+
+  # The single required status check for main.
+  ci:
+    name: ci
+    if: ${{ !cancelled() }}
+    needs: [python, web]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: All jobs succeeded
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Results: $RESULTS"
+          for result in $RESULTS; do
+            [ "$result" = success ] || exit 1
+          done
