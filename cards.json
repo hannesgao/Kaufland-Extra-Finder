@@ -1,0 +1,752 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-06T20:35:10+02:00",
+  "keywords": [
+    "pokemon"
+  ],
+  "store_count": 788,
+  "products": {
+    "20941886|2026-10-08": {
+      "kl_nr": "20941886",
+      "title": "POKÉMON",
+      "subtitle": "Boosterpack »Karmesin & Purpur - Ewige Rivalen»",
+      "price": "4.99",
+      "unit": "je",
+      "shown_from": "2026-10-08",
+      "shown_to": "2026-10-14",
+      "category": "10_Elektro__Buero__Medien",
+      "week": "next",
+      "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20941886-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+      "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20941886-P?JGstbGVnYWN5LW9uc2l0ZS0yJA=="
+    },
+    "20973783|2026-10-04": {
+      "kl_nr": "20973783",
+      "title": "POKÉMON",
+      "subtitle": "Sammelkartenspiel »Top-Trainer-Box«",
+      "price": "55.00",
+      "unit": "je",
+      "shown_from": "2026-10-04",
+      "shown_to": "2026-10-09",
+      "category": "Vorwerbung",
+      "week": "current",
+      "sales_from": "2026-10-12",
+      "sales_to": "2026-10-17",
+      "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/196214144842_DE_V_2030-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+      "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/196214144842_DE_V_2030-1?JGstbGVnYWN5LW9uc2l0ZS0yJA=="
+    },
+    "20973794|2026-10-04": {
+      "kl_nr": "20973794",
+      "title": "POKÉMON",
+      "subtitle": "Sammelkartenspiel-Doppelpack",
+      "price": "12.99",
+      "unit": "je",
+      "shown_from": "2026-10-04",
+      "shown_to": "2026-10-09",
+      "category": "Vorwerbung",
+      "week": "current",
+      "sales_from": "2026-10-12",
+      "sales_to": "2026-10-17",
+      "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/196214152274_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+      "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/196214152274_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA=="
+    }
+  },
+  "stores": [
+    {
+      "id": "DE1480",
+      "name": "Hagen-Hohenlimburg",
+      "plz": "58119",
+      "city": "Hagen",
+      "street": "Auf dem Lölfert 50",
+      "lat": 51.3641872,
+      "lng": 7.5841314,
+      "url": "https://filiale.kaufland.de/service/filiale/hagen-hohenlimburg-1480.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE1600",
+      "name": "Soest",
+      "plz": "59494",
+      "city": "Soest",
+      "street": "Senator-Schwartz-Ring 24",
+      "lat": 51.5611253,
+      "lng": 8.0822934,
+      "url": "https://filiale.kaufland.de/service/filiale/soest-1600.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE2580",
+      "name": "Ludwigsburg",
+      "plz": "71636",
+      "city": "Ludwigsburg",
+      "street": "Schwieberdinger Straße 94",
+      "lat": 48.8906313,
+      "lng": 9.1691475,
+      "url": "https://filiale.kaufland.de/service/filiale/ludwigsburg-2580.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE3000",
+      "name": "Neckarsulm",
+      "plz": "74172",
+      "city": "Neckarsulm",
+      "street": "Rötelstraße 35",
+      "lat": 49.1718392,
+      "lng": 9.2230815,
+      "url": "https://filiale.kaufland.de/service/filiale/neckarsulm-3000.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE3070",
+      "name": "Eiche",
+      "plz": "16356",
+      "city": "Ahrensfelde",
+      "street": "Landsberger Chaussee 17",
+      "lat": 52.5495551,
+      "lng": 13.5969599,
+      "url": "https://filiale.kaufland.de/service/filiale/eiche-3070.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE3140",
+      "name": "Leipzig-Paunsdorf",
+      "plz": "04329",
+      "city": "Leipzig",
+      "street": "Paunsdorfer Allee 1",
+      "lat": 51.34856,
+      "lng": 12.4785725,
+      "url": "https://filiale.kaufland.de/service/filiale/leipzig-paunsdorf-3140.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE3160",
+      "name": "Cottbus-Schmellwitz",
+      "plz": "03044",
+      "city": "Cottbus",
+      "street": "Sielower Chaussee 38",
+      "lat": 51.7831523,
+      "lng": 14.3165846,
+      "url": "https://filiale.kaufland.de/service/filiale/cottbus-schmellwitz-3160.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE3180",
+      "name": "Dallgow-Döberitz",
+      "plz": "14624",
+      "city": "Dallgow-Döberitz",
+      "street": "Döberitzer Weg 3",
+      "lat": 52.5308544,
+      "lng": 13.0804238,
+      "url": "https://filiale.kaufland.de/service/filiale/dallgow-doeberitz-3180.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE3300",
+      "name": "Freiberg, Häuersteig",
+      "plz": "09599",
+      "city": "Freiberg/Sachsen",
+      "street": "Häuersteig 2",
+      "lat": 50.8953854,
+      "lng": 13.3284456,
+      "url": "https://filiale.kaufland.de/service/filiale/freiberg-haeuersteig-3300.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE3700",
+      "name": "Bentwisch",
+      "plz": "18182",
+      "city": "Bentwisch",
+      "street": "Hansestraße 37",
+      "lat": 54.1151087,
+      "lng": 12.193031,
+      "url": "https://filiale.kaufland.de/service/filiale/bentwisch-3700.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4003",
+      "name": "Aachen, Breslauer Str.",
+      "plz": "52068",
+      "city": "Aachen",
+      "street": "Breslauer Straße 35",
+      "lat": 50.783427,
+      "lng": 6.125751,
+      "url": "https://filiale.kaufland.de/service/filiale/aachen-breslauer-str--4003.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4113",
+      "name": "Bremerhaven-Lehe",
+      "plz": "27580",
+      "city": "Bremerhaven",
+      "street": "Pferdebade 6",
+      "lat": 53.572428,
+      "lng": 8.599059,
+      "url": "https://filiale.kaufland.de/service/filiale/bremerhaven-lehe-4113.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4123",
+      "name": "Celle",
+      "plz": "29225",
+      "city": "Celle",
+      "street": "An der Hasenbahn 3",
+      "lat": 52.6061221,
+      "lng": 10.0569452,
+      "url": "https://filiale.kaufland.de/service/filiale/celle-4123.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4153",
+      "name": "Dortmund-Oespel",
+      "plz": "44149",
+      "city": "Dortmund",
+      "street": "Wulfshofstraße 6-8",
+      "lat": 51.4946387,
+      "lng": 7.3714169,
+      "url": "https://filiale.kaufland.de/service/filiale/dortmund-oespel-4153.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4163",
+      "name": "Dreieich",
+      "plz": "63303",
+      "city": "Dreieich",
+      "street": "Robert-Bosch-Straße 15",
+      "lat": 50.0317323,
+      "lng": 8.7040652,
+      "url": "https://filiale.kaufland.de/service/filiale/dreieich-4163.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4183",
+      "name": "Düren",
+      "plz": "52355",
+      "city": "Düren",
+      "street": "Am Ellernbusch 22",
+      "lat": 50.7943061,
+      "lng": 6.4686079,
+      "url": "https://filiale.kaufland.de/service/filiale/dueren-4183.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4193",
+      "name": "Düsseldorf-Friedrichstadt",
+      "plz": "40217",
+      "city": "Düsseldorf",
+      "street": "Friedrichstraße 152",
+      "lat": 51.2088133,
+      "lng": 6.7780702,
+      "url": "https://filiale.kaufland.de/service/filiale/duesseldorf-friedrichstadt-4193.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4253",
+      "name": "Freiburg-Haslach",
+      "plz": "79111",
+      "city": "Freiburg im Breisgau",
+      "street": "St.-Georgener-Straße 2",
+      "lat": 47.9880816,
+      "lng": 7.7989914,
+      "url": "https://filiale.kaufland.de/service/filiale/freiburg-haslach-4253.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4273",
+      "name": "Garbsen",
+      "plz": "30823",
+      "city": "Garbsen",
+      "street": "Havelser Straße 2-8",
+      "lat": 52.4243714,
+      "lng": 9.597184,
+      "url": "https://filiale.kaufland.de/service/filiale/garbsen-4273.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4303",
+      "name": "Gifhorn",
+      "plz": "38518",
+      "city": "Gifhorn",
+      "street": "Eyßelheideweg 5",
+      "lat": 52.4619656,
+      "lng": 10.5386563,
+      "url": "https://filiale.kaufland.de/service/filiale/gifhorn-4303.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4313",
+      "name": "Göttingen-Grone",
+      "plz": "37079",
+      "city": "Göttingen",
+      "street": "Am Kauf Park 2",
+      "lat": 51.5280807,
+      "lng": 9.8828881,
+      "url": "https://filiale.kaufland.de/service/filiale/goettingen-grone-4313.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4323",
+      "name": "Göttingen-Weende",
+      "plz": "37077",
+      "city": "Göttingen-Weende",
+      "street": "Große Breite 6",
+      "lat": 51.5602701,
+      "lng": 9.9271805,
+      "url": "https://filiale.kaufland.de/service/filiale/goettingen-weende-4323.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4333",
+      "name": "Greifswald",
+      "plz": "17491",
+      "city": "Greifswald",
+      "street": "Anklamer Landstraße 1",
+      "lat": 54.0764156,
+      "lng": 13.4305359,
+      "url": "https://filiale.kaufland.de/service/filiale/greifswald-4333.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4370",
+      "name": "München-Neuperlach",
+      "plz": "81737",
+      "city": "München",
+      "street": "Thomas-Dehler-Straße 10",
+      "lat": 48.1000044,
+      "lng": 11.6436324,
+      "url": "https://filiale.kaufland.de/service/filiale/muenchen-neuperlach-4370.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4393",
+      "name": "Heinsberg",
+      "plz": "52525",
+      "city": "Heinsberg",
+      "street": "Humboldtstraße 26",
+      "lat": 51.069033,
+      "lng": 6.1102485,
+      "url": "https://filiale.kaufland.de/service/filiale/heinsberg-4393.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4400",
+      "name": "Berlin-Heinersdorf",
+      "plz": "13089",
+      "city": "Berlin",
+      "street": "Romain-Rolland-Straße 13",
+      "lat": 52.5643312,
+      "lng": 13.4450862,
+      "url": "https://filiale.kaufland.de/service/filiale/berlin-heinersdorf-4400.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4443",
+      "name": "Karlsruhe-Oststadt",
+      "plz": "76137",
+      "city": "Karlsruhe",
+      "street": "Durlacher Allee 111",
+      "lat": 49.0039646,
+      "lng": 8.4493277,
+      "url": "https://filiale.kaufland.de/service/filiale/karlsruhe-oststadt-4443.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4453",
+      "name": "Kassel-Wesertor",
+      "plz": "34125",
+      "city": "Kassel",
+      "street": "Franzgraben 40-42",
+      "lat": 51.321132,
+      "lng": 9.517428,
+      "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4520",
+      "name": "Bremerhaven-Fischereihafen",
+      "plz": "27572",
+      "city": "Bremerhaven",
+      "street": "Bohmsiel 1",
+      "lat": 53.4916074,
+      "lng": 8.6009403,
+      "url": "https://filiale.kaufland.de/service/filiale/bremerhaven-fischereihafen-4520.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4533",
+      "name": "Langenfeld (Rheinland)",
+      "plz": "40764",
+      "city": "Langenfeld",
+      "street": "Rheindorfer Straße 48-56",
+      "lat": 51.0966785,
+      "lng": 6.9500883,
+      "url": "https://filiale.kaufland.de/service/filiale/langenfeld-rheinland--4533.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4563",
+      "name": "Mainz-Bretzenheim",
+      "plz": "55128",
+      "city": "Mainz",
+      "street": "Haifa-Allee 1",
+      "lat": 49.9672476,
+      "lng": 8.2296898,
+      "url": "https://filiale.kaufland.de/service/filiale/mainz-bretzenheim-4563.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4593",
+      "name": "Mönchengladbach-Pesch",
+      "plz": "41065",
+      "city": "Mönchengladbach",
+      "street": "Reyerhütte 1",
+      "lat": 51.192468,
+      "lng": 6.460389,
+      "url": "https://filiale.kaufland.de/service/filiale/moenchengladbach-pesch-4593.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4603",
+      "name": "Mönchengladbach-Eicken",
+      "plz": "41063",
+      "city": "Mönchengladbach",
+      "street": "Krefelder Straße 131",
+      "lat": 51.207336,
+      "lng": 6.4605285,
+      "url": "https://filiale.kaufland.de/service/filiale/moenchengladbach-eicken-4603.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4613",
+      "name": "München-Schwabing-Freimann",
+      "plz": "80939",
+      "city": "München",
+      "street": "Margot-Kalinke-Straße 4",
+      "lat": 48.1947906,
+      "lng": 11.5972031,
+      "url": "https://filiale.kaufland.de/service/filiale/muenchen-schwabing-freimann-4613.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4693",
+      "name": "Oststeinbek",
+      "plz": "22113",
+      "city": "Oststeinbek",
+      "street": "Willinghusener Weg 1",
+      "lat": 53.5455598,
+      "lng": 10.1525975,
+      "url": "https://filiale.kaufland.de/service/filiale/oststeinbek-4693.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4703",
+      "name": "Paderborn-Kernstadt",
+      "plz": "33100",
+      "city": "Paderborn",
+      "street": "Husener Straße 121",
+      "lat": 51.7034911,
+      "lng": 8.7686648,
+      "url": "https://filiale.kaufland.de/service/filiale/paderborn-kernstadt-4703.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4733",
+      "name": "Rastatt",
+      "plz": "76437",
+      "city": "Rastatt",
+      "street": "Rauentaler Straße 65",
+      "lat": 48.860253,
+      "lng": 8.2352115,
+      "url": "https://filiale.kaufland.de/service/filiale/rastatt-4733.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4750",
+      "name": "Amberg",
+      "plz": "92224",
+      "city": "Amberg",
+      "street": "Am Bergsteig 1",
+      "lat": 49.433654,
+      "lng": 11.8872998,
+      "url": "https://filiale.kaufland.de/service/filiale/amberg-4750.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4773",
+      "name": "Rosenheim-Happing",
+      "plz": "83026",
+      "city": "Rosenheim",
+      "street": "Kufsteiner Straße 124",
+      "lat": 47.8384683,
+      "lng": 12.120529,
+      "url": "https://filiale.kaufland.de/service/filiale/rosenheim-happing-4773.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4803",
+      "name": "Schwerin-Krebsförden",
+      "plz": "19061",
+      "city": "Schwerin",
+      "street": "Grabenstraße 1",
+      "lat": 53.6008401,
+      "lng": 11.3925643,
+      "url": "https://filiale.kaufland.de/service/filiale/schwerin-krebsfoerden-4803.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4863",
+      "name": "Wolfsburg",
+      "plz": "38444",
+      "city": "Wolfsburg",
+      "street": "Brandgehaege 9",
+      "lat": 52.3706607,
+      "lng": 10.7258392,
+      "url": "https://filiale.kaufland.de/service/filiale/wolfsburg-4863.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE4893",
+      "name": "Wildau",
+      "plz": "15745",
+      "city": "Wildau",
+      "street": "Chausseestraße 1",
+      "lat": 52.3139188,
+      "lng": 13.6049207,
+      "url": "https://filiale.kaufland.de/service/filiale/wildau-4893.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE5060",
+      "name": "Göttingen-Weststadt",
+      "plz": "37079",
+      "city": "Göttingen",
+      "street": "Elliehäuser Weg 23",
+      "lat": 51.5493199,
+      "lng": 9.9001077,
+      "url": "https://filiale.kaufland.de/service/filiale/goettingen-weststadt-5060.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE5083",
+      "name": "Flensburg",
+      "plz": "24941",
+      "city": "Flensburg",
+      "street": "Schleswiger Straße 130",
+      "lat": 54.7617453,
+      "lng": 9.4339801,
+      "url": "https://filiale.kaufland.de/service/filiale/flensburg-5083.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE5093",
+      "name": "Wiesbaden",
+      "plz": "65203",
+      "city": "Wiesbaden",
+      "street": "Äppelallee 69",
+      "lat": 50.045008,
+      "lng": 8.2166355,
+      "url": "https://filiale.kaufland.de/service/filiale/wiesbaden-5093.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE5113",
+      "name": "Gerlingen",
+      "plz": "70839",
+      "city": "Gerlingen",
+      "street": "Weilimdorfer Straße 93+95",
+      "lat": 48.8064288,
+      "lng": 9.0774281,
+      "url": "https://filiale.kaufland.de/service/filiale/gerlingen-5113.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE6200",
+      "name": "Berlin-Biesdorf",
+      "plz": "12683",
+      "city": "Berlin",
+      "street": "Weißenhöher Straße 88-108",
+      "lat": 52.5066989,
+      "lng": 13.5584569,
+      "url": "https://filiale.kaufland.de/service/filiale/berlin-biesdorf-6200.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04",
+        "20973794|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE7760",
+      "name": "Weißenburg",
+      "plz": "91781",
+      "city": "Weißenburg",
+      "street": "Eichstätter Straße 29",
+      "lat": 49.0274504,
+      "lng": 10.9846703,
+      "url": "https://filiale.kaufland.de/service/filiale/weissenburg-7760.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    },
+    {
+      "id": "DE8730",
+      "name": "Hagen-Nord",
+      "plz": "58099",
+      "city": "Hagen",
+      "street": "Freiligrathstraße 51",
+      "lat": 51.3779854,
+      "lng": 7.4615569,
+      "url": "https://filiale.kaufland.de/service/filiale/hagen-nord-8730.html",
+      "products": [
+        "20941886|2026-10-08",
+        "20973783|2026-10-04"
+      ]
+    }
+  ]
+}
