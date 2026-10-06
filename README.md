@@ -142,6 +142,11 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   current or upcoming Extra leaflet, sortable by PLZ). State lives in the URL
   (`?plz=76137&r=50&tab=all&sort=plz-desc`); geolocation results never put coordinates into it.
 - The footer is one shared partial (`partials/footer.html`) included into every page at build time.
+- Both tabs show a collapsed note "Woher stammen die Angaben?" (`partials/source-note.html`):
+  data comes from Kaufland's store pages, Kaufland lists one Extra PDF at several neighbouring
+  stores, and only the PDF's "NUR IN …" line says where it applies. The card of stores sharing a
+  leaflet ("Auf kaufland.de auch bei diesen Filialen gelistet") marks each one as named or not
+  named in the PDF.
 - XSS: all data is rendered through `h()` (`src/dom.ts`), which only creates text nodes and refuses
   `on*` attributes and non-http(s) URLs; ESLint forbids `innerHTML` & co. Leaflet tooltips get DOM
   nodes, not strings. A CSP meta tag (production build) allows only same-origin resources plus OSM

@@ -43,15 +43,16 @@ describe("renderHit", () => {
     ]);
     expect(li.querySelector(".cal__day.is-today .cal__date")?.textContent).toBe("05");
     expect(li.querySelector(".siblings__title")?.textContent).toBe(
-      "Gleicher Extra-Prospekt auch in",
+      "Auf kaufland.de auch bei diesen Filialen gelistet",
     );
     const siblings = [...li.querySelectorAll(".siblings__item")].map((item) => [
       item.querySelector(".siblings__name")?.textContent,
       item.querySelector(".siblings__place")?.textContent,
+      item.querySelector(".siblings__pdf")?.textContent,
     ]);
     expect(siblings).toEqual([
-      ["Karlsruhe-Beiertheim-Bulac", "76135 Karlsruhe"],
-      ["Karlsruhe-Grünwinkel", "76185 Karlsruhe"],
+      ["Karlsruhe-Beiertheim-Bulac", "76135 Karlsruhe", "Filiale nicht im PDF genannt"],
+      ["Karlsruhe-Grünwinkel", "76185 Karlsruhe", "Filiale nicht im PDF genannt"],
     ]);
     expect(li.querySelector(".siblings__more")).toBeNull();
   });
@@ -107,6 +108,14 @@ describe("renderHit", () => {
     // Checked stores show no pending notice.
     const oststadt = renderHit(nth(hits.filter((h) => h.store.id === "DE4443")), vi.fn());
     expect(oststadt.querySelector(".pdf-warning")).toBeNull();
+  });
+
+  it("marks the sibling the PDF names", () => {
+    const hits = hitsFor(fixture(), PLZ_KARLSRUHE);
+    const li = renderHit(nth(hits.filter((h) => h.store.id === "DE8530")), vi.fn());
+    const first = li.querySelector(".siblings__item");
+    expect(first?.querySelector(".siblings__name")?.textContent).toBe("Karlsruhe-Oststadt");
+    expect(first?.querySelector(".siblings__pdf.is-named")?.textContent).toBe("im PDF genannt");
   });
 
   it("lists at most five siblings and counts the rest", () => {

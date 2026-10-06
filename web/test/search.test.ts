@@ -31,7 +31,36 @@ describe("search", () => {
     const view = nth(hit.leaflets);
     expect(view.label).toBe("Ab Donnerstag");
     expect(view.range).toBe("08.10.–14.10.2026");
-    expect(view.siblings.map((s) => s.id)).toEqual(["DE5443", "DE8530"]);
+    // Listed with the same PDF on kaufland.de, but the PDF names neither of them.
+    expect(view.siblings.map((s) => [s.store.id, s.pdfNamed])).toEqual([
+      ["DE5443", false],
+      ["DE8530", false],
+    ]);
+  });
+
+  it("lists siblings the PDF names first", () => {
+    const hit = search(data, PLZ_KARLSRUHE, 10, MONDAY).hits.find((h) => h.store.id === "DE8530");
+    const siblings = nth(hit?.leaflets ?? []).siblings;
+    expect(siblings.map((s) => [s.store.id, s.pdfNamed])).toEqual([
+      ["DE4443", true],
+      ["DE5443", false],
+    ]);
+  });
+
+  it("marks siblings whose PDF check is open", () => {
+    const store = nth(data.stores.filter((s) => s.id === "DE5443"));
+    const leaflets = store.leaflets.map((l) => {
+      const copy = { ...l };
+      delete copy.pdfStore;
+      delete copy.pdfStoreMatch;
+      return copy;
+    });
+    const patched = replaceStore(data, "DE5443", { leaflets });
+    const hit = nth(search(patched, PLZ_KARLSRUHE, 10, MONDAY).hits);
+    expect(nth(hit.leaflets).siblings.map((s) => [s.store.id, s.pdfNamed])).toEqual([
+      ["DE5443", undefined],
+      ["DE8530", false],
+    ]);
   });
 
   it("marks stores whose leaflets all name a different store", () => {
@@ -135,7 +164,7 @@ describe("search", () => {
   it("shows current and next week's leaflet, current first, each with its own cluster", () => {
     const hit = nth(search(edgeCases(), PLZ_KASSEL, 10, MONDAY).hits);
     expect(hit.leaflets.map((l) => l.label)).toEqual(["Diese Woche", "Ab Donnerstag"]);
-    expect(hit.leaflets.map((l) => l.siblings.map((s) => s.id))).toEqual([["DE4313"], []]);
+    expect(hit.leaflets.map((l) => l.siblings.map((s) => s.store.id))).toEqual([["DE4313"], []]);
   });
 
   it("drops expired leaflets and stores", () => {

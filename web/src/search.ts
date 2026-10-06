@@ -68,8 +68,21 @@ export interface LeafletView {
   specialHours: Extract<SpecialDay, { closed: false }>[];
   /** Closed on every remaining day of this leaflet. */
   unusable: boolean;
-  /** Other stores with the identical leaflet (same PDF). */
-  siblings: Store[];
+  /** Other stores Kaufland lists with the identical leaflet (same PDF); named ones first. */
+  siblings: Sibling[];
+}
+
+/** Another store listed with the same leaflet, and whether that PDF names it. */
+export interface Sibling {
+  store: Store;
+  /** true: the PDF names this store; false: it names others; undefined: not checked yet. */
+  pdfNamed: boolean | undefined;
+}
+
+/** Named stores first, unchecked next, others last. */
+function namedRank(named: boolean | undefined): number {
+  if (named === undefined) return 1;
+  return named ? 0 : 2;
 }
 
 /** A store with its non-expired Extra leaflets. */
@@ -152,7 +165,15 @@ function viewLeaflet(
     .filter((id) => id !== store.id)
     .map((id) => data.storesById.get(id))
     .filter((s): s is Store => s !== undefined)
-    .sort((a, b) => a.name.localeCompare(b.name, "de"));
+    .map((s) => ({
+      store: s,
+      pdfNamed: s.leaflets.find((l) => l.cluster === leaflet.cluster)?.pdfStoreMatch,
+    }))
+    .sort(
+      (a, b) =>
+        namedRank(a.pdfNamed) - namedRank(b.pdfNamed) ||
+        a.store.name.localeCompare(b.store.name, "de"),
+    );
   return {
     leaflet,
     label: leafletLabel(leaflet.validFrom, today),

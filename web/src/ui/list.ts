@@ -166,30 +166,57 @@ function pdfWarning(view: LeafletView): HTMLDivElement | false {
   );
 }
 
+const SIBLINGS_TITLE = "Auf kaufland.de auch bei diesen Filialen gelistet";
+
+/** Whether the PDF names a sibling store: listed on kaufland.de is not the same as valid there. */
+function pdfNamedLabel(named: boolean | undefined): HTMLSpanElement {
+  if (named === undefined) {
+    return h(
+      "span",
+      { class: "siblings__pdf is-unchecked" },
+      icon("schedule"),
+      "PDF nicht geprüft",
+    );
+  }
+  return named
+    ? h("span", { class: "siblings__pdf is-named" }, icon("check"), "im PDF genannt")
+    : h(
+        "span",
+        { class: "siblings__pdf is-not-named" },
+        icon("warning"),
+        "Filiale nicht im PDF genannt",
+      );
+}
+
+/**
+ * Other stores Kaufland lists with the same leaflet. Worded as a fact about kaufland.de, with a
+ * marker per store, so it does not read as "the offers are valid there too".
+ */
 function siblingsCard(view: LeafletView): HTMLElement | false {
   const { siblings } = view;
   if (siblings.length === 0) return false;
   const more = siblings.length - MAX_SIBLINGS;
   return h(
     "section",
-    { class: "siblings", "aria-label": "Gleicher Extra-Prospekt auch in" },
-    h("h4", { class: "siblings__title" }, icon("info"), "Gleicher Extra-Prospekt auch in"),
+    { class: "siblings", "aria-label": SIBLINGS_TITLE },
+    h("h4", { class: "siblings__title" }, icon("info"), SIBLINGS_TITLE),
     h(
       "ul",
       { class: "siblings__list" },
       ...siblings
         .slice(0, MAX_SIBLINGS)
-        .map((s) =>
+        .map(({ store, pdfNamed }) =>
           h(
             "li",
             { class: "siblings__item" },
             icon("storefront"),
             h(
               "span",
-              null,
-              h("span", { class: "siblings__name" }, s.name),
-              h("span", { class: "siblings__place" }, `${s.plz} ${s.city}`),
+              { class: "siblings__store" },
+              h("span", { class: "siblings__name" }, store.name),
+              h("span", { class: "siblings__place" }, `${store.plz} ${store.city}`),
             ),
+            pdfNamedLabel(pdfNamed),
           ),
         ),
       more > 0 &&
