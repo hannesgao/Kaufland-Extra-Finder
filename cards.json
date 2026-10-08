@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-06T20:35:10+02:00",
+  "generated_at": "2026-10-08T12:58:37+02:00",
   "keywords": [
     "pokemon"
   ],
@@ -15,7 +15,7 @@
       "shown_from": "2026-10-08",
       "shown_to": "2026-10-14",
       "category": "10_Elektro__Buero__Medien",
-      "week": "next",
+      "week": "current",
       "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20941886-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
       "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20941886-P?JGstbGVnYWN5LW9uc2l0ZS0yJA=="
     },
