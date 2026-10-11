@@ -106,7 +106,35 @@ class TestMatching:
     def test_keyword_ignores_accents_and_case(self, offer_page: str) -> None:
         offer = _by_nr(parse_offers(offer_page) or [])[BOOSTER]
         assert is_card(replace(offer, title="Pokemon"))
-        assert is_card(replace(offer, title="", subtitle="Sammelkarten von pokémon"))
+        assert is_card(replace(offer, title="", subtitle="SAMMELKARTEN von pokémon"))
+
+    @pytest.mark.parametrize(
+        ("title", "subtitle"),
+        [
+            ("KINDER", "Adventskalender »Pokémon« "),  # chocolate with stickers (2026-10-11)
+            ("POKÉMON", "Plüschfigur Pikachu"),
+        ],
+    )
+    def test_brand_without_card_wording_is_reported_not_listed(
+        self, offer_page: str, title: str, subtitle: str
+    ) -> None:
+        offer = _by_nr(parse_offers(offer_page) or [])[BOOSTER]
+        other = replace(offer, title=title, subtitle=subtitle)
+        assert not is_card(other)
+        assert is_card_like(other)
+
+    @pytest.mark.parametrize(
+        "subtitle",
+        [
+            "Sammelkartenspiel-Doppelpack ",
+            "Boosterpack »Ewige Rivalen«",
+            "Trading Card Game",
+            "TCG",
+        ],
+    )
+    def test_card_wording(self, offer_page: str, subtitle: str) -> None:
+        offer = _by_nr(parse_offers(offer_page) or [])[BOOSTER]
+        assert is_card(replace(offer, title="POKÉMON", subtitle=subtitle))
 
     @pytest.mark.parametrize(
         "title", ["YU-GI-OH!", "ONE PIECE Card Game", "Disney Lorcana", "Fußball-Sammelkarten"]
@@ -285,6 +313,6 @@ class TestCli:
         fetcher = FakeFetcher(store_list_sample(), pages, offer_default=page)
         assert _run(fetcher, tmp_path, "--offers") == EXIT_OK
         report = capsys.readouterr().out
-        assert "Card-like offers matching no keyword" in report
+        assert "Possible trading cards not in cards.json" in report
         assert "YU-GI-OH!" in report
         assert "2 stores" in report

@@ -7,6 +7,7 @@ Captured once from `filiale.kaufland.de` on 2026-10-05. Tests never touch the ne
 | `klstorefinder_sample.json` | `GET /.klstorefinder.json` | 5 of 788 store records, unmodified. DE1530 has special opening days (`sod`). |
 | `prospekte_DE4453.html` | `GET /prospekte.html`, cookie `x-aem-variant=DE4453` | Has an Extra leaflet (`Hyper1`, valid 08.10.–14.10.2026). |
 | `prospekte_DE8530.html` | same, `x-aem-variant=DE8530` | Has an Extra leaflet with a different PDF (different cluster). |
+| `prospekte_DE4453_2026-10-11.html` | same, `x-aem-variant=DE4453`, 2026-10-11 | First week of Kaufland's Mon–Sat rhythm: the old Extra leaflet (`Hyper1`, 08.10.–14.10.) and the new one (`Hyper2`, Mon 12.10.–Sat 17.10.) overlap. |
 | `prospekte_DE1300.html` | same, `x-aem-variant=DE1300` | No Extra leaflet. |
 | `angebote_DE4443.html` | `GET /angebote/uebersicht.html`, cookie `x-aem-variant=DE4443`, 2026-10-06 | Offer overview with both Pokémon offers (one announced, one next week, the latter in two categories), a FUNKO calendar that mentions Pokémon only in its description, a few other offers and one without a title. |
 

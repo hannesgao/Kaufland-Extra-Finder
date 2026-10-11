@@ -63,7 +63,7 @@ export function formatDay(iso: IsoDate): string {
   return `${iso.slice(8, 10)}.${iso.slice(5, 7)}.`;
 }
 
-/** "Donnerstag" */
+/** "Montag" */
 export function weekdayName(iso: IsoDate): string {
   return weekdayFormat.format(new Date(utc(iso)));
 }
@@ -90,7 +90,7 @@ export function formatStamp(date: Date): string {
   return `${stampFormat.format(date)} Uhr`;
 }
 
-/** "Diese Woche" for a running leaflet, "Ab Donnerstag" within a week, otherwise "Ab 15.10.". */
+/** "Diese Woche" for a running leaflet, "Ab Montag" within a week, otherwise "Ab 19.10.". */
 export function leafletLabel(validFrom: IsoDate, today: IsoDate): string {
   if (validFrom <= today) return "Diese Woche";
   if (daysBetween(today, validFrom) <= 6) {
@@ -110,7 +110,8 @@ export function relativeValidity(validFrom: IsoDate, validTo: IsoDate, today: Is
   return left === 2 ? "noch bis morgen gültig" : `noch ${String(left)} Tage gültig`;
 }
 
-export const STALE_AFTER_DAYS = 4;
+/** The scan runs every night; one missed run is fine, two are worth a warning. */
+export const STALE_AFTER_DAYS = 2;
 
 export function isStale(generatedAt: Date, now: Date, days = STALE_AFTER_DAYS): boolean {
   return now.getTime() - generatedAt.getTime() > days * DAY_MS;

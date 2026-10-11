@@ -111,10 +111,10 @@ describe("relativeValidity", () => {
 
 describe("isStale", () => {
   const generated = new Date("2026-10-06T06:31:00+02:00");
-  it("is fresh within four days", () => {
-    expect(isStale(generated, new Date("2026-10-10T06:00:00+02:00"))).toBe(false);
+  it("is fresh within two days", () => {
+    expect(isStale(generated, new Date("2026-10-08T06:00:00+02:00"))).toBe(false);
   });
   it("is stale afterwards", () => {
-    expect(isStale(generated, new Date("2026-10-10T07:00:00+02:00"))).toBe(true);
+    expect(isStale(generated, new Date("2026-10-08T07:00:00+02:00"))).toBe(true);
   });
 });

@@ -4,7 +4,7 @@ Find Kaufland stores near your postcode (PLZ) that currently publish an **Extra-
 the store-specific offers that mydealz users call "Kaufland Extra Filialen".
 
 **→ [hannesgao.github.io/Kaufland-Extra-Finder](https://hannesgao.github.io/Kaufland-Extra-Finder/)**
-(German UI; data updated Mon–Wed 06:30 and Thu 05:30, Berlin time)
+(German UI; data updated every night at 03:30, Berlin time)
 
 > **Unofficial project.** Not affiliated with, endorsed by, or connected to Kaufland.
 > "Kaufland" is a trademark of its respective owner. Data may be incomplete or outdated —
@@ -74,7 +74,7 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, �
       "lng": 9.517428,
       "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html", // optional
       "leaflets": [
-        // Mon–Wed often current + next week
+        // two entries when the next leaflet is already listed (e.g. on the weekend)
         {
           "valid_from": "2026-10-08",
           "valid_to": "2026-10-14",
@@ -116,8 +116,11 @@ With `--offers`, the scraper also reads each store's offer overview
 the current and the next week, plus announced offers ("Vorwerbung", advertised about a week
 before the sale), as JSON; offers differ between stores. Offers whose title or subtitle contains
 a keyword from `CARD_KEYWORDS` in `scraper/src/kef_scraper/offers.py` (accents and case ignored;
-so far only `pokemon`) are written to `cards.json`. The report lists offers that look like
-trading cards but match no keyword (Booster, TCG, Yu-Gi-Oh!, …), so a new brand shows up there.
+so far only `pokemon`) **and** says that it is a card product (Sammelkarten, Kartenspiel,
+Booster, Trading Card, TCG) are written to `cards.json`; other products with the brand (e.g. a
+chocolate advent calendar) are left out. The report lists offers that may be trading cards but
+are not listed (card wording or another card brand such as Yu-Gi-Oh! without a keyword, or a
+keyword without card wording), so a new brand or unusual wording shows up there.
 
 ```jsonc
 {
@@ -262,12 +265,15 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 | `scrape-and-deploy.yml` | schedule, manual, push to `main` | Scrapes all stores, commits the output to the `data` branch and deploys the site to GitHub Pages. On push to `main`, and when run manually with `mode=deploy`, it only redeploys with the current data. |
 | `release.yml`           | GitHub Release published, manual | Checks that the release tag matches the versions of web and scraper, then starts a deploy-only run so the footer shows the release date.                                                                |
 
-**Schedule.** Mon–Wed 06:30 and Thu 05:30 Berlin time: next week's leaflets appear on Monday and
-become valid on Thursday. GitHub cron runs in UTC, so every time is listed twice (CEST and CET);
-a gate job keeps the entry that matches Berlin's current UTC offset. Scheduled runs can start late.
+**Schedule.** Every night at 03:30 Berlin time. Since 12.10.2026 Kaufland's offer week runs
+Monday to Saturday (before: Thursday to Wednesday), so no Extra leaflet is valid on Sundays, and
+next week's leaflets go online some time before the weekend; the nightly scan picks them up the
+night after they appear. GitHub cron runs in UTC, so the time is listed twice (CEST and CET); a
+gate job keeps the entry that matches Berlin's current UTC offset. Scheduled runs can start late.
 The Monday and Thursday runs also scan the offer overviews for trading cards (`--offers`, about
-330 MB more and a few minutes): announced offers appear on Sundays about a week before the sale,
-and the weekly offers start on Thursdays. Manual runs scan them unless `-f offers=false`.
+330 MB more and a few minutes): the overview lists the whole week, including the Thursday–Saturday
+and weekend offers, plus next week's announced offers from the Sunday before; Thursday's run picks
+up late changes. Manual runs scan them unless `-f offers=false`.
 
 **Data.** The scrape job reads the previous `extra.json`, `pdf_checks.json` and `history.csv` from
 the `data` branch, so only new PDFs are downloaded. If the sanity check fails (exit code 2), the
