@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-08T12:58:37+02:00",
+  "generated_at": "2026-10-11T19:35:40+02:00",
   "store_count": 788,
   "failed_count": 0,
   "stores": [
@@ -43,6 +43,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e755-031f-7143-aaed-3e9a98d5b530/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "HAGEN-HOHENLIMBURG, AUF DEM LÖLFERT 50 • HAGEN-NORD, FREILIGRATHSTRASSE 51",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a115e6-730a-7226-9ff9-d4b3b9795229",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_1480_D42-H/ar/1480",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a115e6-730a-7226-9ff9-d4b3b9795229/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "HAGEN-HOHENLIMBURG, AUF DEM LÖLFERT 50 • HAGEN-NORD, FREILIGRATHSTRASSE 51",
+          "pdf_store_match": true
         }
       ]
     },
@@ -64,6 +73,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-35c0-7f02-bfe8-c44848301527/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "PADERBORN, IM SÜDRING-CENTER, HUSENER STRASSE 121",
           "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-5f1d-782a-b017-f417f2cea7f7",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_1560_D42-H/ar/1560",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-5f1d-782a-b017-f417f2cea7f7/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "PADERBORN, IM SÜDRING-CENTER, HUSENER STRASSE 121",
+          "pdf_store_match": false
         }
       ]
     },
@@ -83,6 +101,15 @@
           "cluster": "01a0e6b0-3882-7f78-976e-9736a56af957",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1600_D41-H/ar/1600",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-3882-7f78-976e-9736a56af957/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "SOEST, SENATOR-SCHWARTZ-RING 24",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-6119-7805-925f-16330b599bef",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_1600_D42-H/ar/1600",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-6119-7805-925f-16330b599bef/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "SOEST, SENATOR-SCHWARTZ-RING 24",
           "pdf_store_match": true
         }
@@ -190,6 +217,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-3b1b-7af1-a3c5-c93181048ba7/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "MAINZ-BRETZENHEIM, IM GUTENBERG-CENTER",
           "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-635e-78d2-a474-5378af90c320",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_1733_D42-H/ar/1733",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-635e-78d2-a474-5378af90c320/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "MAINZ-BRETZENHEIM, IM GUTENBERG-CENTER",
+          "pdf_store_match": false
         }
       ]
     },
@@ -209,6 +245,15 @@
           "cluster": "01a0e6b0-3ddd-77ca-88e8-df982eae6494",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1773_D41-H/ar/1773",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-3ddd-77ca-88e8-df982eae6494/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "MG-EICKEN, KREFELDER STR. 131 • MG, REYERHÜTTE 1",
+          "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-65ec-76fe-a752-f47f5249e67b",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_1773_D42-H/ar/1773",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-65ec-76fe-a752-f47f5249e67b/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "MG-EICKEN, KREFELDER STR. 131 • MG, REYERHÜTTE 1",
           "pdf_store_match": false
         }
@@ -253,6 +298,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-4058-7500-a69d-ca3823ba682f/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "LANGENFELD/RHEINLAND, RHEINDORFER STR. 48-56",
           "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-6748-7405-ae92-c48943be50b6",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_1970_D42-H/ar/1970",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-6748-7405-ae92-c48943be50b6/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "LANGENFELD/RHEINLAND, RHEINDORFER STR. 48-56",
+          "pdf_store_match": false
         }
       ]
     },
@@ -272,6 +326,15 @@
           "cluster": "01a0e6b0-42ac-75b6-a903-069e6ef1423e",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1990_D41-H/ar/1990",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-42ac-75b6-a903-069e6ef1423e/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "AACHEN, BRESLAUER STRASSE 35",
+          "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-6965-79c6-95f0-14bd6455871c",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_1990_D42-H/ar/1990",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-6965-79c6-95f0-14bd6455871c/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "AACHEN, BRESLAUER STRASSE 35",
           "pdf_store_match": false
         }
@@ -337,6 +400,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-44df-7773-b9d3-a22ae9e28c58/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "RASTATT, RAUENTALER STRASSE 65",
           "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-6e67-7803-82e7-af5aa10a6d3a",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_2310_D42-H/ar/2310",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-6e67-7803-82e7-af5aa10a6d3a/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "RASTATT, RAUENTALER STRASSE 65",
+          "pdf_store_match": false
         }
       ]
     },
@@ -379,6 +451,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-46f0-7b61-8185-1203ab459e47/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "STEINHEIM A. D. MURR, STEINBEISSTRASSE 15",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-7048-7672-8729-2179eee3b61e",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_2560_D42-H/ar/2560",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-7048-7672-8729-2179eee3b61e/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "STEINHEIM A. D. MURR, STEINBEISSTRASSE 15",
+          "pdf_store_match": true
         }
       ]
     },
@@ -398,6 +479,15 @@
           "cluster": "01a0e6b0-4a2e-7e90-8b45-869355a44d4d",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_2580_D41-H/ar/2580",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-4a2e-7e90-8b45-869355a44d4d/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "LUDWIGSBURG, SCHWIEBERDINGER STRASSE 94",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-7230-749f-b3b8-38110b4981d7",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_2580_D42-H/ar/2580",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-7230-749f-b3b8-38110b4981d7/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "LUDWIGSBURG, SCHWIEBERDINGER STRASSE 94",
           "pdf_store_match": true
         }
@@ -463,6 +553,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-4d3e-7b56-804a-777c7df305b7/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "NECKARSULM, RÖTELSTRASSE 35",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-74d4-7e4e-bdf0-5d415720e571",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_3000_D42-H/ar/3000",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-74d4-7e4e-bdf0-5d415720e571/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "NECKARSULM, RÖTELSTRASSE 35",
+          "pdf_store_match": true
         }
       ]
     },
@@ -482,6 +581,15 @@
           "cluster": "01a0e6b0-4f44-7ca1-9698-4ec9052b46c6",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3070_D41-H/ar/3070",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-4f44-7ca1-9698-4ec9052b46c6/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "AHRENSFELDE-EICHE, IM KAUFPARK • BERLIN, IM BIESDORF-CENTER",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-764a-7812-b109-5aa1e753ee31",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_3070_D42-H/ar/3070",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-764a-7812-b109-5aa1e753ee31/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "AHRENSFELDE-EICHE, IM KAUFPARK • BERLIN, IM BIESDORF-CENTER",
           "pdf_store_match": true
         }
@@ -505,6 +613,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-5177-76da-8f9d-5fb8a98a3a71/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "LEIPZIG-PAUNSDORF, IM PAUNSDORF-CENTER",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-785a-79d5-a80b-96e5da763d8a",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_3140_D42-H/ar/3140",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-785a-79d5-a80b-96e5da763d8a/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "LEIPZIG-PAUNSDORF, IM PAUNSDORF-CENTER",
+          "pdf_store_match": true
         }
       ]
     },
@@ -526,6 +643,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-5485-7b76-a081-ef58752aa63a/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "COTTBUS-SCHMELLWITZ, IM COTTBUS-CENTER",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-7a7c-71cf-8817-cf8535c911b7",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_3160_D42-H/ar/3160",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-7a7c-71cf-8817-cf8535c911b7/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "COTTBUS-SCHMELLWITZ, IM COTTBUS-CENTER",
+          "pdf_store_match": true
         }
       ]
     },
@@ -545,6 +671,15 @@
           "cluster": "01a0e6b0-577c-7173-95ec-f107d7ba9f60",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3180_D41-H/ar/3180",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-577c-7173-95ec-f107d7ba9f60/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "DALLGOW-DÖBERITZ, IM HAVEL-PARK",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-7cc0-71f0-8cf2-f0d9c72daba4",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_3180_D42-H/ar/3180",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-7cc0-71f0-8cf2-f0d9c72daba4/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "DALLGOW-DÖBERITZ, IM HAVEL-PARK",
           "pdf_store_match": true
         }
@@ -587,6 +722,15 @@
           "cluster": "01a0e6b0-5cc2-7b54-b01b-7108e4daaed3",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3300_D41-H/ar/3300",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-5cc2-7b54-b01b-7108e4daaed3/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "FREIBERG/SACHSEN, HÄUERSTEIG 2",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-7e60-79a6-b1cf-836505c80558",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_3300_D42-H/ar/3300",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-7e60-79a6-b1cf-836505c80558/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "FREIBERG/SACHSEN, HÄUERSTEIG 2",
           "pdf_store_match": true
         }
@@ -671,6 +815,15 @@
           "cluster": "01a0e6b0-5f4e-75a0-8f12-db8cf13a840a",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3700_D41-H/ar/3700",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-5f4e-75a0-8f12-db8cf13a840a/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "BENTWISCH, IM HANSE CENTER",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-8048-7519-a226-dae784c417a2",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_3700_D42-H/ar/3700",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-8048-7519-a226-dae784c417a2/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "BENTWISCH, IM HANSE CENTER",
           "pdf_store_match": true
         }
@@ -799,6 +952,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-620c-78bd-9609-cda0ceb0a694/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "CELLE, AN DER HASENBAHN 3",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-8228-76fa-b60c-005542a6e866",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4123_D42-H/ar/4123",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-8228-76fa-b60c-005542a6e866/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "CELLE, AN DER HASENBAHN 3",
+          "pdf_store_match": true
         }
       ]
     },
@@ -841,6 +1003,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-6547-7b95-98a2-7ccd05c280c1/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "DREIEICH-SPRENDLINGEN, IM DREIEICH-NORDPARK",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-841c-727c-92cc-6f993050534b",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4163_D42-H/ar/4163",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-841c-727c-92cc-6f993050534b/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "DREIEICH-SPRENDLINGEN, IM DREIEICH-NORDPARK",
+          "pdf_store_match": true
         }
       ]
     },
@@ -862,6 +1033,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-681a-7b47-8d7f-3682f6720e0e/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "DÜREN, AM ELLERNBUSCH 22",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-8568-7903-a0f0-7be61d295f88",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4183_D42-H/ar/4183",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-8568-7903-a0f0-7be61d295f88/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "DÜREN, AM ELLERNBUSCH 22",
+          "pdf_store_match": true
         }
       ]
     },
@@ -881,6 +1061,15 @@
           "cluster": "01a0e6b0-6aae-79ea-a1ad-feed05837ffa",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4193_D41-H/ar/4193",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-6aae-79ea-a1ad-feed05837ffa/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "DÜSSELDORF-FRIEDRICHSTADT, FRIEDRICHSTRASSE 152",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-87a2-7ad1-9fff-52729ef8df5b",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4193_D42-H/ar/4193",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-87a2-7ad1-9fff-52729ef8df5b/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "DÜSSELDORF-FRIEDRICHSTADT, FRIEDRICHSTRASSE 152",
           "pdf_store_match": true
         }
@@ -946,6 +1135,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-6d23-734c-80c7-5dbeb34977be/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "GARBSEN, IM NORD-WEST-ZENTRUM",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-8993-78b6-9685-10735766149d",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4273_D42-H/ar/4273",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-8993-78b6-9685-10735766149d/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "GARBSEN, IM NORD-WEST-ZENTRUM",
+          "pdf_store_match": true
         }
       ]
     },
@@ -965,6 +1163,15 @@
           "cluster": "01a0e6b0-7023-7194-af4b-3e33311abfc8",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4303_D41-H/ar/4303",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7023-7194-af4b-3e33311abfc8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "GIFHORN, EYSSELHEIDEWEG 5",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-8b8e-7140-998e-c2d23e75f14f",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4303_D42-H/ar/4303",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-8b8e-7140-998e-c2d23e75f14f/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "GIFHORN, EYSSELHEIDEWEG 5",
           "pdf_store_match": true
         }
@@ -1030,6 +1237,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7211-73b1-990c-03a11b2a77eb/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "GREIFSWALD, IM ELISEN PARK",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-8cc8-7d6a-b2f6-33127c03c6df",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4333_D42-H/ar/4333",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-8cc8-7d6a-b2f6-33127c03c6df/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "GREIFSWALD, IM ELISEN PARK",
+          "pdf_store_match": true
         }
       ]
     },
@@ -1049,6 +1265,15 @@
           "cluster": "01a0e6b0-7462-7553-8c0e-e7ba1a71a649",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4370_D41-H/ar/4370",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7462-7553-8c0e-e7ba1a71a649/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "MÜNCHEN-NEUPERLACH, OLLENHAUERSTRASSE 4",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-8e4f-7dbe-9741-ebe0ce913b0c",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4370_D42-H/ar/4370",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-8e4f-7dbe-9741-ebe0ce913b0c/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "MÜNCHEN-NEUPERLACH, OLLENHAUERSTRASSE 4",
           "pdf_store_match": true
         }
@@ -1072,6 +1297,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7710-7c2a-aed7-50ef05ee789e/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "HEINSBERG, HUMBOLDTSTRASSE 26",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-904d-735a-805a-b91d5217e47e",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4393_D42-H/ar/4393",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-904d-735a-805a-b91d5217e47e/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "HEINSBERG, HUMBOLDTSTRASSE 26",
+          "pdf_store_match": true
         }
       ]
     },
@@ -1093,6 +1327,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-79ca-732f-b7f7-eabe28110cb1/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "BERLIN-HEINERSDORF, ROMAIN-ROLLAND-STRASSE 13",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-9253-7699-91c5-962ea3948479",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4400_D42-H/ar/4400",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-9253-7699-91c5-962ea3948479/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "BERLIN-HEINERSDORF, ROMAIN-ROLLAND-STRASSE 13",
+          "pdf_store_match": true
         }
       ]
     },
@@ -1112,6 +1355,15 @@
           "cluster": "01a0e6b0-7c5a-744e-a66d-75a6c14d03b0",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4420_D41-H/ar/4420",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7c5a-744e-a66d-75a6c14d03b0/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "DORTMUND-OESPEL, IM INDUPARK-CENTER",
+          "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-9412-7649-b085-231727c79340",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4420_D42-H/ar/4420",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-9412-7649-b085-231727c79340/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "DORTMUND-OESPEL, IM INDUPARK-CENTER",
           "pdf_store_match": false
         }
@@ -1154,6 +1406,15 @@
           "cluster": "01a0e6b0-7f24-7ff4-89fd-aa2e11127632",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4453_D41-H/ar/4453",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-7f24-7ff4-89fd-aa2e11127632/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KASSEL-WESERTOR, FRANZGRABEN 40-42",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-962e-7b74-a553-7f481a204677",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4453_D42-H/ar/4453",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-962e-7b74-a553-7f481a204677/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "KASSEL-WESERTOR, FRANZGRABEN 40-42",
           "pdf_store_match": true
         }
@@ -1217,6 +1478,15 @@
           "cluster": "01a0e6b0-80ee-7c03-84d4-15047606f430",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4520_D41-H/ar/4520",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-80ee-7c03-84d4-15047606f430/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "BHV-FISCHEREIHAFEN, BOHMSIEL 1 • BHV-LEHE, PFERDEBADE 6",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-9843-7a9f-84aa-7527005f66ba",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4520_D42-H/ar/4520",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-9843-7a9f-84aa-7527005f66ba/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "BHV-FISCHEREIHAFEN, BOHMSIEL 1 • BHV-LEHE, PFERDEBADE 6",
           "pdf_store_match": true
         }
@@ -1324,6 +1594,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-838d-7884-af7f-9248d5eddbc1/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "MÜNCHEN-SCHWABING-FREIMANN, IM SUMA-CENTER",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-99f2-7029-b7d3-759ca3692767",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4613_D42-H/ar/4613",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-99f2-7029-b7d3-759ca3692767/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "MÜNCHEN-SCHWABING-FREIMANN, IM SUMA-CENTER",
+          "pdf_store_match": true
         }
       ]
     },
@@ -1343,6 +1622,15 @@
           "cluster": "01a0e6b0-85f3-717b-aa3f-4100d08c2969",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4693_D41-H/ar/4693",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-85f3-717b-aa3f-4100d08c2969/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "OSTSTEINBEK, IM OSTKREUZ CENTER",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-9be3-7493-961e-e871b8d0b7cc",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4693_D42-H/ar/4693",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-9be3-7493-961e-e871b8d0b7cc/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "OSTSTEINBEK, IM OSTKREUZ CENTER",
           "pdf_store_match": true
         }
@@ -1387,6 +1675,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-886f-73a9-9db3-4b385a09e6a8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "LIMBURG, WESTERWALDSTRASSE 111-113",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-9dde-7f61-b6ff-4f5e1e10f2a4",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4720_D42-H/ar/4720",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-9dde-7f61-b6ff-4f5e1e10f2a4/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "LIMBURG, WESTERWALDSTRASSE 111-113",
+          "pdf_store_match": true
         }
       ]
     },
@@ -1427,6 +1724,15 @@
           "cluster": "01a0e6b0-8b08-7d08-b6ae-ae1cbb987e34",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4750_D41-H/ar/4750",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-8b08-7d08-b6ae-ae1cbb987e34/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "AMBERG, AM BERGSTEIG 1",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-9fd5-71c6-a767-6b09559767c1",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4750_D42-H/ar/4750",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-9fd5-71c6-a767-6b09559767c1/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "AMBERG, AM BERGSTEIG 1",
           "pdf_store_match": true
         }
@@ -1492,6 +1798,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-8d32-7fd4-be75-a39df4575ed8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "WOLFSBURG, BRANDGEHAEGE 9",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-a21c-7a89-8dd4-bd726e2e8d28",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4863_D42-H/ar/4863",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-a21c-7a89-8dd4-bd726e2e8d28/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "WOLFSBURG, BRANDGEHAEGE 9",
+          "pdf_store_match": true
         }
       ]
     },
@@ -1511,6 +1826,15 @@
           "cluster": "01a0e6b0-9029-74ee-bd0f-c0c393fbb9c9",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4893_D41-H/ar/4893",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-9029-74ee-bd0f-c0c393fbb9c9/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "WILDAU, IM A10-CENTER",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-a428-77ec-a0a7-fbeeaba80e23",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4893_D42-H/ar/4893",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-a428-77ec-a0a7-fbeeaba80e23/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "WILDAU, IM A10-CENTER",
           "pdf_store_match": true
         }
@@ -1555,6 +1879,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-930d-7837-92f1-080bfdecbb2e/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "FREIBURG I. BREISGAU-HASLACH, IM BREISGAU-CENTER",
           "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-a6aa-7182-aff7-6a3caa902031",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4950_D42-H/ar/4950",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-a6aa-7182-aff7-6a3caa902031/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "FREIBURG I. BREISGAU-HASLACH, IM BREISGAU-CENTER",
+          "pdf_store_match": false
         }
       ]
     },
@@ -1597,6 +1930,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-9528-7e77-9edf-c7c4f8775c36/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "GÖ-WESTSTADT, ELLIEHÄUSER WEG 23 • GÖ-GRONE, IM KAUF PARK • GÖ-WEENDE, GROSSE BREITE 6",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-a893-7e5f-90b5-d2092e948e98",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_5060_D42-H/ar/5060",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-a893-7e5f-90b5-d2092e948e98/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "GÖ-WESTSTADT, ELLIEHÄUSER WEG 23 • GÖ-GRONE, IM KAUF PARK • GÖ-WEENDE, GROSSE BREITE 6",
+          "pdf_store_match": true
         }
       ]
     },
@@ -1618,6 +1960,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-974b-7538-8490-ee0701e5bfcf/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "FLENSBURG-SÜDSTADT, IM FÖRDE PARK",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-aa66-733d-b044-e1ea5301c1e2",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_5083_D42-H/ar/5083",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-aa66-733d-b044-e1ea5301c1e2/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "FLENSBURG-SÜDSTADT, IM FÖRDE PARK",
+          "pdf_store_match": true
         }
       ]
     },
@@ -1637,6 +1988,15 @@
           "cluster": "01a0e6b0-997c-719f-a941-32189c0f830a",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_5093_D41-H/ar/5093",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-997c-719f-a941-32189c0f830a/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "WIESBADEN, IM ÄPPELALLEE-CENTER",
+          "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-ac53-7db7-b90b-0f9a8abd4017",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_5093_D42-H/ar/5093",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-ac53-7db7-b90b-0f9a8abd4017/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "WIESBADEN, IM ÄPPELALLEE-CENTER",
           "pdf_store_match": true
         }
@@ -1742,6 +2102,15 @@
           "cluster": "01a0e6b0-9c27-79c3-b06b-5abdfc79cfb6",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_6130_D41-H/ar/6130",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-9c27-79c3-b06b-5abdfc79cfb6/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "GERLINGEN, WEILIMDORFER STR. 93-95",
+          "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-aedf-7273-ac09-5afbe9163085",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_6130_D42-H/ar/6130",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-aedf-7273-ac09-5afbe9163085/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "GERLINGEN, WEILIMDORFER STR. 93-95",
           "pdf_store_match": false
         }
@@ -1996,6 +2365,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-9ecc-7067-b27a-79f18c693f98/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "WEISSENBURG, EICHSTÄTTER STRASSE 29",
           "pdf_store_match": true
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-b083-78f7-bb19-6656e6440b4a",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_7760_D42-H/ar/7760",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-b083-78f7-bb19-6656e6440b4a/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "WEISSENBURG, EICHSTÄTTER STRASSE 29",
+          "pdf_store_match": true
         }
       ]
     },
@@ -2015,6 +2393,15 @@
           "cluster": "01a0e6b0-a144-7d9f-b3e4-eb4803583ab7",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_7800_D41-H/ar/7800",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a144-7d9f-b3e4-eb4803583ab7/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "ROSENHEIM-HAPPING, KUFSTEINER STRASSE 124",
+          "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-b24c-75ba-b2ab-93d405b41cca",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_7800_D42-H/ar/7800",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-b24c-75ba-b2ab-93d405b41cca/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "ROSENHEIM-HAPPING, KUFSTEINER STRASSE 124",
           "pdf_store_match": false
         }
@@ -2059,6 +2446,15 @@
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a300-7d33-b369-bd725b44e24e/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
           "pdf_store": "SCHWERIN-KREBSFÖRDEN, IM SIEBEN SEEN CENTER",
           "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-b460-74ce-9248-2ebc56d13e49",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_8340_D42-H/ar/8340",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-b460-74ce-9248-2ebc56d13e49/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+          "pdf_store": "SCHWERIN-KREBSFÖRDEN, IM SIEBEN SEEN CENTER",
+          "pdf_store_match": false
         }
       ]
     },
@@ -2099,6 +2495,15 @@
           "cluster": "01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8",
           "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_8530_D41-H/ar/8530",
           "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/Extra-Angebote-08-10-2026-14-10-2026-00.pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+          "pdf_store_match": false
+        },
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "cluster": "01a11540-b631-750c-bd19-c88e420555bd",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_8530_D42-H/ar/8530",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-b631-750c-bd19-c88e420555bd/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
           "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
           "pdf_store_match": false
         }
@@ -2338,6 +2743,141 @@
       "DE8530"
     ],
     "01a0e755-031f-7143-aaed-3e9a98d5b530": [
+      "DE1480"
+    ],
+    "01a11540-5f1d-782a-b017-f417f2cea7f7": [
+      "DE1560"
+    ],
+    "01a11540-6119-7805-925f-16330b599bef": [
+      "DE1600"
+    ],
+    "01a11540-635e-78d2-a474-5378af90c320": [
+      "DE1733"
+    ],
+    "01a11540-65ec-76fe-a752-f47f5249e67b": [
+      "DE1773"
+    ],
+    "01a11540-6748-7405-ae92-c48943be50b6": [
+      "DE1970"
+    ],
+    "01a11540-6965-79c6-95f0-14bd6455871c": [
+      "DE1990"
+    ],
+    "01a11540-6e67-7803-82e7-af5aa10a6d3a": [
+      "DE2310"
+    ],
+    "01a11540-7048-7672-8729-2179eee3b61e": [
+      "DE2560"
+    ],
+    "01a11540-7230-749f-b3b8-38110b4981d7": [
+      "DE2580"
+    ],
+    "01a11540-74d4-7e4e-bdf0-5d415720e571": [
+      "DE3000"
+    ],
+    "01a11540-764a-7812-b109-5aa1e753ee31": [
+      "DE3070"
+    ],
+    "01a11540-785a-79d5-a80b-96e5da763d8a": [
+      "DE3140"
+    ],
+    "01a11540-7a7c-71cf-8817-cf8535c911b7": [
+      "DE3160"
+    ],
+    "01a11540-7cc0-71f0-8cf2-f0d9c72daba4": [
+      "DE3180"
+    ],
+    "01a11540-7e60-79a6-b1cf-836505c80558": [
+      "DE3300"
+    ],
+    "01a11540-8048-7519-a226-dae784c417a2": [
+      "DE3700"
+    ],
+    "01a11540-8228-76fa-b60c-005542a6e866": [
+      "DE4123"
+    ],
+    "01a11540-841c-727c-92cc-6f993050534b": [
+      "DE4163"
+    ],
+    "01a11540-8568-7903-a0f0-7be61d295f88": [
+      "DE4183"
+    ],
+    "01a11540-87a2-7ad1-9fff-52729ef8df5b": [
+      "DE4193"
+    ],
+    "01a11540-8993-78b6-9685-10735766149d": [
+      "DE4273"
+    ],
+    "01a11540-8b8e-7140-998e-c2d23e75f14f": [
+      "DE4303"
+    ],
+    "01a11540-8cc8-7d6a-b2f6-33127c03c6df": [
+      "DE4333"
+    ],
+    "01a11540-8e4f-7dbe-9741-ebe0ce913b0c": [
+      "DE4370"
+    ],
+    "01a11540-904d-735a-805a-b91d5217e47e": [
+      "DE4393"
+    ],
+    "01a11540-9253-7699-91c5-962ea3948479": [
+      "DE4400"
+    ],
+    "01a11540-9412-7649-b085-231727c79340": [
+      "DE4420"
+    ],
+    "01a11540-962e-7b74-a553-7f481a204677": [
+      "DE4453"
+    ],
+    "01a11540-9843-7a9f-84aa-7527005f66ba": [
+      "DE4520"
+    ],
+    "01a11540-99f2-7029-b7d3-759ca3692767": [
+      "DE4613"
+    ],
+    "01a11540-9be3-7493-961e-e871b8d0b7cc": [
+      "DE4693"
+    ],
+    "01a11540-9dde-7f61-b6ff-4f5e1e10f2a4": [
+      "DE4720"
+    ],
+    "01a11540-9fd5-71c6-a767-6b09559767c1": [
+      "DE4750"
+    ],
+    "01a11540-a21c-7a89-8dd4-bd726e2e8d28": [
+      "DE4863"
+    ],
+    "01a11540-a428-77ec-a0a7-fbeeaba80e23": [
+      "DE4893"
+    ],
+    "01a11540-a6aa-7182-aff7-6a3caa902031": [
+      "DE4950"
+    ],
+    "01a11540-a893-7e5f-90b5-d2092e948e98": [
+      "DE5060"
+    ],
+    "01a11540-aa66-733d-b044-e1ea5301c1e2": [
+      "DE5083"
+    ],
+    "01a11540-ac53-7db7-b90b-0f9a8abd4017": [
+      "DE5093"
+    ],
+    "01a11540-aedf-7273-ac09-5afbe9163085": [
+      "DE6130"
+    ],
+    "01a11540-b083-78f7-bb19-6656e6440b4a": [
+      "DE7760"
+    ],
+    "01a11540-b24c-75ba-b2ab-93d405b41cca": [
+      "DE7800"
+    ],
+    "01a11540-b460-74ce-9248-2ebc56d13e49": [
+      "DE8340"
+    ],
+    "01a11540-b631-750c-bd19-c88e420555bd": [
+      "DE8530"
+    ],
+    "01a115e6-730a-7226-9ff9-d4b3b9795229": [
       "DE1480"
     ]
   }
