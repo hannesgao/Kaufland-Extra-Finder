@@ -262,7 +262,7 @@ def cards_lines(result: ScanResult, cards: dict[str, Any] | None, problems: list
             k = (o.kl_nr, o.title, o.subtitle)
             like[k] = like.get(k, 0) + 1
     if like:
-        out.append("Card-like offers matching no keyword (add a keyword in offers.py?):")
+        out.append("Possible trading cards not in cards.json (check CARD_KEYWORDS in offers.py):")
         out += [f"  {t} {st} ({k}): {n} stores" for (k, t, st), n in sorted(like.items())]
     return out
 

@@ -1,18 +1,19 @@
 name: Scrape and deploy
 
-# Scrape: Mon–Wed 06:30 and Thu 05:30 Berlin time (next week's leaflets appear on Monday and
-# become valid on Thursday). Cron runs in UTC, so each time has a CEST and a CET entry; the gate
-# job keeps the one that matches Berlin's current offset. On Monday and Thursday the scrape also
-# reads every store's offer overview for trading cards (cards.json): announced offers appear on
-# Sundays about a week before the sale, the weekly offers start on Thursdays.
+# Scrape: daily at 03:30 Berlin time. Since 12.10.2026 Kaufland's offer week runs Monday to
+# Saturday, so no Extra leaflet is valid on Sundays; next week's leaflets go online some time
+# before the weekend (seen on Sunday, not yet on the Thursday before), and a daily scan picks
+# them up the night after they appear. Cron runs in UTC, so the time has a CEST and a CET entry;
+# the gate job keeps the one that matches Berlin's current offset. On Monday and Thursday the
+# scrape also reads every store's offer overview for trading cards (cards.json): it lists the
+# whole week (incl. the Thursday-Saturday and weekend offers) plus next week's announced offers
+# from the Sunday before; Thursday's run picks up late changes.
 # Deploy: after every scrape, on push to main (code changes, no scrape), and deploy-only when
 # release.yml starts it after a GitHub Release is published (footer shows the release date).
 on:
   schedule:
-    - cron: "30 4 * * 1-3" # 06:30 CEST
-    - cron: "30 5 * * 1-3" # 06:30 CET
-    - cron: "30 3 * * 4" # 05:30 CEST
-    - cron: "30 4 * * 4" # 05:30 CET
+    - cron: "30 1 * * *" # 03:30 CEST
+    - cron: "30 2 * * *" # 03:30 CET
   workflow_dispatch:
     inputs:
       mode:
@@ -64,8 +65,8 @@ jobs:
             schedule)
               offset=$(TZ=Europe/Berlin date +%z)
               case "$SCHEDULE" in
-                "30 4 * * 1-3" | "30 3 * * 4") expected=+0200 ;; # CEST entries
-                *) expected=+0100 ;; # CET entries
+                "30 1 * * *") expected=+0200 ;; # CEST entry
+                *) expected=+0100 ;; # CET entry
               esac
               if [ "$offset" = "$expected" ]; then
                 scrape=true

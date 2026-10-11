@@ -63,3 +63,27 @@ export function nth<T>(items: readonly T[], i = 0): T {
   if (item === undefined) throw new Error(`no element at index ${String(i)}`);
   return item;
 }
+
+/** Kassel-Wesertor's first Mon–Sat Extra leaflet, as scanned on 2026-10-11 (real values). */
+export const MON_SAT_LEAFLET = {
+  valid_from: "2026-10-12",
+  valid_to: "2026-10-17",
+  cluster: "01a11540-962e-7b74-a553-7f481a204677",
+  viewer: "https://leaflets.kaufland.com/de-DE/DE_de_Hyper2_4453_D42-H/ar/4453",
+  pdf: "https://assets.leaflets.schwarz/leaflets/pdfs/01a11540-962e-7b74-a553-7f481a204677/Extra-Angebote-12-10-2026-17-10-2026-00.pdf",
+  pdf_store: "KASSEL-WESERTOR, FRANZGRABEN 40-42",
+  pdf_store_match: true,
+};
+
+/**
+ * The fixture after Kaufland's switch to Mon–Sat weeks on 12.10.2026: Kassel-Wesertor gets its
+ * Mon–Sat leaflet; with `keepOld` it keeps the Thu–Wed one too (they overlap 12.–14.10.).
+ */
+export function monSat(keepOld: boolean): ExtraData {
+  const json = fixtureJson();
+  const stores = json.stores as Json[];
+  const kassel = nth(stores.filter((s) => s.id === "DE4453"));
+  kassel.leaflets = [...(keepOld ? (kassel.leaflets as Json[]) : []), MON_SAT_LEAFLET];
+  (json.clusters as Json)[MON_SAT_LEAFLET.cluster] = ["DE4453"];
+  return parseExtra(json);
+}

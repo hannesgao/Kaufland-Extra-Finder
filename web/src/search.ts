@@ -48,7 +48,7 @@ export interface WeekView {
 
 export interface LeafletView {
   leaflet: Leaflet;
-  label: string; // "Diese Woche" / "Ab Donnerstag"
+  label: string; // "Diese Woche" / "Ab Montag"
   /** "Aktuellster Extra-Prospekt" for the newest leaflet, "Laufender Extra-Prospekt" otherwise. */
   heading: string;
   /** "Gültig von Do, 08.10. bis Mi, 14.10.2026" */
@@ -59,7 +59,7 @@ export interface LeafletView {
   range: string; // "08.10.–14.10.2026"
   /** Already valid today (otherwise it starts in the future). */
   running: boolean;
-  /** Start and end, e.g. { weekday: "Donnerstag", date: "08.10.2026" }. */
+  /** Start and end, e.g. { weekday: "Montag", date: "12.10.2026" }. */
   from: DayLabel;
   to: DayLabel;
   /** Days within the remaining validity on which the store is closed. */

@@ -71,7 +71,7 @@ interface MapSlot {
   last: { point: LatLng; radius: number; markers: MapMarker[] } | null;
 }
 
-/** Offers are updated on Mondays and Thursdays, so allow a long weekend before warning. */
+/** Offers are scanned on Mondays and Thursdays (Thu -> Mon is 4 days); warn after one missed scan. */
 const CARDS_STALE_AFTER_DAYS = 5;
 
 const forms: SearchForm[] = [

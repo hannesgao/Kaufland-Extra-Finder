@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from conftest import FakeFetcher, store_list_sample
+from conftest import FakeFetcher, fixture_text, store_list_sample
 from kef_scraper.build import SCHEMA_VERSION, build_extra, sanity_problems
 from kef_scraper.fetch import FetchError
 from kef_scraper.models import ScanResult, Store, StoreResult
@@ -23,7 +23,7 @@ def _stores() -> dict[str, Store]:
 
 
 def _two_week_page(page: str) -> str:
-    """The DE4453 page plus next week's Extra leaflet (Monday-Wednesday situation)."""
+    """The DE4453 page plus next week's Extra leaflet (a second, later validity period)."""
     return page.replace(
         "</body>",
         '<div data-t-name="FlyerTile" data-subcategory="Hyper1" '
@@ -53,6 +53,19 @@ class TestScanStore:
         fetcher = FakeFetcher([], {"DE4453": _two_week_page(pages["DE4453"])})
         r = scan_store(fetcher, _stores()["DE4453"])
         assert [lf.valid_from.isoformat() for lf in r.leaflets] == ["2026-10-08", "2026-10-15"]
+
+    def test_switch_to_monday_to_saturday(self) -> None:
+        """Real page of 2026-10-11: Kaufland's week changed from Thu-Wed to Mon-Sat on 12.10.,
+        so the old Extra leaflet (Hyper1, until Wed) overlaps the new one (Hyper2, Mon-Sat)."""
+        page = fixture_text("prospekte_DE4453_2026-10-11.html")
+        r = scan_store(FakeFetcher([], {"DE4453": page}), _stores()["DE4453"])
+        assert r.error is None
+        assert [(lf.valid_from.isoformat(), lf.valid_to.isoformat()) for lf in r.leaflets] == [
+            ("2026-10-08", "2026-10-14"),
+            ("2026-10-12", "2026-10-17"),
+        ]
+        assert len({lf.cluster for lf in r.leaflets}) == 2
+        assert [t.subcategory for t in r.unusual] == ["Leaflet5"]
 
     def test_duplicate_tiles_collapse(self, pages: dict[str, str]) -> None:
         page = pages["DE4453"].replace("</body>", pages["DE4453"].split("<body>")[1])

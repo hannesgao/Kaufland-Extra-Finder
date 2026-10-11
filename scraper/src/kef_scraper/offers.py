@@ -25,14 +25,16 @@ _TEMPLATE = '"component":"OfferTemplate"'
 IMAGE_RENDITION = "150"  # keys of `listImageRenditions`: rendered width in px
 IMAGE_RENDITION_2X = "322"
 
-# Trading-card offers are those whose title or subtitle contains one of these (accents and case
-# ignored). Only Pokémon so far: a full scan on 2026-10-06 found no other trading cards.
+# Trading-card offers are those whose title or subtitle contains one of these brands AND says that
+# it is a card product (accents and case ignored): "KINDER Adventskalender »Pokémon«" is chocolate
+# with stickers, not cards. Only Pokémon so far: a full scan on 2026-10-06 found no other cards.
 CARD_KEYWORDS = ("pokemon",)
-# Offers that look like trading cards but match no keyword are listed in the scan report, so a
-# new brand shows up before anyone misses it.
-_CARD_LIKE = re.compile(
-    r"sammelkart|trading ?card|\btcg\b|booster|yu-?gi-?oh|one piece|lorcana|"
-    r"magic: the gathering|digimon|dragon ?ball|topps|match attax"
+_CARD_PRODUCT = re.compile(r"sammelkart|kartenspiel|booster|trading ?card|\btcg\b")
+# Offers that may be trading cards but are not listed are named in the scan report, so a new brand
+# or a card product with unusual wording shows up before anyone misses it: card wording without a
+# brand keyword, another card brand, or a brand keyword without card wording.
+_OTHER_CARD_BRANDS = re.compile(
+    r"yu-?gi-?oh|one piece|lorcana|magic: the gathering|digimon|dragon ?ball|topps|match attax"
 )
 
 
@@ -40,13 +42,24 @@ def _norm(text: str) -> str:
     return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
 
 
-def is_card(offer: Offer) -> bool:
-    text = _norm(f"{offer.title} {offer.subtitle}")
+def _card_text(offer: Offer) -> str:
+    return _norm(f"{offer.title} {offer.subtitle}")
+
+
+def _has_brand(text: str) -> bool:
     return any(k in text for k in CARD_KEYWORDS)
 
 
+def is_card(offer: Offer) -> bool:
+    text = _card_text(offer)
+    return _has_brand(text) and bool(_CARD_PRODUCT.search(text))
+
+
 def is_card_like(offer: Offer) -> bool:
-    return not is_card(offer) and bool(_CARD_LIKE.search(_norm(f"{offer.title} {offer.subtitle}")))
+    text = _card_text(offer)
+    if _has_brand(text) and _CARD_PRODUCT.search(text):
+        return False
+    return _has_brand(text) or bool(_CARD_PRODUCT.search(text) or _OTHER_CARD_BRANDS.search(text))
 
 
 def _date(value: object) -> dt.date | None:
