@@ -1,8 +1,1090 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-01T10:32:43+01:00",
-  "store_count": 787,
-  "failed_count": 0,
-  "stores": [],
-  "clusters": {}
+  "generated_at": "2026-11-02T10:55:01+01:00",
+  "store_count": 788,
+  "failed_count": 1,
+  "stores": [
+    {
+      "id": "DE1480",
+      "name": "Hagen-Hohenlimburg",
+      "plz": "58119",
+      "city": "Hagen",
+      "street": "Auf dem Lölfert 50",
+      "lat": 51.3641872,
+      "lng": 7.5841314,
+      "url": "https://filiale.kaufland.de/service/filiale/hagen-hohenlimburg-1480.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820a-ebb5-7486-b5bf-bbc683cf4244",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1480_D45-H/ar/1480",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820a-ebb5-7486-b5bf-bbc683cf4244/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "HAGEN-HOHENLIMBURG, AUF DEM LÖLFERT 50 • HAGEN-NORD, FREILIGRATHSTRASSE 51",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE1560",
+      "name": "Paderborn-Schloß Neuhaus",
+      "plz": "33104",
+      "city": "Paderborn",
+      "street": "Bentelerstraße 4",
+      "lat": 51.7434995,
+      "lng": 8.726286,
+      "url": "https://filiale.kaufland.de/service/filiale/paderborn-schloss-neuhaus-1560.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820a-ee46-7edd-bab2-17880ae89d45",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1560_D45-H/ar/1560",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820a-ee46-7edd-bab2-17880ae89d45/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "PADERBORN, IM SÜDRING-CENTER, HUSENER STRASSE 121",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE1600",
+      "name": "Soest",
+      "plz": "59494",
+      "city": "Soest",
+      "street": "Senator-Schwartz-Ring 24",
+      "lat": 51.5611253,
+      "lng": 8.0822934,
+      "url": "https://filiale.kaufland.de/service/filiale/soest-1600.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820a-f068-7408-b7eb-17442c75a044",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1600_D45-H/ar/1600",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820a-f068-7408-b7eb-17442c75a044/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "SOEST, SENATOR-SCHWARTZ-RING 24",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE1733",
+      "name": "Mainz-Mombach",
+      "plz": "55120",
+      "city": "Mainz",
+      "street": "Rheinallee 120",
+      "lat": 50.02551,
+      "lng": 8.230617,
+      "url": "https://filiale.kaufland.de/service/filiale/mainz-mombach-1733.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820a-f74d-7c29-9a61-9811d4349235",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1733_D45-H/ar/1733",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820a-f74d-7c29-9a61-9811d4349235/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "MAINZ-BRETZENHEIM, IM GUTENBERG-CENTER",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE1773",
+      "name": "Mönchengladbach-Holt",
+      "plz": "41069",
+      "city": "Mönchengladbach",
+      "street": "Aachener Straße 387",
+      "lat": 51.183107,
+      "lng": 6.4115753,
+      "url": "https://filiale.kaufland.de/service/filiale/moenchengladbach-holt-1773.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820a-fb00-7b74-9e46-fe4f79f0141b",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1773_D45-H/ar/1773",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820a-fb00-7b74-9e46-fe4f79f0141b/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "MG-EICKEN, KREFELDER STR. 131 • MG, REYERHÜTTE 1",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE1970",
+      "name": "Monheim am Rhein",
+      "plz": "40789",
+      "city": "Monheim am Rhein",
+      "street": "Friedrichstraße 20",
+      "lat": 51.0870808,
+      "lng": 6.8901167,
+      "url": "https://filiale.kaufland.de/service/filiale/monheim-am-rhein-1970.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820a-fd97-7758-b2d3-08c95fa5b2f2",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1970_D45-H/ar/1970",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820a-fd97-7758-b2d3-08c95fa5b2f2/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "LANGENFELD/RHEINLAND, RHEINDORFER STR. 48-56",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE1990",
+      "name": "Aachen, Vaalser Str.",
+      "plz": "52074",
+      "city": "Aachen",
+      "street": "Vaalser Straße 242-246",
+      "lat": 50.7699543,
+      "lng": 6.0585098,
+      "url": "https://filiale.kaufland.de/service/filiale/aachen-vaalser-str--1990.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820a-ffee-72ac-91e5-338a7c6e3856",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_1990_D45-H/ar/1990",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820a-ffee-72ac-91e5-338a7c6e3856/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "AACHEN, BRESLAUER STRASSE 35",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE2310",
+      "name": "Baden-Baden",
+      "plz": "76532",
+      "city": "Baden-Baden",
+      "street": "Rheinstraße 136",
+      "lat": 48.7828149,
+      "lng": 8.2083138,
+      "url": "https://filiale.kaufland.de/service/filiale/baden-baden-2310.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-0250-7699-8db6-b978d53d4420",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_2310_D45-H/ar/2310",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-0250-7699-8db6-b978d53d4420/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "RASTATT, RAUENTALER STRASSE 65",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE2560",
+      "name": "Steinheim an der Murr",
+      "plz": "71711",
+      "city": "Steinheim an der Murr",
+      "street": "Steinbeisstraße 15",
+      "lat": 48.9699861,
+      "lng": 9.2662634,
+      "url": "https://filiale.kaufland.de/service/filiale/steinheim-an-der-murr-2560.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-0514-7a61-abb0-61f865afd99a",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_2560_D45-H/ar/2560",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-0514-7a61-abb0-61f865afd99a/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "STEINHEIM A. D. MURR, STEINBEISSTRASSE 15",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE2580",
+      "name": "Ludwigsburg",
+      "plz": "71636",
+      "city": "Ludwigsburg",
+      "street": "Schwieberdinger Straße 94",
+      "lat": 48.8906313,
+      "lng": 9.1691475,
+      "url": "https://filiale.kaufland.de/service/filiale/ludwigsburg-2580.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-0755-7287-9af2-26e48b6036f1",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_2580_D45-H/ar/2580",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-0755-7287-9af2-26e48b6036f1/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "LUDWIGSBURG, SCHWIEBERDINGER STRASSE 94",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE3000",
+      "name": "Neckarsulm",
+      "plz": "74172",
+      "city": "Neckarsulm",
+      "street": "Rötelstraße 35",
+      "lat": 49.1718392,
+      "lng": 9.2230815,
+      "url": "https://filiale.kaufland.de/service/filiale/neckarsulm-3000.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-09b4-79af-9bff-7822a6e3e734",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3000_D45-H/ar/3000",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-09b4-79af-9bff-7822a6e3e734/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "NECKARSULM, RÖTELSTRASSE 35",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE3070",
+      "name": "Eiche",
+      "plz": "16356",
+      "city": "Ahrensfelde",
+      "street": "Landsberger Chaussee 17",
+      "lat": 52.5495551,
+      "lng": 13.5969599,
+      "url": "https://filiale.kaufland.de/service/filiale/eiche-3070.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-0bfb-767f-9809-dee7295ca4e9",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3070_D45-H/ar/3070",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-0bfb-767f-9809-dee7295ca4e9/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "AHRENSFELDE-EICHE, IM KAUFPARK • BERLIN, IM BIESDORF-CENTER",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE3140",
+      "name": "Leipzig-Paunsdorf",
+      "plz": "04329",
+      "city": "Leipzig",
+      "street": "Paunsdorfer Allee 1",
+      "lat": 51.34856,
+      "lng": 12.4785725,
+      "url": "https://filiale.kaufland.de/service/filiale/leipzig-paunsdorf-3140.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-0e06-700f-b08d-86be2963058d",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3140_D45-H/ar/3140",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-0e06-700f-b08d-86be2963058d/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "LEIPZIG-PAUNSDORF, IM PAUNSDORF-CENTER",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE3160",
+      "name": "Cottbus-Schmellwitz",
+      "plz": "03044",
+      "city": "Cottbus",
+      "street": "Sielower Chaussee 38",
+      "lat": 51.7831523,
+      "lng": 14.3165846,
+      "url": "https://filiale.kaufland.de/service/filiale/cottbus-schmellwitz-3160.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-102a-7eab-b8a8-2cf757f89ea8",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3160_D45-H/ar/3160",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-102a-7eab-b8a8-2cf757f89ea8/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "COTTBUS-SCHMELLWITZ, IM COTTBUS-CENTER",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE3180",
+      "name": "Dallgow-Döberitz",
+      "plz": "14624",
+      "city": "Dallgow-Döberitz",
+      "street": "Döberitzer Weg 3",
+      "lat": 52.5308544,
+      "lng": 13.0804238,
+      "url": "https://filiale.kaufland.de/service/filiale/dallgow-doeberitz-3180.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-1259-7ead-a483-ae93fe28db39",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3180_D45-H/ar/3180",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-1259-7ead-a483-ae93fe28db39/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "DALLGOW-DÖBERITZ, IM HAVEL-PARK",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE3300",
+      "name": "Freiberg, Häuersteig",
+      "plz": "09599",
+      "city": "Freiberg/Sachsen",
+      "street": "Häuersteig 2",
+      "lat": 50.8953854,
+      "lng": 13.3284456,
+      "url": "https://filiale.kaufland.de/service/filiale/freiberg-haeuersteig-3300.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-153a-7240-8191-f6047d8ac28f",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3300_D45-H/ar/3300",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-153a-7240-8191-f6047d8ac28f/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "FREIBERG/SACHSEN, HÄUERSTEIG 2",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE3700",
+      "name": "Bentwisch",
+      "plz": "18182",
+      "city": "Bentwisch",
+      "street": "Hansestraße 37",
+      "lat": 54.1151087,
+      "lng": 12.193031,
+      "url": "https://filiale.kaufland.de/service/filiale/bentwisch-3700.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-17a6-7cac-93f9-2b74079ca9ba",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_3700_D45-H/ar/3700",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-17a6-7cac-93f9-2b74079ca9ba/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "BENTWISCH, IM HANSE CENTER",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4123",
+      "name": "Celle",
+      "plz": "29225",
+      "city": "Celle",
+      "street": "An der Hasenbahn 3",
+      "lat": 52.6061221,
+      "lng": 10.0569452,
+      "url": "https://filiale.kaufland.de/service/filiale/celle-4123.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-19c4-7b8e-a7ad-22237600f04a",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4123_D45-H/ar/4123",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-19c4-7b8e-a7ad-22237600f04a/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "CELLE, AN DER HASENBAHN 3",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4163",
+      "name": "Dreieich",
+      "plz": "63303",
+      "city": "Dreieich",
+      "street": "Robert-Bosch-Straße 15",
+      "lat": 50.0317323,
+      "lng": 8.7040652,
+      "url": "https://filiale.kaufland.de/service/filiale/dreieich-4163.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-1c00-76b4-969f-02bb8801eb0a",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4163_D45-H/ar/4163",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-1c00-76b4-969f-02bb8801eb0a/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "DREIEICH-SPRENDLINGEN, IM DREIEICH-NORDPARK",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4183",
+      "name": "Düren",
+      "plz": "52355",
+      "city": "Düren",
+      "street": "Am Ellernbusch 22",
+      "lat": 50.7943061,
+      "lng": 6.4686079,
+      "url": "https://filiale.kaufland.de/service/filiale/dueren-4183.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-1ead-7af4-a228-7ca85ce7ced4",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4183_D45-H/ar/4183",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-1ead-7af4-a228-7ca85ce7ced4/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "DÜREN, AM ELLERNBUSCH 22",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4193",
+      "name": "Düsseldorf-Friedrichstadt",
+      "plz": "40217",
+      "city": "Düsseldorf",
+      "street": "Friedrichstraße 152",
+      "lat": 51.2088133,
+      "lng": 6.7780702,
+      "url": "https://filiale.kaufland.de/service/filiale/duesseldorf-friedrichstadt-4193.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-2171-71e4-948b-c0f413e92d40",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4193_D45-H/ar/4193",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-2171-71e4-948b-c0f413e92d40/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "DÜSSELDORF-FRIEDRICHSTADT, FRIEDRICHSTRASSE 152",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4273",
+      "name": "Garbsen",
+      "plz": "30823",
+      "city": "Garbsen",
+      "street": "Havelser Straße 2-8",
+      "lat": 52.4243714,
+      "lng": 9.597184,
+      "url": "https://filiale.kaufland.de/service/filiale/garbsen-4273.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-2421-7bb4-a3ef-7e78c724604b",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4273_D45-H/ar/4273",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-2421-7bb4-a3ef-7e78c724604b/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "GARBSEN, IM NORD-WEST-ZENTRUM",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4303",
+      "name": "Gifhorn",
+      "plz": "38518",
+      "city": "Gifhorn",
+      "street": "Eyßelheideweg 5",
+      "lat": 52.4619656,
+      "lng": 10.5386563,
+      "url": "https://filiale.kaufland.de/service/filiale/gifhorn-4303.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-265f-7462-bb65-cc0eccaa128b",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4303_D45-H/ar/4303",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-265f-7462-bb65-cc0eccaa128b/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "GIFHORN, EYSSELHEIDEWEG 5",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4333",
+      "name": "Greifswald",
+      "plz": "17491",
+      "city": "Greifswald",
+      "street": "Anklamer Landstraße 1",
+      "lat": 54.0764156,
+      "lng": 13.4305359,
+      "url": "https://filiale.kaufland.de/service/filiale/greifswald-4333.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-2904-73dd-8b46-76e9c3d155ac",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4333_D45-H/ar/4333",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-2904-73dd-8b46-76e9c3d155ac/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "GREIFSWALD, IM ELISEN PARK",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4370",
+      "name": "München-Neuperlach",
+      "plz": "81737",
+      "city": "München",
+      "street": "Thomas-Dehler-Straße 10",
+      "lat": 48.1000044,
+      "lng": 11.6436324,
+      "url": "https://filiale.kaufland.de/service/filiale/muenchen-neuperlach-4370.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-2b03-708b-bbea-c3111b24329d",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4370_D45-H/ar/4370",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-2b03-708b-bbea-c3111b24329d/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "MÜNCHEN-NEUPERLACH, OLLENHAUERSTRASSE 4",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4393",
+      "name": "Heinsberg",
+      "plz": "52525",
+      "city": "Heinsberg",
+      "street": "Humboldtstraße 26",
+      "lat": 51.069033,
+      "lng": 6.1102485,
+      "url": "https://filiale.kaufland.de/service/filiale/heinsberg-4393.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-2d48-789c-8e33-2387e7cffd91",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4393_D45-H/ar/4393",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-2d48-789c-8e33-2387e7cffd91/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "HEINSBERG, HUMBOLDTSTRASSE 26",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4400",
+      "name": "Berlin-Heinersdorf",
+      "plz": "13089",
+      "city": "Berlin",
+      "street": "Romain-Rolland-Straße 13",
+      "lat": 52.5643312,
+      "lng": 13.4450862,
+      "url": "https://filiale.kaufland.de/service/filiale/berlin-heinersdorf-4400.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-335f-77e9-8b72-fd70f6b8d3b9",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4400_D45-H/ar/4400",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-335f-77e9-8b72-fd70f6b8d3b9/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "BERLIN-HEINERSDORF, ROMAIN-ROLLAND-STRASSE 13",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4420",
+      "name": "Dortmund-Hombruch",
+      "plz": "44225",
+      "city": "Dortmund",
+      "street": "Luisenglück 43",
+      "lat": 51.4763433,
+      "lng": 7.4329911,
+      "url": "https://filiale.kaufland.de/service/filiale/dortmund-hombruch-4420.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-35a9-7e31-b5c2-b1467c9ab510",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4420_D45-H/ar/4420",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-35a9-7e31-b5c2-b1467c9ab510/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "DORTMUND-OESPEL, IM INDUPARK-CENTER",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE4453",
+      "name": "Kassel-Wesertor",
+      "plz": "34125",
+      "city": "Kassel",
+      "street": "Franzgraben 40-42",
+      "lat": 51.321132,
+      "lng": 9.517428,
+      "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-38c7-7ad8-9f83-5735f6f65855",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4453_D45-H/ar/4453",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-38c7-7ad8-9f83-5735f6f65855/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "KASSEL-WESERTOR, FRANZGRABEN 40-42",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4520",
+      "name": "Bremerhaven-Fischereihafen",
+      "plz": "27572",
+      "city": "Bremerhaven",
+      "street": "Bohmsiel 1",
+      "lat": 53.4916074,
+      "lng": 8.6009403,
+      "url": "https://filiale.kaufland.de/service/filiale/bremerhaven-fischereihafen-4520.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-3b06-7f88-849b-272d5839f572",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4520_D45-H/ar/4520",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-3b06-7f88-849b-272d5839f572/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "BHV-FISCHEREIHAFEN, BOHMSIEL 1 • BHV-LEHE, PFERDEBADE 6",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4613",
+      "name": "München-Schwabing-Freimann",
+      "plz": "80939",
+      "city": "München",
+      "street": "Margot-Kalinke-Straße 4",
+      "lat": 48.1947906,
+      "lng": 11.5972031,
+      "url": "https://filiale.kaufland.de/service/filiale/muenchen-schwabing-freimann-4613.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-3d62-74c5-bbee-ef87e44874de",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4613_D45-H/ar/4613",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-3d62-74c5-bbee-ef87e44874de/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "MÜNCHEN-SCHWABING-FREIMANN, IM SUMA-CENTER",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4693",
+      "name": "Oststeinbek",
+      "plz": "22113",
+      "city": "Oststeinbek",
+      "street": "Willinghusener Weg 1",
+      "lat": 53.5455598,
+      "lng": 10.1525975,
+      "url": "https://filiale.kaufland.de/service/filiale/oststeinbek-4693.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-406b-702d-bbad-669aa6a964d2",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4693_D45-H/ar/4693",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-406b-702d-bbad-669aa6a964d2/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "OSTSTEINBEK, IM OSTKREUZ CENTER",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4720",
+      "name": "Limburg",
+      "plz": "65549",
+      "city": "Limburg",
+      "street": "Westerwaldstraße 111-113",
+      "lat": 50.3974773,
+      "lng": 8.0560161,
+      "url": "https://filiale.kaufland.de/service/filiale/limburg-4720.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-4302-7c7a-8d62-d5ec1400be81",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4720_D45-H/ar/4720",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-4302-7c7a-8d62-d5ec1400be81/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "LIMBURG, WESTERWALDSTRASSE 111-113",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4750",
+      "name": "Amberg",
+      "plz": "92224",
+      "city": "Amberg",
+      "street": "Am Bergsteig 1",
+      "lat": 49.433654,
+      "lng": 11.8872998,
+      "url": "https://filiale.kaufland.de/service/filiale/amberg-4750.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-4505-737f-8f15-504f3f87a0d5",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4750_D45-H/ar/4750",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-4505-737f-8f15-504f3f87a0d5/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "AMBERG, AM BERGSTEIG 1",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4863",
+      "name": "Wolfsburg",
+      "plz": "38444",
+      "city": "Wolfsburg",
+      "street": "Brandgehaege 9",
+      "lat": 52.3706607,
+      "lng": 10.7258392,
+      "url": "https://filiale.kaufland.de/service/filiale/wolfsburg-4863.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-4773-751b-92fc-49bacd140f24",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4863_D45-H/ar/4863",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-4773-751b-92fc-49bacd140f24/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "WOLFSBURG, BRANDGEHAEGE 9",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4893",
+      "name": "Wildau",
+      "plz": "15745",
+      "city": "Wildau",
+      "street": "Chausseestraße 1",
+      "lat": 52.3139188,
+      "lng": 13.6049207,
+      "url": "https://filiale.kaufland.de/service/filiale/wildau-4893.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-493f-784e-9b35-ef355245afe1",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4893_D45-H/ar/4893",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-493f-784e-9b35-ef355245afe1/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "WILDAU, IM A10-CENTER",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE4950",
+      "name": "Freiburg-Brühl",
+      "plz": "79106",
+      "city": "Freiburg im Breisgau",
+      "street": "Waldkircher Straße 57",
+      "lat": 48.0127852,
+      "lng": 7.8525828,
+      "url": "https://filiale.kaufland.de/service/filiale/freiburg-bruehl-4950.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-4b8d-747c-98b1-500e160aae01",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_4950_D45-H/ar/4950",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-4b8d-747c-98b1-500e160aae01/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "FREIBURG I. BREISGAU-HASLACH, IM BREISGAU-CENTER",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE5060",
+      "name": "Göttingen-Weststadt",
+      "plz": "37079",
+      "city": "Göttingen",
+      "street": "Elliehäuser Weg 23",
+      "lat": 51.5493199,
+      "lng": 9.9001077,
+      "url": "https://filiale.kaufland.de/service/filiale/goettingen-weststadt-5060.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-4dcc-71d4-b78c-591eb1ecd7a7",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_5060_D45-H/ar/5060",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-4dcc-71d4-b78c-591eb1ecd7a7/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "GÖ-WESTSTADT, ELLIEHÄUSER WEG 23 • GÖ-GRONE, IM KAUF PARK • GÖ-WEENDE, GROSSE BREITE 6",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE5083",
+      "name": "Flensburg",
+      "plz": "24941",
+      "city": "Flensburg",
+      "street": "Schleswiger Straße 130",
+      "lat": 54.7617453,
+      "lng": 9.4339801,
+      "url": "https://filiale.kaufland.de/service/filiale/flensburg-5083.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-505c-7bb5-85dc-b50d103c8521",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_5083_D45-H/ar/5083",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-505c-7bb5-85dc-b50d103c8521/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "FLENSBURG-SÜDSTADT, IM FÖRDE PARK",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE5093",
+      "name": "Wiesbaden",
+      "plz": "65203",
+      "city": "Wiesbaden",
+      "street": "Äppelallee 69",
+      "lat": 50.045008,
+      "lng": 8.2166355,
+      "url": "https://filiale.kaufland.de/service/filiale/wiesbaden-5093.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-528d-7500-a2cc-8e42821a8bbc",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_5093_D45-H/ar/5093",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-528d-7500-a2cc-8e42821a8bbc/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "WIESBADEN, IM ÄPPELALLEE-CENTER",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE6130",
+      "name": "Leonberg",
+      "plz": "71229",
+      "city": "Leonberg",
+      "street": "Römerstraße 34",
+      "lat": 48.7972246,
+      "lng": 9.0060824,
+      "url": "https://filiale.kaufland.de/service/filiale/leonberg-6130.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-54d5-7f76-905d-b9a550c3d1eb",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_6130_D45-H/ar/6130",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-54d5-7f76-905d-b9a550c3d1eb/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "GERLINGEN, WEILIMDORFER STR. 93-95",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE7760",
+      "name": "Weißenburg",
+      "plz": "91781",
+      "city": "Weißenburg",
+      "street": "Eichstätter Straße 29",
+      "lat": 49.0274504,
+      "lng": 10.9846703,
+      "url": "https://filiale.kaufland.de/service/filiale/weissenburg-7760.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-57a3-77c3-b6a1-64776e209a4e",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_7760_D45-H/ar/7760",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-57a3-77c3-b6a1-64776e209a4e/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "WEISSENBURG, EICHSTÄTTER STRASSE 29",
+          "pdf_store_match": true
+        }
+      ]
+    },
+    {
+      "id": "DE7800",
+      "name": "Rosenheim-Süd",
+      "plz": "83026",
+      "city": "Rosenheim",
+      "street": "Äußere Münchener Straße 100",
+      "lat": 47.848192,
+      "lng": 12.0906324,
+      "url": "https://filiale.kaufland.de/service/filiale/rosenheim-sued-7800.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-59f2-72e7-8529-38bf52f24cda",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_7800_D45-H/ar/7800",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-59f2-72e7-8529-38bf52f24cda/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "ROSENHEIM-HAPPING, KUFSTEINER STRASSE 124",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE8340",
+      "name": "Schwerin-Mueßer Holz",
+      "plz": "19063",
+      "city": "Schwerin",
+      "street": "Hamburger Allee 140 D",
+      "lat": 53.5920039,
+      "lng": 11.4658307,
+      "url": "https://filiale.kaufland.de/service/filiale/schwerin-muesser-holz-8340.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-5c9c-747f-8f3e-6487e3a5145e",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_8340_D45-H/ar/8340",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-5c9c-747f-8f3e-6487e3a5145e/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "SCHWERIN-KREBSFÖRDEN, IM SIEBEN SEEN CENTER",
+          "pdf_store_match": false
+        }
+      ]
+    },
+    {
+      "id": "DE8530",
+      "name": "Karlsruhe-Grünwinkel",
+      "plz": "76185",
+      "city": "Karlsruhe",
+      "street": "Carl-Metz-Straße 7",
+      "lat": 49.0101522,
+      "lng": 8.3525396,
+      "url": "https://filiale.kaufland.de/service/filiale/karlsruhe-gruenwinkel-8530.html",
+      "leaflets": [
+        {
+          "valid_from": "2026-11-02",
+          "valid_to": "2026-11-07",
+          "cluster": "01a1820b-5ef4-77b7-a13b-c3e0bdcbc249",
+          "viewer": "https://leaflets.kaufland.com/de-DE/DE_de_Hyper1_8530_D45-H/ar/8530",
+          "pdf": "https://assets.leaflets.schwarz/leaflets/pdfs/01a1820b-5ef4-77b7-a13b-c3e0bdcbc249/Extra-Angebote-02-11-2026-07-11-2026-00.pdf",
+          "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+          "pdf_store_match": false
+        }
+      ]
+    }
+  ],
+  "clusters": {
+    "01a1820a-ebb5-7486-b5bf-bbc683cf4244": [
+      "DE1480"
+    ],
+    "01a1820a-ee46-7edd-bab2-17880ae89d45": [
+      "DE1560"
+    ],
+    "01a1820a-f068-7408-b7eb-17442c75a044": [
+      "DE1600"
+    ],
+    "01a1820a-f74d-7c29-9a61-9811d4349235": [
+      "DE1733"
+    ],
+    "01a1820a-fb00-7b74-9e46-fe4f79f0141b": [
+      "DE1773"
+    ],
+    "01a1820a-fd97-7758-b2d3-08c95fa5b2f2": [
+      "DE1970"
+    ],
+    "01a1820a-ffee-72ac-91e5-338a7c6e3856": [
+      "DE1990"
+    ],
+    "01a1820b-0250-7699-8db6-b978d53d4420": [
+      "DE2310"
+    ],
+    "01a1820b-0514-7a61-abb0-61f865afd99a": [
+      "DE2560"
+    ],
+    "01a1820b-0755-7287-9af2-26e48b6036f1": [
+      "DE2580"
+    ],
+    "01a1820b-09b4-79af-9bff-7822a6e3e734": [
+      "DE3000"
+    ],
+    "01a1820b-0bfb-767f-9809-dee7295ca4e9": [
+      "DE3070"
+    ],
+    "01a1820b-0e06-700f-b08d-86be2963058d": [
+      "DE3140"
+    ],
+    "01a1820b-102a-7eab-b8a8-2cf757f89ea8": [
+      "DE3160"
+    ],
+    "01a1820b-1259-7ead-a483-ae93fe28db39": [
+      "DE3180"
+    ],
+    "01a1820b-153a-7240-8191-f6047d8ac28f": [
+      "DE3300"
+    ],
+    "01a1820b-17a6-7cac-93f9-2b74079ca9ba": [
+      "DE3700"
+    ],
+    "01a1820b-19c4-7b8e-a7ad-22237600f04a": [
+      "DE4123"
+    ],
+    "01a1820b-1c00-76b4-969f-02bb8801eb0a": [
+      "DE4163"
+    ],
+    "01a1820b-1ead-7af4-a228-7ca85ce7ced4": [
+      "DE4183"
+    ],
+    "01a1820b-2171-71e4-948b-c0f413e92d40": [
+      "DE4193"
+    ],
+    "01a1820b-2421-7bb4-a3ef-7e78c724604b": [
+      "DE4273"
+    ],
+    "01a1820b-265f-7462-bb65-cc0eccaa128b": [
+      "DE4303"
+    ],
+    "01a1820b-2904-73dd-8b46-76e9c3d155ac": [
+      "DE4333"
+    ],
+    "01a1820b-2b03-708b-bbea-c3111b24329d": [
+      "DE4370"
+    ],
+    "01a1820b-2d48-789c-8e33-2387e7cffd91": [
+      "DE4393"
+    ],
+    "01a1820b-335f-77e9-8b72-fd70f6b8d3b9": [
+      "DE4400"
+    ],
+    "01a1820b-35a9-7e31-b5c2-b1467c9ab510": [
+      "DE4420"
+    ],
+    "01a1820b-38c7-7ad8-9f83-5735f6f65855": [
+      "DE4453"
+    ],
+    "01a1820b-3b06-7f88-849b-272d5839f572": [
+      "DE4520"
+    ],
+    "01a1820b-3d62-74c5-bbee-ef87e44874de": [
+      "DE4613"
+    ],
+    "01a1820b-406b-702d-bbad-669aa6a964d2": [
+      "DE4693"
+    ],
+    "01a1820b-4302-7c7a-8d62-d5ec1400be81": [
+      "DE4720"
+    ],
+    "01a1820b-4505-737f-8f15-504f3f87a0d5": [
+      "DE4750"
+    ],
+    "01a1820b-4773-751b-92fc-49bacd140f24": [
+      "DE4863"
+    ],
+    "01a1820b-493f-784e-9b35-ef355245afe1": [
+      "DE4893"
+    ],
+    "01a1820b-4b8d-747c-98b1-500e160aae01": [
+      "DE4950"
+    ],
+    "01a1820b-4dcc-71d4-b78c-591eb1ecd7a7": [
+      "DE5060"
+    ],
+    "01a1820b-505c-7bb5-85dc-b50d103c8521": [
+      "DE5083"
+    ],
+    "01a1820b-528d-7500-a2cc-8e42821a8bbc": [
+      "DE5093"
+    ],
+    "01a1820b-54d5-7f76-905d-b9a550c3d1eb": [
+      "DE6130"
+    ],
+    "01a1820b-57a3-77c3-b6a1-64776e209a4e": [
+      "DE7760"
+    ],
+    "01a1820b-59f2-72e7-8529-38bf52f24cda": [
+      "DE7800"
+    ],
+    "01a1820b-5c9c-747f-8f3e-6487e3a5145e": [
+      "DE8340"
+    ],
+    "01a1820b-5ef4-77b7-a13b-c3e0bdcbc249": [
+      "DE8530"
+    ]
+  }
 }
