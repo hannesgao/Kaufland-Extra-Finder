@@ -88,3 +88,42 @@ export function monSat(keepOld: boolean): ExtraData {
   (json.clusters as Json)[MON_SAT_LEAFLET.cluster] = ["DE4453"];
   return parseExtra(json);
 }
+
+/**
+ * The fixture with Extra history: Göttingen-Grone (named in both past PDFs) and
+ * Karlsruhe-Beiertheim-Bulach (its past PDF named Karlsruhe-Oststadt) have no current leaflet.
+ */
+export function withHistoryJson(): Json {
+  const json = fixtureJson();
+  const stores = json.stores as Json[];
+  const byId = (id: string) => nth(stores.filter((s) => s.id === id));
+  json.history_since = "2026-09-10";
+  Object.assign(byId("DE4313"), {
+    leaflets: [],
+    past: [
+      { valid_from: "2026-09-10", valid_to: "2026-09-16", pdf_store_match: true },
+      {
+        valid_from: "2026-09-24",
+        valid_to: "2026-09-30",
+        pdf_store: "GÖ-GRONE, IM KAUF PARK",
+        pdf_store_match: true,
+      },
+    ],
+  });
+  Object.assign(byId("DE5443"), {
+    leaflets: [],
+    past: [
+      {
+        valid_from: "2026-09-24",
+        valid_to: "2026-09-30",
+        pdf_store: "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+        pdf_store_match: false,
+      },
+    ],
+  });
+  return json;
+}
+
+export function withHistory(): ExtraData {
+  return parseExtra(withHistoryJson());
+}

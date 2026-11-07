@@ -248,3 +248,131 @@ def test_skip_pdf_check(tmp_path: Path, pages: dict[str, str]) -> None:
     out = tmp_path / "data"
     assert _run(fetcher, out, "--stores", "DE4453", "--skip-pdf-check") == EXIT_OK
     assert fetcher.pdf_requests == []
+
+
+class TestHistory:
+    """extra.json keeps every store that had an Extra leaflet, with its past leaflets."""
+
+    @staticmethod
+    def _monday(tmp_path: Path, pages: dict[str, str], full_list: list[dict[str, Any]]) -> Path:
+        prev = tmp_path / "data-branch"
+        assert _run(FakeFetcher(full_list, pages, default=MINIMAL_PAGE), prev) == EXIT_OK
+        return prev
+
+    @staticmethod
+    def _stores(out: Path) -> dict[str, dict[str, Any]]:
+        return {s["id"]: s for s in json.loads((out / "extra.json").read_text())["stores"]}
+
+    def test_store_without_a_listed_leaflet_stays(
+        self, tmp_path: Path, pages: dict[str, str], full_list: list[dict[str, Any]]
+    ) -> None:
+        prev = tmp_path / "data-branch"
+        pdf = (
+            "https://assets.leaflets.schwarz/leaflets/pdfs/01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8/"
+            "Extra-Angebote-08-10-2026-14-10-2026-00.pdf"
+        )
+        pdfs = {pdf: make_pdf(["NUR IN KARLSRUHE-OSTSTADT, IM DURLACH CENTER"])}
+        monday = FakeFetcher(full_list, pages, default=MINIMAL_PAGE, pdfs=pdfs)
+        assert _run(monday, prev) == EXIT_OK
+        out = tmp_path / "out"
+        pages2 = {**pages, "DE8530": pages["DE1300"]}  # DE8530's leaflet is gone
+        fetcher = FakeFetcher(full_list, pages2, default=MINIMAL_PAGE)
+        assert _run(fetcher, out, "--previous", str(prev), now=TUESDAY) == EXIT_OK
+        extra = json.loads((out / "extra.json").read_text())
+        stores = self._stores(out)
+        assert extra["history_since"] == "2026-10-05"
+        assert stores["DE8530"]["leaflets"] == []
+        assert stores["DE8530"]["name"] == "Karlsruhe-Grünwinkel"
+        assert [(p["valid_from"], p["valid_to"]) for p in stores["DE8530"]["past"]] == [
+            ("2026-10-08", "2026-10-14")
+        ]
+        assert stores["DE8530"]["past"][0] == {
+            "valid_from": "2026-10-08",
+            "valid_to": "2026-10-14",
+            "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+            "pdf_store_match": False,
+        }
+        assert "past" not in stores["DE4453"]  # its leaflet is still listed
+
+    def test_new_leaflet_after_an_expired_one(
+        self, tmp_path: Path, pages: dict[str, str], full_list: list[dict[str, Any]]
+    ) -> None:
+        prev = self._monday(tmp_path, pages, full_list)
+        nov = MONDAY + dt.timedelta(weeks=4)
+        page = (
+            pages["DE4453"]
+            .replace("08.10.2026 - 14.10.2026", "02.11.2026 - 07.11.2026")
+            .replace('data-offer-start-date="2026-10-08"', 'data-offer-start-date="2026-11-02"')
+        )
+        out = tmp_path / "out"
+        fetcher = FakeFetcher(full_list, {**pages, "DE4453": page}, default=MINIMAL_PAGE)
+        assert _run(fetcher, out, "--previous", str(prev), now=nov) == EXIT_OK
+        kassel = self._stores(out)["DE4453"]
+        assert [lf["valid_from"] for lf in kassel["leaflets"]] == ["2026-11-02"]
+        assert [p["valid_from"] for p in kassel["past"]] == ["2026-10-08"]
+
+    def test_failed_store_keeps_its_valid_leaflets(
+        self, tmp_path: Path, pages: dict[str, str], full_list: list[dict[str, Any]]
+    ) -> None:
+        prev = self._monday(tmp_path, pages, full_list)
+        out = tmp_path / "out"
+        pages2: dict[str, str | Exception] = {**pages, "DE4453": FetchError("HTTP 503")}
+        fetcher = FakeFetcher(full_list, pages2, default=MINIMAL_PAGE)
+        assert _run(fetcher, out, "--previous", str(prev), now=TUESDAY) == EXIT_OK
+        kassel = self._stores(out)["DE4453"]
+        assert [lf["valid_from"] for lf in kassel["leaflets"]] == ["2026-10-08"]
+        assert kassel["leaflets"][0]["viewer"].startswith("https://")
+        assert "past" not in kassel
+
+    def test_closed_store_is_dropped(
+        self, tmp_path: Path, pages: dict[str, str], full_list: list[dict[str, Any]]
+    ) -> None:
+        prev = self._monday(tmp_path, pages, full_list)
+        out = tmp_path / "out"
+        without = [r for r in full_list if r["n"] != "DE8530"]
+        fetcher = FakeFetcher(without, pages, default=MINIMAL_PAGE)
+        assert _run(fetcher, out, "--previous", str(prev), now=TUESDAY) == EXIT_OK
+        assert "DE8530" not in self._stores(out)
+
+    def test_seeded_once_from_the_snapshots(
+        self, tmp_path: Path, pages: dict[str, str], full_list: list[dict[str, Any]]
+    ) -> None:
+        prev = self._monday(tmp_path, pages, full_list)
+        # An extra.json from before the history, and an older snapshot with another store.
+        old = json.loads((prev / "extra.json").read_text())
+        del old["history_since"]
+        for s in old["stores"]:
+            s.pop("past", None)
+        (prev / "extra.json").write_text(json.dumps(old))
+        snapshot = json.loads((prev / "snapshots" / "2026-10-05.json").read_text())
+        oststadt = {**snapshot["extra"][0], "id": "DE4443", "name": "Karlsruhe-Oststadt"}
+        oststadt["leaflets"] = [
+            {**oststadt["leaflets"][0], "valid_from": "2026-09-24", "valid_to": "2026-09-30"}
+        ]
+        (prev / "snapshots" / "2026-09-24.json").write_text(
+            json.dumps({**snapshot, "extra": [oststadt]})
+        )
+        out = tmp_path / "out"
+        fetcher = FakeFetcher(full_list, pages, default=MINIMAL_PAGE)
+        assert _run(fetcher, out, "--previous", str(prev), now=TUESDAY) == EXIT_OK
+        extra = json.loads((out / "extra.json").read_text())
+        stores = self._stores(out)
+        assert extra["history_since"] == "2026-09-24"
+        assert stores["DE4443"]["leaflets"] == []
+        assert [p["valid_from"] for p in stores["DE4443"]["past"]] == ["2026-09-24"]
+        # A later run continues from extra.json, not from the snapshots.
+        out2 = tmp_path / "out2"
+        assert _run(fetcher, out2, "--previous", str(out), now=TUESDAY) == EXIT_OK
+        assert json.loads((out2 / "extra.json").read_text())["history_since"] == "2026-09-24"
+        assert [p["valid_from"] for p in self._stores(out2)["DE4443"]["past"]] == ["2026-09-24"]
+
+    def test_stores_outside_a_partial_scan_are_kept(
+        self, tmp_path: Path, pages: dict[str, str], full_list: list[dict[str, Any]]
+    ) -> None:
+        prev = self._monday(tmp_path, pages, full_list)
+        out = tmp_path / "out"
+        fetcher = FakeFetcher(full_list, pages, default=MINIMAL_PAGE)
+        args = ("--previous", str(prev), "--stores", "DE8530")
+        assert _run(fetcher, out, *args, now=TUESDAY) == EXIT_OK
+        kassel = self._stores(out)["DE4453"]
+        assert [lf["valid_from"] for lf in kassel["leaflets"]] == ["2026-10-08"]

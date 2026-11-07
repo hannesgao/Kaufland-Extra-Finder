@@ -19,6 +19,7 @@ from kef_scraper.build import (
     build_extra,
     offers_problems,
     sanity_problems,
+    with_history,
 )
 from kef_scraper.fetch import MAX_WORKERS, Fetcher, FetchError, HttpFetcher
 from kef_scraper.offers import CARD_KEYWORDS
@@ -102,6 +103,29 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _earlier_stores(
+    previous_dir: Path, previous: dict[str, Any] | None, today: dt.date
+) -> tuple[list[dict[str, Any]], str]:
+    """Store records of earlier runs (oldest first) and the date the history starts.
+
+    An `extra.json` without `history_since` predates the history: its stores are seeded once
+    from all snapshots, which keep each day's Extra stores with their leaflets.
+    """
+    stores = list(previous.get("stores", [])) if previous else []
+    if previous and isinstance(previous.get("history_since"), str):
+        return stores, previous["history_since"]
+    snapshots = sorted((previous_dir / "snapshots").glob("*.json"))
+    seeded: list[dict[str, Any]] = []
+    for path in snapshots:
+        snapshot = _load_json(path)
+        if snapshot and isinstance(snapshot.get("extra"), list):
+            seeded += snapshot["extra"]
+    since = snapshots[0].stem if snapshots else today.isoformat()
+    if seeded:
+        log.info("seeding the Extra history from %d snapshots since %s", len(snapshots), since)
+    return seeded + stores, since
+
+
 def _load_json(path: Path) -> dict[str, Any] | None:
     if not path.exists():
         return None
@@ -164,7 +188,10 @@ def main(
             retry_delay=args.pdf_retry_delay,
         )
     extra = build_extra(result, now, pdf_checks)
-    diff = diff_extra(_load_json(previous_dir / "extra.json"), extra)
+    previous = _load_json(previous_dir / "extra.json")
+    earlier, history_since = _earlier_stores(previous_dir, previous, now.date())
+    extra = with_history(extra, result, earlier, history_since)
+    diff = diff_extra(previous, extra)
     problems = sanity_problems(
         result, min_stores=args.min_stores, max_failure_rate=args.max_failure_rate
     )

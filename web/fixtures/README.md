@@ -9,10 +9,12 @@ scraper and use `KEF_EXTRA_JSON` / `KEF_CARDS_JSON`.
 Used by `npm run dev`; the dev server shifts all dates by whole weeks so the data always looks
 current.
 
-- `extra.json`: the full scan of Monday 2026-11-02 from the `data` branch, content unmodified
-  (formatted with Prettier): 45 stores with Extra leaflets valid Monday 02.11. to Saturday
-  07.11.2026 (Kaufland's offer week runs Monday to Saturday since 12.10.2026). Every store has its
-  own PDF; some PDFs name a different store (e.g. Karlsruhe-Grünwinkel's names Karlsruhe-Oststadt).
+- `extra.json`: the full scan of Monday 2026-11-02 from the `data` branch: 45 stores with Extra
+  leaflets valid Monday 02.11. to Saturday 07.11.2026 (Kaufland's offer week runs Monday to
+  Saturday since 12.10.2026), unmodified, plus the history the scraper's `with_history` builds from
+  the snapshots before that day: 57 more stores without a current leaflet, and `past` leaflets
+  since 2026-10-06 (formatted with Prettier). Every store has its own PDF; some PDFs name a
+  different store (e.g. Karlsruhe-Grünwinkel's names Karlsruhe-Oststadt).
 - `cards.json`: the offer scan of the same run, filtered with the current trading-card rule
   (`is_card` in `scraper/src/kef_scraper/offers.py`): 4 Pokémon products in 49 stores. The raw file
   also listed an album for cards in 784 stores, which the rule leaves out since #47.

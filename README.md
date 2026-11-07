@@ -62,8 +62,9 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, â€
   "generated_at": "2026-10-06T06:31:12+02:00", // Europe/Berlin
   "store_count": 788, // stores scanned
   "failed_count": 0,
+  "history_since": "2026-10-06", // first day of the Extra history
   "stores": [
-    // only stores with an Extra leaflet
+    // every store that has had an Extra leaflet since history_since
     {
       "id": "DE4453",
       "name": "Kassel-Wesertor",
@@ -74,6 +75,7 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, â€
       "lng": 9.517428,
       "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html", // optional
       "leaflets": [
+        // listed leaflets; empty when the store has none at the moment;
         // two entries when the next leaflet is already listed (e.g. on the weekend)
         {
           "valid_from": "2026-10-08",
@@ -83,6 +85,15 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, â€
           "pdf": "https://â€¦pdf",
           "pdf_store": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER", // optional, see below
           "pdf_store_match": false,
+        },
+      ],
+      "past": [
+        // optional; earlier Extra leaflets, newest first (links are gone, so dates and PDF check only)
+        {
+          "valid_from": "2026-10-12",
+          "valid_to": "2026-10-17",
+          "pdf_store": "KASSEL-WESERTOR, FRANZGRABEN 40-42",
+          "pdf_store_match": true,
         },
       ],
       "special_days": [
@@ -97,6 +108,13 @@ Exit codes: `0` success, `1` error (store list unavailable, unknown store id, â€
 ```
 
 Expired leaflets are not filtered by the scraper; consumers compare `valid_to` with today's date.
+
+**History.** Kaufland does not publish an Extra leaflet every week (none from 19.10. to 31.10.2026),
+so a store stays in `extra.json` when its leaflet is gone: each run reads the previous
+`extra.json` and moves leaflets that are no longer listed (or have expired) into the store's
+`past` (`with_history()` in `build.py`). A store whose page could not be read keeps its leaflets
+that are still valid; a store that is no longer in Kaufland's store list (closed) is dropped. The
+first run after this was added seeded the history once from `snapshots/` (since 2026-10-06).
 
 ### PDF check
 
@@ -231,12 +249,19 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   nearest store with it) filters the stores by that article (`p=<article number>`). A second view
   "Nach Artikeln" (`view=artikel`) shows one card per article, fewest stores first, with its stores
   sorted by distance (no radius; five at first, "Alle â€¦ anzeigen" for the rest).
+- Stores without a current Extra leaflet (`past` only) are listed below the others, in both
+  _Umkreissuche_ ("Im Umkreis derzeit ohne Extra-Prospekt", grey map markers) and _Alle
+  Extra-Filialen_ ("Derzeit ohne Extra-Prospekt"), as compact cards with the last leaflet's dates,
+  the number of past leaflets and whether its PDF named the store. With the PDF switch on, only
+  past leaflets whose PDF named the store count. When no store has a current leaflet, the status
+  says when the last Extra leaflets were.
 - _Alle Extra-Filialen_ can export the list as shown (PDF switch, sort order) as HTML, PNG or PDF
   (`src/export/`), generated in the browser without libraries or network: a standalone HTML file
   with inline styles, a canvas-drawn PNG at 2Ã—, and an A4 PDF written by hand (standard fonts
   Helvetica/Helvetica-Bold in WinAnsiEncoding, text measured with their AFM widths, header row
   and page numbers on every page). Columns: PLZ, store, street, validity, and "Im PDF genannt"
-  when the PDF switch is off.
+  when the PDF switch is off. Stores without a current leaflet follow under a section row, in grey,
+  with "zuletzt â€¦" as their validity.
 - `package.json` overrides `minimatch` to `^11.0.5` (GHSA-g3hv-75wg-m249): eslint and
   typescript-eslint still ask for `^10`, where the issue is not fixed. Remove the override once
   both accept minimatch 11.

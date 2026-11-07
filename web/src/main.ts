@@ -10,13 +10,23 @@ import {
   type CardsData,
 } from "./cards";
 import { loadData, type ExtraData, type LatLng, type PlzIndex } from "./data";
-import { berlinToday, formatStamp, isStale, STALE_AFTER_DAYS } from "./dates";
+import { berlinToday, formatDate, formatStamp, isStale, STALE_AFTER_DAYS } from "./dates";
 import { byId, h, replaceChildren } from "./dom";
 import { hydrateIcons } from "./icons";
 import { formatKm } from "./geo";
-import { listAll, search, SORT_ORDERS, type Hit, type SortOrder } from "./search";
+import {
+  latestPeriod,
+  listAll,
+  listDormant,
+  search,
+  SORT_ORDERS,
+  type DormantHit,
+  type DormantView,
+  type Hit,
+  type SortOrder,
+} from "./search";
 import { renderArticle, renderArticleStrip, renderCardStore } from "./ui/cards";
-import { renderHit, renderRow } from "./ui/list";
+import { renderDormant, renderHit, renderRow } from "./ui/list";
 import type { MapMarker, MapView } from "./ui/map";
 import { setupTabs } from "./ui/tabs";
 import {
@@ -28,8 +38,11 @@ import {
   cardsNearestStatus,
   cardsStatus,
   countUnchecked,
+  dormantIntro,
+  dormantTitle,
   emptyStatus,
   listSummary,
+  noLeafletStatus,
   nearestStatus,
   radiusStatus,
 } from "./summary";
@@ -98,6 +111,26 @@ const dataAgeBoxes: [HTMLParagraphElement, HTMLDivElement][] = [
 ];
 const list = byId("list", HTMLOListElement);
 const allList = byId("all-list", HTMLOListElement);
+
+/** "Derzeit ohne Extra-Prospekt": Extra stores without a current leaflet, below the others. */
+interface DormantSlot {
+  section: HTMLElement;
+  title: HTMLHeadingElement;
+  intro: HTMLParagraphElement;
+  list: HTMLOListElement;
+}
+
+function dormantSlot(prefix: string): DormantSlot {
+  return {
+    section: byId(prefix, HTMLElement),
+    title: byId(`${prefix}-title`, HTMLHeadingElement),
+    intro: byId(`${prefix}-intro`, HTMLParagraphElement),
+    list: byId(`${prefix}-list`, HTMLOListElement),
+  };
+}
+
+const searchDormant = dormantSlot("dormant");
+const allDormant = dormantSlot("all-dormant");
 const allMeta = byId("all-meta", HTMLParagraphElement);
 const allStatusBox = byId("all-status-box", HTMLDivElement);
 const sortGroup = byId("sort", HTMLDivElement);
@@ -249,6 +282,31 @@ function drawMap(slot: MapSlot): void {
   });
 }
 
+/** First day of the Extra history, "06.10.2026". */
+function historySince(): string | null {
+  const since = data?.extra.historySince;
+  return since ? formatDate(since) : null;
+}
+
+function fillDormant(slot: DormantSlot, nearby: boolean, items: HTMLLIElement[]): void {
+  slot.section.hidden = items.length === 0;
+  slot.title.textContent = dormantTitle(items.length, nearby);
+  slot.intro.textContent = dormantIntro(historySince(), pdfOnly);
+  replaceChildren(slot.list, ...items);
+}
+
+/** Status when no store has a current leaflet: when the last Extra leaflets were. */
+function noLeafletText(today: string): string {
+  if (!data) return emptyStatus(pdfOnly);
+  const dormant = listDormant(data.extra, today, sort, { pdfOnly });
+  return dormant.length > 0 ? noLeafletStatus(latestPeriod(dormant)) : emptyStatus(pdfOnly);
+}
+
+function dormantMarker(view: DormantHit): MapMarker {
+  const { id, name, lat, lng } = view.store;
+  return { id, name, lat, lng, kind: "dormant" };
+}
+
 function hitMarker(hit: Hit): MapMarker {
   const { id, name, lat, lng } = hit.store;
   const kind = hit.closed ? "closed" : hit.foreignOnly ? "foreign" : "default";
@@ -262,7 +320,7 @@ function cardMarker(hit: CardHit): MapMarker {
 
 /* ---------- Radius search (Extra leaflets) ---------- */
 
-function render(shown: Hit[], note?: string): void {
+function render(shown: Hit[], dormant: DormantHit[], note?: string): void {
   searchMap.items.clear();
   const onSelect = (id: string) => {
     select(searchMap, id);
@@ -272,6 +330,24 @@ function render(shown: Hit[], note?: string): void {
     ...shown.map((hit) => {
       const item = renderHit(hit, onSelect, note);
       searchMap.items.set(hit.store.id, item);
+      return item;
+    }),
+  );
+  const since = historySince();
+  fillDormant(
+    searchDormant,
+    true,
+    dormant.map((view) => {
+      const show = () => {
+        onSelect(view.store.id);
+      };
+      const item = renderDormant(view, {
+        distanceKm: view.distanceKm,
+        since,
+        action: { label: "Auf Karte zeigen", icon: "map", onClick: show },
+        onTitleClick: show,
+      });
+      searchMap.items.set(view.store.id, item);
       return item;
     }),
   );
@@ -288,7 +364,7 @@ function runSearch(): void {
   const shown = result.hits.length > 0 ? result.hits : result.nearest ? [result.nearest] : [];
   const count = result.hits.length;
   if (count > 0) {
-    render(shown);
+    render(shown, result.dormant);
     const counts = {
       shown: count,
       hidden: pdfOnly ? unfiltered - count : 0,
@@ -296,15 +372,17 @@ function runSearch(): void {
     };
     setStatus(radiusStatus(counts, radius, origin.label, pdfOnly));
   } else if (result.nearest) {
-    render(shown, "Nächste Extra-Filiale außerhalb des Umkreises");
+    render(shown, result.dormant, "Nächste Extra-Filiale außerhalb des Umkreises");
     setStatus(nearestStatus(formatKm(result.nearest.distanceKm), radius, origin.label, pdfOnly));
   } else {
-    render([]);
-    setStatus(emptyStatus(pdfOnly));
+    render([], result.dormant);
+    setStatus(noLeafletText(today));
   }
   if (import.meta.env.DEV) console.debug(`search took ${(performance.now() - t0).toFixed(1)} ms`);
 
-  searchMap.last = { point: origin.point, radius, markers: shown.map(hitMarker) };
+  // Dormant stores first, so the current ones are drawn on top.
+  const markers = [...result.dormant.map(dormantMarker), ...shown.map(hitMarker)];
+  searchMap.last = { point: origin.point, radius, markers };
   if (tab === "search") drawMap(searchMap);
   runCards();
 }
@@ -315,13 +393,36 @@ function renderAll(): void {
   if (!data) return;
   const today = berlinToday(new Date());
   const views = listAll(data.extra, today, sort, { pdfOnly });
+  const dormant = listDormant(data.extra, today, sort, { pdfOnly });
   replaceChildren(allList, ...views.map((v) => renderRow(v, showInSearch)));
+  const since = historySince();
+  fillDormant(
+    allDormant,
+    false,
+    dormant.map((v) => dormantRow(v, since)),
+  );
   const counts = {
     shown: views.length,
     hidden: pdfOnly ? listAll(data.extra, today, sort).length - views.length : 0,
     unchecked: countUnchecked(views),
   };
-  allMeta.textContent = `${listSummary(counts, pdfOnly)}.`;
+  allMeta.textContent =
+    views.length === 0 && dormant.length > 0
+      ? noLeafletStatus(latestPeriod(dormant))
+      : `${listSummary(counts, pdfOnly, dormant.length)}.`;
+}
+
+function dormantRow(view: DormantView, since: string | null): HTMLLIElement {
+  return renderDormant(view, {
+    since,
+    action: {
+      label: "In Umkreissuche zeigen",
+      icon: "near_me",
+      onClick: () => {
+        showInSearch(view.store.id);
+      },
+    },
+  });
 }
 
 /* ---------- Export ---------- */
@@ -346,7 +447,9 @@ async function exportList(format: ExportFormat): Promise<void> {
   ]);
   const today = berlinToday(new Date());
   const views = listAll(data.extra, today, sort, { pdfOnly });
-  const table = exportTable(views, { generatedAt: data.extra.generatedAt, today, pdfOnly, sort });
+  const dormant = listDormant(data.extra, today, sort, { pdfOnly });
+  const options = { generatedAt: data.extra.generatedAt, today, pdfOnly, sort };
+  const table = exportTable(views, dormant, options);
   download(await renderer(table), `${table.filename}.${format}`);
 }
 

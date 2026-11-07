@@ -172,7 +172,20 @@ describe("search", () => {
     const hit = nth(search(edgeCases(), PLZ_KASSEL, 10, thursday).hits);
     expect(hit.leaflets.map((l) => l.range)).toEqual(["08.10.–14.10.2026"]);
     expect(nth(hit.leaflets).label).toBe("Diese Woche");
-    expect(search(data, PLZ_KASSEL, 100, "2026-10-15")).toEqual({ hits: [], nearest: null });
+    // After its last day the store moves to the Extra stores without a current leaflet.
+    const later = search(data, PLZ_KASSEL, 100, "2026-10-15");
+    expect(later.hits).toEqual([]);
+    expect(later.nearest).toBeNull();
+    expect(later.dormant.map((d) => [d.store.id, d.lastText])).toEqual([
+      ["DE4453", "Do,\u00a008.10. – Mi,\u00a014.10.2026"],
+      ["DE4313", "Do,\u00a008.10. – Mi,\u00a014.10.2026"],
+    ]);
+    expect(nth(later.dormant).last).toEqual({
+      validFrom: "2026-10-08",
+      validTo: "2026-10-14",
+      pdfStore: "KASSEL-WESERTOR, FRANZGRABEN 40-42",
+      pdfStoreMatch: true,
+    });
   });
 
   it("reports closure days and special hours within the validity", () => {

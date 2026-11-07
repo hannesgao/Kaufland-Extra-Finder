@@ -198,8 +198,9 @@ def diff_extra(previous: dict[str, Any] | None, current: dict[str, Any]) -> Diff
     if previous is None or previous.get("schema_version") != SCHEMA_VERSION:
         return None
     before, after = _changes(previous), _changes(current)
-    stores_before = {s["id"] for s in previous.get("stores", [])}
-    stores_after = {s["id"] for s in current["stores"]}
+    # Stores with a listed leaflet; stores without one stay in extra.json (history).
+    stores_before = {s["id"] for s in previous.get("stores", []) if s.get("leaflets")}
+    stores_after = {s["id"] for s in current["stores"] if s["leaflets"]}
     return Diff(
         previous_generated_at=previous.get("generated_at"),
         added=tuple(after[k] for k in sorted(after.keys() - before.keys())),
@@ -214,10 +215,14 @@ def _summary_lines(
 ) -> tuple[str, str, list[str]]:
     """(headline, diff status line, one line per changed leaflet)."""
     leaflet_count = sum(len(s["leaflets"]) for s in extra["stores"])
+    with_leaflets = sum(1 for s in extra["stores"] if s["leaflets"])
+    without = len(extra["stores"]) - with_leaflets
     headline = (
-        f"{len(extra['stores'])} stores with {leaflet_count} Extra leaflets "
-        f"({len(extra['clusters'])} distinct PDFs); scanned {result.store_count}, "
-        f"failed {result.failed_count}, {result.duration_s:.0f}s"
+        f"{with_leaflets} stores with {leaflet_count} Extra leaflets "
+        f"({len(extra['clusters'])} distinct PDFs)"
+        + (f", {without} more without a current one" if without else "")
+        + f"; scanned {result.store_count}, failed {result.failed_count}, "
+        f"{result.duration_s:.0f}s"
     )
     if diff is None:
         return headline, "No comparable previous extra.json; diff skipped.", []
