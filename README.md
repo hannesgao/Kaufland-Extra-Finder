@@ -117,8 +117,9 @@ the current and the next week, plus announced offers ("Vorwerbung", advertised a
 before the sale), as JSON; offers differ between stores. Offers whose title or subtitle contains
 a keyword from `CARD_KEYWORDS` in `scraper/src/kef_scraper/offers.py` (accents and case ignored;
 so far only `pokemon`) **and** says that it is a card product (Sammelkarten, Kartenspiel,
-Booster, Trading Card, TCG) are written to `cards.json`; other products with the brand (e.g. a
-chocolate advent calendar) are left out. The report lists offers that may be trading cards but
+Booster, Trading Card, TCG), and that are not an accessory (album, sleeves, folder, deck box,
+playmat, …), are written to `cards.json`; other products with the brand (e.g. a chocolate advent
+calendar or an album for cards) are left out. The report lists offers that may be trading cards but
 are not listed (card wording or another card brand such as Yu-Gi-Oh! without a keyword, or a
 keyword without card wording), so a new brand or unusual wording shows up there.
 

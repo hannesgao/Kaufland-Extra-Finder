@@ -113,9 +113,12 @@ class TestMatching:
         [
             ("KINDER", "Adventskalender »Pokémon« "),  # chocolate with stickers (2026-10-11)
             ("POKÉMON", "Plüschfigur Pikachu"),
+            ("AK TRADE", "Sammelkarten-Album Pokémon"),  # album for cards (2026-11-01)
+            ("POKÉMON", "Schutzhüllen für Sammelkarten"),
+            ("POKÉMON", "Sammelkarten-Ordner"),
         ],
     )
-    def test_brand_without_card_wording_is_reported_not_listed(
+    def test_non_cards_are_reported_not_listed(
         self, offer_page: str, title: str, subtitle: str
     ) -> None:
         offer = _by_nr(parse_offers(offer_page) or [])[BOOSTER]
@@ -130,6 +133,8 @@ class TestMatching:
             "Boosterpack »Ewige Rivalen«",
             "Trading Card Game",
             "TCG",
+            "Sammelkartenspiel »Top-Trainer-Box«",
+            "Sammelkartenspiel »Mega-Glurak X«",  # real offer, 2026-11-01
         ],
     )
     def test_card_wording(self, offer_page: str, subtitle: str) -> None:
