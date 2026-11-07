@@ -1,19 +1,20 @@
 name: Scrape and deploy
 
-# Scrape: daily at 03:30 Berlin time. Since 12.10.2026 Kaufland's offer week runs Monday to
-# Saturday, so no Extra leaflet is valid on Sundays; next week's leaflets go online some time
-# before the weekend (seen on Sunday, not yet on the Thursday before), and a daily scan picks
-# them up the night after they appear. Cron runs in UTC, so the time has a CEST and a CET entry;
-# the gate job keeps the one that matches Berlin's current offset. On Monday and Thursday the
-# scrape also reads every store's offer overview for trading cards (cards.json): it lists the
-# whole week (incl. the Thursday-Saturday and weekend offers) plus next week's announced offers
-# from the Sunday before; Thursday's run picks up late changes.
+# Scrape: once a day, as soon as possible after 03:30 Berlin time. Since 12.10.2026 Kaufland's
+# offer week runs Monday to Saturday, and new leaflets go online shortly before the week starts.
+# GitHub starts scheduled runs late (6-7 hours in Oct/Nov 2026), so there are several cron entries
+# through the night; the gate job lets the first run after 03:30 Berlin time scrape and skips the
+# rest of the day once the data branch has a scan from today. A failed scrape leaves no commit, so
+# the next entry tries again. On Monday and Thursday the scrape also reads every store's offer
+# overview for trading cards (cards.json): it lists the whole week (incl. the Thursday-Saturday and
+# weekend offers) plus next week's announced offers from the Sunday before; Thursday's run picks up
+# late changes.
 # Deploy: after every scrape, on push to main (code changes, no scrape), and deploy-only when
 # release.yml starts it after a GitHub Release is published (footer shows the release date).
 on:
   schedule:
-    - cron: "30 1 * * *" # 03:30 CEST
-    - cron: "30 2 * * *" # 03:30 CET
+    # Every two hours from 19:30 to 07:30 UTC; see the gate job.
+    - cron: "30 1,3,5,7,19,21,23 * * *"
   workflow_dispatch:
     inputs:
       mode:
@@ -40,7 +41,8 @@ jobs:
     name: Decide
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    permissions: {}
+    permissions:
+      contents: read # date of the last scan on the data branch
     outputs:
       scrape: ${{ steps.decide.outputs.scrape }}
       deploy_only: ${{ steps.decide.outputs.deploy_only }}
@@ -49,7 +51,7 @@ jobs:
       - id: decide
         env:
           EVENT: ${{ github.event_name }}
-          SCHEDULE: ${{ github.event.schedule }}
+          GH_TOKEN: ${{ github.token }}
           MODE: ${{ inputs.mode }}
           OFFERS: ${{ inputs.offers }}
         run: |
@@ -63,16 +65,17 @@ jobs:
               [ "$OFFERS" = true ] && offers=true
               ;;
             schedule)
-              offset=$(TZ=Europe/Berlin date +%z)
-              case "$SCHEDULE" in
-                "30 1 * * *") expected=+0200 ;; # CEST entry
-                *) expected=+0100 ;; # CET entry
-              esac
-              if [ "$offset" = "$expected" ]; then
+              today=$(TZ=Europe/Berlin date +%F)
+              now=$(TZ=Europe/Berlin date +%H%M)
+              last=$(gh api "repos/$GITHUB_REPOSITORY/commits/data" --jq .commit.committer.date || true)
+              last_day=$([ -n "$last" ] && TZ=Europe/Berlin date -d "$last" +%F || echo none)
+              if [ "$now" -lt 0330 ]; then
+                echo "::notice::Berlin time $now is before 03:30; skipping."
+              elif [ "$last_day" = "$today" ]; then
+                echo "::notice::The data branch already has a scan from today ($last); skipping."
+              else
                 scrape=true
                 case "$(TZ=Europe/Berlin date +%u)" in 1 | 4) offers=true ;; esac # Mon, Thu
-              else
-                echo "::notice::Cron '$SCHEDULE' is for the other DST period (Berlin is UTC$offset); skipping."
               fi
               ;;
           esac
@@ -130,7 +133,13 @@ jobs:
             exit 0
           fi
           git commit -q -m "data: scan $(TZ=Europe/Berlin date '+%Y-%m-%d %H:%M')"
-          git push origin HEAD:data
+          # GitHub occasionally answers a push with "Internal Server Error" (2026-11-04).
+          for attempt in 1 2 3; do
+            git push origin HEAD:data && exit 0
+            echo "::warning::Push attempt $attempt failed."
+            [ "$attempt" -lt 3 ] && sleep $((attempt * 30))
+          done
+          exit 1
 
   deploy:
     name: Deploy to GitHub Pages
