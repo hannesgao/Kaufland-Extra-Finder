@@ -26,13 +26,18 @@ IMAGE_RENDITION = "150"  # keys of `listImageRenditions`: rendered width in px
 IMAGE_RENDITION_2X = "322"
 
 # Trading-card offers are those whose title or subtitle contains one of these brands AND says that
-# it is a card product (accents and case ignored): "KINDER Adventskalender »Pokémon«" is chocolate
-# with stickers, not cards. Only Pokémon so far: a full scan on 2026-10-06 found no other cards.
+# it is a card product, and that are not an accessory (accents and case ignored):
+# "KINDER Adventskalender »Pokémon«" is chocolate with stickers (2026-10-11) and
+# "AK TRADE Sammelkarten-Album Pokémon" is an album for cards (2026-11-01), neither is cards.
+# Only Pokémon so far: a full scan on 2026-10-06 found no other cards.
 CARD_KEYWORDS = ("pokemon",)
 _CARD_PRODUCT = re.compile(r"sammelkart|kartenspiel|booster|trading ?card|\btcg\b")
+_ACCESSORY = re.compile(
+    r"album|ordner|mappe|sleeve|hulle|binder|portfolio|aufbewahrung|deck ?box|spielmatte|playmat"
+)
 # Offers that may be trading cards but are not listed are named in the scan report, so a new brand
 # or a card product with unusual wording shows up before anyone misses it: card wording without a
-# brand keyword, another card brand, or a brand keyword without card wording.
+# brand keyword, another card brand, a brand keyword without card wording, or an accessory.
 _OTHER_CARD_BRANDS = re.compile(
     r"yu-?gi-?oh|one piece|lorcana|magic: the gathering|digimon|dragon ?ball|topps|match attax"
 )
@@ -50,14 +55,17 @@ def _has_brand(text: str) -> bool:
     return any(k in text for k in CARD_KEYWORDS)
 
 
+def _is_card_text(text: str) -> bool:
+    return _has_brand(text) and bool(_CARD_PRODUCT.search(text)) and not _ACCESSORY.search(text)
+
+
 def is_card(offer: Offer) -> bool:
-    text = _card_text(offer)
-    return _has_brand(text) and bool(_CARD_PRODUCT.search(text))
+    return _is_card_text(_card_text(offer))
 
 
 def is_card_like(offer: Offer) -> bool:
     text = _card_text(offer)
-    if _has_brand(text) and _CARD_PRODUCT.search(text):
+    if _is_card_text(text):
         return False
     return _has_brand(text) or bool(_CARD_PRODUCT.search(text) or _OTHER_CARD_BRANDS.search(text))
 
