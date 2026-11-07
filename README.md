@@ -4,7 +4,7 @@ Find Kaufland stores near your postcode (PLZ) that currently publish an **Extra-
 the store-specific offers that mydealz users call "Kaufland Extra Filialen".
 
 **→ [hannesgao.github.io/Kaufland-Extra-Finder](https://hannesgao.github.io/Kaufland-Extra-Finder/)**
-(German UI; data updated every night at 03:30, Berlin time)
+(German UI; data updated once a day, from 03:30 Berlin time)
 
 > **Unofficial project.** Not affiliated with, endorsed by, or connected to Kaufland.
 > "Kaufland" is a trademark of its respective owner. Data may be incomplete or outdated —
@@ -269,11 +269,13 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 | `scrape-and-deploy.yml` | schedule, manual, push to `main` | Scrapes all stores, commits the output to the `data` branch and deploys the site to GitHub Pages. On push to `main`, and when run manually with `mode=deploy`, it only redeploys with the current data. |
 | `release.yml`           | GitHub Release published, manual | Checks that the release tag matches the versions of web and scraper, then starts a deploy-only run so the footer shows the release date.                                                                |
 
-**Schedule.** Every night at 03:30 Berlin time. Since 12.10.2026 Kaufland's offer week runs
-Monday to Saturday (before: Thursday to Wednesday), so no Extra leaflet is valid on Sundays, and
-next week's leaflets go online some time before the weekend; the nightly scan picks them up the
-night after they appear. GitHub cron runs in UTC, so the time is listed twice (CEST and CET); a
-gate job keeps the entry that matches Berlin's current UTC offset. Scheduled runs can start late.
+**Schedule.** Once a day, as soon as possible after 03:30 Berlin time. Since 12.10.2026 Kaufland's
+offer week runs Monday to Saturday (before: Thursday to Wednesday), so no Extra leaflet is valid on
+Sundays, and new leaflets go online shortly before the week starts. GitHub starts scheduled runs
+late (6–7 hours in October and November 2026), so the workflow has cron entries every two hours
+from 19:30 to 07:30 UTC; a gate job lets the first run after 03:30 Berlin time scrape and skips
+the others once the `data` branch has a scan from today. If a scrape fails, the next entry tries
+again; a failed push to `data` is retried twice.
 The Monday and Thursday runs also scan the offer overviews for trading cards (`--offers`, about
 330 MB more and a few minutes): the overview lists the whole week, including the Thursday–Saturday
 and weekend offers, plus next week's announced offers from the Sunday before; Thursday's run picks
