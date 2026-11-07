@@ -236,6 +236,9 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   Helvetica/Helvetica-Bold in WinAnsiEncoding, text measured with their AFM widths, header row
   and page numbers on every page). Columns: PLZ, store, street, validity, and "Im PDF genannt"
   when the PDF switch is off.
+- `package.json` overrides `minimatch` to `^11.0.5` (GHSA-g3hv-75wg-m249): eslint and
+  typescript-eslint still ask for `^10`, where the issue is not fixed. Remove the override once
+  both accept minimatch 11.
 - The footer is one shared partial (`partials/footer.html`) included into every page at build time.
 - Both tabs show a collapsed note "Woher stammen die Angaben?" (`partials/source-note.html`):
   data comes from Kaufland's store pages, Kaufland lists one Extra PDF at several neighbouring
