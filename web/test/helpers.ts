@@ -2,7 +2,8 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseExtra, type ExtraData, type LatLng } from "../src/data";
 
-export const FIXTURE_PATH = resolve(import.meta.dirname, "../fixtures/extra.json");
+/** Unit tests use this frozen scan (Thu–Wed week, a three-store cluster), not the dev fixture. */
+export const FIXTURE_PATH = resolve(import.meta.dirname, "fixtures/extra-2026-10-05.json");
 
 type Json = Record<string, unknown>;
 

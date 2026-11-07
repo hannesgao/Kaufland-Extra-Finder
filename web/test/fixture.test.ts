@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { buildStamp, footerStamp, shiftedFixture } from "../vite.config";
+import { FIXTURE_PATH } from "./helpers";
 
 interface Shifted {
   generated_at: string;
@@ -8,21 +11,50 @@ interface Shifted {
 
 describe("dev fixture date shifting", () => {
   it("moves all dates by whole weeks so weekdays stay the same", () => {
-    const shifted = JSON.parse(shiftedFixture(new Date("2026-10-21T10:00:00Z"))) as Shifted;
+    const shifted = JSON.parse(
+      shiftedFixture(new Date("2026-10-21T10:00:00Z"), FIXTURE_PATH),
+    ) as Shifted;
     expect(shifted.generated_at).toBe("2026-10-19T23:46:36+02:00");
     const kassel = shifted.stores.find((s) => s.id === "DE4453");
     expect(kassel?.leaflets.map((l) => l.valid_from)).toEqual(["2026-10-22"]);
   });
 
   it("does not touch dates inside URLs", () => {
-    const shifted = JSON.parse(shiftedFixture(new Date("2026-10-21T10:00:00Z"))) as Shifted;
+    const shifted = JSON.parse(
+      shiftedFixture(new Date("2026-10-21T10:00:00Z"), FIXTURE_PATH),
+    ) as Shifted;
     const urls = shifted.stores.flatMap((s) => s.leaflets.map((l) => l.viewer));
     expect(urls.every((u) => u.startsWith("https://leaflets.kaufland.com/"))).toBe(true);
   });
 
   it("leaves the fixture unchanged during its own week", () => {
-    const shifted = JSON.parse(shiftedFixture(new Date("2026-10-07T10:00:00Z"))) as Shifted;
+    const shifted = JSON.parse(
+      shiftedFixture(new Date("2026-10-07T10:00:00Z"), FIXTURE_PATH),
+    ) as Shifted;
     expect(shifted.generated_at).toBe("2026-10-05T23:46:36+02:00");
+  });
+});
+
+describe("dev fixtures", () => {
+  // Kaufland's offer week runs Monday to Saturday since 12.10.2026; the dev server should show that.
+  const dev = (name: string) =>
+    JSON.parse(readFileSync(resolve(import.meta.dirname, "../fixtures", name), "utf-8")) as {
+      stores: { leaflets?: { valid_from: string; valid_to: string }[] }[];
+    };
+
+  it("only has Monday-to-Saturday Extra leaflets", () => {
+    const leaflets = dev("extra.json").stores.flatMap((s) => s.leaflets ?? []);
+    expect(leaflets.length).toBeGreaterThan(0);
+    for (const l of leaflets) {
+      expect(new Date(l.valid_from).getUTCDay()).toBe(1);
+      expect(new Date(l.valid_to).getUTCDay()).toBe(6);
+    }
+  });
+
+  it("shifts the Monday-to-Saturday week into the current week", () => {
+    const shifted = JSON.parse(shiftedFixture(new Date("2026-11-25T10:00:00Z"))) as Shifted;
+    const froms = new Set(shifted.stores.flatMap((s) => s.leaflets.map((l) => l.valid_from)));
+    expect([...froms]).toEqual(["2026-11-23"]);
   });
 });
 

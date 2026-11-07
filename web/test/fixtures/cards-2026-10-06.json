@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-06T20:35:10+02:00",
+  "keywords": ["pokemon"],
+  "store_count": 788,
+  "products": {
+    "20941886|2026-10-08": {
+      "kl_nr": "20941886",
+      "title": "POKÉMON",
+      "subtitle": "Boosterpack »Karmesin & Purpur - Ewige Rivalen»",
+      "price": "4.99",
+      "unit": "je",
+      "shown_from": "2026-10-08",
+      "shown_to": "2026-10-14",
+      "category": "10_Elektro__Buero__Medien",
+      "week": "next",
+      "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20941886-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+      "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20941886-P?JGstbGVnYWN5LW9uc2l0ZS0yJA=="
+    },
+    "20973783|2026-10-04": {
+      "kl_nr": "20973783",
+      "title": "POKÉMON",
+      "subtitle": "Sammelkartenspiel »Top-Trainer-Box«",
+      "price": "55.00",
+      "unit": "je",
+      "shown_from": "2026-10-04",
+      "shown_to": "2026-10-09",
+      "category": "Vorwerbung",
+      "week": "current",
+      "sales_from": "2026-10-12",
+      "sales_to": "2026-10-17",
+      "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/196214144842_DE_V_2030-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+      "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/196214144842_DE_V_2030-1?JGstbGVnYWN5LW9uc2l0ZS0yJA=="
+    },
+    "20973794|2026-10-04": {
+      "kl_nr": "20973794",
+      "title": "POKÉMON",
+      "subtitle": "Sammelkartenspiel-Doppelpack",
+      "price": "12.99",
+      "unit": "je",
+      "shown_from": "2026-10-04",
+      "shown_to": "2026-10-09",
+      "category": "Vorwerbung",
+      "week": "current",
+      "sales_from": "2026-10-12",
+      "sales_to": "2026-10-17",
+      "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/196214152274_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+      "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/196214152274_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA=="
+    }
+  },
+  "stores": [
+    {
+      "id": "DE4313",
+      "name": "Göttingen-Grone",
+      "plz": "37079",
+      "city": "Göttingen",
+      "street": "Am Kauf Park 2",
+      "lat": 51.5280807,
+      "lng": 9.8828881,
+      "url": "https://filiale.kaufland.de/service/filiale/goettingen-grone-4313.html",
+      "products": ["20941886|2026-10-08", "20973783|2026-10-04"]
+    },
+    {
+      "id": "DE4400",
+      "name": "Berlin-Heinersdorf",
+      "plz": "13089",
+      "city": "Berlin",
+      "street": "Romain-Rolland-Straße 13",
+      "lat": 52.5643312,
+      "lng": 13.4450862,
+      "url": "https://filiale.kaufland.de/service/filiale/berlin-heinersdorf-4400.html",
+      "products": ["20941886|2026-10-08", "20973783|2026-10-04", "20973794|2026-10-04"]
+    },
+    {
+      "id": "DE4443",
+      "name": "Karlsruhe-Oststadt",
+      "plz": "76137",
+      "city": "Karlsruhe",
+      "street": "Durlacher Allee 111",
+      "lat": 49.0039646,
+      "lng": 8.4493277,
+      "url": "https://filiale.kaufland.de/service/filiale/karlsruhe-oststadt-4443.html",
+      "products": ["20941886|2026-10-08", "20973783|2026-10-04"]
+    },
+    {
+      "id": "DE4453",
+      "name": "Kassel-Wesertor",
+      "plz": "34125",
+      "city": "Kassel",
+      "street": "Franzgraben 40-42",
+      "lat": 51.321132,
+      "lng": 9.517428,
+      "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html",
+      "products": ["20941886|2026-10-08", "20973783|2026-10-04"]
+    },
+    {
+      "id": "DE4733",
+      "name": "Rastatt",
+      "plz": "76437",
+      "city": "Rastatt",
+      "street": "Rauentaler Straße 65",
+      "lat": 48.860253,
+      "lng": 8.2352115,
+      "url": "https://filiale.kaufland.de/service/filiale/rastatt-4733.html",
+      "products": ["20941886|2026-10-08", "20973783|2026-10-04"]
+    },
+    {
+      "id": "DE6200",
+      "name": "Berlin-Biesdorf",
+      "plz": "12683",
+      "city": "Berlin",
+      "street": "Weißenhöher Straße 88-108",
+      "lat": 52.5066989,
+      "lng": 13.5584569,
+      "url": "https://filiale.kaufland.de/service/filiale/berlin-biesdorf-6200.html",
+      "products": ["20941886|2026-10-08", "20973783|2026-10-04", "20973794|2026-10-04"]
+    }
+  ]
+}
