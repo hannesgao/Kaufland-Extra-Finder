@@ -17,6 +17,14 @@ export interface Leaflet {
   pdfStoreMatch?: boolean;
 }
 
+/** An Extra leaflet the store had before; its links are gone, only dates and the PDF check stay. */
+export interface PastLeaflet {
+  validFrom: IsoDate;
+  validTo: IsoDate;
+  pdfStore?: string;
+  pdfStoreMatch?: boolean;
+}
+
 export interface Store {
   id: string;
   name: string;
@@ -27,12 +35,17 @@ export interface Store {
   lng: number;
   /** Store page on filiale.kaufland.de (optional in the data). */
   url?: string;
+  /** Listed leaflets; empty for a store that only had Extra leaflets before. */
   leaflets: Leaflet[];
+  /** Earlier Extra leaflets, newest first (since `historySince`). */
+  past: PastLeaflet[];
   specialDays: SpecialDay[];
 }
 
 export interface ExtraData {
   generatedAt: Date;
+  /** First day of the Extra history; null for data without history. */
+  historySince: IsoDate | null;
   storeCount: number;
   stores: Store[];
   storesById: ReadonlyMap<string, Store>;
@@ -99,14 +112,11 @@ export function httpsUrl(obj: Json, key: string, where: string): string {
   return url.href;
 }
 
-function parseLeaflet(raw: unknown, where: string): Leaflet {
-  if (!isObject(raw)) throw new DataError(`${where}: leaflet must be an object`);
-  const leaflet: Leaflet = {
+/** Validity and the optional PDF check, shared by listed and past leaflets. */
+function parseDates(raw: Json, where: string): PastLeaflet {
+  const leaflet: PastLeaflet = {
     validFrom: isoDate(raw, "valid_from", where),
     validTo: isoDate(raw, "valid_to", where),
-    cluster: str(raw, "cluster", where),
-    viewer: httpsUrl(raw, "viewer", where),
-    pdf: httpsUrl(raw, "pdf", where),
   };
   if (raw.pdf_store !== undefined) leaflet.pdfStore = str(raw, "pdf_store", where);
   if (raw.pdf_store_match !== undefined) {
@@ -117,6 +127,21 @@ function parseLeaflet(raw: unknown, where: string): Leaflet {
   }
   if (leaflet.validTo < leaflet.validFrom) throw new DataError(`${where}: valid_to < valid_from`);
   return leaflet;
+}
+
+function parseLeaflet(raw: unknown, where: string): Leaflet {
+  if (!isObject(raw)) throw new DataError(`${where}: leaflet must be an object`);
+  return {
+    ...parseDates(raw, where),
+    cluster: str(raw, "cluster", where),
+    viewer: httpsUrl(raw, "viewer", where),
+    pdf: httpsUrl(raw, "pdf", where),
+  };
+}
+
+function parsePast(raw: unknown, where: string): PastLeaflet {
+  if (!isObject(raw)) throw new DataError(`${where}: past leaflet must be an object`);
+  return parseDates(raw, where);
 }
 
 function parseSpecialDay(raw: unknown, where: string): SpecialDay {
@@ -141,6 +166,7 @@ function parseStore(raw: unknown, index: number): Store {
   if (Math.abs(lat) > 90 || Math.abs(lng) > 180)
     throw new DataError(`${where}: invalid coordinates`);
   const special = raw.special_days === undefined ? [] : arr(raw, "special_days", where);
+  const past = raw.past === undefined ? [] : arr(raw, "past", where);
   const url = raw.url === undefined ? undefined : httpsUrl(raw, "url", where);
   return {
     id: str(raw, "id", where),
@@ -152,6 +178,9 @@ function parseStore(raw: unknown, index: number): Store {
     lng,
     ...(url && { url }),
     leaflets: arr(raw, "leaflets", where).map((l) => parseLeaflet(l, where)),
+    past: past
+      .map((l) => parsePast(l, where))
+      .sort((a, b) => b.validFrom.localeCompare(a.validFrom)),
     specialDays: special.map((d) => parseSpecialDay(d, where)),
   };
 }
@@ -178,6 +207,8 @@ export function parseExtra(raw: unknown): ExtraData {
   }
   return {
     generatedAt,
+    historySince:
+      raw.history_since === undefined ? null : isoDate(raw, "history_since", "extra.json"),
     storeCount: num(raw, "store_count", "extra.json"),
     stores,
     storesById,

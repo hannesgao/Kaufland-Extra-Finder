@@ -156,6 +156,8 @@ const HEAD_LINE_H = 9;
 const HEAD_PAD_Y = 4.5;
 /** Cap height of Helvetica (718/1000 em), to centre text vertically. */
 const CAP = 0.718;
+/** Title row above the stores without a current leaflet. */
+const SECTION_H = 22;
 /** The table ends here; below: the page footer. */
 const TABLE_BOTTOM = PAGE_H - MARGIN - 14;
 
@@ -258,18 +260,28 @@ function layoutPages(table: ExportTable): Page[] {
       return wrapText(row[i] ?? "", col.width - 2 * PAD_X, measure);
     });
     const height = Math.max(...lines.map((l) => l.length)) * LINE_H + 2 * PAD_Y;
-    if (top + height > TABLE_BOTTOM) {
+    const { dormant } = table;
+    const sectionStart = dormant?.start === index;
+    // The section title never stays alone at the bottom of a page.
+    if (top + height + (sectionStart ? SECTION_H : 0) > TABLE_BOTTOM) {
       page = new Page();
       pages.push(page);
       top = MARGIN;
       top += drawHeader(page, cols, top);
     }
+    if (dormant && sectionStart) {
+      const baseline = top + SECTION_H - 6;
+      page.text(dormant.title, MARGIN + PAD_X, baseline, BODY_SIZE, true, PALETTE.accent);
+      page.rect(MARGIN, top + SECTION_H - 1.5, TABLE_W, 1.5, PALETTE.accent);
+      top += SECTION_H;
+    }
+    const muted = dormant !== undefined && index >= dormant.start;
     if (index % 2 === 1) page.rect(MARGIN, top, TABLE_W, height, PALETTE.zebra);
     page.rect(MARGIN, top + height - 0.5, TABLE_W, 0.5, PALETTE.rule);
     cols.forEach((col, i) => {
       (lines[i] ?? []).forEach((line, n) => {
         const baseline = top + PAD_Y + (LINE_H + BODY_SIZE * CAP) / 2 + n * LINE_H;
-        const color = col.strong ? PALETTE.accent : PALETTE.text;
+        const color = muted ? PALETTE.muted : col.strong ? PALETTE.accent : PALETTE.text;
         page.text(
           line,
           cellX(col, line, BODY_SIZE, col.strong),

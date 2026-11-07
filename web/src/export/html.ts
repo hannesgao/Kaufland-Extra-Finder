@@ -33,6 +33,9 @@ const STYLE = `
   tbody tr:nth-child(even) td { background: ${C.zebra}; }
   th.strong, td.strong { text-align: center; }
   td.strong { color: ${C.accent}; font-weight: 700; font-variant-numeric: tabular-nums; }
+  tr.section th { padding: 10px 8px 4px; background: none; color: ${C.accent}; font-size: 12px;
+    letter-spacing: 0; text-transform: none; border-bottom: 2px solid ${C.accent}; }
+  tr.dormant td, tr.dormant td.strong { color: ${C.muted}; }
   footer { margin-top: 10px; color: ${C.muted}; font-size: 11px; }
   @page { margin: 14mm; }
   @media print { body { margin: 0; } thead { display: table-header-group; }
@@ -44,16 +47,23 @@ export function exportHtml(table: ExportTable): Blob {
   const head = table.columns
     .map((c) => `<th${c.strong ? ' class="strong"' : ""}>${escapeHtml(c.header)}</th>`)
     .join("");
+  const { dormant } = table;
   const body = table.rows
-    .map(
-      (row) =>
-        `<tr>${row
-          .map((cell, i) => {
-            const strong = table.columns[i]?.strong ? ' class="strong"' : "";
-            return `<td${strong}>${escapeHtml(cell)}</td>`;
-          })
-          .join("")}</tr>`,
-    )
+    .map((row, index) => {
+      const cells = row
+        .map((cell, i) => {
+          const strong = table.columns[i]?.strong ? ' class="strong"' : "";
+          return `<td${strong}>${escapeHtml(cell)}</td>`;
+        })
+        .join("");
+      if (!dormant || index < dormant.start) return `<tr>${cells}</tr>`;
+      const section =
+        index === dormant.start
+          ? `<tr class="section"><th colspan="${String(table.columns.length)}">` +
+            `${escapeHtml(dormant.title)}</th></tr>\n`
+          : "";
+      return `${section}<tr class="dormant">${cells}</tr>`;
+    })
     .join("\n");
   const html = `<!doctype html>
 <html lang="de">

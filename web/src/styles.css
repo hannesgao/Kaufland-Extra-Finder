@@ -43,6 +43,8 @@
   --map-marker: #006a60;
   --map-marker-closed: #8a9491;
   --map-marker-foreign: #d9480f;
+  --map-marker-dormant: #e3eae7;
+  --map-marker-dormant-ring: #6f7976;
   --map-marker-stroke: #ffffff;
   --map-origin: #3b5ba9;
   --map-radius: #3b5ba9;
@@ -103,6 +105,8 @@
     --map-marker: #82d5c8;
     --map-marker-closed: #6f7976;
     --map-marker-foreign: #ff8a50;
+    --map-marker-dormant: #2b3331;
+    --map-marker-dormant-ring: #8a9491;
     --map-marker-stroke: #0e1513;
     --map-origin: #afc6ff;
     --map-radius: #afc6ff;
@@ -835,6 +839,14 @@ a {
 }
 
 .map[hidden],
+/* Store cards, then the Extra stores without a current leaflet; one column next to the map. */
+.results__stores {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+}
+
 .results[hidden],
 .articles[hidden],
 .article-strip[hidden] {
@@ -2433,4 +2445,62 @@ button.segment:focus-visible {
 button.segment:disabled {
   cursor: progress;
   opacity: 0.6;
+}
+
+/* ---------- Extra stores without a current leaflet ---------- */
+/* Compact, quieter cards below the current ones: no calendar, no leaflet panel. */
+.dormant-section {
+  margin-top: 12px;
+}
+
+.dormant-section__title {
+  margin: 0 0 4px;
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.dormant-section__intro {
+  margin: 0 0 12px;
+  color: var(--md-on-surface-variant);
+  font-size: 0.875rem;
+}
+
+.store--dormant {
+  background: var(--md-surface-container-low);
+}
+
+.store--dormant .store__plz,
+.store--dormant .store__avatar {
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+}
+
+.dormant {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  margin-top: 12px;
+  font-size: 0.875rem;
+}
+
+.dormant p {
+  margin: 0;
+}
+
+.dormant__last {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.dormant__last .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--md-on-surface-variant);
+}
+
+.dormant__count {
+  color: var(--md-on-surface-variant);
 }

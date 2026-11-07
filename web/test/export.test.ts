@@ -10,7 +10,7 @@ import { edgeCases, fixture, MONDAY } from "./helpers";
 const GENERATED = new Date("2026-10-05T04:31:00Z");
 
 function table(pdfOnly: boolean, data = fixture()): ExportTable {
-  return exportTable(listAll(data, MONDAY, "plz-asc", { pdfOnly }), {
+  return exportTable(listAll(data, MONDAY, "plz-asc", { pdfOnly }), [], {
     generatedAt: GENERATED,
     today: MONDAY,
     pdfOnly,

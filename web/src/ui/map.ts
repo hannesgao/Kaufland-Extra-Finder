@@ -13,7 +13,8 @@ export interface MapMarker {
   name: string;
   lat: number;
   lng: number;
-  kind: "default" | "closed" | "foreign";
+  /** "dormant": an Extra store without a current leaflet. */
+  kind: "default" | "closed" | "foreign" | "dormant";
 }
 
 export interface MapView {
@@ -25,6 +26,7 @@ const MARKER_COLOUR: Record<MapMarker["kind"], string> = {
   default: "--map-marker",
   closed: "--map-marker-closed",
   foreign: "--map-marker-foreign",
+  dormant: "--map-marker-dormant",
 };
 
 const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -55,9 +57,10 @@ export async function createMap(
   const style = (isSelected: boolean, marker: MapMarker) => ({
     radius: isSelected ? 11 : 8,
     weight: isSelected ? 3 : 2,
-    color: cssVar("--map-marker-stroke"),
+    // Stores without a current leaflet: a light disc with a grey ring, behind the others.
+    color: cssVar(marker.kind === "dormant" ? "--map-marker-dormant-ring" : "--map-marker-stroke"),
     fillColor: cssVar(MARKER_COLOUR[marker.kind]),
-    fillOpacity: 0.9,
+    fillOpacity: marker.kind === "dormant" ? 0.7 : 0.9,
   });
 
   return {

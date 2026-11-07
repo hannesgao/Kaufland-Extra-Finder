@@ -171,7 +171,14 @@
 
         <section id="results" class="results" aria-label="Ergebnisse" tabindex="-1">
           <div id="map" class="map" role="region" aria-label="Karte der Filialen" hidden></div>
-          <ol id="list" class="list"></ol>
+          <div class="results__stores">
+            <ol id="list" class="list"></ol>
+            <section id="dormant" class="dormant-section" aria-labelledby="dormant-title" hidden>
+              <h2 id="dormant-title" class="dormant-section__title"></h2>
+              <p id="dormant-intro" class="dormant-section__intro"></p>
+              <ol id="dormant-list" class="list"></ol>
+            </section>
+          </div>
         </section>
       </div>
 
@@ -243,6 +250,16 @@
         </div>
 
         <ol id="all-list" class="list" aria-label="Liste der Extra-Filialen"></ol>
+        <section
+          id="all-dormant"
+          class="dormant-section"
+          aria-labelledby="all-dormant-title"
+          hidden
+        >
+          <h2 id="all-dormant-title" class="dormant-section__title"></h2>
+          <p id="all-dormant-intro" class="dormant-section__intro"></p>
+          <ol id="all-dormant-list" class="list"></ol>
+        </section>
       </div>
 
       <div id="panel-cards" role="tabpanel" aria-labelledby="tab-cards" hidden>

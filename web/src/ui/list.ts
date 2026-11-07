@@ -9,7 +9,8 @@ import { formatDay } from "../dates";
 import { h } from "../dom";
 import { formatKm } from "../geo";
 import { icon } from "../icons";
-import type { DayView, Hit, LeafletView, StoreView } from "../search";
+import type { DayView, DormantView, Hit, LeafletView, StoreView } from "../search";
+import { pastCount } from "../summary";
 
 const MAX_SIBLINGS = 5;
 const WEEKDAYS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
@@ -379,6 +380,66 @@ export function renderHit(hit: Hit, onSelect: (id: string) => void, note?: strin
     onTitleClick: select,
     ...(note !== undefined && { note }),
   });
+}
+
+/* ---------- Extra stores without a current leaflet ---------- */
+
+export interface DormantOptions {
+  /** Radius search: distance chip; otherwise the PLZ badge leads. */
+  distanceKm?: number;
+  /** "06.10.2026": the day the history starts. */
+  since: string | null;
+  action: CardOptions["action"];
+  onTitleClick?: () => void;
+}
+
+/** Compact card: name, address, when the last Extra leaflet was, how many there were. */
+export function renderDormant(view: DormantView, options: DormantOptions): HTMLLIElement {
+  const { store, last } = view;
+  const { distanceKm, since, action, onTitleClick } = options;
+  const headingId = `dormant-${store.id}`;
+  const lead =
+    distanceKm === undefined
+      ? h("span", { class: "store__plz", "aria-hidden": "true" }, store.plz)
+      : icon("storefront", "icon store__avatar");
+  return h(
+    "li",
+    { class: "store store--dormant", "data-id": store.id },
+    h(
+      "article",
+      { class: "store__body", "aria-labelledby": headingId },
+      storeHeader(store, headingId, lead, distanceKm, onTitleClick),
+      h(
+        "div",
+        { class: "dormant" },
+        h(
+          "p",
+          { class: "dormant__last" },
+          icon("history"),
+          h(
+            "span",
+            null,
+            "Zuletzt: ",
+            h("time", { datetime: `${last.validFrom}/${last.validTo}` }, view.lastText),
+          ),
+        ),
+        h("p", { class: "dormant__count" }, pastCount(view.count, since)),
+        pdfNamedLabel(last.pdfStoreMatch),
+      ),
+      h(
+        "div",
+        { class: "actions store__actions" },
+        store.url &&
+          externalButton(store.url, "Filialseite", store.name, "btn--outlined", "storefront"),
+        h(
+          "button",
+          { type: "button", class: "btn btn--sm btn--outlined", on: { click: action.onClick } },
+          icon(action.icon),
+          action.label,
+        ),
+      ),
+    ),
+  );
 }
 
 /** "Alle Extra-Filialen" card: PLZ badge, "In Umkreissuche zeigen". */

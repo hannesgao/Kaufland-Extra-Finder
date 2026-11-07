@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 from collections import defaultdict
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from typing import Any
 
 from kef_scraper.models import Leaflet, Offer, ScanResult, SpecialDay, Store
@@ -35,26 +35,97 @@ def build_extra(
         s = r.store
         for lf in r.leaflets:
             clusters[lf.cluster].add(s.id)
-        store: dict[str, Any] = {
-            "id": s.id,
-            "name": s.name,
-            "plz": s.plz,
-            "city": s.city,
-            "street": s.street,
-            "lat": s.lat,
-            "lng": s.lng,
-            **({"url": s.url} if s.url else {}),
-            "leaflets": [_leaflet(lf, s, pdf_checks.get(lf.cluster)) for lf in r.leaflets],
-        }
-        special = [_special_day(d) for d in s.special_days if d.date >= today]
-        if special:  # optional field, omitted when empty
-            store["special_days"] = special
-        stores.append(store)
+        leaflets = [_leaflet(lf, s, pdf_checks.get(lf.cluster)) for lf in r.leaflets]
+        stores.append(_store_record(s, today, leaflets))
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at.isoformat(timespec="seconds"),
         "store_count": result.store_count,
         "failed_count": result.failed_count,
+        "stores": stores,
+        "clusters": {k: sorted(v) for k, v in sorted(clusters.items())},
+    }
+
+
+def _store_record(s: Store, today: dt.date, leaflets: list[dict[str, Any]]) -> dict[str, Any]:
+    store: dict[str, Any] = {
+        "id": s.id,
+        "name": s.name,
+        "plz": s.plz,
+        "city": s.city,
+        "street": s.street,
+        "lat": s.lat,
+        "lng": s.lng,
+        **({"url": s.url} if s.url else {}),
+        "leaflets": leaflets,
+    }
+    special = [_special_day(d) for d in s.special_days if d.date >= today]
+    if special:  # optional field, omitted when empty
+        store["special_days"] = special
+    return store
+
+
+# What a past leaflet keeps: its links are dead once Kaufland removes the leaflet.
+PAST_FIELDS = ("valid_from", "valid_to", "pdf_store", "pdf_store_match")
+
+
+def with_history(
+    extra: dict[str, Any],
+    result: ScanResult,
+    previous_stores: Iterable[Mapping[str, Any]],
+    history_since: str,
+) -> dict[str, Any]:
+    """`extra` plus every store that had an Extra leaflet before, with its past leaflets.
+
+    `previous_stores` are the store records of earlier runs, oldest first (the previous
+    `extra.json`, and once the snapshots before it). A leaflet of an earlier run that this scan
+    no longer lists, or that has expired, becomes a `past` entry (newest first). A store whose
+    page could not be read keeps the leaflets that are still valid. A store that is no longer in
+    Kaufland's store list (closed) is dropped after a full scan.
+    """
+    today = dt.date.fromisoformat(extra["generated_at"][:10]).isoformat()
+    scanned = {r.store.id: r for r in result.results}
+    failed = {r.store.id for r in result.failures}
+    current = {s["id"]: s for s in extra["stores"]}
+    clusters = {k: set(v) for k, v in extra["clusters"].items()}
+    earlier: dict[str, Mapping[str, Any]] = {}
+    past: defaultdict[str, dict[tuple[str, str], dict[str, Any]]] = defaultdict(dict)
+    carried: defaultdict[str, dict[tuple[str, str], dict[str, Any]]] = defaultdict(dict)
+    for prev in previous_stores:
+        sid = prev["id"]
+        earlier[sid] = prev  # the latest record wins
+        for p in prev.get("past", []):
+            past[sid][(p["valid_from"], p["valid_to"])] = {k: p[k] for k in PAST_FIELDS if k in p}
+        for lf in prev.get("leaflets", []):
+            key = (lf["valid_from"], lf["valid_to"])
+            past[sid][key] = {k: lf[k] for k in PAST_FIELDS if k in lf}
+            if lf["valid_to"] >= today:
+                carried[sid][key] = dict(lf)
+    stores = []
+    for sid in sorted(current.keys() | earlier.keys()):
+        if sid in current:
+            record = dict(current[sid])
+        elif sid in scanned:
+            record = _store_record(scanned[sid].store, dt.date.fromisoformat(today), [])
+        elif not result.full_scan:
+            record = {k: v for k, v in earlier[sid].items() if k != "past"}
+            record["leaflets"] = []
+        else:
+            continue  # no longer in the store list
+        # Not looked at (failed, or outside --stores): its leaflets may well still be listed.
+        unknown = sid in failed or sid not in scanned
+        if unknown and not record["leaflets"]:
+            record["leaflets"] = list(carried[sid].values())
+            for lf in record["leaflets"]:
+                clusters.setdefault(lf["cluster"], set()).add(sid)
+        listed = {(lf["valid_from"], lf["valid_to"]) for lf in record["leaflets"]}
+        entries = [p for key, p in past[sid].items() if key not in listed]
+        if entries:
+            record["past"] = sorted(entries, key=lambda p: p["valid_from"], reverse=True)
+        stores.append(record)
+    return {
+        **extra,
+        "history_since": history_since,
         "stores": stores,
         "clusters": {k: sorted(v) for k, v in sorted(clusters.items())},
     }

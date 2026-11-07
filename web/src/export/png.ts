@@ -21,6 +21,8 @@ const PAD_Y = 5;
 /** Header row: 28px for one line; long headers wrap. */
 const HEAD_LINE_H = 14;
 const HEAD_PAD_Y = 7;
+/** Title row above the stores without a current leaflet. */
+const SECTION_H = 34;
 /** Canvas size limit of common browsers (per side, in device pixels). */
 const MAX_SIDE = 16_000;
 
@@ -78,7 +80,9 @@ export async function exportPng(table: ExportTable): Promise<Blob> {
   const tableTop = MARGIN + TITLE_SIZE + 8 + subtitle.length * (SUBTITLE_SIZE + 5) + 8;
   const headLines = Math.max(...cols.map((c) => c.header.length));
   const headH = headLines * HEAD_LINE_H + 2 * HEAD_PAD_Y;
-  const tableBottom = tableTop + headH + rows.reduce((sum, r) => sum + r.height, 0);
+  const { dormant } = table;
+  const section = dormant && dormant.start < rows.length ? SECTION_H : 0;
+  const tableBottom = tableTop + headH + section + rows.reduce((sum, r) => sum + r.height, 0);
   const height = tableBottom + 12 + footer.length * (FOOT_SIZE + 5) + MARGIN;
   const scale = Math.min(2, MAX_SIDE / height);
   canvas.width = Math.round(WIDTH * scale);
@@ -121,6 +125,13 @@ export async function exportPng(table: ExportTable): Promise<Blob> {
   top += headH;
 
   rows.forEach((row, index) => {
+    if (dormant?.start === index) {
+      ctx.fillStyle = PALETTE.accent;
+      text(dormant.title, MARGIN + PAD_X, top + SECTION_H - 12, BODY_SIZE, true);
+      ctx.fillRect(MARGIN, top + SECTION_H - 2, TABLE_W, 2);
+      top += SECTION_H;
+    }
+    const muted = dormant !== undefined && index >= dormant.start;
     if (index % 2 === 1) {
       ctx.fillStyle = PALETTE.zebra;
       ctx.fillRect(MARGIN, top, TABLE_W, row.height);
@@ -128,7 +139,7 @@ export async function exportPng(table: ExportTable): Promise<Blob> {
     ctx.fillStyle = PALETTE.rule;
     ctx.fillRect(MARGIN, top + row.height - 1, TABLE_W, 1);
     cols.forEach((col, i) => {
-      ctx.fillStyle = col.strong ? PALETTE.accent : PALETTE.text;
+      ctx.fillStyle = muted ? PALETTE.muted : col.strong ? PALETTE.accent : PALETTE.text;
       (row.lines[i] ?? []).forEach((line, n) => {
         const middle = top + PAD_Y + LINE_H / 2 + n * LINE_H;
         text(line, cellX(col, line, BODY_SIZE, col.strong), middle, BODY_SIZE, col.strong);

@@ -1,6 +1,6 @@
 /** Pure search logic: which Extra stores are near a point, and what to show for each. */
 
-import type { ExtraData, IsoDate, LatLng, Leaflet, SpecialDay, Store } from "./data";
+import type { ExtraData, IsoDate, LatLng, Leaflet, PastLeaflet, SpecialDay, Store } from "./data";
 import {
   addDays,
   dateRange,
@@ -113,6 +113,23 @@ export interface SearchResult {
   hits: Hit[];
   /** Nearest store outside the radius, only set when `hits` is empty. */
   nearest: Hit | null;
+  /** Extra stores in the radius without a current leaflet, nearest first. */
+  dormant: DormantHit[];
+}
+
+/** A store that had Extra leaflets before but has no current or upcoming one. */
+export interface DormantView {
+  store: Store;
+  /** Its newest past leaflet. */
+  last: PastLeaflet;
+  /** "Mo, 02.11. – Sa, 07.11.2026" */
+  lastText: string;
+  /** Number of past Extra leaflets (since the history starts). */
+  count: number;
+}
+
+export interface DormantHit extends DormantView {
+  distanceKm: number;
 }
 
 const shortHour = (time: string) => time.replace(/^0/, "").replace(/:00$/, "");
@@ -245,6 +262,84 @@ export function listAll(
     );
 }
 
+const shown = (leaflet: PastLeaflet, options: SearchOptions) =>
+  !(options.pdfOnly && leaflet.pdfStoreMatch === false);
+
+/** "Mo, 02.11. – Sa, 07.11.2026" */
+export function pastText(leaflet: PastLeaflet): string {
+  const { validFrom, validTo } = leaflet;
+  return (
+    `${weekdayShort(validFrom)},\u00a0${formatDay(validFrom)} – ` +
+    `${weekdayShort(validTo)},\u00a0${formatDate(validTo)}`
+  );
+}
+
+/**
+ * The store's past Extra leaflets, newest first: the scraper's `past` plus listed leaflets that
+ * have expired since the last scan. With the PDF switch, leaflets that name another store are left
+ * out, like current ones.
+ */
+function pastLeaflets(store: Store, today: IsoDate, options: SearchOptions): PastLeaflet[] {
+  const seen = new Map<string, PastLeaflet>();
+  for (const l of [...store.leaflets.filter((l) => l.validTo < today), ...store.past]) {
+    const key = `${l.validFrom}|${l.validTo}`;
+    if (seen.has(key) || !shown(l, options)) continue;
+    const { validFrom, validTo, pdfStore, pdfStoreMatch } = l; // no links: they are gone
+    seen.set(key, {
+      validFrom,
+      validTo,
+      ...(pdfStore !== undefined && { pdfStore }),
+      ...(pdfStoreMatch !== undefined && { pdfStoreMatch }),
+    });
+  }
+  return [...seen.values()].sort((a, b) => b.validFrom.localeCompare(a.validFrom));
+}
+
+/** The store as a dormant Extra store, or null if it has a current leaflet or no past one. */
+export function describeDormant(
+  store: Store,
+  today: IsoDate,
+  options: SearchOptions = {},
+): DormantView | null {
+  if (store.leaflets.some((l) => l.validTo >= today && shown(l, options))) return null;
+  const past = pastLeaflets(store, today, options);
+  const last = past[0];
+  return last ? { store, last, lastText: pastText(last), count: past.length } : null;
+}
+
+/** Extra stores without a current or upcoming leaflet, sorted like `listAll`. */
+export function listDormant(
+  data: ExtraData,
+  today: IsoDate,
+  order: SortOrder,
+  options: SearchOptions = {},
+): DormantView[] {
+  const direction = order === "plz-asc" ? 1 : -1;
+  return data.stores
+    .map((s) => describeDormant(s, today, options))
+    .filter((v): v is DormantView => v !== null)
+    .sort(
+      (a, b) =>
+        direction * a.store.plz.localeCompare(b.store.plz) ||
+        a.store.name.localeCompare(b.store.name, "de"),
+    );
+}
+
+/** The newest past Extra week and how many of the given stores had it (for "zuletzt …"). */
+export function latestPeriod(
+  dormant: readonly DormantView[],
+): { leaflet: PastLeaflet; text: string; stores: number } | null {
+  const newest = dormant.reduce<PastLeaflet | null>(
+    (best, v) => (best === null || v.last.validFrom > best.validFrom ? v.last : best),
+    null,
+  );
+  if (!newest) return null;
+  const stores = dormant.filter(
+    (v) => v.last.validFrom === newest.validFrom && v.last.validTo === newest.validTo,
+  ).length;
+  return { leaflet: newest, text: pastText(newest), stores };
+}
+
 /** Open stores first, then by distance. */
 function compareHits(a: Hit, b: Hit): number {
   return Number(a.closed) - Number(b.closed) || a.distanceKm - b.distanceKm;
@@ -265,7 +360,14 @@ export function search(
     stores.map((s) => toHit(s, origin, today, data, options)).filter((h): h is Hit => h !== null);
   const inRange = data.stores.filter((s) => distanceKm(origin, [s.lat, s.lng]) <= radiusKm);
   const hits = describe(inRange).sort(compareHits);
-  if (hits.length > 0) return { hits, nearest: null };
+  const dormant = inRange
+    .map((s) => {
+      const view = describeDormant(s, today, options);
+      return view && { ...view, distanceKm: distanceKm(origin, [s.lat, s.lng]) };
+    })
+    .filter((d): d is DormantHit => d !== null)
+    .sort((a, b) => a.distanceKm - b.distanceKm);
+  if (hits.length > 0) return { hits, nearest: null, dormant };
   const nearest = describe(data.stores).sort(compareHits)[0] ?? null;
-  return { hits, nearest };
+  return { hits, nearest, dormant };
 }

@@ -49,10 +49,42 @@ export function emptyStatus(pdfOnly: boolean): string {
     : "Derzeit ist keine Filiale mit Extra-Angeboten bekannt.";
 }
 
-/** "102 Filialen mit Extra-Prospekt" / "55 Filialen, für die … gilt (47 Filialen ausgeblendet, …)" */
-export function listSummary(counts: Counts, pdfOnly: boolean): string {
-  if (!pdfOnly) return `${filialen(counts.shown)} mit Extra-Prospekt`;
-  return `${filialen(counts.shown)}, ${GILT}${hiddenNote(counts)}`;
+/**
+ * "45 Filialen mit Extra-Prospekt, 57 weitere derzeit ohne" /
+ * "33 Filialen, für die … gilt (12 Filialen ausgeblendet), 17 weitere derzeit ohne"
+ */
+export function listSummary(counts: Counts, pdfOnly: boolean, dormant = 0): string {
+  const current = pdfOnly
+    ? `${filialen(counts.shown)}, ${GILT}${hiddenNote(counts)}`
+    : `${filialen(counts.shown)} mit Extra-Prospekt`;
+  return dormant > 0 ? `${current}, ${String(dormant)} weitere derzeit ohne` : current;
+}
+
+/** When no store has a current Extra leaflet: Kaufland does not publish one every week. */
+export function noLeafletStatus(latest: { text: string; stores: number } | null): string {
+  const now = "Derzeit gibt es keinen Extra-Prospekt.";
+  return latest ? `${now} Zuletzt: ${latest.text} (${filialen(latest.stores)}).` : now;
+}
+
+/* ---------- Extra stores without a current leaflet ---------- */
+
+export function dormantTitle(n: number, nearby: boolean): string {
+  return `${nearby ? "Im Umkreis derzeit" : "Derzeit"} ohne Extra-Prospekt (${String(n)})`;
+}
+
+export function dormantIntro(since: string | null, pdfOnly: boolean): string {
+  const when = since ? ` seit dem ${since}` : "";
+  const which = pdfOnly ? ", der laut PDF für sie galt" : "";
+  return (
+    `Diese Filialen hatten${when} mindestens einen Extra-Prospekt${which}. ` +
+    "Kaufland bietet Extra-Prospekte nicht jede Woche an."
+  );
+}
+
+/** "3 Extra-Prospekte seit 06.10.2026" */
+export function pastCount(n: number, since: string | null): string {
+  const what = `${String(n)} ${n === 1 ? "Extra-Prospekt" : "Extra-Prospekte"}`;
+  return since ? `${what} seit ${since}` : what;
 }
 
 /* ---------- Pokémon-Angebote ---------- */
