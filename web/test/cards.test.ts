@@ -22,7 +22,7 @@ import {
 import { shiftedFixture } from "../vite.config";
 import { nth, PLZ_KARLSRUHE } from "./helpers";
 
-const CARDS_PATH = resolve(import.meta.dirname, "../fixtures/cards.json");
+const CARDS_PATH = resolve(import.meta.dirname, "fixtures/cards-2026-10-06.json");
 type Json = Record<string, unknown>;
 
 /** Real cards.json for 6 stores, generated Tuesday 2026-10-06. */
