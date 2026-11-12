@@ -15,6 +15,7 @@ from conftest import NO_OFFERS_PAGE, FakeFetcher, store_list_sample
 from kef_scraper.build import (
     CARDS_SCHEMA_VERSION,
     build_cards,
+    build_deals,
     offer_key,
     offers_problems,
 )
@@ -296,7 +297,10 @@ class TestCli:
         cards = json.loads((tmp_path / "cards.json").read_text())
         assert [s["id"] for s in cards["stores"]] == ["DE4453"]
         assert cards["store_count"] == 2
+        deals = json.loads((tmp_path / "deals.json").read_text())
+        assert (deals["store_count"], deals["products"]) == (2, {})  # no PDF names a store here
         report = capsys.readouterr().out
+        assert "deals.json: 0 offers in 0 stores" in report
         assert "Offer overviews: 2 scanned, 0 failed, 1 without offer data" in report
         assert "Trading-card offers (pokemon): 2 in 1 stores" in report
         assert "Sammelkartenspiel »Top-Trainer-Box« (20973783) 55.00" in report
@@ -320,6 +324,7 @@ class TestCli:
         summary = tmp_path / "summary.md"
         assert _run(fetcher, tmp_path, "--offers", "--summary", str(summary)) == EXIT_OK
         assert json.loads((tmp_path / "cards.json").read_text()) == {"old": True}
+        assert not (tmp_path / "deals.json").exists()
         assert (tmp_path / "extra.json").exists()
         assert "cards.json NOT updated: 2/2 offer overviews failed" in capsys.readouterr().out
         assert "### ❌ Trading cards not updated" in summary.read_text()
@@ -405,3 +410,94 @@ class TestExtraOfferReport:
         stores = list(_stores().values())
         result = ScanResult(results=(StoreResult(stores[0]),), full_scan=False)
         assert extra_offer_lines(result, {"stores": []}) == []
+
+
+class TestBuildDeals:
+    """deals.json: offers of the Extra leaflets in stores named by their PDF."""
+
+    BREAD = _extra_offer("1", "Krustenbrot", "1.39")
+    MILK = _extra_offer("2", "MÜLLER Müllermilch", "0.59", "1.49")
+    BEEF = _extra_offer("3", "US-Rinderentrecôte", "5.39")  # worded differently in the PDF
+    TEXT = "nur in soest mueller muellermilch 0 59 rinder entrecote 5 39"
+
+    def _deals(self, *, dear_milk: bool = False) -> dict[str, Any]:
+        a, b, c, listed, other = list(_stores().values())
+        milk = replace(self.MILK, price="0.69") if dear_milk else self.MILK
+        results = (
+            StoreResult(a, offers_scanned=True, extra_offers=(self.BREAD, self.MILK, self.BEEF)),
+            StoreResult(b, offers_scanned=True, extra_offers=(self.BREAD, self.MILK)),
+            StoreResult(c, offers_scanned=True, extra_offers=(self.BREAD, milk)),
+            StoreResult(listed, offers_scanned=True, extra_offers=(self.BREAD,)),
+            StoreResult(other, offers_scanned=True, extra_offers=(self.BREAD, self.MILK)),
+        )
+        extra = {
+            "stores": [
+                *(
+                    {"id": s.id, "leaflets": [{"cluster": "a", "pdf_store_match": True}]}
+                    for s in (a, b, c)
+                ),
+                {"id": listed.id, "leaflets": [{"cluster": "a", "pdf_store_match": False}]},
+            ]
+        }
+        checks = {"a": PdfCheck("SOEST", text=self.TEXT)}
+        return build_deals(ScanResult(results=results, full_scan=False), extra, checks, NOW)
+
+    def test_lists_offers_printed_in_the_pdf(self) -> None:
+        deals = self._deals()
+        a, b, c, *_ = _stores()
+        milk, beef = offer_key(self.MILK), offer_key(self.BEEF)
+        assert list(deals["products"]) == [milk, beef]
+        assert [s["id"] for s in deals["stores"]] == sorted([a, b, c])
+        assert deals["products"][milk] == {
+            "kl_nr": "2",
+            "title": "MÜLLER Müllermilch",
+            "subtitle": "",
+            "price": "0.59",
+            "old_price": "1.49",
+            "shown_from": "2026-11-09",
+            "shown_to": "2026-11-14",
+            "week": "current",
+            "sections": [],
+            "other_stores": 1,  # a store that no Extra PDF names has it too
+        }
+        assert (deals["store_count"], deals["extra_store_count"]) == (5, 3)
+
+    def test_bakery_offers_of_every_store_are_left_out(self) -> None:
+        deals = self._deals()
+        assert offer_key(self.BREAD) not in deals["products"]
+        assert deals["left_out"] == 3
+
+    def test_offer_of_named_stores_only_is_listed_without_its_title_in_the_pdf(self) -> None:
+        deals = self._deals()
+        beef = offer_key(self.BEEF)
+        by_id = {s["id"]: s for s in deals["stores"]}
+        a = next(iter(_stores()))
+        assert by_id[a]["unconfirmed"] == [beef]
+        assert deals["products"][beef]["other_stores"] == 0
+        assert all("unconfirmed" not in s for sid, s in by_id.items() if sid != a)
+
+    def test_store_with_another_price(self) -> None:
+        deals = self._deals(dear_milk=True)
+        milk = offer_key(self.MILK)
+        c = list(_stores())[2]
+        assert deals["products"][milk]["price"] == "0.59"  # the price most stores have
+        assert {s["id"]: s.get("prices") for s in deals["stores"] if "prices" in s} == {
+            c: {milk: "0.69"}
+        }
+
+    def test_no_store_named_by_a_pdf(self) -> None:
+        stores = list(_stores().values())
+        results = tuple(
+            StoreResult(s, offers_scanned=True, extra_offers=(self.MILK,)) for s in stores
+        )
+        deals = build_deals(ScanResult(results=results, full_scan=False), {"stores": []}, {}, NOW)
+        assert (deals["products"], deals["stores"], deals["extra_store_count"]) == ({}, [], 0)
+
+    def test_needs_an_aware_timestamp(self) -> None:
+        with pytest.raises(ValueError, match="timezone-aware"):
+            build_deals(
+                ScanResult(results=(), full_scan=False),
+                {"stores": []},
+                {},
+                NOW.replace(tzinfo=None),
+            )

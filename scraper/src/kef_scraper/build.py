@@ -8,7 +8,8 @@ from collections.abc import Iterable, Mapping
 from typing import Any
 
 from kef_scraper.models import Leaflet, Offer, ScanResult, SpecialDay, Store
-from kef_scraper.pdfcheck import PdfCheck, matches_store
+from kef_scraper.offers import EXTRA_SECTION
+from kef_scraper.pdfcheck import PdfCheck, matches_store, offer_in_pdf
 
 SCHEMA_VERSION = 1
 MIN_STORES = 700
@@ -257,3 +258,117 @@ def offers_problems(result: ScanResult, *, max_failure_rate: float = MAX_FAILURE
                 f"{count}/{total} {label} ({count / total:.1%} > {max_failure_rate:.0%})"
             )
     return problems
+
+
+DEALS_SCHEMA_VERSION = 1
+
+
+def named_clusters(extra: Mapping[str, Any]) -> dict[str, list[str]]:
+    """Stores named by a current Extra PDF: store id -> ids of those PDFs."""
+    named = {}
+    for s in extra["stores"]:
+        clusters = [lf["cluster"] for lf in s["leaflets"] if lf.get("pdf_store_match")]
+        if clusters:
+            named[s["id"]] = clusters
+    return named
+
+
+def title_in_pdfs(offer: Offer, clusters: list[str], pdf_checks: Mapping[str, PdfCheck]) -> bool:
+    """Is the offer's title printed in one of these PDFs?"""
+    checks = (pdf_checks.get(c) for c in clusters)
+    return any(offer_in_pdf(c.text, offer.title, offer.price)[0] for c in checks if c and c.text)
+
+
+def _deal(offer: Offer) -> dict[str, Any]:
+    out = _card_offer(offer)
+    del out["category"]
+    if offer.old_price:
+        out["old_price"] = offer.old_price
+    out["sections"] = [s for s in offer.sections if s != EXTRA_SECTION]
+    return out
+
+
+def build_deals(
+    result: ScanResult,
+    extra: Mapping[str, Any],
+    pdf_checks: Mapping[str, PdfCheck],
+    generated_at: dt.datetime,
+) -> dict[str, Any]:
+    """Offers of the Extra leaflets (`deals.json`): each offer once, and the stores that have it.
+
+    Only stores named by their Extra PDF count. An offer from the section "Extra-Angebote" of such
+    a store is listed if its title is printed in the store's PDF, or if no other store has it (the
+    PDF may word it differently); the latter are named in the store's `unconfirmed`. What is left
+    out are offers every store has in that section, such as bakery offers.
+
+    A product carries the price most stores have; a store with another price lists it in `prices`.
+    `other_stores` counts stores not named by an Extra PDF that have the offer as well.
+    """
+    if generated_at.tzinfo is None:
+        raise ValueError("generated_at must be timezone-aware")
+    named = named_clusters(extra)
+    scanned = [r for r in result.results if r.offers_scanned and not r.offers_error]
+    elsewhere: dict[str, int] = {}
+    for r in scanned:
+        if r.store.id not in named:
+            for key in {offer_key(o) for o in r.extra_offers}:
+                elsewhere[key] = elsewhere.get(key, 0) + 1
+    offers: dict[str, dict[str, Offer]] = {}  # key -> store id -> offer
+    unconfirmed: dict[str, list[str]] = {}
+    left_out = 0
+    for r in scanned:
+        clusters = named.get(r.store.id)
+        if not clusters:
+            continue
+        for o in r.extra_offers:
+            key = offer_key(o)
+            if not title_in_pdfs(o, clusters, pdf_checks):
+                if elsewhere.get(key):
+                    left_out += 1
+                    continue
+                unconfirmed.setdefault(r.store.id, []).append(key)
+            offers.setdefault(key, {})[r.store.id] = o
+    products: dict[str, dict[str, Any]] = {}
+    prices: dict[str, dict[str, str]] = {}
+    for key, by_store in sorted(offers.items()):
+        tally: dict[tuple[str | None, str | None], int] = {}
+        for o in by_store.values():
+            tally[o.price, o.old_price] = tally.get((o.price, o.old_price), 0) + 1
+        usual = max(sorted(tally, key=str), key=lambda k: tally[k])
+        first = next(o for _, o in sorted(by_store.items()) if (o.price, o.old_price) == usual)
+        products[key] = _deal(first) | {"other_stores": elsewhere.get(key, 0)}
+        for sid, o in by_store.items():
+            if o.price and o.price != usual[0]:
+                prices.setdefault(sid, {})[key] = o.price
+    stores = []
+    for r in sorted(scanned, key=lambda r: r.store.id):
+        s = r.store
+        keys = sorted(k for k, by_store in offers.items() if s.id in by_store)
+        if not keys:
+            continue
+        stores.append(
+            {
+                "id": s.id,
+                "name": s.name,
+                "plz": s.plz,
+                "city": s.city,
+                "street": s.street,
+                "lat": s.lat,
+                "lng": s.lng,
+                **({"url": s.url} if s.url else {}),
+                "products": keys,
+                **({"prices": prices[s.id]} if s.id in prices else {}),
+                **({"unconfirmed": sorted(unconfirmed[s.id])} if s.id in unconfirmed else {}),
+            }
+        )
+    return {
+        "schema_version": DEALS_SCHEMA_VERSION,
+        "generated_at": generated_at.isoformat(timespec="seconds"),
+        # Stores whose offer overview was read, and those of them named by an Extra PDF.
+        "store_count": len(scanned),
+        "extra_store_count": sum(1 for r in scanned if r.store.id in named),
+        # Offers left out: title not in the store's PDF and listed by other stores as well.
+        "left_out": left_out,
+        "products": products,
+        "stores": stores,
+    }

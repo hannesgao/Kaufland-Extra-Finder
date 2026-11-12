@@ -40,16 +40,16 @@ Please don't run full scans locally; they run on a schedule in GitHub Actions.
 
 `kef-scrape` options:
 
-| Option             | Default | Meaning                                                                                         |
-| ------------------ | ------- | ----------------------------------------------------------------------------------------------- |
-| `--out DIR`        | `data`  | Where `extra.json`, `history.csv`, `snapshots/` (and with `--offers` `cards.json`) are written. |
-| `--previous DIR`   | `--out` | Previous run's output (CI: the `data` branch checkout), used for `history.csv` and the diff.    |
-| `--stores IDS`     | all     | Comma-separated store ids; skips the minimum-store-count check.                                 |
-| `--workers N`      | 4       | Concurrent requests, 1–4.                                                                       |
-| `--delay S`        | 0.25    | Pause before each request.                                                                      |
-| `--summary FILE`   | –       | Append a Markdown report (e.g. `$GITHUB_STEP_SUMMARY`).                                         |
-| `--skip-pdf-check` | off     | Don't download new Extra PDFs for the PDF check (see below).                                    |
-| `--offers`         | off     | Also read every store's offer overview and write `cards.json` (trading cards, see below).       |
+| Option             | Default | Meaning                                                                                                       |
+| ------------------ | ------- | ------------------------------------------------------------------------------------------------------------- |
+| `--out DIR`        | `data`  | Where `extra.json`, `history.csv`, `snapshots/` (and with `--offers` `cards.json`, `deals.json`) are written. |
+| `--previous DIR`   | `--out` | Previous run's output (CI: the `data` branch checkout), used for `history.csv` and the diff.                  |
+| `--stores IDS`     | all     | Comma-separated store ids; skips the minimum-store-count check.                                               |
+| `--workers N`      | 4       | Concurrent requests, 1–4.                                                                                     |
+| `--delay S`        | 0.25    | Pause before each request.                                                                                    |
+| `--summary FILE`   | –       | Append a Markdown report (e.g. `$GITHUB_STEP_SUMMARY`).                                                       |
+| `--skip-pdf-check` | off     | Don't download new Extra PDFs for the PDF check (see below).                                                  |
+| `--offers`         | off     | Also read every store's offer overview and write `cards.json` and `deals.json` (see below).                   |
 
 Exit codes: `0` success, `1` error (store list unavailable, unknown store id, …),
 `2` sanity check failed (fewer than 700 stores or more than 5 % failures) — nothing is written.
@@ -128,16 +128,64 @@ retried on the next run and leaves both fields out, which the web page shows as 
 ausstehend". `--skip-pdf-check` disables the downloads (cached results are still used). The footer code in the PDF ("1_D41-H_8530_TS") does not identify the store reliably.
 
 The cache also keeps the text of all pages of each PDF (lower case, without accents and
-punctuation), which the offer report below compares with the store's offers.
+punctuation), which `deals.json` below compares with the store's offers.
 
-### Extra offers in the report
+### Offers of the Extra leaflets (`deals.json`)
 
-With `--offers`, the report also covers the section "Extra-Angebote" of each store's offer overview
-(see below for the page). Stores named by their Extra PDF list about 35 offers there, all other
-stores only a handful that almost every store has. The report shows the number of offers per group
-of stores, the offers found in at least 90 % of all stores (not Extra offers), and for every other
-offer in how many stores it is and whether its title and price are printed in the store's PDF.
-This is a report only so far; no file is written from it.
+With `--offers`, the scraper also writes `deals.json` from the section "Extra-Angebote" of each
+store's offer overview (see the next section for the page). Stores named by their Extra PDF list
+about 35 offers there; every other store only a handful that almost all stores have (bakery).
+
+Only stores named by their Extra PDF count. An offer of such a store is listed if
+
+- its title is printed in the store's PDF (the cached text of all pages, compared without case,
+  accents, punctuation and spaces), or
+- its title is not found there, but no store outside the named ones has the offer: the PDF may
+  word it differently. Such offers are named in the store's `unconfirmed`.
+
+Everything else in that section is left out. Offers that other stores have as well stay listed
+when they are printed in the PDF; `other_stores` says how many stores those are.
+
+```jsonc
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-12T07:11:15+01:00",
+  "store_count": 785, // offer overviews read
+  "extra_store_count": 51, // of them named by an Extra PDF
+  "left_out": 196, // offers of named stores that are not listed
+  "products": {
+    "20683585|2026-11-08": {
+      "kl_nr": "20683585",
+      "title": "MÜLLER",
+      "subtitle": "Müllermilch",
+      "price": "0.59", // the price most stores have
+      "old_price": "1.49", // Kaufland's comparison price, optional
+      "unit": "je 400-ml-Fl.",
+      "shown_from": "2026-11-08",
+      "shown_to": "2026-11-14",
+      "week": "current",
+      "sections": ["Molkereiprodukte, Fette"], // other categories that list it
+      "other_stores": 37, // stores not named by an Extra PDF that have it too
+      "thumbnail": "https://kaufland.media.schwarz/…", // optional, as in cards.json
+    },
+  },
+  "stores": [
+    {
+      "id": "DE4443",
+      "name": "Karlsruhe-Oststadt",
+      // plz, city, street, lat, lng, url as in extra.json
+      "products": ["20683585|2026-11-08"],
+      "prices": { "00010960|2026-11-08": "3.99" }, // only where the store's price differs
+      "unconfirmed": ["00012321|2026-11-08"], // listed without their title in the PDF
+    },
+  ],
+}
+```
+
+The file is written together with `cards.json` and under the same conditions. In a week without
+Extra leaflets it has no products. The report shows the number of offers per group of stores and,
+for the most common offers, in how many stores they are and whether the title is in the PDF. The
+web page does not use the file yet.
 
 ### Trading-card offers (`cards.json`)
 
@@ -195,8 +243,8 @@ keyword without card wording), so a new brand or unusual wording shows up there.
 ```
 
 A store whose page has no offer data (e.g. a closed store) counts as a store without offers. If
-more than 5 % of the offer overviews fail or have no offer data, `cards.json` is not written (the
-previous one stays) while `extra.json` is still updated. An offer means the store advertises it,
+more than 5 % of the offer overviews fail or have no offer data, `cards.json` and `deals.json` are not written (the
+previous ones stay) while `extra.json` is still updated. An offer means the store advertises it,
 not that it is in stock.
 
 ### Postcode coordinates (`web/public/plz.json`)

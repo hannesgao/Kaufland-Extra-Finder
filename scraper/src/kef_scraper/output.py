@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from kef_scraper.build import SCHEMA_VERSION
+from kef_scraper.build import SCHEMA_VERSION, named_clusters
 from kef_scraper.models import Offer, ScanResult
 from kef_scraper.offers import EXTRA_SECTION
 from kef_scraper.pdfcheck import PARSER_VERSION, PdfCheck, offer_in_pdf
@@ -287,13 +287,16 @@ _FOUND = {
     (False, False): "neither",
 }
 BASELINE_SHARE = 0.9  # an "Extra offer" in this share of all stores is not an Extra offer
-_TOP_EXTRA_OFFERS = 60
+_TOP_EXTRA_OFFERS = 40
 
 
 def extra_offer_lines(
-    result: ScanResult, extra: dict[str, Any], pdf_checks: Mapping[str, PdfCheck] | None = None
+    result: ScanResult,
+    extra: dict[str, Any],
+    pdf_checks: Mapping[str, PdfCheck] | None = None,
+    deals: dict[str, Any] | None = None,
 ) -> list[str]:
-    """Report lines about the section "Extra-Angebote" of the offer overviews (report only).
+    """Report lines about the section "Extra-Angebote" of the offer overviews and `deals.json`.
 
     Compares stores named by their Extra PDF with the other stores, and the offers with the text
     of the store's PDF. Empty when no offer overview was scanned.
@@ -303,14 +306,8 @@ def extra_offer_lines(
     if not scanned:
         return []
     pdf_checks = pdf_checks or {}
-    named: dict[str, list[str]] = {}  # store id -> clusters of the PDFs that name it
-    listed: set[str] = set()
-    for s in extra["stores"]:
-        clusters = [lf["cluster"] for lf in s["leaflets"] if lf.get("pdf_store_match")]
-        if clusters:
-            named[s["id"]] = clusters
-        elif s["leaflets"]:
-            listed.add(s["id"])
+    named = named_clusters(extra)
+    listed = {s["id"] for s in extra["stores"] if s["leaflets"]} - named.keys()
     groups: dict[str, list[int]] = {"named by their PDF": [], "other Extra": [], "no Extra": []}
     stores_of: dict[str, set[str]] = {}
     sample: dict[str, Offer] = {}
@@ -321,7 +318,14 @@ def extra_offer_lines(
         for o in r.extra_offers:
             stores_of.setdefault(o.kl_nr, set()).add(sid)
             sample.setdefault(o.kl_nr, o)
-    out = [f'Extra offers (section "{EXTRA_SECTION}" of the offer overview, report only):']
+    out = [f'Extra offers (section "{EXTRA_SECTION}" of the offer overview):']
+    if deals is not None:
+        unconfirmed = sum(len(s.get("unconfirmed", ())) for s in deals["stores"])
+        out.append(
+            f"  deals.json: {len(deals['products'])} offers in {len(deals['stores'])} stores; "
+            f"{unconfirmed} listed without their title in the PDF (no other store has them), "
+            f"{deals['left_out']} left out (not in the PDF, other stores have them)"
+        )
     for group, counts in groups.items():
         if counts:
             counts.sort()
@@ -384,6 +388,7 @@ def render_report(
     cards: dict[str, Any] | None = None,
     offers_problems: list[str] | None = None,
     pdf_checks: Mapping[str, PdfCheck] | None = None,
+    deals: dict[str, Any] | None = None,
 ) -> str:
     headline, status, changes = _summary_lines(result, extra, diff)
     unusual = [
@@ -400,7 +405,7 @@ def render_report(
     card_lines = cards_lines(result, cards, offers_problems or [])
     if card_lines:
         out += ["", *card_lines]
-    extra_lines = extra_offer_lines(result, extra, pdf_checks)
+    extra_lines = extra_offer_lines(result, extra, pdf_checks, deals)
     if extra_lines:
         out += ["", *extra_lines]
     if result.failed_count:
@@ -417,6 +422,7 @@ def render_summary_md(
     cards: dict[str, Any] | None = None,
     offers_problems: list[str] | None = None,
     pdf_checks: Mapping[str, PdfCheck] | None = None,
+    deals: dict[str, Any] | None = None,
 ) -> str:
     """Markdown for $GITHUB_STEP_SUMMARY."""
     headline, status, changes = _summary_lines(result, extra, diff)
@@ -435,7 +441,7 @@ def render_summary_md(
     if card_lines:
         title = "❌ Trading cards not updated" if offers_problems else "🃏 Trading cards"
         out += ["", f"### {title}", "", "```", *card_lines, "```"]
-    extra_lines = extra_offer_lines(result, extra, pdf_checks)
+    extra_lines = extra_offer_lines(result, extra, pdf_checks, deals)
     if extra_lines:
         out += ["", "### 🛒 Extra offers", "", "```", *extra_lines, "```"]
     return "\n".join(out) + "\n"
