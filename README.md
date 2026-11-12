@@ -127,6 +127,18 @@ failed downloads get a second pass in the same run (after 60 s, 15 s apart); wha
 retried on the next run and leaves both fields out, which the web page shows as "PDF-Prüfung
 ausstehend". `--skip-pdf-check` disables the downloads (cached results are still used). The footer code in the PDF ("1_D41-H_8530_TS") does not identify the store reliably.
 
+The cache also keeps the text of all pages of each PDF (lower case, without accents and
+punctuation), which the offer report below compares with the store's offers.
+
+### Extra offers in the report
+
+With `--offers`, the report also covers the section "Extra-Angebote" of each store's offer overview
+(see below for the page). Stores named by their Extra PDF list about 35 offers there, all other
+stores only a handful that almost every store has. The report shows the number of offers per group
+of stores, the offers found in at least 90 % of all stores (not Extra offers), and for every other
+offer in how many stores it is and whether its title and price are printed in the store's PDF.
+This is a report only so far; no file is written from it.
+
 ### Trading-card offers (`cards.json`)
 
 With `--offers`, the scraper also reads each store's offer overview

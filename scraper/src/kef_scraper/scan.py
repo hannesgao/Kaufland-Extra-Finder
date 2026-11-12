@@ -9,7 +9,7 @@ from dataclasses import replace
 
 from kef_scraper.fetch import MAX_WORKERS, Fetcher, FetchError
 from kef_scraper.models import Leaflet, ScanResult, Store, StoreResult, Tile
-from kef_scraper.offers import is_card, is_card_like, parse_offers
+from kef_scraper.offers import is_card, is_card_like, is_extra_offer, parse_offers
 from kef_scraper.parse import ParseError, is_extra, is_standard, parse_tiles, to_leaflet
 from kef_scraper.pdfcheck import PdfCheck, check_pdf
 
@@ -39,7 +39,7 @@ def _leaflets(fetcher: Fetcher, store: Store) -> StoreResult:
 
 
 def _with_offers(fetcher: Fetcher, result: StoreResult) -> StoreResult:
-    """Add the store's trading-card offers. Independent of the leaflet result."""
+    """Add the store's trading-card and Extra offers. Independent of the leaflet result."""
     store = result.store
     try:
         offers = parse_offers(fetcher.offers_page(store.id))
@@ -53,6 +53,7 @@ def _with_offers(fetcher: Fetcher, result: StoreResult) -> StoreResult:
         offers_scanned=True,
         cards=tuple(o for o in offers if is_card(o)),
         card_like=tuple(o for o in offers if is_card_like(o)),
+        extra_offers=tuple(o for o in offers if is_extra_offer(o)),
     )
 
 

@@ -14,6 +14,7 @@ import logging
 import re
 import unicodedata
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import Any
 
 from kef_scraper.models import Offer
@@ -24,6 +25,10 @@ log = logging.getLogger(__name__)
 _TEMPLATE = '"component":"OfferTemplate"'
 IMAGE_RENDITION = "150"  # keys of `listImageRenditions`: rendered width in px
 IMAGE_RENDITION_2X = "322"
+
+# Display name of the category with the offers of a store's Extra leaflet. Every store has a few
+# offers in it (bakery); stores named in an Extra PDF had about 35 (2026-10-06 and 2026-11-12).
+EXTRA_SECTION = "Extra-Angebote"
 
 # Trading-card offers are those whose title or subtitle contains one of these brands AND says that
 # it is a card product, and that are not an accessory (accents and case ignored):
@@ -92,13 +97,20 @@ def _rendition(raw: Mapping[str, Any], width: str) -> str | None:
     return f"{image}?{token}" if isinstance(token, str) and token else None
 
 
-def _offer(raw: Mapping[str, Any], category: str, next_week: dt.date | None) -> Offer | None:
+def is_extra_offer(offer: Offer) -> bool:
+    return EXTRA_SECTION in offer.sections
+
+
+def _offer(
+    raw: Mapping[str, Any], category: str, section: str, next_week: dt.date | None
+) -> Offer | None:
     kl_nr = raw.get("klNr")
     shown_from, shown_to = _date(raw.get("dateFrom")), _date(raw.get("dateTo"))
     if not isinstance(kl_nr, str) or not kl_nr or shown_from is None or shown_to is None:
         return None
     price = raw.get("formattedPrice")
     unit = raw.get("unit")
+    old_price = raw.get("formattedOldPrice")
     return Offer(
         kl_nr=kl_nr,
         title=_text(raw.get("title")),
@@ -113,13 +125,16 @@ def _offer(raw: Mapping[str, Any], category: str, next_week: dt.date | None) -> 
         week="next" if next_week and shown_from >= next_week else "current",
         thumbnail=_rendition(raw, IMAGE_RENDITION),
         thumbnail_2x=_rendition(raw, IMAGE_RENDITION_2X),
+        old_price=old_price if isinstance(old_price, str) and old_price else None,
+        sections=(section,) if section else (),
     )
 
 
 def parse_offers(html: str) -> list[Offer] | None:
     """All offers on a store's offer overview, or None if the page has no offer data.
 
-    An offer listed in several categories is returned once (key: article number + start date).
+    An offer listed in several categories is returned once (key: article number + start date),
+    with the first category's data and the display names of all of them in `sections`.
     Raises ParseError when the offer data is there but cannot be read.
     """
     start = html.find(_TEMPLATE)
@@ -141,10 +156,14 @@ def parse_offers(html: str) -> list[Offer] | None:
     for cycle in cycles:
         for category in cycle.get("categories") or []:
             name = _text(category.get("name"))
+            section = _text(category.get("displayName"))
             for raw in category.get("offers") or []:
-                offer = _offer(raw, name, next_week) if isinstance(raw, dict) else None
+                offer = _offer(raw, name, section, next_week) if isinstance(raw, dict) else None
                 if offer is None:
                     log.debug("skipping malformed offer in %s", name)
                     continue
-                offers.setdefault((offer.kl_nr, offer.shown_from), offer)
+                key = (offer.kl_nr, offer.shown_from)
+                first = offers.setdefault(key, offer)
+                if section and section not in first.sections:
+                    offers[key] = replace(first, sections=(*first.sections, section))
     return list(offers.values())

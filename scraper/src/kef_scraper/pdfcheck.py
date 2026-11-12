@@ -9,6 +9,9 @@ Page 1 of every Extra-Angebote PDF ends with a block naming the store(s) it is v
 The block may wrap over several lines; "•" separates stores; each entry is "PLACE, LOCATION".
 Kaufland serves some PDFs to stores the block does not name; those leaflets are flagged.
 The code in the footer (e.g. "1_D41-H_8530_TS") does not reliably identify the store.
+
+The text of all pages is kept as well (normalised), to check whether an offer from the store's
+offer overview is printed in the leaflet.
 """
 
 from __future__ import annotations
@@ -27,7 +30,7 @@ from kef_scraper.models import Store
 log = logging.getLogger(__name__)
 
 # Bump when parsing changes, so cached results are recomputed.
-PARSER_VERSION = 2
+PARSER_VERSION = 3
 
 _BLOCK_START = re.compile(r"^\s*NUR IN\s+(?P<rest>.*)$")
 # Footer line after the block, e.g. "1_D41-H_8530_TS kaufland.de"
@@ -48,16 +51,24 @@ class PdfCheck:
 
     store_line: str | None
     error: str | None = None
+    text: str | None = None  # all pages, as `normalize()` returns it
+
+
+def _page_texts(pdf: bytes, *, first_only: bool = False) -> list[str]:
+    try:
+        pages = PdfReader(io.BytesIO(pdf)).pages
+        return [page.extract_text() or "" for page in (pages[:1] if first_only else pages)]
+    except (PdfReadError, ValueError, KeyError, IndexError) as e:
+        raise PdfCheckError(f"unreadable PDF: {e}") from e
 
 
 def extract_store_line(pdf: bytes) -> str:
     """The whole store block after "NUR IN", on one line, e.g. "GÖ-WESTSTADT, … • GÖ-GRONE, …"."""
-    try:
-        reader = PdfReader(io.BytesIO(pdf))
-        text = reader.pages[0].extract_text() if reader.pages else ""
-    except (PdfReadError, ValueError, KeyError, IndexError) as e:
-        raise PdfCheckError(f"unreadable PDF: {e}") from e
-    lines = (text or "").splitlines()
+    return _store_line(_page_texts(pdf, first_only=True))
+
+
+def _store_line(pages: list[str]) -> str:
+    lines = (pages[0] if pages else "").splitlines()
     for i, line in enumerate(lines):
         m = _BLOCK_START.match(line)
         if not m:
@@ -75,12 +86,13 @@ def extract_store_line(pdf: bytes) -> str:
 
 def check_pdf(pdf: bytes) -> PdfCheck:
     try:
-        return PdfCheck(store_line=extract_store_line(pdf))
+        pages = _page_texts(pdf)
+        return PdfCheck(store_line=_store_line(pages), text=normalize(" ".join(pages)))
     except PdfCheckError as e:
         return PdfCheck(store_line=None, error=str(e))
 
 
-def _norm(text: str) -> str:
+def normalize(text: str) -> str:
     """Case-, accent- and spelling-insensitive form.
 
     "Straße" == "STRASSE" == "Str.", "Grünwinkel" == "GRUENWINKEL".
@@ -95,13 +107,13 @@ def _norm(text: str) -> str:
 
 
 def _tokens(text: str) -> list[str]:
-    return [_ABBREVIATIONS.get(t, t) for t in _norm(text).split()]
+    return [_ABBREVIATIONS.get(t, t) for t in normalize(text).split()]
 
 
 def _entry_names_store(entry: str, store: Store) -> bool:
     place = entry.partition(",")[0]
-    street = _norm(store.street)
-    if street and f" {street} " in f" {_norm(entry)} ":
+    street = normalize(store.street)
+    if street and f" {street} " in f" {normalize(entry)} ":
         return True
     place_tokens = _tokens(place)
     entry_tokens = _tokens(entry)
@@ -129,3 +141,15 @@ def _entry_names_store(entry: str, store: Store) -> bool:
 def matches_store(store_line: str, store: Store) -> bool:
     """Does the PDF's store block name this store (by street or by name)?"""
     return any(_entry_names_store(entry, store) for entry in store_line.split("•"))
+
+
+def offer_in_pdf(text: str, title: str, price: str | None) -> tuple[bool, bool]:
+    """Is an offer's title, and its price, printed in a leaflet (`PdfCheck.text`)?
+
+    Spaces are ignored, because PDF text extraction splits and joins words freely. The price is
+    compared by its digits ("0.99" == "0,99" == "099"), so it can match by chance.
+    """
+    haystack = text.replace(" ", "")
+    needle = normalize(title).replace(" ", "")
+    digits = re.sub(r"\D", "", price or "")
+    return bool(needle) and needle in haystack, bool(digits) and digits in haystack
