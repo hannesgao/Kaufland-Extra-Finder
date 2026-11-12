@@ -79,6 +79,8 @@ export interface DealOptions {
   unconfirmed: boolean;
   /** Only stores within this radius of the origin. */
   nearKm: number | null;
+  /** Only this store and all of its offers (`commonOnly` and `nearKm` do not apply). */
+  storeId?: string | null;
 }
 
 export interface DealStoreView {
@@ -234,6 +236,19 @@ const ORDER: Record<DealSort, (a: DealView, b: DealView) => number> = {
     b.storeCount - a.storeCount,
 };
 
+/** Current offers per store id (those found in the store's PDF), for the store cards. */
+export function dealCounts(data: DealsData, today: IsoDate): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const store of data.stores) {
+    const count = store.products.filter((key) => {
+      const product = data.products.get(key);
+      return product && viewOffer(product, today) && !store.unconfirmed.has(key);
+    }).length;
+    if (count > 0) counts.set(store.id, count);
+  }
+  return counts;
+}
+
 /** Categories of the current offers, alphabetically, for the filter. */
 export function dealSections(data: DealsData, today: IsoDate): string[] {
   const sections = new Set<string>();
@@ -288,9 +303,12 @@ export function listDeals(
     const offer = product && viewOffer(product, today);
     if (!product || !offer) continue;
     if (options.section && !product.sections.includes(options.section)) continue;
-    if (options.commonOnly && all.length * 2 < extraStores.size) continue;
+    const one = options.storeId ?? null;
+    if (!one && options.commonOnly && all.length * 2 < extraStores.size) continue;
     const stores = all
-      .filter((s) => options.nearKm === null || s.distanceKm <= options.nearKm)
+      .filter((s) =>
+        one ? s.store.id === one : options.nearKm === null || s.distanceKm <= options.nearKm,
+      )
       .sort((a, b) => a.distanceKm - b.distanceKm);
     if (stores.length === 0) continue;
     const prices = stores

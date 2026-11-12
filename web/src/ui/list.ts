@@ -328,12 +328,19 @@ export interface CardOptions {
   /** Click on the store name (search: select on the map). */
   onTitleClick?: () => void;
   note?: string;
+  /** "28 Extra-Angebote": opens the store's offers in the Extra-Angebote tab. */
+  deals?: StoreDeals | undefined;
+}
+
+export interface StoreDeals {
+  label: string;
+  onClick: () => void;
 }
 
 export function renderStoreCard(view: StoreView, options: CardOptions): HTMLLIElement {
   const { store } = view;
   const headingId = `store-${store.id}`;
-  const { distanceKm, action, onTitleClick, note } = options;
+  const { distanceKm, action, onTitleClick, note, deals } = options;
   const lead =
     distanceKm === undefined
       ? h("span", { class: "store__plz", "aria-hidden": "true" }, store.plz)
@@ -364,13 +371,29 @@ export function renderStoreCard(view: StoreView, options: CardOptions): HTMLLIEl
           icon(action.icon),
           action.label,
         ),
+        deals &&
+          h(
+            "button",
+            {
+              type: "button",
+              class: "btn btn--sm btn--tonal store__deals",
+              on: { click: deals.onClick },
+            },
+            icon("sell"),
+            deals.label,
+          ),
       ),
     ),
   );
 }
 
 /** Radius search card: store icon, distance, "Auf Karte zeigen". */
-export function renderHit(hit: Hit, onSelect: (id: string) => void, note?: string): HTMLLIElement {
+export function renderHit(
+  hit: Hit,
+  onSelect: (id: string) => void,
+  note?: string,
+  deals?: StoreDeals,
+): HTMLLIElement {
   const select = () => {
     onSelect(hit.store.id);
   };
@@ -379,6 +402,7 @@ export function renderHit(hit: Hit, onSelect: (id: string) => void, note?: strin
     action: { label: "Auf Karte zeigen", icon: "map", onClick: select },
     onTitleClick: select,
     ...(note !== undefined && { note }),
+    deals,
   });
 }
 
@@ -443,8 +467,13 @@ export function renderDormant(view: DormantView, options: DormantOptions): HTMLL
 }
 
 /** "Alle Extra-Filialen" card: PLZ badge, "In Umkreissuche zeigen". */
-export function renderRow(view: StoreView, onShowInSearch: (id: string) => void): HTMLLIElement {
+export function renderRow(
+  view: StoreView,
+  onShowInSearch: (id: string) => void,
+  deals?: StoreDeals,
+): HTMLLIElement {
   return renderStoreCard(view, {
+    deals,
     action: {
       label: "In Umkreissuche zeigen",
       icon: "near_me",

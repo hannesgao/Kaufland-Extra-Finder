@@ -153,8 +153,15 @@ export function dealsStatus(
   extraStores: number,
   near: { radiusKm: number; label: string } | null,
   from: string,
+  storeName: string | null = null,
 ): string {
   if (total === 0) return DEALS_EMPTY;
+  if (storeName) {
+    const n = `${String(shown)} ${shown === 1 ? "Extra-Angebot" : "Extra-Angebote"}`;
+    return shown === 0
+      ? `Keine Extra-Angebote in der Filiale ${storeName}.`
+      : `${n} in der Filiale ${storeName}.`;
+  }
   if (shown === 0 && near) {
     return `Keine Extra-Filiale mit Angeboten im Umkreis von ${String(near.radiusKm)} km ${near.label}.`;
   }
@@ -166,4 +173,9 @@ export function dealsStatus(
     ? ` Nur Filialen im Umkreis von ${String(near.radiusKm)} km ${near.label}.`
     : ` Filialen nach Entfernung ${from}.`;
   return `${offers} aus ${stores}${rest}.${where}`;
+}
+
+/** "28 Extra-Angebote" on a store card. */
+export function dealsButton(count: number): string {
+  return `${String(count)} ${count === 1 ? "Extra-Angebot" : "Extra-Angebote"}`;
 }

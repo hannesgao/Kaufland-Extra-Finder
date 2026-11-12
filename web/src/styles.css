@@ -2701,3 +2701,93 @@ button.segment:disabled {
     grid-row: 1 / span 2;
   }
 }
+
+/* ---------- Extra-Angebote: category on the card, one store's offers, folded filters ---------- */
+.deal__section {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.deal__section .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--md-primary);
+}
+
+.deals-store {
+  margin-bottom: 16px;
+}
+
+.deals-store[hidden] {
+  display: none;
+}
+
+.deals-store p {
+  flex: 1;
+}
+
+.switch:has(.switch__input:disabled) {
+  opacity: 0.38;
+  cursor: default;
+}
+
+/* Wide screens: no summary, the filters are always there. */
+.filters__summary {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .filters {
+    margin-top: 16px;
+  }
+
+  .filters__summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 0 16px 0 20px;
+    border: 1px solid var(--md-outline);
+    border-radius: var(--shape-full);
+    font-size: 0.875rem;
+    font-weight: 500;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .filters__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .filters__summary .icon {
+    width: 20px;
+    height: 20px;
+    color: var(--md-on-surface-variant);
+  }
+
+  .filters__title {
+    flex: 1;
+  }
+
+  .filters__count {
+    display: grid;
+    place-items: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: var(--shape-full);
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .filters__count[hidden] {
+    display: none;
+  }
+
+  .filters[open] .filters__arrow {
+    transform: rotate(180deg);
+  }
+}

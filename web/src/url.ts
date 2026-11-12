@@ -1,7 +1,7 @@
 /**
  * Search state <-> URL query (`?plz=76137&r=25&tab=all&sort=plz-desc&pdf=all`;
  * Pokémon tab: `tab=cards&view=artikel&p=20973794`; Extra offers:
- * `tab=deals&dsort=filialen&cat=Fisch&dall=1&near=1&unconf=1`).
+ * `tab=deals&dsort=filialen&cat=Fisch&dall=1&near=1&unconf=1&store=DE4443`).
  * Defaults are omitted. Coordinates are never put into the URL.
  */
 
@@ -18,6 +18,7 @@ export const CARDS_VIEWS = ["filialen", "artikel"] as const;
 export type CardsView = (typeof CARDS_VIEWS)[number];
 const PLZ = /^\d{5}$/;
 const ARTICLE = /^\d{6,10}$/;
+const STORE = /^[A-Z]{2}\d{3,5}$/;
 
 export interface QueryState {
   plz: string | null;
@@ -38,6 +39,8 @@ export interface QueryState {
   dealsNear: boolean;
   /** Extra offers: also those whose title was not found in the leaflet PDF. */
   dealsUnconfirmed: boolean;
+  /** Extra offers: only this store (Kaufland store id, e.g. "DE4443"). */
+  dealStore: string | null;
 }
 
 export function isPlz(value: string): boolean {
@@ -70,6 +73,7 @@ export function parseQuery(search: string): QueryState {
     dealsAll: params.get("dall") === "1",
     dealsNear: params.get("near") === "1",
     dealsUnconfirmed: params.get("unconf") === "1",
+    dealStore: STORE.test(params.get("store") ?? "") ? params.get("store") : null,
   };
 }
 
@@ -87,6 +91,7 @@ export function buildQuery(state: QueryState): string {
   if (state.dealsAll) params.set("dall", "1");
   if (state.dealsNear) params.set("near", "1");
   if (state.dealsUnconfirmed) params.set("unconf", "1");
+  if (state.dealStore) params.set("store", state.dealStore);
   const query = params.toString();
   return query ? `?${query}` : "";
 }
