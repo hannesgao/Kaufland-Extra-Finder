@@ -2181,12 +2181,12 @@ a.credit:hover,
   cursor: pointer;
 }
 
-/* Narrow screens get short tab labels so all three tabs fit without scrolling. */
+/* Narrow screens get short tab labels, then no icons, so all four tabs fit without scrolling. */
 .tab__label--short {
   display: none;
 }
 
-@media (max-width: 719px) {
+@media (max-width: 799px) {
   .tab {
     padding: 0 12px;
   }
@@ -2200,19 +2200,24 @@ a.credit:hover,
   }
 }
 
-@media (max-width: 419px) {
+@media (max-width: 519px) {
   .tab {
-    padding: 0 8px;
+    padding: 0 6px;
   }
-}
 
-@media (max-width: 379px) {
   .tab .icon {
     display: none;
   }
 }
 
-@media (min-width: 720px) {
+@media (max-width: 359px) {
+  .tab {
+    padding: 0 4px;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (min-width: 800px) {
   .tab {
     flex: 0 0 auto;
   }
@@ -2503,4 +2508,196 @@ button.segment:disabled {
 
 .dormant__count {
   color: var(--md-on-surface-variant);
+}
+
+/* ---------- Extra-Angebote: one card per offer (article cards with prices) ---------- */
+.deal__prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin-top: 6px;
+}
+
+.deal__price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5rem;
+}
+
+.deal__from {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.deal__old {
+  color: var(--md-on-surface-variant);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.deal__discount {
+  align-self: center;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--md-error-container);
+  color: var(--md-on-error-container);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.deal__unit {
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+}
+
+/* Category filter: a dropdown with icons (ui/select.ts) in the same outlined pill as the other
+ * controls. The arrow sits at the inset of the switches; icons share one column. */
+.select-wrap {
+  position: relative;
+  margin-top: -7px;
+}
+
+.select {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 54px;
+  padding: 0 20px 0 24px;
+  border: 0;
+  border-radius: var(--shape-full);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.select:focus-visible {
+  outline: 3px solid var(--md-primary);
+  outline-offset: -3px;
+}
+
+.select__value {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.select__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select__icon,
+.select__check,
+.select__arrow {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.select__icon {
+  color: var(--md-primary);
+}
+
+.select__arrow {
+  color: var(--md-on-surface-variant);
+  transition: transform 0.15s;
+}
+
+.select[aria-expanded="true"] .select__arrow {
+  transform: rotate(180deg);
+}
+
+.select__list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  max-height: min(60vh, 420px);
+  margin: 0;
+  padding: 8px 0;
+  overflow-y: auto;
+  border-radius: var(--shape-md);
+  background: var(--md-surface-container);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 30%),
+    0 2px 6px 2px rgb(0 0 0 / 15%);
+  list-style: none;
+}
+
+.select__list[hidden] {
+  display: none;
+}
+
+.select__option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 16px 0 24px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.select__option .select__label {
+  overflow: visible;
+  white-space: normal;
+}
+
+.select__option.is-active {
+  background: color-mix(in srgb, var(--md-on-surface) 8%, var(--md-surface-container));
+}
+
+.select__option[aria-selected="true"] {
+  font-weight: 500;
+}
+
+.select__count {
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.select__check {
+  color: var(--md-primary);
+  visibility: hidden;
+}
+
+.select__option[aria-selected="true"] .select__check {
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .select__arrow {
+    transition: none;
+  }
+}
+
+/* Phones: distance (and price) move under the store, so the name keeps its width. */
+@media (max-width: 479px) {
+  .deal__store {
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+  }
+
+  .deal__store .article__store-distance {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .deal__store .offer__link {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
 }

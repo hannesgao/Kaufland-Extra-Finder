@@ -7,10 +7,11 @@ import { defineConfig } from "vitest/config";
 const BASE = "/Kaufland-Extra-Finder/";
 const FIXTURE = resolve(import.meta.dirname, "fixtures/extra.json");
 const CARDS_FIXTURE = resolve(import.meta.dirname, "fixtures/cards.json");
+const DEALS_FIXTURE = resolve(import.meta.dirname, "fixtures/deals.json");
 const DAY_MS = 86_400_000;
 
 // Only same-origin resources, plus OSM tiles and product thumbnails from Kaufland's image server
-// (Pokémon tab). Applied to the production build only: the dev server injects inline styles.
+// (offer tabs). Applied to the production build only: the dev server injects inline styles.
 const CSP = [
   "default-src 'self'",
   "script-src 'self'",
@@ -55,32 +56,31 @@ function extraJson(): Plugin {
 }
 
 /**
- * Serves `data/cards.json` (trading-card offers). Unlike extra.json it is optional:
- * - dev: the fixture (dates shifted like extra.json's), or $KEF_CARDS_JSON
- * - build: emitted only when $KEF_CARDS_JSON is set; without it the tab says there is no data yet
+ * Serves an optional data file: `data/cards.json` (trading-card offers) or `data/deals.json`
+ * (offers of the Extra leaflets). Unlike extra.json these are optional:
+ * - dev: the fixture (dates shifted like extra.json's), or the file named by `env`
+ * - build: emitted only when `env` is set; without it the tab says there is no data yet
  */
-function cardsJson(): Plugin {
+function optionalJson(name: "cards" | "deals", env: string, fixture: string): Plugin {
   return {
-    name: "kef-cards-json",
+    name: `kef-${name}-json`,
     configureServer(server) {
-      server.middlewares.use(`${BASE}data/cards.json`, (_req, res) => {
-        const source = process.env.KEF_CARDS_JSON;
-        const body = source
-          ? readFileSync(source, "utf-8")
-          : shiftedFixture(new Date(), CARDS_FIXTURE);
+      server.middlewares.use(`${BASE}data/${name}.json`, (_req, res) => {
+        const source = process.env[env];
+        const body = source ? readFileSync(source, "utf-8") : shiftedFixture(new Date(), fixture);
         res.setHeader("Content-Type", "application/json; charset=utf-8");
         res.end(body);
       });
     },
     generateBundle() {
-      const source = process.env.KEF_CARDS_JSON;
+      const source = process.env[env];
       if (!source) return;
       const text = readFileSync(source, "utf-8");
       const parsed = JSON.parse(text) as { schema_version?: unknown };
       if (parsed.schema_version !== 1) {
         this.error(`${source}: unsupported schema_version ${String(parsed.schema_version)}`);
       }
-      this.emitFile({ type: "asset", fileName: "data/cards.json", source: text });
+      this.emitFile({ type: "asset", fileName: `data/${name}.json`, source: text });
     },
   };
 }
@@ -90,7 +90,10 @@ export function shiftedFixture(now: Date, path = FIXTURE): string {
   const text = readFileSync(path, "utf-8");
   const generated = /"generated_at": "(\d{4}-\d{2}-\d{2})/.exec(text)?.[1];
   if (!generated) throw new Error("fixture has no generated_at");
-  const weeks = Math.floor((now.getTime() - Date.parse(generated)) / (7 * DAY_MS));
+  // Calendar weeks (Monday to Sunday), so a fixture from a Thursday is current on a Monday too.
+  const monday = (ms: number) => ms - ((new Date(ms).getUTCDay() + 6) % 7) * DAY_MS;
+  const today = Date.parse(now.toISOString().slice(0, 10));
+  const weeks = Math.round((monday(today) - monday(Date.parse(generated))) / (7 * DAY_MS));
   const shift = (iso: string) =>
     new Date(Date.parse(iso) + weeks * 7 * DAY_MS).toISOString().slice(0, 10);
   return text.replace(/\b(\d{4}-\d{2}-\d{2})(?=[T"])/g, (iso) => shift(iso));
@@ -175,7 +178,14 @@ function contentSecurityPolicy(): Plugin {
 
 export default defineConfig({
   base: BASE,
-  plugins: [extraJson(), cardsJson(), partials(), buildInfo(), contentSecurityPolicy()],
+  plugins: [
+    extraJson(),
+    optionalJson("cards", "KEF_CARDS_JSON", CARDS_FIXTURE),
+    optionalJson("deals", "KEF_DEALS_JSON", DEALS_FIXTURE),
+    partials(),
+    buildInfo(),
+    contentSecurityPolicy(),
+  ],
   build: {
     rolldownOptions: {
       input: {

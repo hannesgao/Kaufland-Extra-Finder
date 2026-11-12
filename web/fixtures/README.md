@@ -2,7 +2,7 @@
 
 Two sets of **real scraper output**, with real viewer, PDF and store links. Links point to the
 leaflets of that week and stop working once Kaufland removes them; for current data run the
-scraper and use `KEF_EXTRA_JSON` / `KEF_CARDS_JSON`.
+scraper and use `KEF_EXTRA_JSON` / `KEF_CARDS_JSON` / `KEF_DEALS_JSON`.
 
 ## Dev server (`fixtures/`)
 
@@ -19,6 +19,11 @@ current.
   (`is_card` in `scraper/src/kef_scraper/offers.py`): 4 Pokémon products in 49 stores. The raw file
   also listed an album for cards in 784 stores, which the rule leaves out since #47.
 
+- `deals.json`: the offers of the Extra leaflets from the offer scan of Thursday 2026-11-12,
+  unmodified (formatted with Prettier): 72 offers valid 08.11. to 14.11.2026 in the 51 stores named
+  by their Extra PDF. It is from a later week than `extra.json`; each file is shifted by its own
+  date.
+
 ## Unit tests (`test/fixtures/`)
 
 Frozen so the tests do not change with the dev data:
@@ -30,3 +35,6 @@ Frozen so the tests do not change with the dev data:
   Edge cases (two validity periods, closure days, special hours, Monday-to-Saturday leaflets) are
   derived from this file in `test/helpers.ts`.
 - `cards-2026-10-06.json`: trading-card offers of six stores from the offer scan on 2026-10-06.
+- `deals-2026-11-12.json`: the stores DE1480, DE1600, DE2560, DE4443 and DE4453 from the same
+  `deals.json` as the dev fixture (products reduced to theirs, `extra_store_count` set to 5). One
+  offer has another price in two stores, and one is listed without its title in the PDF.

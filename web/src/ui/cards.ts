@@ -4,10 +4,10 @@
  * No calendar or leaflet panel. All data goes through h() into text nodes.
  */
 
-import type { ArticleSummary, CardHit, CardStore, OfferView, StoreDistance } from "../cards";
+import type { ArticleSummary, CardHit, OfferDates, OfferView, StoreDistance } from "../cards";
 import { formatKm } from "../geo";
 import { h } from "../dom";
-import { icon } from "../icons";
+import { icon, type IconName } from "../icons";
 import { externalButton, storeHeader } from "./list";
 
 const OFFER_PAGE = "https://filiale.kaufland.de/angebote/uebersicht.html";
@@ -36,15 +36,31 @@ export function storeCount(n: number): string {
   return `in ${String(n)} ${n === 1 ? "Filiale" : "Filialen"}`;
 }
 
+/** What the shared offer elements need: trading cards and Extra offers both have it. */
+export type ListedOffer = OfferView<
+  OfferDates & {
+    klNr: string;
+    title: string;
+    subtitle: string;
+    thumbnail?: string;
+    thumbnail2x?: string;
+  }
+>;
+
 /** Brand line ("POKÉMON") and product name; Kaufland leaves some titles empty. */
-function names(view: OfferView): { brand: string; name: string } {
+export function names(view: ListedOffer): { brand: string; name: string } {
   const { title, subtitle } = view.product;
   return { brand: subtitle ? title : "", name: subtitle || title };
 }
 
-function thumbnail(view: OfferView, size = 64, className = "offer__thumb"): Element {
+export function thumbnail(
+  view: ListedOffer,
+  size = 64,
+  className = "offer__thumb",
+  placeholder: IconName = "playing_cards",
+): Element {
   const { thumbnail: src, thumbnail2x } = view.product;
-  if (!src) return h("span", { class: `${className} ${className}--empty` }, icon("playing_cards"));
+  if (!src) return h("span", { class: `${className} ${className}--empty` }, icon(placeholder));
   return h("img", {
     class: className,
     src,
@@ -58,7 +74,7 @@ function thumbnail(view: OfferView, size = 64, className = "offer__thumb"): Elem
   });
 }
 
-function stateChip(view: OfferView): HTMLSpanElement {
+export function stateChip(view: ListedOffer): HTMLSpanElement {
   const when = view.state === "upcoming" ? "Erhältlich" : "Im Angebot";
   return h(
     "span",
@@ -67,7 +83,11 @@ function stateChip(view: OfferView): HTMLSpanElement {
   );
 }
 
-function offerLink(view: OfferView, store: CardStore, label = "Zum Angebot"): HTMLAnchorElement {
+export function offerLink(
+  view: ListedOffer,
+  store: { id: string; name: string },
+  label = "Zum Angebot",
+): HTMLAnchorElement {
   const { brand, name } = names(view);
   return h(
     "a",
@@ -84,7 +104,11 @@ function offerLink(view: OfferView, store: CardStore, label = "Zum Angebot"): HT
   );
 }
 
-function offerItem(view: OfferView, store: CardStore, options: StoreCardOptions): HTMLLIElement {
+function offerItem(
+  view: OfferView,
+  store: { id: string; name: string },
+  options: StoreCardOptions,
+): HTMLLIElement {
   const { product } = view;
   const { brand, name } = names(view);
   const count = options.counts?.get(product.key);

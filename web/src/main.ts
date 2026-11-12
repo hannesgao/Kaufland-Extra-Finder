@@ -9,6 +9,15 @@ import {
   type CardHit,
   type CardsData,
 } from "./cards";
+import {
+  DEAL_SORTS,
+  dealSections,
+  listDeals,
+  loadDeals,
+  sectionCounts,
+  type DealsData,
+  type DealSort,
+} from "./deals";
 import { loadData, type ExtraData, type LatLng, type PlzIndex } from "./data";
 import { berlinToday, formatDate, formatStamp, isStale, STALE_AFTER_DAYS } from "./dates";
 import { byId, h, replaceChildren } from "./dom";
@@ -26,6 +35,8 @@ import {
   type SortOrder,
 } from "./search";
 import { renderArticle, renderArticleStrip, renderCardStore } from "./ui/cards";
+import { renderDeal, sectionIcon } from "./ui/deals";
+import { setupSelect } from "./ui/select";
 import { renderDormant, renderHit, renderRow } from "./ui/list";
 import type { MapMarker, MapView } from "./ui/map";
 import { setupTabs } from "./ui/tabs";
@@ -38,6 +49,8 @@ import {
   cardsNearestStatus,
   cardsStatus,
   countUnchecked,
+  DEALS_MISSING,
+  dealsStatus,
   dormantIntro,
   dormantTitle,
   emptyStatus,
@@ -66,7 +79,7 @@ interface Origin {
   plz: string | null;
 }
 
-/** The radius search and the Pokémon tab each have a search form; PLZ and radius are shared. */
+/** The radius search and the two offer tabs each have a search form; PLZ and radius are shared. */
 interface SearchForm {
   form: HTMLFormElement;
   plz: HTMLInputElement;
@@ -99,6 +112,12 @@ const forms: SearchForm[] = [
     plz: byId("cards-plz", HTMLInputElement),
     error: byId("cards-plz-error", HTMLParagraphElement),
     locate: byId("cards-locate", HTMLButtonElement),
+  },
+  {
+    form: byId("deals-form", HTMLFormElement),
+    plz: byId("deals-plz", HTMLInputElement),
+    error: byId("deals-plz-error", HTMLParagraphElement),
+    locate: byId("deals-locate", HTMLButtonElement),
   },
 ];
 const status = byId("status", HTMLParagraphElement);
@@ -150,6 +169,24 @@ const cardsStrip = byId("cards-strip", HTMLElement);
 const cardsStripList = byId("cards-strip-list", HTMLUListElement);
 const cardsArticles = byId("cards-articles", HTMLOListElement);
 const cardsResults = byId("cards-results", HTMLElement);
+const dealsStatusText = byId("deals-status", HTMLParagraphElement);
+const dealsStatusBox = byId("deals-status-box", HTMLDivElement);
+const dealsAge = byId("deals-age", HTMLParagraphElement);
+const dealsAgeBox = byId("deals-age-box", HTMLDivElement);
+const dealsList = byId("deals-list", HTMLOListElement);
+const dealsSortGroup = byId("deals-sort", HTMLFieldSetElement);
+const dealsSectionSelect = setupSelect(
+  byId("deals-section", HTMLDivElement),
+  "Kategorie",
+  (value) => {
+    dealSection = value === "" ? null : value;
+    syncUrl(false);
+    runDeals();
+  },
+);
+const dealsCommonSwitch = byId("deals-common", HTMLInputElement);
+const dealsNearSwitch = byId("deals-near", HTMLInputElement);
+const dealsUnconfirmedSwitch = byId("deals-unconfirmed", HTMLInputElement);
 
 const searchMap: MapSlot = {
   container: byId("map", HTMLDivElement),
@@ -182,6 +219,16 @@ let cardsView: CardsView = parseQuery(location.search).cardsView;
 let article: string | null = parseQuery(location.search).article;
 /** Article view: articles whose full store list is shown. */
 const expandedArticles = new Set<string>();
+/** undefined: not loaded yet; null: no deals.json published yet. */
+let deals: DealsData | null | undefined;
+let dealsLoading = false;
+let dealSort: DealSort = parseQuery(location.search).dealSort;
+let dealSection: string | null = parseQuery(location.search).dealSection;
+let dealsAll = parseQuery(location.search).dealsAll;
+let dealsNear = parseQuery(location.search).dealsNear;
+let dealsUnconfirmed = parseQuery(location.search).dealsUnconfirmed;
+/** Extra offers whose full store list is shown. */
+const expandedDeals = new Set<string>();
 
 function setStatus(text: string, kind: "info" | "error" = "info"): void {
   status.textContent = text;
@@ -191,6 +238,11 @@ function setStatus(text: string, kind: "info" | "error" = "info"): void {
 function setCardsStatus(text: string, kind: "info" | "error" = "info"): void {
   cardsStatusText.textContent = text;
   cardsStatusBox.classList.toggle("banner--error", kind === "error");
+}
+
+function setDealsStatus(text: string, kind: "info" | "error" = "info"): void {
+  dealsStatusText.textContent = text;
+  dealsStatusBox.classList.toggle("banner--error", kind === "error");
 }
 
 function showPlzError(message: string | null): void {
@@ -223,6 +275,11 @@ function syncUrl(push: boolean): void {
     pdfOnly,
     cardsView,
     article,
+    dealSort,
+    dealSection,
+    dealsAll,
+    dealsNear,
+    dealsUnconfirmed,
   };
   const url = `${location.pathname}${buildQuery(state)}`;
   if (push) history.pushState(null, "", url);
@@ -385,6 +442,7 @@ function runSearch(): void {
   searchMap.last = { point: origin.point, radius, markers };
   if (tab === "search") drawMap(searchMap);
   runCards();
+  runDeals();
 }
 
 /* ---------- All Extra stores ---------- */
@@ -503,7 +561,7 @@ function ensureCards(): void {
   loadCards(import.meta.env.BASE_URL)
     .then((loaded) => {
       cards = loaded;
-      showCardsAge(loaded);
+      showOffersAge(cardsAge, cardsAgeBox, loaded?.generatedAt ?? null);
       runCards();
     })
     .catch((err: unknown) => {
@@ -514,6 +572,129 @@ function ensureCards(): void {
       );
       cardsAge.textContent = "Nicht verfügbar.";
     });
+}
+
+/* ---------- Extra-Angebote ---------- */
+
+/** Load deals.json the first time the tab is shown; it is not needed for the other tabs. */
+function ensureDeals(): void {
+  if (dealsLoading) return;
+  dealsLoading = true;
+  loadDeals(import.meta.env.BASE_URL)
+    .then((loaded) => {
+      deals = loaded;
+      showOffersAge(dealsAge, dealsAgeBox, loaded?.generatedAt ?? null);
+      runDeals();
+    })
+    .catch((err: unknown) => {
+      console.error(err);
+      setDealsStatus(
+        "Die Extra-Angebote konnten nicht geladen werden. Bitte später erneut versuchen.",
+        "error",
+      );
+      dealsAge.textContent = "Nicht verfügbar.";
+    });
+}
+
+/**
+ * The category filter lists the categories of the offers the other filters leave, with the number
+ * of offers in each. A category from the URL that no current offer has is dropped.
+ */
+function fillDealSections(
+  known: readonly string[],
+  counts: ReadonlyMap<string, number>,
+  all: number,
+): void {
+  if (dealSection && !known.includes(dealSection)) {
+    dealSection = null;
+    syncUrl(false);
+  }
+  const sections = new Map(counts);
+  if (dealSection && !sections.has(dealSection)) sections.set(dealSection, 0);
+  dealsSectionSelect.setOptions(
+    [
+      { value: "", label: "Alle Kategorien", icon: "category", count: all },
+      ...[...sections].map(([section, count]) => ({
+        value: section,
+        label: section,
+        icon: sectionIcon(section),
+        count,
+      })),
+    ],
+    dealSection ?? "",
+  );
+}
+
+function runDeals(): void {
+  if (deals === undefined) return;
+  if (deals === null) {
+    replaceChildren(dealsList);
+    setDealsStatus(DEALS_MISSING);
+    return;
+  }
+  if (!origin) return;
+  const at = origin;
+  const today = berlinToday(new Date());
+  const options = {
+    sort: dealSort,
+    section: null,
+    commonOnly: !dealsAll,
+    unconfirmed: dealsUnconfirmed,
+    nearKm: dealsNear ? radius : null,
+  };
+  // Without the category first, for the numbers in the category filter.
+  const unfiltered = listDeals(deals, at.point, today, options);
+  fillDealSections(
+    dealSections(deals, today),
+    sectionCounts(unfiltered.views),
+    unfiltered.views.length,
+  );
+  const { extraStores, total } = unfiltered;
+  const views = dealSection
+    ? listDeals(deals, at.point, today, { ...options, section: dealSection }).views
+    : unfiltered.views;
+  replaceChildren(
+    dealsList,
+    ...views.map((view) =>
+      renderDeal(view, extraStores, expandedDeals.has(view.offer.product.key), (key) => {
+        expandedDeals.add(key);
+        runDeals();
+      }),
+    ),
+  );
+  const near = dealsNear ? { radiusKm: radius, label: at.label } : null;
+  setDealsStatus(dealsStatus(views.length, total, extraStores, near, at.from));
+}
+
+function isDealSort(value: string): value is DealSort {
+  return (DEAL_SORTS as readonly string[]).includes(value);
+}
+
+function onDealsChange(event: Event): void {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) {
+    return;
+  } else if (target.name === "deals-sort" && isDealSort(target.value)) {
+    dealSort = target.value;
+  } else if (target === dealsCommonSwitch) {
+    dealsAll = !target.checked;
+  } else if (target === dealsNearSwitch) {
+    dealsNear = target.checked;
+  } else if (target === dealsUnconfirmedSwitch) {
+    dealsUnconfirmed = target.checked;
+  } else {
+    return; // PLZ field and radius have their own handlers
+  }
+  syncUrl(false);
+  runDeals();
+}
+
+function checkDealControls(): void {
+  const radio = dealsSortGroup.querySelector<HTMLInputElement>(`input[value="${dealSort}"]`);
+  if (radio) radio.checked = true;
+  dealsCommonSwitch.checked = !dealsAll;
+  dealsNearSwitch.checked = dealsNear;
+  dealsUnconfirmedSwitch.checked = dealsUnconfirmed;
 }
 
 function renderCards(shown: CardHit[], counts: ReadonlyMap<string, number>, note?: string): void {
@@ -651,21 +832,18 @@ function checkCardsView(): void {
   if (radio) radio.checked = true;
 }
 
-function showCardsAge(loaded: CardsData | null): void {
-  if (!loaded) {
-    cardsAge.textContent = "Noch keine Daten.";
+/** "Stand der Angebote" of an offer tab; red when a scan was missed. */
+function showOffersAge(text: HTMLElement, box: HTMLElement, generatedAt: Date | null): void {
+  if (!generatedAt) {
+    text.textContent = "Noch keine Daten.";
     return;
   }
-  const stale = isStale(loaded.generatedAt, new Date(), CARDS_STALE_AFTER_DAYS);
-  const stamp = h(
-    "time",
-    { datetime: loaded.generatedAt.toISOString() },
-    formatStamp(loaded.generatedAt),
-  );
-  replaceChildren(cardsAge, "Stand der Angebote: ", stamp);
-  cardsAgeBox.classList.toggle("banner--error", stale);
+  const stale = isStale(generatedAt, new Date(), CARDS_STALE_AFTER_DAYS);
+  const stamp = h("time", { datetime: generatedAt.toISOString() }, formatStamp(generatedAt));
+  replaceChildren(text, "Stand der Angebote: ", stamp);
+  box.classList.toggle("banner--error", stale);
   if (stale) {
-    cardsAge.append(
+    text.append(
       " ",
       h(
         "strong",
@@ -711,6 +889,8 @@ const tabs = setupTabs(tablist, (selected) => {
 function showTab(): void {
   if (tab === "all") {
     renderAll();
+  } else if (tab === "deals") {
+    ensureDeals();
   } else if (tab === "cards") {
     ensureCards();
     if (cardsView === "filialen") drawMap(cardsMap);
@@ -758,6 +938,7 @@ const GEO_ERRORS: Record<number, string> = {
 /** Location messages go to the status of the tab the button is on. */
 function locateStatus(text: string, kind: "info" | "error" = "info"): void {
   if (tab === "cards") setCardsStatus(text, kind);
+  else if (tab === "deals") setDealsStatus(text, kind);
   else setStatus(text, kind);
 }
 
@@ -818,6 +999,12 @@ function applyQuery(): void {
   cardsView = query.cardsView;
   article = query.article;
   checkCardsView();
+  dealSort = query.dealSort;
+  dealSection = query.dealSection;
+  dealsAll = query.dealsAll;
+  dealsNear = query.dealsNear;
+  dealsUnconfirmed = query.dealsUnconfirmed;
+  checkDealControls();
   const sortRadio = sortGroup.querySelector<HTMLInputElement>(`input[value="${sort}"]`);
   if (sortRadio) sortRadio.checked = true;
   tab = query.tab;
@@ -861,6 +1048,7 @@ for (const { form, plz, locate } of forms) {
 sortGroup.addEventListener("change", onSortChange);
 exportGroup.addEventListener("click", onExportClick);
 cardsViewGroup.addEventListener("change", onCardsViewChange);
+byId("deals-form", HTMLFormElement).addEventListener("change", onDealsChange);
 for (const box of pdfSwitches) box.addEventListener("change", onPdfOnlyChange);
 window.addEventListener("popstate", applyQuery);
 
@@ -870,6 +1058,7 @@ checkRadius(initial.radius);
 tabs.select(initial.tab);
 for (const box of pdfSwitches) box.checked = initial.pdfOnly;
 checkCardsView();
+checkDealControls();
 
 loadData(import.meta.env.BASE_URL)
   .then((loaded) => {
@@ -884,4 +1073,5 @@ loadData(import.meta.env.BASE_URL)
     allMeta.textContent = "Die Daten konnten nicht geladen werden.";
     allStatusBox.classList.add("banner--error");
     setCardsStatus("Die Daten konnten nicht geladen werden.", "error");
+    setDealsStatus("Die Daten konnten nicht geladen werden.", "error");
   });
