@@ -16,6 +16,7 @@ from kef_scraper.build import (
     MAX_FAILURE_RATE,
     MIN_STORES,
     build_cards,
+    build_deals,
     build_extra,
     offers_problems,
     sanity_problems,
@@ -82,7 +83,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--offers",
         action="store_true",
-        help="also read each store's offer overview and write cards.json (trading-card offers)",
+        help="also read each store's offer overview; writes cards.json (trading-card offers) "
+        "and deals.json (offers of the Extra leaflets)",
     )
     p.add_argument(
         "--skip-pdf-check",
@@ -201,13 +203,16 @@ def main(
         offers_problems(result, max_failure_rate=args.max_failure_rate) if args.offers else []
     )
     cards = build_cards(result, now, CARD_KEYWORDS) if args.offers and not card_problems else None
+    deals = build_deals(result, extra, pdf_checks, now) if cards is not None else None
 
-    sys.stdout.write(render_report(result, extra, diff, cards, card_problems, pdf_checks))
+    sys.stdout.write(render_report(result, extra, diff, cards, card_problems, pdf_checks, deals))
     if args.summary:
         args.summary.parent.mkdir(parents=True, exist_ok=True)
         with args.summary.open("a", encoding="utf-8") as f:
             f.write(
-                render_summary_md(result, extra, diff, problems, cards, card_problems, pdf_checks)
+                render_summary_md(
+                    result, extra, diff, problems, cards, card_problems, pdf_checks, deals
+                )
             )
 
     if problems:
@@ -226,10 +231,13 @@ def main(
     write_text_atomic(out / "extra.json", dump_json(extra))
     log.info("wrote %s", out / "extra.json")
     for p in card_problems:
-        log.warning("offer scan: %s; cards.json not updated", p)
+        log.warning("offer scan: %s; cards.json and deals.json not updated", p)
     if cards is not None:
         write_text_atomic(out / "cards.json", dump_json(cards))
         log.info("wrote %s", out / "cards.json")
+    if deals is not None:
+        write_text_atomic(out / "deals.json", dump_json(deals))
+        log.info("wrote %s", out / "deals.json")
     return EXIT_OK
 
 
