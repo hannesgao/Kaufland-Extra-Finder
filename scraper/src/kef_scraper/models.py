@@ -72,6 +72,10 @@ class Offer:
     week: str  # "current" or "next": the week of the offer overview that lists it
     thumbnail: str | None = None  # 150 px wide
     thumbnail_2x: str | None = None  # 322 px wide
+    old_price: str | None = None  # Kaufland's comparison price, e.g. "2.99"
+    # Display names of every category that lists the offer, e.g. ("Molkereiprodukte, Fette",
+    # "Extra-Angebote"), in page order.
+    sections: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,6 +90,7 @@ class StoreResult:
     offers_scanned: bool = False
     cards: tuple[Offer, ...] = ()
     card_like: tuple[Offer, ...] = ()
+    extra_offers: tuple[Offer, ...] = ()  # offers in the section "Extra-Angebote"
     no_offer_page: bool = False
     offers_error: str | None = None
 

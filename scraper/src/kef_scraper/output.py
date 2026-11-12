@@ -8,13 +8,15 @@ import io
 import json
 import os
 import tempfile
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from kef_scraper.build import SCHEMA_VERSION
-from kef_scraper.models import ScanResult
-from kef_scraper.pdfcheck import PARSER_VERSION, PdfCheck
+from kef_scraper.models import Offer, ScanResult
+from kef_scraper.offers import EXTRA_SECTION
+from kef_scraper.pdfcheck import PARSER_VERSION, PdfCheck, offer_in_pdf
 
 HISTORY_FIELDS = (
     "first_seen",
@@ -91,7 +93,9 @@ def read_pdf_checks(path: Path) -> dict[str, PdfCheck]:
     if not isinstance(checks, dict):
         return {}
     return {
-        k: PdfCheck(store_line=v["store_line"])
+        k: PdfCheck(
+            store_line=v["store_line"], text=v["text"] if isinstance(v.get("text"), str) else None
+        )
         for k, v in checks.items()
         if isinstance(v, dict) and isinstance(v.get("store_line"), str)
     }
@@ -99,7 +103,11 @@ def read_pdf_checks(path: Path) -> dict[str, PdfCheck]:
 
 def render_pdf_checks(checks: dict[str, PdfCheck]) -> str:
     """Only successful checks are cached (failed downloads are retried next run)."""
-    ok = {k: {"store_line": c.store_line} for k, c in sorted(checks.items()) if c.store_line}
+    ok = {
+        k: {"store_line": c.store_line} | ({"text": c.text} if c.text else {})
+        for k, c in sorted(checks.items())
+        if c.store_line
+    }
     return dump_json({"parser": PARSER_VERSION, "checks": ok})
 
 
@@ -272,12 +280,110 @@ def cards_lines(result: ScanResult, cards: dict[str, Any] | None, problems: list
     return out
 
 
+_FOUND = {
+    (True, True): "title and price",
+    (True, False): "title only",
+    (False, True): "price only",
+    (False, False): "neither",
+}
+BASELINE_SHARE = 0.9  # an "Extra offer" in this share of all stores is not an Extra offer
+_TOP_EXTRA_OFFERS = 60
+
+
+def extra_offer_lines(
+    result: ScanResult, extra: dict[str, Any], pdf_checks: Mapping[str, PdfCheck] | None = None
+) -> list[str]:
+    """Report lines about the section "Extra-Angebote" of the offer overviews (report only).
+
+    Compares stores named by their Extra PDF with the other stores, and the offers with the text
+    of the store's PDF. Empty when no offer overview was scanned.
+    """
+    scanned = [r for r in result.results if r.offers_scanned and not r.offers_error]
+    scanned = [r for r in scanned if not r.no_offer_page]
+    if not scanned:
+        return []
+    pdf_checks = pdf_checks or {}
+    named: dict[str, list[str]] = {}  # store id -> clusters of the PDFs that name it
+    listed: set[str] = set()
+    for s in extra["stores"]:
+        clusters = [lf["cluster"] for lf in s["leaflets"] if lf.get("pdf_store_match")]
+        if clusters:
+            named[s["id"]] = clusters
+        elif s["leaflets"]:
+            listed.add(s["id"])
+    groups: dict[str, list[int]] = {"named by their PDF": [], "other Extra": [], "no Extra": []}
+    stores_of: dict[str, set[str]] = {}
+    sample: dict[str, Offer] = {}
+    for r in scanned:
+        sid = r.store.id
+        group = "no Extra" if sid not in named and sid not in listed else "other Extra"
+        groups["named by their PDF" if sid in named else group].append(len(r.extra_offers))
+        for o in r.extra_offers:
+            stores_of.setdefault(o.kl_nr, set()).add(sid)
+            sample.setdefault(o.kl_nr, o)
+    out = [f'Extra offers (section "{EXTRA_SECTION}" of the offer overview, report only):']
+    for group, counts in groups.items():
+        if counts:
+            counts.sort()
+            out.append(
+                f"  {len(counts)} stores {group}: {counts[0]} / {counts[len(counts) // 2]} / "
+                f"{counts[-1]} offers (min / median / max)"
+            )
+    baseline = {k for k, v in stores_of.items() if len(v) >= BASELINE_SHARE * len(scanned)}
+    products = {k: v & named.keys() for k, v in stores_of.items() if k not in baseline}
+    products = {k: v for k, v in products.items() if v}
+    common = sum(1 for v in products.values() if 2 * len(v) >= len(named))
+    out.append(
+        f"  {len(baseline)} offers in at least {BASELINE_SHARE:.0%} of all stores (not Extra); "
+        f"{len(products)} others in named stores, {common} of them in at least half"
+    )
+    # Cross-check with the PDFs: per offer and named store, are title and price in the PDF text?
+    tally = dict.fromkeys([*_FOUND.values(), "no PDF text"], 0)
+    in_pdf: dict[str, list[int]] = {}  # kl_nr -> [title found, checked]
+    base_found = base_checked = 0
+    for r in scanned:
+        if r.store.id not in named:
+            continue
+        checks = (pdf_checks.get(c) for c in named[r.store.id])
+        texts = [c.text for c in checks if c and c.text]
+        for o in r.extra_offers:
+            if not texts:
+                tally["no PDF text"] += o.kl_nr not in baseline
+                continue
+            hits = [offer_in_pdf(t, o.title, o.price) for t in texts]
+            title, price = any(h[0] for h in hits), any(h[1] for h in hits)
+            if o.kl_nr in baseline:
+                base_found += title
+                base_checked += 1
+                continue
+            tally[_FOUND[title, price]] += 1
+            pair = in_pdf.setdefault(o.kl_nr, [0, 0])
+            pair[0] += title
+            pair[1] += 1
+    out.append("  In the PDF of the store: " + ", ".join(f"{k} {v}" for k, v in tally.items()))
+    out.append(f"  Baseline offers with their title in the PDF: {base_found} of {base_checked}")
+    ranked = sorted(products, key=lambda k: (-len(products[k]), sample[k].title, k))
+    for k in ranked[:_TOP_EXTRA_OFFERS]:
+        o = sample[k]
+        found, checked = in_pdf.get(k, [0, 0])
+        old = f" (was {o.old_price})" if o.old_price else ""
+        out.append(
+            f"  {len(products[k]):3} named, {len(stores_of[k] - named.keys()):3} other, "
+            f"title in PDF {found}/{checked}: {o.title} {o.subtitle} ({k}) "
+            f"{o.price or '?'}{old} {o.shown_from}..{o.shown_to}"
+        )
+    if len(ranked) > _TOP_EXTRA_OFFERS:
+        out.append(f"  ... and {len(ranked) - _TOP_EXTRA_OFFERS} more")
+    return out
+
+
 def render_report(
     result: ScanResult,
     extra: dict[str, Any],
     diff: Diff | None,
     cards: dict[str, Any] | None = None,
     offers_problems: list[str] | None = None,
+    pdf_checks: Mapping[str, PdfCheck] | None = None,
 ) -> str:
     headline, status, changes = _summary_lines(result, extra, diff)
     unusual = [
@@ -294,6 +400,9 @@ def render_report(
     card_lines = cards_lines(result, cards, offers_problems or [])
     if card_lines:
         out += ["", *card_lines]
+    extra_lines = extra_offer_lines(result, extra, pdf_checks)
+    if extra_lines:
+        out += ["", *extra_lines]
     if result.failed_count:
         out += ["", "Failures:", *(f"  {r.store.id}: {r.error}" for r in result.failures)]
         out += [f"  store list: {e}" for e in result.list_errors]
@@ -307,6 +416,7 @@ def render_summary_md(
     problems: list[str],
     cards: dict[str, Any] | None = None,
     offers_problems: list[str] | None = None,
+    pdf_checks: Mapping[str, PdfCheck] | None = None,
 ) -> str:
     """Markdown for $GITHUB_STEP_SUMMARY."""
     headline, status, changes = _summary_lines(result, extra, diff)
@@ -325,4 +435,7 @@ def render_summary_md(
     if card_lines:
         title = "❌ Trading cards not updated" if offers_problems else "🃏 Trading cards"
         out += ["", f"### {title}", "", "```", *card_lines, "```"]
+    extra_lines = extra_offer_lines(result, extra, pdf_checks)
+    if extra_lines:
+        out += ["", "### 🛒 Extra offers", "", "```", *extra_lines, "```"]
     return "\n".join(out) + "\n"

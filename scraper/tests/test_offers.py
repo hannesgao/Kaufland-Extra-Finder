@@ -21,8 +21,16 @@ from kef_scraper.build import (
 from kef_scraper.cli import EXIT_OK, main
 from kef_scraper.fetch import FetchError
 from kef_scraper.models import Offer, ScanResult, Store, StoreResult
-from kef_scraper.offers import CARD_KEYWORDS, is_card, is_card_like, parse_offers
+from kef_scraper.offers import (
+    CARD_KEYWORDS,
+    EXTRA_SECTION,
+    is_card,
+    is_card_like,
+    parse_offers,
+)
+from kef_scraper.output import extra_offer_lines
 from kef_scraper.parse import ParseError, parse_stores
+from kef_scraper.pdfcheck import PdfCheck
 from kef_scraper.scan import scan_store
 
 NOW = dt.datetime(2026, 10, 6, 6, 30, tzinfo=ZoneInfo("Europe/Berlin"))
@@ -49,6 +57,12 @@ class TestParseOffers:
             len(nrs) == len(set(nrs)) == 10
         )  # 11 entries; the booster's second category collapses
         assert {TOP_TRAINER, BOOSTER, FUNKO} <= set(nrs)
+
+    def test_keeps_every_section_and_the_old_price(self, offer_page: str) -> None:
+        offers = _by_nr(parse_offers(offer_page) or [])
+        assert offers[TOP_TRAINER].sections == ("Nächste Woche",)
+        assert len(offers[BOOSTER].sections) == 2
+        assert {o.old_price for o in offers.values()} > {None}
 
     def test_announced_offer(self, offer_page: str) -> None:
         offer = _by_nr(parse_offers(offer_page) or [])[TOP_TRAINER]
@@ -321,3 +335,73 @@ class TestCli:
         assert "Possible trading cards not in cards.json" in report
         assert "YU-GI-OH!" in report
         assert "2 stores" in report
+
+
+def _extra_offer(kl_nr: str, title: str, price: str, old_price: str | None = None) -> Offer:
+    day = dt.date(2026, 11, 9)
+    return Offer(
+        kl_nr=kl_nr,
+        title=title,
+        subtitle="",
+        price=price,
+        unit=None,
+        shown_from=day,
+        shown_to=day + dt.timedelta(days=5),
+        sales_from=None,
+        sales_to=None,
+        category="97_Internetwerbung",
+        week="current",
+        old_price=old_price,
+        sections=(EXTRA_SECTION,),
+    )
+
+
+class TestExtraOfferReport:
+    """Offers of the section "Extra-Angebote", compared between stores and with the PDF."""
+
+    BREAD = _extra_offer("1", "Krustenbrot", "1.39")
+    MILK = _extra_offer("2", "MÜLLER Müllermilch", "0.59", "1.49")
+    KOHLRABI = _extra_offer("3", "Dtsch. Kohlrabi, lose", "0.49")
+
+    def _result(self) -> tuple[ScanResult, dict[str, Any]]:
+        stores = list(_stores().values())
+        named, listed, *others = stores  # the bread is in every store: baseline
+        results = [
+            StoreResult(
+                named, offers_scanned=True, extra_offers=(self.BREAD, self.MILK, self.KOHLRABI)
+            ),
+            StoreResult(listed, offers_scanned=True, extra_offers=(self.BREAD,)),
+            *(StoreResult(s, offers_scanned=True, extra_offers=(self.BREAD,)) for s in others),
+        ]
+        extra = {
+            "stores": [
+                {"id": named.id, "leaflets": [{"cluster": "a", "pdf_store_match": True}]},
+                {"id": listed.id, "leaflets": [{"cluster": "a", "pdf_store_match": False}]},
+            ]
+        }
+        return ScanResult(results=tuple(results), full_scan=False), extra
+
+    def test_compares_stores_and_pdf(self) -> None:
+        result, extra = self._result()
+        text = "nur in soest mueller muellermilch 0 59 kohlrabi 0 49"
+        lines = extra_offer_lines(result, extra, {"a": PdfCheck("SOEST", text=text)})
+        report = "\n".join(lines)
+        assert "1 stores named by their PDF: 3 / 3 / 3 offers" in report
+        assert "1 stores other Extra: 1 / 1 / 1 offers" in report
+        assert (
+            "1 offers in at least 90% of all stores (not Extra); 2 others in named stores" in report
+        )
+        assert "title and price 1, title only 0, price only 1, neither 0, no PDF text 0" in report
+        assert "Baseline offers with their title in the PDF: 0 of 1" in report
+        assert "title in PDF 1/1: MÜLLER Müllermilch  (2) 0.59 (was 1.49)" in report
+        assert "Krustenbrot" not in report
+
+    def test_without_pdf_text(self) -> None:
+        result, extra = self._result()
+        report = "\n".join(extra_offer_lines(result, extra, {"a": PdfCheck("SOEST")}))
+        assert "no PDF text 2" in report
+
+    def test_nothing_without_an_offer_scan(self) -> None:
+        stores = list(_stores().values())
+        result = ScanResult(results=(StoreResult(stores[0]),), full_scan=False)
+        assert extra_offer_lines(result, {"stores": []}) == []

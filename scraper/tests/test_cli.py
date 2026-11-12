@@ -181,7 +181,8 @@ def test_pdf_check_flags_mismatches_and_caches(
     cache = json.loads((out / "pdf_checks.json").read_text())
     assert cache["parser"] == PARSER_VERSION
     assert cache["checks"]["01a0e6b0-a6e8-71d1-a747-5a1d3b7f8fa8"] == {
-        "store_line": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER"
+        "store_line": "KARLSRUHE-OSTSTADT, IM DURLACH CENTER",
+        "text": "nur in karlsruhe oststadt im durlach center",
     }
 
     # Second run reuses the cache: no PDF is downloaded again.

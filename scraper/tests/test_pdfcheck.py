@@ -7,11 +7,11 @@ import pytest
 from conftest import make_pdf
 from kef_scraper.models import Store
 from kef_scraper.pdfcheck import (
-    PdfCheck,
     PdfCheckError,
     check_pdf,
     extract_store_line,
     matches_store,
+    offer_in_pdf,
 )
 
 # Layout like the real page 1: offers, then the store line, then a footer code that does NOT
@@ -73,10 +73,29 @@ class TestExtract:
             extract_store_line(b"<html>error</html>")
 
     def test_check_pdf_reports_errors_instead_of_raising(self) -> None:
-        assert check_pdf(make_pdf(PAGE)) == PdfCheck("KARLSRUHE-OSTSTADT, IM DURLACH CENTER")
+        ok = check_pdf(make_pdf(PAGE))
+        assert (ok.store_line, ok.error) == ("KARLSRUHE-OSTSTADT, IM DURLACH CENTER", None)
         result = check_pdf(b"%PDF-broken")
         assert result.store_line is None
         assert result.error is not None
+        assert result.text is None
+
+
+class TestOfferInPdf:
+    TEXT = check_pdf(
+        make_pdf(["NUR IN SOEST, RIGAER RING 2", "MÜLLER", "Müller milch", "0.59", "Kohlrabi 0.49"])
+    ).text
+
+    def test_keeps_the_text_of_the_leaflet(self) -> None:
+        assert self.TEXT == "nur in soest rigaer ring 2 mueller mueller milch 0 59 kohlrabi 0 49"
+
+    def test_title_and_price(self) -> None:
+        assert self.TEXT is not None
+        assert offer_in_pdf(self.TEXT, "Müllermilch", "0.59") == (True, True)  # spaces ignored
+        assert offer_in_pdf(self.TEXT, "MÜLLER", "1.49") == (True, False)
+        assert offer_in_pdf(self.TEXT, "Dtsch. Kohlrabi, lose", "0.49") == (False, True)
+        assert offer_in_pdf(self.TEXT, "Krustenbrot", None) == (False, False)
+        assert offer_in_pdf(self.TEXT, "", "") == (False, False)
 
 
 class TestMatch:

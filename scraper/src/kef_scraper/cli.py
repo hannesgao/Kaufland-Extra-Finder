@@ -202,11 +202,13 @@ def main(
     )
     cards = build_cards(result, now, CARD_KEYWORDS) if args.offers and not card_problems else None
 
-    sys.stdout.write(render_report(result, extra, diff, cards, card_problems))
+    sys.stdout.write(render_report(result, extra, diff, cards, card_problems, pdf_checks))
     if args.summary:
         args.summary.parent.mkdir(parents=True, exist_ok=True)
         with args.summary.open("a", encoding="utf-8") as f:
-            f.write(render_summary_md(result, extra, diff, problems, cards, card_problems))
+            f.write(
+                render_summary_md(result, extra, diff, problems, cards, card_problems, pdf_checks)
+            )
 
     if problems:
         for p in problems:
