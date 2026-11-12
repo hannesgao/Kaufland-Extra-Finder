@@ -243,6 +243,15 @@ export function dealSections(data: DealsData, today: IsoDate): string[] {
   return [...sections].sort((a, b) => a.localeCompare(b, "de"));
 }
 
+/** Offers per category among `views` (an offer can be in several), alphabetically. */
+export function sectionCounts(views: readonly DealView[]): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const view of views) {
+    for (const s of view.offer.product.sections) counts.set(s, (counts.get(s) ?? 0) + 1);
+  }
+  return new Map([...counts].sort(([a], [b]) => a.localeCompare(b, "de")));
+}
+
 /**
  * Current and upcoming offers with their stores (nearest to `origin` first). "In N of M stores"
  * counts every Extra store, also with `nearKm`, which only limits the stores that are listed.

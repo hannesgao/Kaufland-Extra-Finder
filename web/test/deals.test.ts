@@ -8,6 +8,7 @@ import {
   discountPercent,
   listDeals,
   parseDeals,
+  sectionCounts,
   type DealOptions,
   type DealView,
 } from "../src/deals";
@@ -193,6 +194,15 @@ describe("dealSections", () => {
     expect(sections).toHaveLength(10);
     expect(sections[0]).toBe("Drogerie, Tiernahrung");
     expect(dealSections(data, "2026-11-15")).toEqual([]);
+  });
+});
+
+describe("sectionCounts", () => {
+  it("counts the listed offers per category", () => {
+    const counts = sectionCounts(list().views);
+    expect(counts.get("Getränke, Spirituosen")).toBe(4);
+    expect([...counts.keys()][0]).toBe("Drogerie, Tiernahrung");
+    expect(sectionCounts(list({ nearKm: 0 }).views).size).toBe(0);
   });
 });
 

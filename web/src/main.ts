@@ -14,6 +14,7 @@ import {
   dealSections,
   listDeals,
   loadDeals,
+  sectionCounts,
   type DealsData,
   type DealSort,
 } from "./deals";
@@ -34,7 +35,8 @@ import {
   type SortOrder,
 } from "./search";
 import { renderArticle, renderArticleStrip, renderCardStore } from "./ui/cards";
-import { renderDeal } from "./ui/deals";
+import { renderDeal, sectionIcon } from "./ui/deals";
+import { setupSelect } from "./ui/select";
 import { renderDormant, renderHit, renderRow } from "./ui/list";
 import type { MapMarker, MapView } from "./ui/map";
 import { setupTabs } from "./ui/tabs";
@@ -173,7 +175,15 @@ const dealsAge = byId("deals-age", HTMLParagraphElement);
 const dealsAgeBox = byId("deals-age-box", HTMLDivElement);
 const dealsList = byId("deals-list", HTMLOListElement);
 const dealsSortGroup = byId("deals-sort", HTMLFieldSetElement);
-const dealsSectionSelect = byId("deals-section", HTMLSelectElement);
+const dealsSectionSelect = setupSelect(
+  byId("deals-section", HTMLDivElement),
+  "Kategorie",
+  (value) => {
+    dealSection = value === "" ? null : value;
+    syncUrl(false);
+    runDeals();
+  },
+);
 const dealsCommonSwitch = byId("deals-common", HTMLInputElement);
 const dealsNearSwitch = byId("deals-near", HTMLInputElement);
 const dealsUnconfirmedSwitch = byId("deals-unconfirmed", HTMLInputElement);
@@ -586,18 +596,33 @@ function ensureDeals(): void {
     });
 }
 
-/** The category filter lists the categories of the current offers; an unknown one is dropped. */
-function fillDealSections(sections: readonly string[]): void {
-  if (dealSection && !sections.includes(dealSection)) {
+/**
+ * The category filter lists the categories of the offers the other filters leave, with the number
+ * of offers in each. A category from the URL that no current offer has is dropped.
+ */
+function fillDealSections(
+  known: readonly string[],
+  counts: ReadonlyMap<string, number>,
+  all: number,
+): void {
+  if (dealSection && !known.includes(dealSection)) {
     dealSection = null;
     syncUrl(false);
   }
-  replaceChildren(
-    dealsSectionSelect,
-    h("option", { value: "" }, "Alle Kategorien"),
-    ...sections.map((section) => h("option", { value: section }, section)),
+  const sections = new Map(counts);
+  if (dealSection && !sections.has(dealSection)) sections.set(dealSection, 0);
+  dealsSectionSelect.setOptions(
+    [
+      { value: "", label: "Alle Kategorien", icon: "category", count: all },
+      ...[...sections].map(([section, count]) => ({
+        value: section,
+        label: section,
+        icon: sectionIcon(section),
+        count,
+      })),
+    ],
+    dealSection ?? "",
   );
-  dealsSectionSelect.value = dealSection ?? "";
 }
 
 function runDeals(): void {
@@ -610,14 +635,24 @@ function runDeals(): void {
   if (!origin) return;
   const at = origin;
   const today = berlinToday(new Date());
-  fillDealSections(dealSections(deals, today));
-  const { views, extraStores, total } = listDeals(deals, at.point, today, {
+  const options = {
     sort: dealSort,
-    section: dealSection,
+    section: null,
     commonOnly: !dealsAll,
     unconfirmed: dealsUnconfirmed,
     nearKm: dealsNear ? radius : null,
-  });
+  };
+  // Without the category first, for the numbers in the category filter.
+  const unfiltered = listDeals(deals, at.point, today, options);
+  fillDealSections(
+    dealSections(deals, today),
+    sectionCounts(unfiltered.views),
+    unfiltered.views.length,
+  );
+  const { extraStores, total } = unfiltered;
+  const views = dealSection
+    ? listDeals(deals, at.point, today, { ...options, section: dealSection }).views
+    : unfiltered.views;
   replaceChildren(
     dealsList,
     ...views.map((view) =>
@@ -637,9 +672,7 @@ function isDealSort(value: string): value is DealSort {
 
 function onDealsChange(event: Event): void {
   const target = event.target;
-  if (target === dealsSectionSelect) {
-    dealSection = dealsSectionSelect.value || null;
-  } else if (!(target instanceof HTMLInputElement)) {
+  if (!(target instanceof HTMLInputElement)) {
     return;
   } else if (target.name === "deals-sort" && isDealSort(target.value)) {
     dealSort = target.value;
@@ -662,7 +695,6 @@ function checkDealControls(): void {
   dealsCommonSwitch.checked = !dealsAll;
   dealsNearSwitch.checked = dealsNear;
   dealsUnconfirmedSwitch.checked = dealsUnconfirmed;
-  dealsSectionSelect.value = dealSection ?? "";
 }
 
 function renderCards(shown: CardHit[], counts: ReadonlyMap<string, number>, note?: string): void {

@@ -2552,12 +2552,19 @@ button.segment:disabled {
   font-size: 0.8125rem;
 }
 
-/* Category filter: a native select in the same outlined pill as the other controls. */
+/* Category filter: a dropdown with icons (ui/select.ts) in the same outlined pill as the other
+ * controls. The arrow sits at the inset of the switches; icons share one column. */
+.select-wrap {
+  position: relative;
+  margin-top: -7px;
+}
+
 .select {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
   height: 54px;
-  margin-top: -7px;
   padding: 0 20px 0 24px;
   border: 0;
   border-radius: var(--shape-full);
@@ -2566,6 +2573,7 @@ button.segment:disabled {
   font: inherit;
   font-size: 0.875rem;
   font-weight: 500;
+  text-align: left;
   cursor: pointer;
 }
 
@@ -2574,9 +2582,107 @@ button.segment:disabled {
   outline-offset: -3px;
 }
 
-.select option {
-  background: var(--md-surface-container-lowest);
-  color: var(--md-on-surface);
+.select__value {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.select__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select__icon,
+.select__check,
+.select__arrow {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.select__icon {
+  color: var(--md-primary);
+}
+
+.select__arrow {
+  color: var(--md-on-surface-variant);
+  transition: transform 0.15s;
+}
+
+.select[aria-expanded="true"] .select__arrow {
+  transform: rotate(180deg);
+}
+
+.select__list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  max-height: min(60vh, 420px);
+  margin: 0;
+  padding: 8px 0;
+  overflow-y: auto;
+  border-radius: var(--shape-md);
+  background: var(--md-surface-container);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 30%),
+    0 2px 6px 2px rgb(0 0 0 / 15%);
+  list-style: none;
+}
+
+.select__list[hidden] {
+  display: none;
+}
+
+.select__option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 16px 0 24px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.select__option .select__label {
+  overflow: visible;
+  white-space: normal;
+}
+
+.select__option.is-active {
+  background: color-mix(in srgb, var(--md-on-surface) 8%, var(--md-surface-container));
+}
+
+.select__option[aria-selected="true"] {
+  font-weight: 500;
+}
+
+.select__count {
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.select__check {
+  color: var(--md-primary);
+  visibility: hidden;
+}
+
+.select__option[aria-selected="true"] .select__check {
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .select__arrow {
+    transition: none;
+  }
 }
 
 /* Phones: distance (and price) move under the store, so the name keeps its width. */

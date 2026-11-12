@@ -303,7 +303,8 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   Extra-Filialen" and "auch in N anderen Filialen" for offers that stores without an Extra
   leaflet have too. Below it the stores, nearest to the PLZ first (five, then "Alle … anzeigen"),
   each with a link to the offer in that store. Controls: sort by discount, number of stores or
-  price (`dsort=filialen|preis`), category (`cat=`), "Nur verbreitete Angebote" (on by default:
+  price (`dsort=filialen|preis`), category (`cat=`; a dropdown with an icon and the number of offers
+  per category, `ui/select.ts`), "Nur verbreitete Angebote" (on by default:
   offers that at least half of the Extra stores have; `dall=1` shows all), "Nur Filialen im
   Umkreis" (`near=1`) and "Auch nicht im PDF gefundene" (`unconf=1`, offers listed in a store's
   `unconfirmed`).

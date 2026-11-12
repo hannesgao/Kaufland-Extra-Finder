@@ -7,10 +7,36 @@
 import type { DealStoreView, DealView } from "../deals";
 import { h } from "../dom";
 import { formatKm } from "../geo";
-import { icon } from "../icons";
+import { icon, type IconName } from "../icons";
 import { formatPrice, names, offerLink, stateChip, thumbnail } from "./cards";
 
 export const DEAL_STORES_SHOWN = 5;
+
+/** Icons for Kaufland's categories, matched by a word of the name; first match wins. */
+const SECTION_ICONS: readonly (readonly [RegExp, IconName])[] = [
+  [/bäckerei|backshop/, "bakery_dining"],
+  [/\bbio\b|bio-/, "eco"],
+  [/region/, "location_on"],
+  [/obst|gemüse|pflanzen/, "nutrition"],
+  [/fleisch|geflügel|wurst/, "kebab_dining"],
+  [/fisch/, "set_meal"],
+  [/molkerei|käse/, "egg"],
+  [/tiefkühl/, "ac_unit"],
+  [/feinkost|konserven/, "takeout_dining"],
+  [/grundnahrung/, "grocery"],
+  [/kaffee|tee|süßwaren|knabber/, "coffee"],
+  [/getränke|spirituosen|wein|bier/, "liquor"],
+  [/drogerie|tiernahrung/, "soap"],
+  [/elektro|büro|medien/, "devices"],
+  [/heim|haus/, "chair"],
+  [/bekleidung|auto|freizeit|spiel/, "checkroom"],
+];
+
+/** The icon of a category; promotions and unknown categories get the price tag. */
+export function sectionIcon(section: string): IconName {
+  const name = section.toLocaleLowerCase("de");
+  return SECTION_ICONS.find(([pattern]) => pattern.test(name))?.[1] ?? "sell";
+}
 
 /** "in 41 von 51 Extra-Filialen" */
 export function dealStoreCount(count: number, extraStores: number): string {
