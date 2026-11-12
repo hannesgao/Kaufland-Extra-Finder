@@ -9,18 +9,22 @@ const DEFAULTS: QueryState = {
   pdfOnly: true, // on by default
   cardsView: "filialen",
   article: null,
+  dealSort: "rabatt",
+  dealSection: null,
+  dealsAll: false,
+  dealsNear: false,
+  dealsUnconfirmed: false,
 };
 
 describe("parseQuery", () => {
   it("reads PLZ, radius, tab and sort order", () => {
     expect(parseQuery("?plz=76137&r=50&tab=all&sort=plz-desc&pdf=all")).toEqual({
+      ...DEFAULTS,
       plz: "76137",
       radius: 50,
       tab: "all",
       sort: "plz-desc",
       pdfOnly: false,
-      cardsView: "filialen",
-      article: null,
     });
   });
 
@@ -58,6 +62,11 @@ describe("buildQuery", () => {
       pdfOnly: false,
       cardsView: "artikel",
       article: "20973794",
+      dealSort: "filialen",
+      dealSection: "Fisch",
+      dealsAll: true,
+      dealsNear: true,
+      dealsUnconfirmed: true,
     };
     expect(parseQuery(buildQuery(state))).toEqual(state);
   });
@@ -85,5 +94,23 @@ describe("isPlz", () => {
   it("knows the Pokémon tab", () => {
     expect(parseQuery("?tab=cards").tab).toBe("cards");
     expect(buildQuery({ ...DEFAULTS, tab: "cards" })).toBe("?tab=cards");
+  });
+});
+
+describe("Extra offers tab", () => {
+  it("keeps its settings", () => {
+    const query = "?tab=deals&dsort=preis&cat=Getr%C3%A4nke%2C+Spirituosen&dall=1&near=1&unconf=1";
+    const state = parseQuery(query);
+    expect(state).toMatchObject({
+      tab: "deals",
+      dealSort: "preis",
+      dealSection: "Getränke, Spirituosen",
+      dealsAll: true,
+      dealsNear: true,
+      dealsUnconfirmed: true,
+    });
+    expect(buildQuery(state)).toBe(query);
+    expect(parseQuery("?dsort=x&dall=yes&cat=").dealSort).toBe("rabatt");
+    expect(parseQuery("?dsort=x&dall=yes&cat=")).toEqual(DEFAULTS);
   });
 });

@@ -138,3 +138,32 @@ export function articlesStatus(count: number, from: string): string {
     `Filialen nach Entfernung ${from}.`
   );
 }
+
+export const DEALS_EMPTY = "Derzeit gibt es keine Extra-Angebote.";
+export const DEALS_MISSING =
+  "Noch keine Extra-Angebote verfügbar. Sie werden montags und donnerstags aktualisiert.";
+
+/**
+ * "31 Extra-Angebote aus 51 Extra-Filialen, 40 weitere ausgeblendet. Filialen nach Entfernung
+ * von PLZ 76131." / "… im Umkreis von 25 km um PLZ 76131."
+ */
+export function dealsStatus(
+  shown: number,
+  total: number,
+  extraStores: number,
+  near: { radiusKm: number; label: string } | null,
+  from: string,
+): string {
+  if (total === 0) return DEALS_EMPTY;
+  if (shown === 0 && near) {
+    return `Keine Extra-Filiale mit Angeboten im Umkreis von ${String(near.radiusKm)} km ${near.label}.`;
+  }
+  const hidden = total - shown;
+  const offers = `${String(shown)} ${shown === 1 ? "Extra-Angebot" : "Extra-Angebote"}`;
+  const stores = `${String(extraStores)} ${extraStores === 1 ? "Extra-Filiale" : "Extra-Filialen"}`;
+  const rest = hidden > 0 ? `, ${String(hidden)} weitere ausgeblendet` : "";
+  const where = near
+    ? ` Nur Filialen im Umkreis von ${String(near.radiusKm)} km ${near.label}.`
+    : ` Filialen nach Entfernung ${from}.`;
+  return `${offers} aus ${stores}${rest}.${where}`;
+}

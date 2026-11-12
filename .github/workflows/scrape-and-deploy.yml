@@ -179,6 +179,10 @@ jobs:
           if [ -f data-branch/cards.json ]; then
             echo "cards=$GITHUB_WORKSPACE/data-branch/cards.json" >> "$GITHUB_OUTPUT"
           fi
+          # Optional as well: the offers of the Extra leaflets.
+          if [ -f data-branch/deals.json ]; then
+            echo "deals=$GITHUB_WORKSPACE/data-branch/deals.json" >> "$GITHUB_OUTPUT"
+          fi
       # The footer shows when this version was released; unreleased versions show the build time.
       - name: Look up the release of this version
         id: release
@@ -202,6 +206,7 @@ jobs:
         env:
           KEF_EXTRA_JSON: ${{ github.workspace }}/data-branch/extra.json
           KEF_CARDS_JSON: ${{ steps.data.outputs.cards }}
+          KEF_DEALS_JSON: ${{ steps.data.outputs.deals }}
           KEF_RELEASED_AT: ${{ steps.release.outputs.published_at }}
         run: |
           npm ci

@@ -184,8 +184,7 @@ when they are printed in the PDF; `other_stores` says how many stores those are.
 
 The file is written together with `cards.json` and under the same conditions. In a week without
 Extra leaflets it has no products. The report shows the number of offers per group of stores and,
-for the most common offers, in how many stores they are and whether the title is in the PDF. The
-web page does not use the file yet.
+for the most common offers, in how many stores they are and whether the title is in the PDF.
 
 ### Trading-card offers (`cards.json`)
 
@@ -290,12 +289,24 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
 - On page load the default PLZ 76131 (25 km) is searched, so the map and the store cards show
   right away. Map tiles therefore come from `tile.openstreetmap.org` on every visit of the search
   tab (the _Alle Extra-Filialen_ tab loads no map). No cookies, no storage, no external fonts.
-- Three tabs: _Umkreissuche_ (radius search with map), _Alle Extra-Filialen_ (all stores with a
-  current or upcoming Extra leaflet, sortable by PLZ) and _Pokémon-Angebote_ (stores near the
-  PLZ with Pokémon offers, from `cards.json`; on narrow screens the tabs read _Umkreis_,
-  _Extra-Filialen_, _Pokémon_). PLZ and radius are shared by both search forms. State lives in the
-  URL (`?plz=76137&r=50&tab=all&sort=plz-desc`, `tab=cards`); geolocation results never put
-  coordinates into it.
+- Four tabs: _Umkreissuche_ (radius search with map), _Alle Extra-Filialen_ (all stores with a
+  current or upcoming Extra leaflet, sortable by PLZ), _Extra-Angebote_ (the offers of the Extra
+  leaflets, from `deals.json`) and _Pokémon-Angebote_ (stores near the PLZ with Pokémon offers,
+  from `cards.json`); on narrow screens the tabs read _Umkreis_, _Filialen_, _Angebote_,
+  _Pokémon_. PLZ and radius are shared by the three search forms. State lives in the URL
+  (`?plz=76137&r=50&tab=all&sort=plz-desc`, `tab=deals`, `tab=cards`); geolocation results never
+  put coordinates into it.
+- _Extra-Angebote_: `data/deals.json` is loaded when the tab is first shown and is optional like
+  `cards.json` (`fixtures/deals.json` in development, `KEF_DEALS_JSON` for a build). One card per
+  offer: thumbnail, price ("ab …" when stores differ, then every store shows its price),
+  Kaufland's comparison price, the discount computed from the two, "bis …"/"ab …", "in N von M
+  Extra-Filialen" and "auch in N anderen Filialen" for offers that stores without an Extra
+  leaflet have too. Below it the stores, nearest to the PLZ first (five, then "Alle … anzeigen"),
+  each with a link to the offer in that store. Controls: sort by discount, number of stores or
+  price (`dsort=filialen|preis`), category (`cat=`), "Nur verbreitete Angebote" (on by default:
+  offers that at least half of the Extra stores have; `dall=1` shows all), "Nur Filialen im
+  Umkreis" (`near=1`) and "Auch nicht im PDF gefundene" (`unconf=1`, offers listed in a store's
+  `unconfirmed`).
 - _Pokémon-Angebote_: `data/cards.json` is loaded when the tab is first shown. It is
   optional: in development it is served from `fixtures/cards.json` (dates shifted like
   `extra.json`) or `KEF_CARDS_JSON`; a production build includes it only when `KEF_CARDS_JSON` is

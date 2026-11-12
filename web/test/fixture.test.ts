@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { listDeals, parseDeals } from "../src/deals";
 import { buildStamp, footerStamp, shiftedFixture } from "../vite.config";
 import { FIXTURE_PATH } from "./helpers";
 
@@ -55,6 +56,21 @@ describe("dev fixtures", () => {
     const shifted = JSON.parse(shiftedFixture(new Date("2026-11-25T10:00:00Z"))) as Shifted;
     const froms = new Set(shifted.stores.flatMap((s) => s.leaflets.map((l) => l.valid_from)));
     expect([...froms]).toEqual(["2026-11-23"]);
+  });
+
+  it("has Extra offers that are current after shifting", () => {
+    const path = resolve(import.meta.dirname, "../fixtures/deals.json");
+    const data = parseDeals(JSON.parse(shiftedFixture(new Date("2026-12-02T10:00:00Z"), path)));
+    expect(data.stores).toHaveLength(51);
+    const { views, extraStores } = listDeals(data, [49.0019, 8.4287], "2026-12-02", {
+      sort: "rabatt",
+      section: null,
+      commonOnly: true,
+      unconfirmed: false,
+      nearKm: null,
+    });
+    expect(extraStores).toBe(51);
+    expect(views.length).toBeGreaterThan(20);
   });
 });
 

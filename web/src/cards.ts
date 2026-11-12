@@ -62,8 +62,16 @@ export interface CardsData {
 /** "upcoming": not on sale yet (blue); "now": on sale today (green). */
 export type OfferState = "upcoming" | "now";
 
-export interface OfferView {
-  product: CardProduct;
+/** What `viewOffer` needs of an offer. */
+export interface OfferDates {
+  shownFrom: IsoDate;
+  shownTo: IsoDate;
+  salesFrom?: IsoDate;
+  salesTo?: IsoDate;
+}
+
+export interface OfferView<P extends OfferDates = CardProduct> {
+  product: P;
   state: OfferState;
   /** First and last day it can be bought (the sale for announced offers). */
   from: IsoDate;
@@ -95,10 +103,10 @@ export interface CardSearchResult {
   nearest: CardHit | null;
 }
 
-const optStr = (obj: Json, key: string, where: string): string | undefined =>
+export const optStr = (obj: Json, key: string, where: string): string | undefined =>
   obj[key] === undefined ? undefined : str(obj, key, where);
 
-const optUrl = (obj: Json, key: string, where: string): string | undefined =>
+export const optUrl = (obj: Json, key: string, where: string): string | undefined =>
   obj[key] === undefined ? undefined : httpsUrl(obj, key, where);
 
 function parseProduct(key: string, raw: unknown): CardProduct {
@@ -183,7 +191,7 @@ export async function loadCards(base: string): Promise<CardsData | null> {
 }
 
 /** When it can be bought, relative to `today`; null once it is over. */
-export function viewOffer(product: CardProduct, today: IsoDate): OfferView | null {
+export function viewOffer<P extends OfferDates>(product: P, today: IsoDate): OfferView<P> | null {
   const from = product.salesFrom ?? product.shownFrom;
   const to = product.salesTo ?? product.shownTo;
   if (to < today) return null;
