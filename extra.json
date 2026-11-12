@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-11T09:01:50+01:00",
+  "generated_at": "2026-11-12T07:11:15+01:00",
   "store_count": 788,
   "failed_count": 0,
   "stores": [
@@ -203,6 +203,10 @@
       "special_days": [
         {
           "date": "2026-11-15",
+          "closed": true
+        },
+        {
+          "date": "2026-11-18",
           "closed": true
         }
       ],
@@ -789,6 +793,10 @@
         {
           "date": "2026-11-15",
           "closed": true
+        },
+        {
+          "date": "2026-11-18",
+          "closed": true
         }
       ],
       "past": [
@@ -946,6 +954,10 @@
       "special_days": [
         {
           "date": "2026-11-15",
+          "closed": true
+        },
+        {
+          "date": "2026-11-18",
           "closed": true
         }
       ],
@@ -1122,6 +1134,10 @@
       "special_days": [
         {
           "date": "2026-11-15",
+          "closed": true
+        },
+        {
+          "date": "2026-11-18",
           "closed": true
         }
       ],
@@ -1420,6 +1436,10 @@
       "special_days": [
         {
           "date": "2026-11-15",
+          "closed": true
+        },
+        {
+          "date": "2026-11-18",
           "closed": true
         }
       ],
@@ -2269,6 +2289,10 @@
       "special_days": [
         {
           "date": "2026-11-15",
+          "closed": true
+        },
+        {
+          "date": "2026-11-18",
           "closed": true
         }
       ],
@@ -3765,6 +3789,10 @@
       "special_days": [
         {
           "date": "2026-11-15",
+          "closed": true
+        },
+        {
+          "date": "2026-11-18",
           "closed": true
         }
       ],
