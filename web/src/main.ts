@@ -11,6 +11,7 @@ import {
 } from "./cards";
 import {
   DEAL_SORTS,
+  dealCounts,
   dealSections,
   listDeals,
   loadDeals,
@@ -37,7 +38,7 @@ import {
 import { renderArticle, renderArticleStrip, renderCardStore } from "./ui/cards";
 import { renderDeal, sectionIcon } from "./ui/deals";
 import { setupSelect } from "./ui/select";
-import { renderDormant, renderHit, renderRow } from "./ui/list";
+import { renderDormant, renderHit, renderRow, type StoreDeals } from "./ui/list";
 import type { MapMarker, MapView } from "./ui/map";
 import { setupTabs } from "./ui/tabs";
 import {
@@ -49,6 +50,7 @@ import {
   cardsNearestStatus,
   cardsStatus,
   countUnchecked,
+  dealsButton,
   DEALS_MISSING,
   dealsStatus,
   dormantIntro,
@@ -187,6 +189,12 @@ const dealsSectionSelect = setupSelect(
 const dealsCommonSwitch = byId("deals-common", HTMLInputElement);
 const dealsNearSwitch = byId("deals-near", HTMLInputElement);
 const dealsUnconfirmedSwitch = byId("deals-unconfirmed", HTMLInputElement);
+const dealsStoreBox = byId("deals-store", HTMLDivElement);
+const dealsStoreText = byId("deals-store-text", HTMLParagraphElement);
+const dealsFilters = byId("deals-filters", HTMLDetailsElement);
+const dealsFilterCount = byId("deals-filter-count", HTMLSpanElement);
+/** Phones: the filters of the Extra offers tab are folded away under a summary. */
+const narrowScreen = window.matchMedia("(max-width: 599px)");
 
 const searchMap: MapSlot = {
   container: byId("map", HTMLDivElement),
@@ -227,6 +235,8 @@ let dealSection: string | null = parseQuery(location.search).dealSection;
 let dealsAll = parseQuery(location.search).dealsAll;
 let dealsNear = parseQuery(location.search).dealsNear;
 let dealsUnconfirmed = parseQuery(location.search).dealsUnconfirmed;
+/** Extra offers of this store only (from "N Extra-Angebote" on a store card). */
+let dealStore: string | null = parseQuery(location.search).dealStore;
 /** Extra offers whose full store list is shown. */
 const expandedDeals = new Set<string>();
 
@@ -280,6 +290,7 @@ function syncUrl(push: boolean): void {
     dealsAll,
     dealsNear,
     dealsUnconfirmed,
+    dealStore,
   };
   const url = `${location.pathname}${buildQuery(state)}`;
   if (push) history.pushState(null, "", url);
@@ -377,15 +388,43 @@ function cardMarker(hit: CardHit): MapMarker {
 
 /* ---------- Radius search (Extra leaflets) ---------- */
 
+/** "28 Extra-Angebote" for a store card, once deals.json is there and the store has offers. */
+function storeDeals(counts: ReadonlyMap<string, number>, id: string): StoreDeals | undefined {
+  const count = counts.get(id);
+  if (count === undefined) return undefined;
+  return {
+    label: dealsButton(count),
+    onClick: () => {
+      showStoreDeals(id);
+    },
+  };
+}
+
+function currentDealCounts(): ReadonlyMap<string, number> {
+  return deals ? dealCounts(deals, berlinToday(new Date())) : new Map<string, number>();
+}
+
+/** Open the Extra offers tab with the offers of one store. */
+function showStoreDeals(id: string): void {
+  dealStore = id;
+  tab = "deals";
+  tabs.select(tab);
+  syncUrl(true);
+  showTab();
+  runDeals();
+  window.scrollTo({ top: 0, behavior: reducedMotion.matches ? "auto" : "smooth" });
+}
+
 function render(shown: Hit[], dormant: DormantHit[], note?: string): void {
   searchMap.items.clear();
   const onSelect = (id: string) => {
     select(searchMap, id);
   };
+  const counts = currentDealCounts();
   replaceChildren(
     list,
     ...shown.map((hit) => {
-      const item = renderHit(hit, onSelect, note);
+      const item = renderHit(hit, onSelect, note, storeDeals(counts, hit.store.id));
       searchMap.items.set(hit.store.id, item);
       return item;
     }),
@@ -452,7 +491,11 @@ function renderAll(): void {
   const today = berlinToday(new Date());
   const views = listAll(data.extra, today, sort, { pdfOnly });
   const dormant = listDormant(data.extra, today, sort, { pdfOnly });
-  replaceChildren(allList, ...views.map((v) => renderRow(v, showInSearch)));
+  const offerCounts = currentDealCounts();
+  replaceChildren(
+    allList,
+    ...views.map((v) => renderRow(v, showInSearch, storeDeals(offerCounts, v.store.id))),
+  );
   const since = historySince();
   fillDormant(
     allDormant,
@@ -576,7 +619,10 @@ function ensureCards(): void {
 
 /* ---------- Extra-Angebote ---------- */
 
-/** Load deals.json the first time the tab is shown; it is not needed for the other tabs. */
+/**
+ * Load deals.json once, after the Extra stores: the tab needs it, and the store cards of the other
+ * tabs get their "N Extra-Angebote" button from it.
+ */
 function ensureDeals(): void {
   if (dealsLoading) return;
   dealsLoading = true;
@@ -585,6 +631,10 @@ function ensureDeals(): void {
       deals = loaded;
       showOffersAge(dealsAge, dealsAgeBox, loaded?.generatedAt ?? null);
       runDeals();
+      if (loaded) {
+        runSearch(); // the store cards get their button
+        if (tab === "all") renderAll();
+      }
     })
     .catch((err: unknown) => {
       console.error(err);
@@ -635,8 +685,21 @@ function runDeals(): void {
   if (!origin) return;
   const at = origin;
   const today = berlinToday(new Date());
+  // A store from the URL that has no offers (any more) is dropped.
+  const store = deals.stores.find((s) => s.id === dealStore) ?? null;
+  if (dealStore && !store) {
+    dealStore = null;
+    syncUrl(false);
+  }
+  dealsStoreBox.hidden = !store;
+  if (store) {
+    dealsStoreText.textContent = `Nur Angebote der Filiale ${store.name} (${store.plz} ${store.city}).`;
+  }
+  dealsCommonSwitch.disabled = dealsNearSwitch.disabled = store !== null;
+  showFilterCount();
   const options = {
     sort: dealSort,
+    storeId: dealStore,
     section: null,
     commonOnly: !dealsAll,
     unconfirmed: dealsUnconfirmed,
@@ -663,7 +726,25 @@ function runDeals(): void {
     ),
   );
   const near = dealsNear ? { radiusKm: radius, label: at.label } : null;
-  setDealsStatus(dealsStatus(views.length, total, extraStores, near, at.from));
+  setDealsStatus(dealsStatus(views.length, total, extraStores, near, at.from, store?.name ?? null));
+}
+
+/** How many settings differ from the defaults, next to "Filter und Sortierung" on phones. */
+function showFilterCount(): void {
+  const active = [
+    dealSort !== "rabatt",
+    dealSection !== null,
+    dealsAll,
+    dealsNear,
+    dealsUnconfirmed,
+  ].filter(Boolean).length;
+  dealsFilterCount.hidden = active === 0;
+  dealsFilterCount.textContent = String(active);
+}
+
+/** Wide screens always show the filters; phones start with them folded. */
+function foldFilters(): void {
+  dealsFilters.open = !narrowScreen.matches;
 }
 
 function isDealSort(value: string): value is DealSort {
@@ -1004,6 +1085,7 @@ function applyQuery(): void {
   dealsAll = query.dealsAll;
   dealsNear = query.dealsNear;
   dealsUnconfirmed = query.dealsUnconfirmed;
+  dealStore = query.dealStore;
   checkDealControls();
   const sortRadio = sortGroup.querySelector<HTMLInputElement>(`input[value="${sort}"]`);
   if (sortRadio) sortRadio.checked = true;
@@ -1049,6 +1131,13 @@ sortGroup.addEventListener("change", onSortChange);
 exportGroup.addEventListener("click", onExportClick);
 cardsViewGroup.addEventListener("change", onCardsViewChange);
 byId("deals-form", HTMLFormElement).addEventListener("change", onDealsChange);
+byId("deals-store-clear", HTMLButtonElement).addEventListener("click", () => {
+  dealStore = null;
+  syncUrl(false);
+  runDeals();
+});
+narrowScreen.addEventListener("change", foldFilters);
+foldFilters();
 for (const box of pdfSwitches) box.addEventListener("change", onPdfOnlyChange);
 window.addEventListener("popstate", applyQuery);
 
@@ -1066,6 +1155,7 @@ loadData(import.meta.env.BASE_URL)
     showDataAge(loaded.extra);
     setStatus("");
     applyQuery();
+    ensureDeals();
   })
   .catch((err: unknown) => {
     console.error(err);

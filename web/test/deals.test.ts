@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { DataError } from "../src/data";
 import {
+  dealCounts,
   dealSections,
   discountPercent,
   listDeals,
@@ -12,7 +13,7 @@ import {
   type DealOptions,
   type DealView,
 } from "../src/deals";
-import { dealsStatus, DEALS_EMPTY } from "../src/summary";
+import { dealsButton, dealsStatus, DEALS_EMPTY } from "../src/summary";
 import { DEAL_STORES_SHOWN, dealStoreCount, otherStoresNote, renderDeal } from "../src/ui/deals";
 import { PLZ_KARLSRUHE } from "./helpers";
 
@@ -187,6 +188,42 @@ describe("listDeals", () => {
   });
 });
 
+describe("one store", () => {
+  it("lists all offers of the store, common or not, with its prices", () => {
+    const { views } = list({ storeId: "DE2560" }); // Steinheim an der Murr: 46 offers, 1 unconfirmed
+    expect(views).toHaveLength(45);
+    expect(views.every((v) => v.stores.length === 1 && v.stores[0]?.store.id === "DE2560")).toBe(
+      true,
+    );
+    const lamb = find(views, LAMB);
+    expect([lamb.priceFrom, lamb.priceTo]).toEqual(["3.99", "3.99"]);
+    expect(lamb.storeCount).toBe(3);
+    expect(list({ storeId: "DE2560", unconfirmed: true }).views).toHaveLength(46);
+    expect(list({ storeId: "DE2560", nearKm: 1 }).views).toHaveLength(45); // radius does not apply
+    expect(list({ storeId: "DE0000" }).views).toEqual([]);
+  });
+
+  it("counts the offers per store for the store cards", () => {
+    const data = parseDeals(dealsJson());
+    const counts = dealCounts(data, THURSDAY);
+    expect(counts.get("DE2560")).toBe(45);
+    expect(counts.get("DE4443")).toBe(27); // 28 without the unconfirmed one
+    expect(counts.size).toBe(5);
+    expect(dealCounts(data, "2026-11-15").size).toBe(0);
+    expect(dealsButton(27)).toBe("27 Extra-Angebote");
+    expect(dealsButton(1)).toBe("1 Extra-Angebot");
+  });
+
+  it("names the store in the status", () => {
+    expect(dealsStatus(45, 48, 5, null, "von PLZ 76131", "Steinheim an der Murr")).toBe(
+      "45 Extra-Angebote in der Filiale Steinheim an der Murr.",
+    );
+    expect(dealsStatus(0, 48, 5, null, "von PLZ 76131", "Soest")).toBe(
+      "Keine Extra-Angebote in der Filiale Soest.",
+    );
+  });
+});
+
 describe("dealSections", () => {
   it("lists the categories of the current offers", () => {
     const data = parseDeals(dealsJson());
@@ -247,6 +284,17 @@ describe("renderDeal", () => {
     expect(link?.rel).toBe("noopener noreferrer");
     const image = item.querySelector("img");
     expect(image?.getAttribute("referrerpolicy")).toBe("no-referrer");
+  });
+
+  it("names the category with its icon", () => {
+    const item = renderDeal(find(list().views, MILK), 5, false, noop);
+    const section = item.querySelector(".deal__section");
+    expect(section?.textContent).toBe("Molkereiprodukte, Fette");
+    expect(section?.querySelector("svg")).not.toBeNull();
+    const paprika = list().views.find((v) => v.offer.product.sections.length === 0);
+    expect(
+      paprika && renderDeal(paprika, 5, false, noop).querySelector(".deal__section"),
+    ).toBeNull();
   });
 
   it("shows 'ab' and every store's price when prices differ", () => {

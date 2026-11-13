@@ -143,6 +143,13 @@ export function renderDeal(
             { class: "offer__meta" },
             stateChip(offer),
             h("span", { class: "offer__count" }, dealStoreCount(view.storeCount, extraStores)),
+            product.sections[0] !== undefined &&
+              h(
+                "span",
+                { class: "offer__count deal__section" },
+                icon(sectionIcon(product.sections[0])),
+                product.sections[0],
+              ),
             product.otherStores > 0 &&
               h(
                 "span",

@@ -296,7 +296,7 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   _Pokémon_. PLZ and radius are shared by the three search forms. State lives in the URL
   (`?plz=76137&r=50&tab=all&sort=plz-desc`, `tab=deals`, `tab=cards`); geolocation results never
   put coordinates into it.
-- _Extra-Angebote_: `data/deals.json` is loaded when the tab is first shown and is optional like
+- _Extra-Angebote_: `data/deals.json` is loaded after the Extra stores and is optional like
   `cards.json` (`fixtures/deals.json` in development, `KEF_DEALS_JSON` for a build). One card per
   offer: thumbnail, price ("ab …" when stores differ, then every store shows its price),
   Kaufland's comparison price, the discount computed from the two, "bis …"/"ab …", "in N von M
@@ -307,7 +307,11 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   per category, `ui/select.ts`), "Nur verbreitete Angebote" (on by default:
   offers that at least half of the Extra stores have; `dall=1` shows all), "Nur Filialen im
   Umkreis" (`near=1`) and "Auch nicht im PDF gefundene" (`unconf=1`, offers listed in a store's
-  `unconfirmed`).
+  `unconfirmed`). Each card names the offer's first category with its icon. On screens below
+  600px the controls under the PLZ row are folded into "Filter und Sortierung", with the number
+  of changed settings. The store cards of the two Extra tabs get a button "N Extra-Angebote" for
+  stores with offers; it opens this tab with that store only (`store=<store id>`: all of the
+  store's offers with its prices; "Alle Filialen" clears it).
 - _Pokémon-Angebote_: `data/cards.json` is loaded when the tab is first shown. It is
   optional: in development it is served from `fixtures/cards.json` (dates shifted like
   `extra.json`) or `KEF_CARDS_JSON`; a production build includes it only when `KEF_CARDS_JSON` is

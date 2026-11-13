@@ -14,6 +14,7 @@ const DEFAULTS: QueryState = {
   dealsAll: false,
   dealsNear: false,
   dealsUnconfirmed: false,
+  dealStore: null,
 };
 
 describe("parseQuery", () => {
@@ -67,6 +68,7 @@ describe("buildQuery", () => {
       dealsAll: true,
       dealsNear: true,
       dealsUnconfirmed: true,
+      dealStore: "DE4443",
     };
     expect(parseQuery(buildQuery(state))).toEqual(state);
   });
@@ -112,5 +114,10 @@ describe("Extra offers tab", () => {
     expect(buildQuery(state)).toBe(query);
     expect(parseQuery("?dsort=x&dall=yes&cat=").dealSort).toBe("rabatt");
     expect(parseQuery("?dsort=x&dall=yes&cat=")).toEqual(DEFAULTS);
+    expect(parseQuery("?store=DE4443").dealStore).toBe("DE4443");
+    expect(parseQuery("?store=<b>").dealStore).toBeNull();
+    expect(buildQuery({ ...DEFAULTS, tab: "deals", dealStore: "DE4443" })).toBe(
+      "?tab=deals&store=DE4443",
+    );
   });
 });

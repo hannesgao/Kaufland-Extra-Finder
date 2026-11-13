@@ -9,20 +9,19 @@ scraper and use `KEF_EXTRA_JSON` / `KEF_CARDS_JSON` / `KEF_DEALS_JSON`.
 Used by `npm run dev`; the dev server shifts all dates by whole weeks so the data always looks
 current.
 
-- `extra.json`: the full scan of Monday 2026-11-02 from the `data` branch: 45 stores with Extra
-  leaflets valid Monday 02.11. to Saturday 07.11.2026 (Kaufland's offer week runs Monday to
-  Saturday since 12.10.2026), unmodified, plus the history the scraper's `with_history` builds from
-  the snapshots before that day: 57 more stores without a current leaflet, and `past` leaflets
-  since 2026-10-06 (formatted with Prettier). Every store has its own PDF; some PDFs name a
-  different store (e.g. Karlsruhe-Grünwinkel's names Karlsruhe-Oststadt).
-- `cards.json`: the offer scan of the same run, filtered with the current trading-card rule
-  (`is_card` in `scraper/src/kef_scraper/offers.py`): 4 Pokémon products in 49 stores. The raw file
-  also listed an album for cards in 784 stores, which the rule leaves out since #47.
-
-- `deals.json`: the offers of the Extra leaflets from the offer scan of Thursday 2026-11-12,
-  unmodified (formatted with Prettier): 72 offers valid 08.11. to 14.11.2026 in the 51 stores named
-  by their Extra PDF. It is from a later week than `extra.json`; each file is shifted by its own
-  date.
+- `extra.json` and `deals.json`: the scan of Thursday 2026-11-12 (21:15) from the `data` branch,
+  unmodified (formatted with Prettier).
+  - `extra.json`: 103 stores with Extra leaflets valid Monday 09.11. to Saturday 14.11.2026
+    (Kaufland's offer week runs Monday to Saturday since 12.10.2026) in 45 PDFs; 51 stores are
+    named by their PDF, 52 are not (e.g. Karlsruhe-Grünwinkel's names Karlsruhe-Oststadt). Every
+    store has a current leaflet, so the section "Derzeit ohne Extra-Prospekt" is empty; `past`
+    leaflets go back to 2026-10-06.
+  - `deals.json`: 72 offers valid 08.11. to 14.11.2026 in the 51 stores named by their Extra PDF.
+- `cards.json`: the offer scan of Monday 2026-11-02, filtered with the current trading-card rule
+  (`is_card` in `scraper/src/kef_scraper/offers.py`): 4 Pokémon products in 49 stores. It is older
+  than the other two because the scan of 2026-11-12 found no trading cards; each file is shifted
+  by its own date. The raw file also listed an album for cards in 784 stores, which the rule
+  leaves out since #47.
 
 ## Unit tests (`test/fixtures/`)
 

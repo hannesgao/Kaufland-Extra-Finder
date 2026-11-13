@@ -16,6 +16,17 @@ function linkTexts(el: Element) {
 }
 
 describe("renderHit", () => {
+  it("offers the store's Extra offers when there are some", () => {
+    const hit = nth(hitsFor(fixture(), PLZ_KARLSRUHE));
+    expect(renderHit(hit, vi.fn()).querySelector(".store__deals")).toBeNull();
+    const onClick = vi.fn();
+    const li = renderHit(hit, vi.fn(), undefined, { label: "27 Extra-Angebote", onClick });
+    const button = li.querySelector<HTMLButtonElement>(".store__deals");
+    expect(button?.textContent).toBe("27 Extra-Angebote");
+    button?.click();
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
   it("renders name, address, distance, label and siblings", () => {
     const li = renderHit(nth(hitsFor(fixture(), PLZ_KARLSRUHE)), vi.fn());
     expect(li.dataset.id).toBe("DE4443");

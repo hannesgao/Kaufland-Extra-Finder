@@ -309,94 +309,102 @@
               </div>
             </div>
 
-            <div class="search-options">
-              <fieldset class="outlined segmented">
-                <legend class="outlined__label">Umkreis</legend>
-                <div class="segmented__group">
-                  <label class="segment">
-                    <input type="radio" name="radius" value="10" />
-                    <span class="segment__check" data-icon="check"></span>10 km
+            <details class="filters" id="deals-filters" open>
+              <summary class="filters__summary">
+                <span data-icon="tune"></span>
+                <span class="filters__title">Filter und Sortierung</span>
+                <span class="filters__count" id="deals-filter-count" hidden></span>
+                <span class="filters__arrow" data-icon="expand_more"></span>
+              </summary>
+              <div class="search-options">
+                <fieldset class="outlined segmented">
+                  <legend class="outlined__label">Umkreis</legend>
+                  <div class="segmented__group">
+                    <label class="segment">
+                      <input type="radio" name="radius" value="10" />
+                      <span class="segment__check" data-icon="check"></span>10 km
+                    </label>
+                    <label class="segment">
+                      <input type="radio" name="radius" value="25" checked />
+                      <span class="segment__check" data-icon="check"></span>25 km
+                    </label>
+                    <label class="segment">
+                      <input type="radio" name="radius" value="50" />
+                      <span class="segment__check" data-icon="check"></span>50 km
+                    </label>
+                    <label class="segment">
+                      <input type="radio" name="radius" value="100" />
+                      <span class="segment__check" data-icon="check"></span>100 km
+                    </label>
+                  </div>
+                </fieldset>
+                <fieldset class="outlined switch-field">
+                  <legend class="outlined__label">Entfernung</legend>
+                  <label class="switch">
+                    <input type="checkbox" role="switch" class="switch__input" id="deals-near" />
+                    <span class="switch__label">Nur Filialen im Umkreis</span>
+                    <span class="switch__track" aria-hidden="true"
+                      ><span class="switch__thumb"></span
+                    ></span>
                   </label>
-                  <label class="segment">
-                    <input type="radio" name="radius" value="25" checked />
-                    <span class="segment__check" data-icon="check"></span>25 km
-                  </label>
-                  <label class="segment">
-                    <input type="radio" name="radius" value="50" />
-                    <span class="segment__check" data-icon="check"></span>50 km
-                  </label>
-                  <label class="segment">
-                    <input type="radio" name="radius" value="100" />
-                    <span class="segment__check" data-icon="check"></span>100 km
-                  </label>
-                </div>
-              </fieldset>
-              <fieldset class="outlined switch-field">
-                <legend class="outlined__label">Entfernung</legend>
-                <label class="switch">
-                  <input type="checkbox" role="switch" class="switch__input" id="deals-near" />
-                  <span class="switch__label">Nur Filialen im Umkreis</span>
-                  <span class="switch__track" aria-hidden="true"
-                    ><span class="switch__thumb"></span
-                  ></span>
-                </label>
-              </fieldset>
+                </fieldset>
 
-              <fieldset class="outlined segmented" id="deals-sort">
-                <legend class="outlined__label">Sortierung</legend>
-                <div class="segmented__group segmented__group--three">
-                  <label class="segment">
-                    <input type="radio" name="deals-sort" value="rabatt" checked />
-                    <span class="segment__check" data-icon="check"></span>Rabatt
-                  </label>
-                  <label class="segment">
-                    <input type="radio" name="deals-sort" value="filialen" />
-                    <span class="segment__check" data-icon="check"></span>Filialen
-                  </label>
-                  <label class="segment">
-                    <input type="radio" name="deals-sort" value="preis" />
-                    <span class="segment__check" data-icon="check"></span>Preis
-                  </label>
-                </div>
-              </fieldset>
+                <fieldset class="outlined segmented" id="deals-sort">
+                  <legend class="outlined__label">Sortierung</legend>
+                  <div class="segmented__group segmented__group--three">
+                    <label class="segment">
+                      <input type="radio" name="deals-sort" value="rabatt" checked />
+                      <span class="segment__check" data-icon="check"></span>Rabatt
+                    </label>
+                    <label class="segment">
+                      <input type="radio" name="deals-sort" value="filialen" />
+                      <span class="segment__check" data-icon="check"></span>Filialen
+                    </label>
+                    <label class="segment">
+                      <input type="radio" name="deals-sort" value="preis" />
+                      <span class="segment__check" data-icon="check"></span>Preis
+                    </label>
+                  </div>
+                </fieldset>
 
-              <fieldset class="outlined select-field">
-                <legend class="outlined__label">Kategorie</legend>
-                <div id="deals-section"></div>
-              </fieldset>
+                <fieldset class="outlined select-field">
+                  <legend class="outlined__label">Kategorie</legend>
+                  <div id="deals-section"></div>
+                </fieldset>
 
-              <fieldset class="outlined switch-field">
-                <legend class="outlined__label">Verbreitung</legend>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    role="switch"
-                    class="switch__input"
-                    id="deals-common"
-                    checked
-                  />
-                  <span class="switch__label">Nur verbreitete Angebote</span>
-                  <span class="switch__track" aria-hidden="true"
-                    ><span class="switch__thumb"></span
-                  ></span>
-                </label>
-              </fieldset>
-              <fieldset class="outlined switch-field">
-                <legend class="outlined__label">PDF-Prüfung</legend>
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    role="switch"
-                    class="switch__input"
-                    id="deals-unconfirmed"
-                  />
-                  <span class="switch__label">Auch nicht im PDF gefundene</span>
-                  <span class="switch__track" aria-hidden="true"
-                    ><span class="switch__thumb"></span
-                  ></span>
-                </label>
-              </fieldset>
-            </div>
+                <fieldset class="outlined switch-field">
+                  <legend class="outlined__label">Verbreitung</legend>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      role="switch"
+                      class="switch__input"
+                      id="deals-common"
+                      checked
+                    />
+                    <span class="switch__label">Nur verbreitete Angebote</span>
+                    <span class="switch__track" aria-hidden="true"
+                      ><span class="switch__thumb"></span
+                    ></span>
+                  </label>
+                </fieldset>
+                <fieldset class="outlined switch-field">
+                  <legend class="outlined__label">PDF-Prüfung</legend>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      role="switch"
+                      class="switch__input"
+                      id="deals-unconfirmed"
+                    />
+                    <span class="switch__label">Auch nicht im PDF gefundene</span>
+                    <span class="switch__track" aria-hidden="true"
+                      ><span class="switch__thumb"></span
+                    ></span>
+                  </label>
+                </fieldset>
+              </div>
+            </details>
           </form>
         </section>
 
@@ -411,6 +419,14 @@
             <span class="banner__icon" data-icon="schedule"></span>
             <p id="deals-age">Wird geladen …</p>
           </div>
+        </div>
+
+        <div class="banner deals-store" id="deals-store" hidden>
+          <span class="banner__icon" data-icon="storefront"></span>
+          <p id="deals-store-text"></p>
+          <button type="button" class="btn btn--sm btn--text" id="deals-store-clear">
+            <span data-icon="close"></span>Alle Filialen
+          </button>
         </div>
 
         <ol
