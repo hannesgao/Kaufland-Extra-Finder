@@ -40,6 +40,7 @@
   --on-warning-container: #231b00;
   --md-shadow: 0 0 0;
 
+  /* Map overlays sit on OSM tiles, which are light in both schemes: one set of colours. */
   --map-marker: #006a60;
   --map-marker-closed: #8a9491;
   --map-marker-foreign: #d9480f;
@@ -101,15 +102,6 @@
     --warning: #f2cc2e;
     --warning-container: #534600;
     --on-warning-container: #ffe76b;
-
-    --map-marker: #82d5c8;
-    --map-marker-closed: #6f7976;
-    --map-marker-foreign: #ff8a50;
-    --map-marker-dormant: #2b3331;
-    --map-marker-dormant-ring: #8a9491;
-    --map-marker-stroke: #0e1513;
-    --map-origin: #afc6ff;
-    --map-radius: #afc6ff;
   }
 }
 
@@ -2478,6 +2470,13 @@ a.credit:hover,
     transition: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* The credit floats clear of the map's rounded corner, which used to cut off its last letters. */
+.map .leaflet-bottom .leaflet-control-attribution {
+  margin: 0 12px 8px 0;
+  padding: 1px 8px;
+  border-radius: var(--shape-full);
 }
 
 /* Leaflet controls in the dark scheme */
