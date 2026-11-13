@@ -2181,7 +2181,7 @@ a.credit:hover,
   cursor: pointer;
 }
 
-/* Narrow screens get short tab labels, then no icons, so all four tabs fit without scrolling. */
+/* Below 800px the tabs get short labels. */
 .tab__label--short {
   display: none;
 }
@@ -2197,23 +2197,6 @@ a.credit:hover,
 
   .tab__label--short {
     display: inline;
-  }
-}
-
-@media (max-width: 519px) {
-  .tab {
-    padding: 0 6px;
-  }
-
-  .tab .icon {
-    display: none;
-  }
-}
-
-@media (max-width: 359px) {
-  .tab {
-    padding: 0 4px;
-    font-size: 0.8125rem;
   }
 }
 
@@ -2249,6 +2232,95 @@ a.credit:hover,
 
 .tab:focus-visible {
   outline-offset: -3px;
+}
+
+/*
+ * Phones: the tabs become an M3 navigation bar fixed to the bottom edge, so every view stays
+ * visible and in reach of the thumb. Same elements and roles, only placed and styled differently.
+ */
+@media (max-width: 599px) {
+  :root {
+    --nav-bar-height: 64px;
+  }
+
+  html {
+    scroll-padding-bottom: var(--nav-bar-height);
+  }
+
+  body {
+    padding-bottom: var(--nav-bar-height);
+  }
+
+  .tabs {
+    position: fixed;
+    z-index: 1100; /* above the Leaflet panes and controls (up to 1000) */
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: var(--nav-bar-height);
+    overflow: visible;
+    border-top: 1px solid var(--md-outline-variant);
+    background: var(--md-surface-container);
+  }
+
+  .tab {
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  .tab:hover {
+    background: transparent;
+  }
+
+  /* Active indicator: a pill behind the icon instead of the underline. */
+  .tab::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: 56px;
+    height: 28px;
+    border-radius: 14px;
+    translate: -50% 0;
+  }
+
+  .tab:hover::before {
+    background: color-mix(in srgb, var(--md-on-surface) var(--state-hover), transparent);
+  }
+
+  .tab[aria-selected="true"]::before {
+    background: var(--md-secondary-container);
+  }
+
+  .tab[aria-selected="true"]::after {
+    content: none;
+  }
+
+  .tab .icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+  }
+
+  .tab[aria-selected="true"] {
+    color: var(--md-on-surface);
+    font-weight: 700;
+  }
+
+  .tab[aria-selected="true"] .icon {
+    color: var(--md-on-secondary-container);
+  }
+
+  .tab:focus-visible {
+    outline-offset: -4px;
+  }
 }
 
 /* ---------- All stores list ---------- */
