@@ -372,3 +372,94 @@ def build_deals(
         "products": products,
         "stores": stores,
     }
+
+
+OFFERS_SCHEMA_VERSION = 1
+
+
+def _listed_offer(offer: Offer) -> dict[str, Any]:
+    out = _card_offer(offer)
+    del out["category"], out["week"]  # the week follows from the sale dates
+    out |= {
+        "old_price": offer.old_price,
+        "base_price": offer.base_price,
+        "card_price": offer.card_price,
+        "card_base_price": offer.card_base_price,
+        "description": offer.description if offer.description != offer.subtitle else None,
+        "department": offer.department,
+    }
+    if offer.multi_buy:
+        out["multi_buy"] = list(offer.multi_buy)
+    out["sections"] = list(offer.sections)
+    return {k: v for k, v in out.items() if v is not None}
+
+
+def build_offers(result: ScanResult, generated_at: dt.datetime) -> dict[str, Any]:
+    """Every offer of every store (`offers/`): a shared catalog and one small file per store.
+
+    Returns `index` (the stores and how many offers each has), `catalog` (each offer once, as
+    most stores have it, and under `common` the keys of the offers most stores have) and `stores`.
+    A store's offers are the common ones without its `missing` plus its `added`; `overrides`
+    holds the fields in which its offer differs from the catalog (null removes a field). Listing
+    only the differences keeps the 788 store files small: most offers are the same everywhere.
+    """
+    if generated_at.tzinfo is None:
+        raise ValueError("generated_at must be timezone-aware")
+    stamp = generated_at.isoformat(timespec="seconds")
+    scanned = sorted(
+        (r for r in result.results if r.offers_scanned and not r.offers_error and r.offers),
+        key=lambda r: r.store.id,
+    )
+    records: dict[Offer, dict[str, Any]] = {}  # per distinct offer, shared between stores
+    tally: dict[str, dict[Offer, int]] = {}
+    for r in scanned:
+        for o in r.offers:
+            if o not in records:
+                records[o] = _listed_offer(o)
+            counts = tally.setdefault(offer_key(o), {})
+            counts[o] = counts.get(o, 0) + 1
+    # Most common variant; ties go to the first one seen, in store order.
+    usual = {key: max(counts, key=lambda o: counts[o]) for key, counts in tally.items()}
+    catalog = {key: records[usual[key]] for key in sorted(usual)}
+    common = {key for key, counts in tally.items() if 2 * sum(counts.values()) > len(scanned)}
+    stores: dict[str, dict[str, Any]] = {}
+    index = []
+    for r in scanned:
+        overrides: dict[str, dict[str, Any]] = {}
+        own_keys = {offer_key(o) for o in r.offers}
+        for o in r.offers:
+            key = offer_key(o)
+            if o == usual[key]:
+                continue
+            base, own = catalog[key], records[o]
+            changed = {k: own.get(k) for k in base.keys() | own.keys() if base.get(k) != own.get(k)}
+            if changed:
+                overrides[key] = dict(sorted(changed.items()))
+        stores[r.store.id] = {
+            "schema_version": OFFERS_SCHEMA_VERSION,
+            "generated_at": stamp,
+            "id": r.store.id,
+            "added": sorted(own_keys - common),
+            "missing": sorted(common - own_keys),
+            **({"overrides": dict(sorted(overrides.items()))} if overrides else {}),
+        }
+        s = r.store
+        index.append(
+            {
+                "id": s.id,
+                "name": s.name,
+                "plz": s.plz,
+                "city": s.city,
+                "street": s.street,
+                "lat": s.lat,
+                "lng": s.lng,
+                **({"url": s.url} if s.url else {}),
+                "offers": len(r.offers),
+            }
+        )
+    head = {"schema_version": OFFERS_SCHEMA_VERSION, "generated_at": stamp}
+    return {
+        "index": head | {"stores": index},
+        "catalog": head | {"common": sorted(common), "products": catalog},
+        "stores": stores,
+    }

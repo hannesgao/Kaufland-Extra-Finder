@@ -377,3 +377,42 @@ class TestHistory:
         assert _run(fetcher, out, *args, now=TUESDAY) == EXIT_OK
         kassel = self._stores(out)["DE4453"]
         assert [lf["valid_from"] for lf in kassel["leaflets"]] == ["2026-10-08"]
+
+
+def test_full_offer_scan_writes_the_catalog_and_drops_closed_stores(
+    tmp_path: Path,
+    pages: dict[str, str],
+    full_list: list[dict[str, Any]],
+    offer_page: str,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    out = tmp_path / "data"
+    stale = out / "offers" / "stores" / "DE0001.json"  # a store that has closed since
+    stale.parent.mkdir(parents=True)
+    stale.write_text("{}")
+    fetcher = FakeFetcher(full_list, pages, default=MINIMAL_PAGE, offer_default=offer_page)
+    assert _run(fetcher, out, "--offers", "--skip-pdf-check") == EXIT_OK
+
+    catalog = json.loads((out / "offers" / "catalog.json").read_text())
+    index = json.loads((out / "offers" / "index.json").read_text())
+    store = json.loads((out / "offers" / "stores" / "DE4453.json").read_text())
+    assert len(catalog["products"]) == len(catalog["common"]) == 10
+    assert len(index["stores"]) == 705
+    assert catalog["generated_at"] == index["generated_at"] == store["generated_at"]
+    assert (store["added"], store["missing"]) == ([], [])  # every store has the same page here
+    assert not stale.exists()
+    assert len(list(stale.parent.iterdir())) == 705
+    assert "Offer catalog: 10 offers in 705 stores" in capsys.readouterr().out
+
+
+def test_rejected_offer_scan_keeps_the_previous_catalog(
+    tmp_path: Path, pages: dict[str, str], full_list: list[dict[str, Any]]
+) -> None:
+    out = tmp_path / "data"
+    previous = out / "offers" / "catalog.json"
+    previous.parent.mkdir(parents=True)
+    previous.write_text("{}")
+    fetcher = FakeFetcher(full_list, pages, default=MINIMAL_PAGE, offer_default="<html/>")
+    assert _run(fetcher, out, "--offers", "--skip-pdf-check") == EXIT_OK
+    assert previous.read_text() == "{}"
+    assert not (out / "offers" / "index.json").exists()

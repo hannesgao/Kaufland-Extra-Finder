@@ -40,16 +40,16 @@ Please don't run full scans locally; they run on a schedule in GitHub Actions.
 
 `kef-scrape` options:
 
-| Option             | Default | Meaning                                                                                                       |
-| ------------------ | ------- | ------------------------------------------------------------------------------------------------------------- |
-| `--out DIR`        | `data`  | Where `extra.json`, `history.csv`, `snapshots/` (and with `--offers` `cards.json`, `deals.json`) are written. |
-| `--previous DIR`   | `--out` | Previous run's output (CI: the `data` branch checkout), used for `history.csv` and the diff.                  |
-| `--stores IDS`     | all     | Comma-separated store ids; skips the minimum-store-count check.                                               |
-| `--workers N`      | 4       | Concurrent requests, 1–4.                                                                                     |
-| `--delay S`        | 0.25    | Pause before each request.                                                                                    |
-| `--summary FILE`   | –       | Append a Markdown report (e.g. `$GITHUB_STEP_SUMMARY`).                                                       |
-| `--skip-pdf-check` | off     | Don't download new Extra PDFs for the PDF check (see below).                                                  |
-| `--offers`         | off     | Also read every store's offer overview and write `cards.json` and `deals.json` (see below).                   |
+| Option             | Default | Meaning                                                                                                                  |
+| ------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `--out DIR`        | `data`  | Where `extra.json`, `history.csv`, `snapshots/` (and with `--offers` `cards.json`, `deals.json`, `offers/`) are written. |
+| `--previous DIR`   | `--out` | Previous run's output (CI: the `data` branch checkout), used for `history.csv` and the diff.                             |
+| `--stores IDS`     | all     | Comma-separated store ids; skips the minimum-store-count check.                                                          |
+| `--workers N`      | 4       | Concurrent requests, 1–4.                                                                                                |
+| `--delay S`        | 0.25    | Pause before each request.                                                                                               |
+| `--summary FILE`   | –       | Append a Markdown report (e.g. `$GITHUB_STEP_SUMMARY`).                                                                  |
+| `--skip-pdf-check` | off     | Don't download new Extra PDFs for the PDF check (see below).                                                             |
+| `--offers`         | off     | Also read every store's offer overview and write `cards.json`, `deals.json` and `offers/` (see below).                   |
 
 Exit codes: `0` success, `1` error (store list unavailable, unknown store id, …),
 `2` sanity check failed (fewer than 700 stores or more than 5 % failures) — nothing is written.
@@ -241,8 +241,66 @@ keyword without card wording), so a new brand or unusual wording shows up there.
 }
 ```
 
+### Every offer of every store (`offers/`)
+
+With `--offers`, a full scan also writes all offers of all stores, about 1200 per store. Most of
+them are the same in most stores, so they are stored once:
+
+- `offers/catalog.json`: every offer once, as most stores have it (`products`), and the keys of
+  the offers that more than half of the stores have (`common`).
+- `offers/index.json`: the stores with address, coordinates and their number of offers.
+- `offers/stores/<store id>.json`: how the store differs. Its offers are `common` without its
+  `missing` plus its `added`; `overrides` holds the fields in which one of its offers differs from
+  the catalog, mostly prices (`null`: the store's offer has no such field).
+
+```jsonc
+// offers/catalog.json
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-14T07:11:15+01:00",
+  "common": ["00424937|2026-11-08"],
+  "products": {
+    "00424937|2026-11-08": {
+      "kl_nr": "00424937",
+      "title": "KINDER",
+      "subtitle": "Pingui",
+      "description": "Schoko-Milch-Dessert, gekühlt", // omitted when equal to the subtitle
+      "price": "2.49",
+      "old_price": "3.29",
+      "unit": "je 8 St. = 240-g-Packg.",
+      "base_price": "(1 kg = 10.38)",
+      "card_price": "2.22", // with the Kaufland Card
+      "card_base_price": "(1 kg = 9.25)",
+      "multi_buy": ["3 Stück", "entspr. pro Packg. 1.34"], // price applies from this quantity
+      "sales_from": "2026-11-09", // days the price applies ("Ab Do." offers start on Thursday)
+      "sales_to": "2026-11-14",
+      "shown_from": "2026-11-08", // days the offer is on the website
+      "shown_to": "2026-11-14",
+      "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/…?…", // 150 px
+      "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/…?…", // 322 px
+      "department": "Molkereiprodukte, Fette", // first assortment category; promotions have none
+      "sections": ["Molkereiprodukte, Fette", "Ab Mo.: Jetzt sparen mit Kaufland Card XTRA"],
+    },
+  },
+}
+
+// offers/stores/DE4453.json
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-14T07:11:15+01:00",
+  "id": "DE4453",
+  "added": ["00010536|2026-11-15"],
+  "missing": [],
+  "overrides": { "00424937|2026-11-08": { "old_price": null, "price": "2.79" } },
+}
+```
+
+A full scan removes the files of stores it no longer has. A scan of a few stores (`--stores`)
+only writes those stores' files and leaves the catalog and the index alone. Optional fields are
+omitted when Kaufland gives no value.
+
 A store whose page has no offer data (e.g. a closed store) counts as a store without offers. If
-more than 5 % of the offer overviews fail or have no offer data, `cards.json` and `deals.json` are not written (the
+more than 5 % of the offer overviews fail or have no offer data, `cards.json`, `deals.json` and `offers/` are not written (the
 previous ones stay) while `extra.json` is still updated. An offer means the store advertises it,
 not that it is in stock.
 

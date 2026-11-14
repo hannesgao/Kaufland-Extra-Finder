@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 
 from kef_scraper.fetch import MAX_WORKERS, Fetcher, FetchError
-from kef_scraper.models import Leaflet, ScanResult, Store, StoreResult, Tile
+from kef_scraper.models import Leaflet, Offer, ScanResult, Store, StoreResult, Tile
 from kef_scraper.offers import is_card, is_card_like, is_extra_offer, parse_offers
 from kef_scraper.parse import ParseError, is_extra, is_standard, parse_tiles, to_leaflet
 from kef_scraper.pdfcheck import PdfCheck, check_pdf
@@ -38,8 +38,14 @@ def _leaflets(fetcher: Fetcher, store: Store) -> StoreResult:
     return StoreResult(store=store, leaflets=tuple(ordered), unusual=tuple(unusual))
 
 
-def _with_offers(fetcher: Fetcher, result: StoreResult) -> StoreResult:
-    """Add the store's trading-card and Extra offers. Independent of the leaflet result."""
+def _with_offers(
+    fetcher: Fetcher, result: StoreResult, shared: dict[Offer, Offer] | None = None
+) -> StoreResult:
+    """Add the store's offers. Independent of the leaflet result.
+
+    Most offers are identical in hundreds of stores: `shared` keeps one object per distinct offer
+    for the whole scan instead of one per store.
+    """
     store = result.store
     try:
         offers = parse_offers(fetcher.offers_page(store.id))
@@ -48,19 +54,28 @@ def _with_offers(fetcher: Fetcher, result: StoreResult) -> StoreResult:
         return replace(result, offers_scanned=True, offers_error=str(e))
     if offers is None:
         return replace(result, offers_scanned=True, no_offer_page=True)
+    if shared is not None:
+        offers = [shared.setdefault(o, o) for o in offers]
     return replace(
         result,
         offers_scanned=True,
         cards=tuple(o for o in offers if is_card(o)),
         card_like=tuple(o for o in offers if is_card_like(o)),
         extra_offers=tuple(o for o in offers if is_extra_offer(o)),
+        offers=tuple(offers),
     )
 
 
-def scan_store(fetcher: Fetcher, store: Store, *, with_offers: bool = False) -> StoreResult:
+def scan_store(
+    fetcher: Fetcher,
+    store: Store,
+    *,
+    with_offers: bool = False,
+    shared: dict[Offer, Offer] | None = None,
+) -> StoreResult:
     """Fetch and classify one store. Never raises for expected failures; sets errors instead."""
     result = _leaflets(fetcher, store)
-    return _with_offers(fetcher, result) if with_offers else result
+    return _with_offers(fetcher, result, shared) if with_offers else result
 
 
 def scan(
@@ -76,8 +91,13 @@ def scan(
     what = "leaflets and offers" if with_offers else "leaflets"
     log.info("Scanning %s of %d stores with %d workers ...", what, len(stores), workers)
     t0 = time.monotonic()
+    shared: dict[Offer, Offer] = {}
     with ThreadPoolExecutor(workers) as pool:
-        results = tuple(pool.map(lambda s: scan_store(fetcher, s, with_offers=with_offers), stores))
+        results = tuple(
+            pool.map(
+                lambda s: scan_store(fetcher, s, with_offers=with_offers, shared=shared), stores
+            )
+        )
     return ScanResult(
         results=results,
         full_scan=full_scan,

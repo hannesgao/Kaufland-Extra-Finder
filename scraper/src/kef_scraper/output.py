@@ -44,8 +44,9 @@ def write_text_atomic(path: Path, text: str) -> None:
         raise
 
 
-def dump_json(obj: object, *, indent: int = 2) -> str:
-    return json.dumps(obj, ensure_ascii=False, indent=indent) + "\n"
+def dump_json(obj: object, *, indent: int | None = 2) -> str:
+    separators = (",", ":") if indent is None else None
+    return json.dumps(obj, ensure_ascii=False, indent=indent, separators=separators) + "\n"
 
 
 def build_snapshot(
@@ -381,6 +382,21 @@ def extra_offer_lines(
     return out
 
 
+def catalog_lines(offers: dict[str, Any] | None) -> list[str]:
+    """Report lines about the offer catalog (`offers/`); empty when it was not built."""
+    if offers is None:
+        return []
+    counts = sorted(s["offers"] for s in offers["index"]["stores"])
+    if not counts:
+        return ["Offer catalog: no store with offers"]
+    overrides = sum(len(s.get("overrides", ())) for s in offers["stores"].values())
+    return [
+        f"Offer catalog: {len(offers['catalog']['products'])} offers in {len(counts)} stores",
+        f"  per store: {counts[0]} to {counts[-1]}, median {counts[len(counts) // 2]}; "
+        f"{overrides} offers differ from the catalog",
+    ]
+
+
 def render_report(
     result: ScanResult,
     extra: dict[str, Any],
@@ -389,6 +405,7 @@ def render_report(
     offers_problems: list[str] | None = None,
     pdf_checks: Mapping[str, PdfCheck] | None = None,
     deals: dict[str, Any] | None = None,
+    offers: dict[str, Any] | None = None,
 ) -> str:
     headline, status, changes = _summary_lines(result, extra, diff)
     unusual = [
@@ -408,6 +425,7 @@ def render_report(
     extra_lines = extra_offer_lines(result, extra, pdf_checks, deals)
     if extra_lines:
         out += ["", *extra_lines]
+    out += ["", *catalog_lines(offers)] if offers is not None else []
     if result.failed_count:
         out += ["", "Failures:", *(f"  {r.store.id}: {r.error}" for r in result.failures)]
         out += [f"  store list: {e}" for e in result.list_errors]
@@ -423,6 +441,7 @@ def render_summary_md(
     offers_problems: list[str] | None = None,
     pdf_checks: Mapping[str, PdfCheck] | None = None,
     deals: dict[str, Any] | None = None,
+    offers: dict[str, Any] | None = None,
 ) -> str:
     """Markdown for $GITHUB_STEP_SUMMARY."""
     headline, status, changes = _summary_lines(result, extra, diff)
@@ -444,4 +463,6 @@ def render_summary_md(
     extra_lines = extra_offer_lines(result, extra, pdf_checks, deals)
     if extra_lines:
         out += ["", "### 🛒 Extra offers", "", "```", *extra_lines, "```"]
+    if offers is not None:
+        out += ["", "### 🧾 Offer catalog", "", "```", *catalog_lines(offers), "```"]
     return "\n".join(out) + "\n"

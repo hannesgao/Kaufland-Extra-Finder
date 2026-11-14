@@ -66,7 +66,9 @@ class Offer:
     unit: str | None
     shown_from: dt.date  # advertised on the website (for announced offers: before the sale)
     shown_to: dt.date
-    sales_from: dt.date | None  # set for announced offers ("Vorwerbung"): the actual sale
+    # Days the price applies, e.g. Thu-Sat for the "Ab Do." offers. Until Oct 2026 only announced
+    # offers ("Vorwerbung") had them; now every offer does.
+    sales_from: dt.date | None
     sales_to: dt.date | None
     category: str  # internal category name, e.g. "Vorwerbung"
     week: str  # "current" or "next": the week of the offer overview that lists it
@@ -76,6 +78,14 @@ class Offer:
     # Display names of every category that lists the offer, e.g. ("Molkereiprodukte, Fette",
     # "Extra-Angebote"), in page order.
     sections: tuple[str, ...] = ()
+    # Display name of the first assortment category ("main" on the page) that lists the offer,
+    # e.g. "Molkereiprodukte, Fette"; None for offers that are only in promotion categories.
+    department: str | None = None
+    description: str | None = None  # e.g. "versch. Sorten, gekühlt"
+    base_price: str | None = None  # e.g. "(1 kg = 9.95)"
+    card_price: str | None = None  # with the Kaufland Card, e.g. "2.22" (Kaufland's "*" removed)
+    card_base_price: str | None = None  # e.g. "(1 kg = 9.25)"
+    multi_buy: tuple[str, ...] = ()  # e.g. ("3 Stück", "entspr. pro Beutel 1.34")
 
 
 @dataclass(frozen=True, slots=True)
@@ -91,6 +101,7 @@ class StoreResult:
     cards: tuple[Offer, ...] = ()
     card_like: tuple[Offer, ...] = ()
     extra_offers: tuple[Offer, ...] = ()  # offers in the section "Extra-Angebote"
+    offers: tuple[Offer, ...] = ()  # every offer of the overview
     no_offer_page: bool = False
     offers_error: str | None = None
 
