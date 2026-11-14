@@ -3375,7 +3375,7 @@ button.segment:disabled {
 
 .zoffer__prices {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto auto minmax(0, 1fr);
   align-items: baseline;
   column-gap: 8px;
   white-space: nowrap;
@@ -3400,8 +3400,26 @@ button.segment:disabled {
   line-height: 1.125rem;
 }
 
+/* The deposit follows the price; with a card price beside it, it goes to the line below. */
+.zoffer__deposit {
+  grid-area: 1 / 2 / auto / -1;
+}
+
+.zoffer__prices:has(.zoffer__cardprice) .zoffer__deposit {
+  grid-area: 2 / 2 / auto / -1;
+}
+
+.zoffer__deposit,
+.zitem__deposit {
+  color: var(--md-on-surface);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .zoffer__cardprice {
-  grid-area: 1 / 2;
+  grid-area: 1 / 3;
   justify-self: end;
 }
 
@@ -3466,18 +3484,27 @@ button.segment:disabled {
   white-space: nowrap;
 }
 
-/* Narrow tiles put the card price under the comparison price. */
+/* Narrow tiles stack them: price, deposit, comparison price, card price. */
 @container (max-width: 200px) {
   .zoffer__prices {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: 1.75rem 1.125rem auto;
-    row-gap: 2px;
+  }
+
+  .zoffer__deposit,
+  .zoffer__prices:has(.zoffer__cardprice) .zoffer__deposit {
+    grid-area: 2 / 1;
+    line-height: 1.0625rem;
+  }
+
+  .zoffer__old {
+    grid-area: 3 / 1;
   }
 
   .zoffer__cardprice,
   .zoffer__cardprice--only {
-    grid-area: 3 / 1;
+    grid-area: 4 / 1;
     justify-self: start;
+    margin-top: 2px;
   }
 }
 
@@ -4031,6 +4058,12 @@ button.segment:disabled {
 
 .sheet-item__regular {
   display: contents;
+}
+
+.sheet-item__deposit {
+  font-size: 8pt;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .sheet-item__cardprice {

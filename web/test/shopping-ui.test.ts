@@ -6,6 +6,7 @@ import {
   germanDecimals,
   multiBuyText,
   packText,
+  splitDeposit,
   unitFacts,
 } from "../src/ui/shopping";
 
@@ -91,8 +92,34 @@ describe("unit facts", () => {
   });
 
   it("names the pack, unless the unit says nothing", () => {
-    expect(packText({ unit: "je Ka. 20 x 0,5-l-Fl." })).toBe("je Ka. 20 x 0,5-l-Fl.");
+    expect(packText({ unit: "je Ka. 20 x 0,5-l-Fl." })).toBe("Ka. 20 x 0,5-l-Fl.");
+    expect(packText({ unit: "je kg" })).toBe("kg");
+    expect(packText({ unit: "je-1,5kg-Bund" })).toBe("1,5kg-Bund");
+    expect(packText({ unit: "jede Sorte" })).toBe("jede Sorte");
     expect(packText({ unit: "je" })).toBeNull();
     expect(packText({})).toBeNull();
+  });
+});
+
+describe("splitDeposit", () => {
+  it("takes the deposit out of the description", () => {
+    expect(splitDeposit("auch alkoholfrei (+ 3.10 Pfand)")).toEqual({
+      text: "auch alkoholfrei",
+      deposit: "3.10",
+    });
+    expect(splitDeposit("max. 3 % Fett (+ 0.15 Flaschenpfand), gekühlt")).toEqual({
+      text: "max. 3 % Fett, gekühlt",
+      deposit: "0.15",
+    });
+  });
+
+  it("leaves no text when the deposit was all there was", () => {
+    expect(splitDeposit("(+ 3.42 Pfand)")).toEqual({ deposit: "3.42" });
+  });
+
+  it("keeps a description without a deposit", () => {
+    expect(splitDeposit("versch. Sorten")).toEqual({ text: "versch. Sorten" });
+    expect(splitDeposit("ohne Pfand")).toEqual({ text: "ohne Pfand" });
+    expect(splitDeposit(undefined)).toEqual({});
   });
 });
