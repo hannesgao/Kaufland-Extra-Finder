@@ -82,51 +82,63 @@ function picture(
   });
 }
 
-/** Price, comparison price and discount; offers that only have a card price show that one. */
+/**
+ * Price with its comparison price, then the Kaufland Card price as a tag of its own, then the
+ * discount. Offers that are only sold with the card have no regular price.
+ */
 function prices(offer: Offer, className: string, withDiscount = true): HTMLDivElement {
   const discount = withDiscount ? discountPercent(offer.price, offer.oldPrice) : null;
-  const main = offer.price ?? offer.cardPrice;
+  const { price, oldPrice, cardPrice } = offer;
   return h(
     "div",
     { class: `${className}__prices` },
-    main !== undefined && h("span", { class: `${className}__price` }, formatPrice(main)),
-    offer.price !== undefined &&
-      offer.oldPrice !== undefined &&
+    price !== undefined &&
       h(
-        "s",
-        { class: `${className}__old` },
-        h("span", { class: "visually-hidden" }, "statt "),
-        formatPrice(offer.oldPrice),
+        "span",
+        { class: `${className}__regular` },
+        h("span", { class: `${className}__price` }, formatPrice(price)),
+        oldPrice !== undefined &&
+          h(
+            "s",
+            { class: `${className}__old` },
+            h("span", { class: "visually-hidden" }, "statt "),
+            formatPrice(oldPrice),
+          ),
+      ),
+    cardPrice !== undefined &&
+      h(
+        "span",
+        {
+          class: `${className}__cardprice${price === undefined ? ` ${className}__cardprice--only` : ""}`,
+          title: price === undefined ? "Preis nur mit Kaufland Card" : "Preis mit Kaufland Card",
+        },
+        icon("credit_card"),
+        h(
+          "span",
+          { class: `${className}__cardlabel` },
+          price === undefined ? "nur mit Kaufland Card" : "mit Kaufland Card",
+        ),
+        " ",
+        formatPrice(cardPrice),
       ),
     discount !== null &&
       h("span", { class: `chip ${className}__discount` }, `−${String(discount)}\u00a0%`),
   );
 }
 
-/** Unit and base price, card price, multi-buy condition: the small print under the price. */
+/** Unit and base prices and the multi-buy condition: the small print. */
 function conditions(offer: Offer, className: string): Child[] {
-  const unit = [offer.unit, offer.basePrice && germanDecimals(offer.basePrice)]
+  const unit = [
+    offer.unit,
+    offer.basePrice && germanDecimals(offer.basePrice),
+    offer.cardBasePrice && `mit Kaufland Card ${germanDecimals(offer.cardBasePrice)}`,
+  ]
     .filter(Boolean)
     .join(" ");
   const multiBuy = multiBuyText(offer.multiBuy);
-  const cardOnly = offer.price === undefined && offer.cardPrice !== undefined;
-  const card =
-    offer.cardPrice === undefined
-      ? null
-      : cardOnly
-        ? "Preis nur mit Kaufland Card"
-        : `Mit Kaufland Card: ${formatPrice(offer.cardPrice)}`;
-  const cardBase = offer.cardBasePrice ? ` ${germanDecimals(offer.cardBasePrice)}` : "";
   return [
     unit && h("p", { class: `${className}__unit` }, unit),
     multiBuy && h("p", { class: `${className}__extra` }, multiBuy),
-    card &&
-      h(
-        "p",
-        { class: `${className}__extra ${className}__card` },
-        icon("credit_card"),
-        card + cardBase,
-      ),
   ];
 }
 
