@@ -82,6 +82,12 @@ function picture(
   });
 }
 
+/** Kaufland compares some prices with the list price: "UVP 47.69" becomes "UVP 47,69 €". */
+export function comparisonPrice(oldPrice: string): string {
+  const listPrice = /^UVP\s+(\d+(?:\.\d+)?)$/.exec(oldPrice)?.[1];
+  return listPrice === undefined ? formatPrice(oldPrice) : `UVP\u00a0${formatPrice(listPrice)}`;
+}
+
 /**
  * Price with its comparison price, then the Kaufland Card price as a tag of its own, then the
  * discount. Offers that are only sold with the card have no regular price.
@@ -102,7 +108,7 @@ function prices(offer: Offer, className: string, withDiscount = true): HTMLDivEl
             "s",
             { class: `${className}__old` },
             h("span", { class: "visually-hidden" }, "statt "),
-            formatPrice(oldPrice),
+            comparisonPrice(oldPrice),
           ),
       ),
     cardPrice !== undefined &&
