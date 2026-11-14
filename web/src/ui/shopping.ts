@@ -132,18 +132,40 @@ function prices(offer: Offer, className: string, withDiscount = true): HTMLDivEl
   );
 }
 
-/** Unit and base prices and the multi-buy condition: the small print. */
+/**
+ * Kaufland's base price text as separate facts: "Abtropfgewicht 250 g (1 kg = 9.90)" becomes
+ * "Abtropfgewicht 250 g" and "1 kg = 9,90"; several bracketed prices become one fact each.
+ */
+export function basePriceLines(basePrice: string | undefined): string[] {
+  if (!basePrice) return [];
+  return germanDecimals(basePrice)
+    .split(/[()]|\s\/\s/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+/** What the pack is and what it costs per kilogram, litre or piece: one line per fact. */
+export function unitLines(offer: Offer): string[] {
+  const unit = offer.unit?.trim();
+  return [
+    // A bare "je" only introduces Kaufland's price tag.
+    ...(unit && unit !== "je" ? [unit] : []),
+    ...basePriceLines(offer.basePrice),
+    ...basePriceLines(offer.cardBasePrice).map((line) => `mit Kaufland Card: ${line}`),
+  ];
+}
+
+/** Unit, base prices and the multi-buy condition: the small print, apart from the description. */
 function conditions(offer: Offer, className: string): Child[] {
-  const unit = [
-    offer.unit,
-    offer.basePrice && germanDecimals(offer.basePrice),
-    offer.cardBasePrice && `mit Kaufland Card ${germanDecimals(offer.cardBasePrice)}`,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  const lines = unitLines(offer);
   const multiBuy = multiBuyText(offer.multiBuy);
   return [
-    unit && h("p", { class: `${className}__unit` }, unit),
+    lines.length > 0 &&
+      h(
+        "ul",
+        { class: `${className}__units` },
+        ...lines.map((line) => h("li", { class: `${className}__unit` }, line)),
+      ),
     multiBuy && h("p", { class: `${className}__extra` }, multiBuy),
   ];
 }
