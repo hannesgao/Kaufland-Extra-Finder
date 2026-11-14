@@ -95,6 +95,7 @@ export function comparisonPrice(oldPrice: string): string {
 function prices(offer: Offer, className: string, withDiscount = true): HTMLDivElement {
   const discount = withDiscount ? discountPercent(offer.price, offer.oldPrice) : null;
   const { price, oldPrice, cardPrice } = offer;
+  const { deposit } = splitDeposit(offer.description);
   return h(
     "div",
     { class: `${className}__prices` },
@@ -103,6 +104,8 @@ function prices(offer: Offer, className: string, withDiscount = true): HTMLDivEl
         "span",
         { class: `${className}__regular` },
         h("span", { class: `${className}__price` }, formatPrice(price)),
+        deposit !== undefined &&
+          h("span", { class: `${className}__deposit` }, `+\u00a0${formatPrice(deposit)} Pfand`),
         oldPrice !== undefined &&
           h(
             "s",
@@ -165,13 +168,29 @@ export function basePriceFacts(basePrice: string | undefined): UnitFact[] {
 }
 
 /**
- * What the price is for: "je Ka. 20 x 0,5-l-Fl.". Shown right under the name, because offers of
- * one product in two pack sizes differ in nothing else. A bare "je" only introduces Kaufland's
- * price tag.
+ * What the price is for: "Ka. 20 x 0,5-l-Fl.". Shown right under the name, because offers of
+ * one product in two pack sizes differ in nothing else.
  */
 export function packText(offer: Pick<Offer, "unit">): string | null {
-  const unit = offer.unit?.trim();
-  return unit && unit !== "je" ? unit : null;
+  // "je Ka. 20 x 0,5-l-Fl." and the odd "je-1,5kg-Bund": the label needs no "je".
+  const pack = offer.unit?.trim().replace(/^je(?:[\s-]+|$)/, "");
+  return pack === undefined || pack === "" ? null : pack;
+}
+
+const DEPOSIT = /\s*\(\+\s*(\d+(?:[.,]\d{1,2})?)\s*(?:Flaschen)?pfand\)/i;
+
+/**
+ * Kaufland notes the deposit in the description: "auch alkoholfrei (+ 3.10 Pfand)". It is shown
+ * with the price instead; `text` is the description without it (undefined when nothing is left).
+ */
+export function splitDeposit(description: string | undefined): {
+  text?: string;
+  deposit?: string;
+} {
+  const match = description === undefined ? null : DEPOSIT.exec(description);
+  if (!description || !match?.[1]) return description ? { text: description } : {};
+  const text = description.replace(DEPOSIT, "").trim();
+  return { ...(text && { text }), deposit: match[1].replace(",", ".") };
 }
 
 /** What it costs per kilogram, litre or piece: one line per base price. */
@@ -220,11 +239,12 @@ function conditions(offer: Offer, className: string): Child[] {
 function head(offer: Offer, className: string): Child[] {
   const { brand, name } = offerNames(offer);
   const pack = packText(offer);
+  const description = splitDeposit(offer.description).text;
   return [
     brand && h("p", { class: `${className}__brand` }, brand),
     h("p", { class: `${className}__name` }, name),
     pack && h("p", { class: `${className}__pack` }, h("span", { class: "pack" }, pack)),
-    offer.description && h("p", { class: `${className}__description` }, offer.description),
+    description && h("p", { class: `${className}__description` }, description),
   ];
 }
 
