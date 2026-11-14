@@ -1,7 +1,8 @@
 /**
  * Search state <-> URL query (`?plz=76137&r=25&tab=all&sort=plz-desc&pdf=all`;
  * Pokémon tab: `tab=cards&view=artikel&p=20973794`; Extra offers:
- * `tab=deals&dsort=filialen&cat=Fisch&dall=1&near=1&unconf=1&store=DE4443`).
+ * `tab=deals&dsort=filialen&cat=Fisch&dall=1&near=1&unconf=1&store=DE4443`; shopping list:
+ * `tab=zettel`, its content is kept in local storage, not in the URL).
  * Defaults are omitted. Coordinates are never put into the URL.
  */
 
@@ -11,7 +12,7 @@ import { RADII, SORT_ORDERS, type Radius, type SortOrder } from "./search";
 /** Searched on page load when the URL has no PLZ (Karlsruhe city centre). */
 export const DEFAULT_PLZ = "76131";
 export const DEFAULT_RADIUS: Radius = 25;
-export const TABS = ["search", "all", "deals", "cards"] as const;
+export const TABS = ["search", "all", "deals", "cards", "zettel"] as const;
 export type Tab = (typeof TABS)[number];
 export const CARDS_VIEWS = ["filialen", "artikel"] as const;
 /** Pokémon tab: stores near the PLZ, or one card per article with all its stores. */
