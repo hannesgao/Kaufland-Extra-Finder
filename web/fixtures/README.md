@@ -2,7 +2,7 @@
 
 Two sets of **real scraper output**, with real viewer, PDF and store links. Links point to the
 leaflets of that week and stop working once Kaufland removes them; for current data run the
-scraper and use `KEF_EXTRA_JSON` / `KEF_CARDS_JSON` / `KEF_DEALS_JSON`.
+scraper and use `KEF_EXTRA_JSON` / `KEF_CARDS_JSON` / `KEF_DEALS_JSON` / `KEF_OFFERS_DIR`.
 
 ## Dev server (`fixtures/`)
 
@@ -22,6 +22,11 @@ current.
   than the other two because the scan of 2026-11-12 found no trading cards; each file is shifted
   by its own date. The raw file also listed an album for cards in 784 stores, which the rule
   leaves out since #47.
+
+- `offers/`: every offer of three stores (Berlin-Spandau, Karlsruhe-Oststadt, Kassel-Wesertor)
+  for the shopping list, built by the scraper from their offer overviews of Saturday 2026-11-14:
+  1506 offers in three sale weeks (09.11., 16.11. and the first announced ones of 23.11.). The
+  catalog is unformatted scraper output (about 1 MB) and excluded from Prettier.
 
 ## Unit tests (`test/fixtures/`)
 

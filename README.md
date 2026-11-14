@@ -288,14 +288,26 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   fixture can never be deployed by accident; the deploy job passes the `data` branch's file.
 - On page load the default PLZ 76131 (25 km) is searched, so the map and the store cards show
   right away. Map tiles therefore come from `tile.openstreetmap.org` on every visit of the search
-  tab (the _Alle Extra-Filialen_ tab loads no map). No cookies, no storage, no external fonts.
-- Four tabs: _Umkreissuche_ (radius search with map), _Alle Extra-Filialen_ (all stores with a
+  tab (the _Alle Extra-Filialen_ tab loads no map). No cookies and no external fonts; only the
+  shopping list is kept in the browser's local storage.
+- Five tabs: _Umkreissuche_ (radius search with map), _Alle Extra-Filialen_ (all stores with a
   current or upcoming Extra leaflet, sortable by PLZ), _Extra-Angebote_ (the offers of the Extra
-  leaflets, from `deals.json`) and _Pokémon-Angebote_ (stores near the PLZ with Pokémon offers,
-  from `cards.json`); on narrow screens the tabs read _Umkreis_, _Filialen_, _Angebote_,
-  _Pokémon_. PLZ and radius are shared by the three search forms. State lives in the URL
-  (`?plz=76137&r=50&tab=all&sort=plz-desc`, `tab=deals`, `tab=cards`); geolocation results never
+  leaflets, from `deals.json`), _Pokémon-Angebote_ (stores near the PLZ with Pokémon offers,
+  from `cards.json`) and _Einkaufszettel_ (a printable shopping list from one store's offers,
+  from `offers/`); on narrow screens the tabs read _Umkreis_, _Filialen_, _Angebote_,
+  _Pokémon_, _Zettel_, and below 600px they become a navigation bar fixed to the bottom edge. PLZ and radius are shared by the three search forms. State lives in the URL
+  (`?plz=76137&r=50&tab=all&sort=plz-desc`, `tab=deals`, `tab=cards`, `tab=zettel`); geolocation results never
   put coordinates into it.
+- _Einkaufszettel_ (`src/offers.ts`, `src/shopping.ts`, `src/shopping-tab.ts`, `ui/shopping.ts`;
+  its own chunk, loaded when the tab is first shown): choose a store (nearest to the PLZ, or by
+  name), then pick from its offers (search, sale week, category, sort by discount, price or name)
+  and add own entries. Each entry has a quantity and a note. The list belongs to one store and is
+  kept in `localStorage` (`kef.einkaufszettel.v1`) with a copy of each offer, so it still prints
+  when the data has moved on; entries whose offer has ended, is gone or has another price are
+  marked. "Drucken" prints an A4 sheet instead of the page: clippings with picture, name, price,
+  comparison price, unit, card price and the days the price applies, or compact rows by
+  category. `data/offers/` is optional (`fixtures/offers/` in development, `KEF_OFFERS_DIR` for a
+  build); without it the list still takes own entries.
 - _Extra-Angebote_: `data/deals.json` is loaded after the Extra stores and is optional like
   `cards.json` (`fixtures/deals.json` in development, `KEF_DEALS_JSON` for a build). One card per
   offer: thumbnail, price ("ab …" when stores differ, then every store shows its price),

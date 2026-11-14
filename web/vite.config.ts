@@ -1,5 +1,5 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
 
@@ -8,6 +8,7 @@ const BASE = "/Kaufland-Extra-Finder/";
 const FIXTURE = resolve(import.meta.dirname, "fixtures/extra.json");
 const CARDS_FIXTURE = resolve(import.meta.dirname, "fixtures/cards.json");
 const DEALS_FIXTURE = resolve(import.meta.dirname, "fixtures/deals.json");
+const OFFERS_FIXTURE = resolve(import.meta.dirname, "fixtures/offers");
 const DAY_MS = 86_400_000;
 
 // Only same-origin resources, plus OSM tiles and product thumbnails from Kaufland's image server
@@ -85,10 +86,56 @@ function optionalJson(name: "cards" | "deals", env: string, fixture: string): Pl
   };
 }
 
+/**
+ * Serves `data/offers/`: the catalog of every store's offers (`catalog.json`, `index.json`,
+ * `stores/<id>.json`) for the shopping list. Optional like cards.json:
+ * - dev: the fixture directory (dates shifted), or the directory named by $KEF_OFFERS_DIR
+ * - build: copied only when $KEF_OFFERS_DIR is set
+ */
+function offersDir(): Plugin {
+  const files = (dir: string) => [
+    "catalog.json",
+    "index.json",
+    ...readdirSync(join(dir, "stores"))
+      .filter((name) => /^[A-Z]{2}\d{3,5}\.json$/.test(name))
+      .map((name) => `stores/${name}`),
+  ];
+  return {
+    name: "kef-offers-dir",
+    configureServer(server) {
+      server.middlewares.use(`${BASE}data/offers/`, (req, res) => {
+        const source = process.env.KEF_OFFERS_DIR;
+        const name = (req.url ?? "").split("?")[0]?.replace(/^\//, "") ?? "";
+        const dir = source ?? OFFERS_FIXTURE;
+        // Only names from the directory listing are served, never a path from the request.
+        if (!existsSync(dir) || !files(dir).includes(name)) {
+          res.statusCode = 404;
+          res.end();
+          return;
+        }
+        const path = join(dir, name);
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        res.end(source ? readFileSync(path, "utf-8") : shiftedFixture(new Date(), path));
+      });
+    },
+    generateBundle() {
+      const source = process.env.KEF_OFFERS_DIR;
+      if (!source) return;
+      for (const name of files(source)) {
+        const text = readFileSync(join(source, name), "utf-8");
+        if ((JSON.parse(text) as { schema_version?: unknown }).schema_version !== 1) {
+          this.error(`${join(source, name)}: unsupported schema_version`);
+        }
+        this.emitFile({ type: "asset", fileName: `data/offers/${name}`, source: text });
+      }
+    },
+  };
+}
+
 /** Shift every date in a fixture by whole weeks so its generated_at falls in the current week. */
 export function shiftedFixture(now: Date, path = FIXTURE): string {
   const text = readFileSync(path, "utf-8");
-  const generated = /"generated_at": "(\d{4}-\d{2}-\d{2})/.exec(text)?.[1];
+  const generated = /"generated_at":\s*"(\d{4}-\d{2}-\d{2})/.exec(text)?.[1];
   if (!generated) throw new Error("fixture has no generated_at");
   // Calendar weeks (Monday to Sunday), so a fixture from a Thursday is current on a Monday too.
   const monday = (ms: number) => ms - ((new Date(ms).getUTCDay() + 6) % 7) * DAY_MS;
@@ -182,6 +229,7 @@ export default defineConfig({
     extraJson(),
     optionalJson("cards", "KEF_CARDS_JSON", CARDS_FIXTURE),
     optionalJson("deals", "KEF_DEALS_JSON", DEALS_FIXTURE),
+    offersDir(),
     partials(),
     buildInfo(),
     contentSecurityPolicy(),
