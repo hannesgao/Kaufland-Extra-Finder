@@ -164,12 +164,19 @@ export function basePriceFacts(basePrice: string | undefined): UnitFact[] {
     });
 }
 
-/** What the pack is and what it costs per kilogram, litre or piece: one line per fact. */
-export function unitFacts(offer: Offer): UnitFact[] {
+/**
+ * What the price is for: "je Ka. 20 x 0,5-l-Fl.". Shown right under the name, because offers of
+ * one product in two pack sizes differ in nothing else. A bare "je" only introduces Kaufland's
+ * price tag.
+ */
+export function packText(offer: Pick<Offer, "unit">): string | null {
   const unit = offer.unit?.trim();
+  return unit && unit !== "je" ? unit : null;
+}
+
+/** What it costs per kilogram, litre or piece: one line per base price. */
+export function unitFacts(offer: Offer): UnitFact[] {
   return [
-    // A bare "je" only introduces Kaufland's price tag.
-    ...(unit && unit !== "je" ? [{ value: unit }] : []),
     ...basePriceFacts(offer.basePrice),
     ...basePriceFacts(offer.cardBasePrice).map((fact) => ({ ...fact, card: true as const })),
   ];
@@ -212,9 +219,11 @@ function conditions(offer: Offer, className: string): Child[] {
 
 function head(offer: Offer, className: string): Child[] {
   const { brand, name } = offerNames(offer);
+  const pack = packText(offer);
   return [
     brand && h("p", { class: `${className}__brand` }, brand),
     h("p", { class: `${className}__name` }, name),
+    pack && h("p", { class: `${className}__pack` }, h("span", { class: "pack" }, pack)),
     offer.description && h("p", { class: `${className}__description` }, offer.description),
   ];
 }
