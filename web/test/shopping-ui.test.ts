@@ -5,6 +5,7 @@ import {
   comparisonPrice,
   germanDecimals,
   multiBuyText,
+  packText,
   unitFacts,
 } from "../src/ui/shopping";
 
@@ -75,7 +76,7 @@ describe("unit facts", () => {
     ]);
   });
 
-  it("lists the unit, the base price and the card's base price", () => {
+  it("lists the base price and the card's base price", () => {
     expect(
       unitFacts({
         ...offer,
@@ -84,13 +85,14 @@ describe("unit facts", () => {
         cardBasePrice: "(1 kg = 3.73)",
       }),
     ).toEqual([
-      { value: "je 310 - 445-g-Packg." },
       { label: "1 kg", value: "4,03\u00a0€" },
       { label: "1 kg", value: "3,73\u00a0€", card: true },
     ]);
   });
 
-  it("drops a unit that says nothing", () => {
-    expect(unitFacts({ ...offer, unit: "je" })).toEqual([]);
+  it("names the pack, unless the unit says nothing", () => {
+    expect(packText({ unit: "je Ka. 20 x 0,5-l-Fl." })).toBe("je Ka. 20 x 0,5-l-Fl.");
+    expect(packText({ unit: "je" })).toBeNull();
+    expect(packText({})).toBeNull();
   });
 });

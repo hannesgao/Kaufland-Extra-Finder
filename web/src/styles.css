@@ -3092,14 +3092,14 @@ button.segment:disabled {
   }
 }
 
-/* Every tile spans eight rows of the list's grid and takes its row sizes from it (subgrid): the
-   picture, brand, name, description, unit facts, multi-buy note, prices and sale days of the
+/* Every tile spans nine rows of the list's grid and takes its row sizes from it (subgrid): the
+   picture, brand, name, pack, description, base prices, multi-buy note, prices and sale days of the
    tiles in one row start at the same height, each as tall as the longest of its kind. */
 .zoffer {
   display: grid;
   position: relative;
   grid-template-rows: subgrid;
-  grid-row: span 8;
+  grid-row: span 9;
   row-gap: 0;
   min-width: 0;
   padding: 12px;
@@ -3223,25 +3223,63 @@ button.segment:disabled {
   line-height: 1.25rem;
 }
 
-.zoffer__description {
+.zoffer__pack {
   grid-row: 4;
+  margin: 4px 0 !important;
 }
 
-.zoffer__units {
+.zoffer__description {
   grid-row: 5;
 }
 
-.zoffer__extra {
+.zoffer__units {
   grid-row: 6;
+}
+
+.zoffer__extra {
+  grid-row: 7;
 }
 
 .zoffer__pricebox {
   container-type: inline-size;
-  grid-row: 7;
+  grid-row: 8;
 }
 
 .zoffer__when {
-  grid-row: 8;
+  grid-row: 9;
+}
+
+/* The pack the price is for, as a label of its own: two offers of one product often differ in
+   nothing but this. */
+.pack {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--shape-sm);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.0625rem;
+  overflow-wrap: anywhere;
+}
+
+.zitem__pack {
+  margin: 4px 0 2px !important;
+}
+
+.sheet-item__pack {
+  margin: 0.6mm 0 !important;
+}
+
+.sheet-item .pack {
+  padding: 0 1.5mm;
+  border: 0.25mm solid #666666;
+  border-radius: 1mm;
+  background: transparent;
+  color: #000000;
+  font-size: 7.5pt;
+  line-height: 1.35;
 }
 
 .zoffer__brand,
@@ -3267,7 +3305,7 @@ button.segment:disabled {
   color: var(--md-on-surface);
 }
 
-/* Unit facts: what the pack is, then one line per base price as "1 kg | 4,03 €". The labels
+/* Base prices, one per line as "1 kg | 4,03 €". The labels
    share a column, the amounts are set flush right. */
 .zoffer__units,
 .zitem__units,
