@@ -536,6 +536,20 @@ a {
   user-select: none;
 }
 
+/* An addition to the label, e.g. the days of a calendar week: only where it fits. */
+.segment__detail {
+  display: none;
+  color: var(--md-on-surface-variant);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+@media (min-width: 1200px) {
+  .segment__detail {
+    display: inline;
+  }
+}
+
 .segment + .segment {
   border-left: 1px solid var(--md-outline);
 }
@@ -3049,12 +3063,11 @@ button.segment:disabled {
   }
 }
 
-/* Offers to pick from: tiles like the ones on kaufland.de, all of one size. The picture is on
+/* Offers to pick from: tiles like the ones on kaufland.de, one width for all. The picture is on
    top with the discount and the add button in its corners; price and dates sit at the bottom. */
 .zoffers {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-rows: 1fr; /* every row as tall as the tallest tile */
   gap: 12px;
   margin: 16px 0 0;
   padding: 0;
@@ -3209,17 +3222,44 @@ button.segment:disabled {
   white-space: nowrap;
 }
 
-.zoffer__name,
-.zoffer__description,
-.zoffer__unit,
-.zoffer__extra {
+.zoffer__name {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
+}
+
+/* The description and the unit facts are shown in full. The tiles of a row are as tall as its
+   tallest one; one height for all rows would make every tile as tall as the longest description
+   among them (a ski jacket with 466 characters: twice the usual tile). */
+.zoffer__name,
+.zoffer__description,
+.zoffer__unit,
+.zoffer__extra {
   overflow-wrap: break-word;
   hyphens: auto;
+}
+
+.zoffer__units,
+.zitem__units,
+.sheet-item__units {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Apart from the description: what the pack is, then one line per base price. */
+.zoffer__units {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--md-outline-variant);
+  font-variant-numeric: tabular-nums;
+}
+
+.zitem__units {
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
 }
 
 .zoffer__name {
@@ -3238,6 +3278,10 @@ button.segment:disabled {
 }
 
 .zoffer__unit {
+  color: var(--md-on-surface);
+}
+
+.zoffer__extra {
   margin-top: 4px;
 }
 

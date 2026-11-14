@@ -4,7 +4,7 @@
  */
 
 import { DataError, type IsoDate, type PlzIndex } from "./data";
-import { berlinToday, formatDay, formatRange, formatStamp } from "./dates";
+import { berlinToday, formatDay, formatRange, formatStamp, isoWeek } from "./dates";
 import { h, replaceChildren } from "./dom";
 import { formatKm } from "./geo";
 import { icon, type IconName } from "./icons";
@@ -117,7 +117,7 @@ function segmented<T extends string>(
   onChange: (value: T) => void,
 ): {
   field: HTMLFieldSetElement;
-  set(options: readonly { value: T; label: string }[], value: T): void;
+  set(options: readonly { value: T; label: string; detail?: string }[], value: T): void;
 } {
   const group = h("div", { class: "segmented__group" });
   const field = h(
@@ -148,6 +148,8 @@ function segmented<T extends string>(
             }),
             icon("check", "icon segment__check"),
             option.label,
+            // Shown where there is room for it; see `.segment__detail`.
+            option.detail && h("span", { class: "segment__detail" }, option.detail),
           ),
         ),
       );
@@ -155,13 +157,14 @@ function segmented<T extends string>(
   };
 }
 
-function weekLabel(week: OfferWeek, today: IsoDate, index: number): string {
-  if (week.from <= today) return "Diese Woche";
-  return index <= 1 && week.from <= addWeek(today) ? "Nächste Woche" : `Ab ${formatDay(week.from)}`;
-}
-
-function addWeek(iso: IsoDate): IsoDate {
-  return new Date(Date.parse(iso) + 7 * 86_400_000).toISOString().slice(0, 10);
+/** Calendar weeks are short enough for three segments on a phone; the days follow when there is room. */
+function weekOption(week: OfferWeek): { value: IsoDate; label: string; detail: string } {
+  return {
+    value: week.monday,
+    label: `KW\u00a0${String(isoWeek(week.monday))}`,
+    // "09.–14.11.", or "30.11.–05.12." across two months
+    detail: `${week.from.slice(5, 7) === week.to.slice(5, 7) ? `${week.from.slice(8)}.` : formatDay(week.from)}–${formatDay(week.to)}`,
+  };
 }
 
 export function mountShopping(root: HTMLElement, ctx: ShoppingContext): ShoppingTab {
@@ -528,10 +531,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     if (!weeks.some((week) => week.monday === filter.week)) filter.week = weeks[0]?.monday ?? null;
     weekSwitch.field.hidden = weeks.length < 2;
     if (weeks[0] && filter.week) {
-      weekSwitch.set(
-        weeks.map((week, i) => ({ value: week.monday, label: weekLabel(week, day, i) })),
-        filter.week,
-      );
+      weekSwitch.set(weeks.map(weekOption), filter.week);
     }
     sortSwitch.set(
       OFFER_SORTS.map((value) => ({ value, label: SORT_LABELS[value] })),
