@@ -3245,12 +3245,21 @@ button.segment:disabled {
   color: var(--md-on-surface);
 }
 
+/* Price over its comparison price on the left, the Kaufland Card price as a tag on the right.
+   The block has one height whether or not there is a comparison or a card price. */
 .zoffer__prices {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 8px;
+  min-height: 2.875rem;
   margin-top: 4px;
   white-space: nowrap;
+}
+
+.zoffer__regular {
+  display: grid;
+  align-content: end;
 }
 
 .zoffer__price {
@@ -3261,11 +3270,53 @@ button.segment:disabled {
 }
 
 .zoffer__old {
-  overflow: hidden;
   color: var(--md-on-surface-variant);
   font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
-  text-overflow: ellipsis;
+  line-height: 1.125rem;
+}
+
+.zoffer__cardprice,
+.zitem__cardprice {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 8px 0 6px;
+  border-radius: var(--shape-sm);
+  background: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.zoffer__cardprice .icon,
+.zitem__cardprice .icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+/* No room for the words on a tile: the icon and the title say it, the words stay for readers. */
+.zoffer__cardlabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.zoffer__cardprice--only {
+  height: 30px;
+  font-size: 1.125rem;
+}
+
+.zitem__cardlabel {
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .zoffer__when {
@@ -3278,22 +3329,26 @@ button.segment:disabled {
   white-space: nowrap;
 }
 
-/* Narrow tiles break the dates in two; one-day offers keep the same height. */
-@container (max-width: 172px) {
-  .zoffer__when {
-    min-height: 2.125rem;
-  }
-
-  /* ... and the comparison price goes under the price; the line is kept free without one. */
+/* Narrow tiles break the dates in two (one-day offers keep the same height) and put the card
+   price under the price. */
+@container (max-width: 200px) {
   .zoffer__prices {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0;
-    min-height: 2.875rem;
+    justify-content: flex-start;
+    gap: 2px;
+    min-height: 4.625rem;
   }
 
-  .zoffer__old {
-    line-height: 1.125rem;
+  .zoffer__regular {
+    min-height: 2.875rem;
+    align-content: start;
+  }
+}
+
+@container (max-width: 172px) {
+  .zoffer__when {
+    min-height: 2.125rem;
   }
 }
 
@@ -3369,6 +3424,10 @@ button.segment:disabled {
   margin-top: 6px;
 }
 
+.zitem__regular {
+  display: contents;
+}
+
 .zitem__price {
   font-size: 1.25rem;
   font-weight: 600;
@@ -3404,7 +3463,6 @@ button.segment:disabled {
   color: var(--md-on-surface);
 }
 
-.zitem__card,
 .zitem__when,
 .zitem__status {
   display: flex;
@@ -3412,7 +3470,6 @@ button.segment:disabled {
   gap: 6px;
 }
 
-.zitem__card .icon,
 .zitem__when .icon,
 .zitem__status .icon {
   flex: none;
@@ -3826,8 +3883,27 @@ button.segment:disabled {
   color: #444444;
 }
 
-.sheet-item__card .icon {
+.sheet-item__regular {
+  display: contents;
+}
+
+.sheet-item__cardprice {
+  padding: 0 1.5mm;
+  border: 0.25mm solid #000000;
+  border-radius: 1mm;
+  font-size: 10pt;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.sheet-item__cardprice .icon {
   display: none;
+}
+
+.sheet-item__cardlabel {
+  font-size: 7pt;
+  font-weight: 400;
 }
 
 .sheet-item__when {
