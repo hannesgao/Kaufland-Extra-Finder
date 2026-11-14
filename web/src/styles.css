@@ -3248,18 +3248,31 @@ button.segment:disabled {
 /* Price over its comparison price on the left, the Kaufland Card price as a tag on the right.
    The block has one height whether or not there is a comparison or a card price. */
 .zoffer__prices {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 2.875rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: 1.75rem 1.125rem;
+  align-items: baseline;
+  column-gap: 8px;
   margin-top: 4px;
   white-space: nowrap;
 }
 
 .zoffer__regular {
-  display: grid;
-  align-content: end;
+  display: contents;
+}
+
+.zoffer__old {
+  grid-area: 2 / 1;
+}
+
+.zoffer__cardprice {
+  grid-area: 1 / 2;
+  justify-self: end;
+}
+
+.zoffer__cardprice--only {
+  grid-area: 1 / 1 / auto / -1;
+  justify-self: start;
 }
 
 .zoffer__price {
@@ -3278,23 +3291,30 @@ button.segment:disabled {
 
 .zoffer__cardprice,
 .zitem__cardprice {
+  /* Same size as the regular price and on its baseline. */
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: 4px;
-  height: 26px;
-  padding: 0 8px 0 6px;
+  padding: 0 6px;
   border-radius: var(--shape-sm);
   background: var(--md-tertiary-container);
   color: var(--md-on-tertiary-container);
-  font-size: 0.9375rem;
+  font-size: 1.25rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  line-height: 1.75rem;
   white-space: nowrap;
+}
+
+.zitem__cardprice {
+  font-weight: 600;
+  line-height: 1.5rem;
 }
 
 .zoffer__cardprice .icon,
 .zitem__cardprice .icon {
   flex: none;
+  align-self: center;
   width: 16px;
   height: 16px;
 }
@@ -3307,11 +3327,6 @@ button.segment:disabled {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
-}
-
-.zoffer__cardprice--only {
-  height: 30px;
-  font-size: 1.125rem;
 }
 
 .zitem__cardlabel {
@@ -3333,16 +3348,28 @@ button.segment:disabled {
    price under the price. */
 @container (max-width: 200px) {
   .zoffer__prices {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 2px;
-    min-height: 4.625rem;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 1.75rem 1.125rem 1.75rem;
+    row-gap: 2px;
   }
 
-  .zoffer__regular {
-    min-height: 2.875rem;
-    align-content: start;
+  .zoffer__cardprice,
+  .zoffer__cardprice--only {
+    grid-area: 3 / 1;
+    justify-self: start;
+  }
+}
+
+/* The narrowest tiles (two per row on a 320px phone) fit a two-digit card price just so. */
+@container (max-width: 150px) {
+  .zoffer__cardprice {
+    gap: 3px;
+    padding: 0 4px;
+  }
+
+  .zoffer__cardprice .icon {
+    width: 14px;
+    height: 14px;
   }
 }
 
@@ -3891,7 +3918,7 @@ button.segment:disabled {
   padding: 0 1.5mm;
   border: 0.25mm solid #000000;
   border-radius: 1mm;
-  font-size: 10pt;
+  font-size: 15pt; /* as large as the regular price */
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
