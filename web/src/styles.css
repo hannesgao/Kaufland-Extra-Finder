@@ -3049,8 +3049,255 @@ button.segment:disabled {
   }
 }
 
-/* Offers to pick from */
-.zoffers,
+/* Offers to pick from: tiles like the ones on kaufland.de, all of one size. The picture is on
+   top with the discount and the add button in its corners; price and dates sit at the bottom. */
+.zoffers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr; /* every row as tall as the tallest tile */
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 600px) {
+  .zoffers {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 840px) {
+  .zoffers {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .zoffers {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.zoffer {
+  container-type: inline-size;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--shape-lg);
+  background: var(--md-surface-container-lowest);
+}
+
+.zoffer--picked {
+  border-color: var(--md-primary);
+  box-shadow: inset 0 0 0 1px var(--md-primary);
+}
+
+.zoffer__media {
+  position: relative;
+  flex: none;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--shape-md);
+  background: #ffffff; /* product pictures have a white background in both schemes */
+}
+
+.zoffer__thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%; /* the height attribute would win over a percentage of the ratio box */
+  object-fit: contain;
+}
+
+.zoffer__thumb--empty {
+  display: grid;
+  place-items: center;
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+}
+
+.zoffer__discount {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--shape-md) 0 var(--shape-md) 0;
+  background: #ba1a1a; /* on the white picture in both schemes */
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 24px;
+}
+
+.zoffer__add {
+  display: grid;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--md-outline);
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1b1c1a; /* on the white picture in both schemes */
+  cursor: pointer;
+}
+
+.zoffer__add:hover:not(:disabled) {
+  border-color: var(--md-primary);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+
+.zoffer__add[aria-pressed="true"] {
+  border-color: var(--md-primary);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+
+.zoffer__add:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.zoffer__add:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+.zoffer__add .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.zoffer__text,
+.zoffer__foot {
+  display: grid;
+  min-width: 0;
+}
+
+.zoffer__text {
+  flex: 1 0 auto;
+  align-content: start;
+  margin-top: 10px;
+}
+
+.zoffer__foot {
+  margin-top: 8px;
+}
+
+.zoffer p {
+  margin: 0;
+}
+
+.zoffer__brand {
+  overflow: hidden;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.125rem;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.zoffer__name,
+.zoffer__description,
+.zoffer__unit,
+.zoffer__extra {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.zoffer__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+}
+
+.zoffer__description,
+.zoffer__unit,
+.zoffer__extra,
+.zoffer__when {
+  color: var(--md-on-surface-variant);
+  font-size: 0.75rem;
+  line-height: 1.0625rem;
+}
+
+.zoffer__unit {
+  margin-top: 4px;
+}
+
+.zoffer__extra {
+  color: var(--md-on-surface);
+}
+
+.zoffer__prices {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.zoffer__price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.75rem;
+}
+
+.zoffer__old {
+  overflow: hidden;
+  color: var(--md-on-surface-variant);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+}
+
+.zoffer__when {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.25em;
+}
+
+.zoffer__when span {
+  white-space: nowrap;
+}
+
+/* Narrow tiles break the dates in two; one-day offers keep the same height. */
+@container (max-width: 172px) {
+  .zoffer__when {
+    min-height: 2.125rem;
+  }
+
+  /* ... and the comparison price goes under the price; the line is kept free without one. */
+  .zoffer__prices {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    min-height: 2.875rem;
+  }
+
+  .zoffer__old {
+    line-height: 1.125rem;
+  }
+}
+
+/* The list and the offers share the text styles */
 .zitems {
   display: grid;
   gap: 12px;
@@ -3059,19 +3306,6 @@ button.segment:disabled {
   list-style: none;
 }
 
-@media (min-width: 720px) {
-  .zoffers {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1100px) {
-  .zoffers {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.zoffer,
 .zitem {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -3082,11 +3316,6 @@ button.segment:disabled {
   background: var(--md-surface-container-lowest);
 }
 
-.zoffer--picked {
-  border-color: var(--md-primary);
-}
-
-.zoffer__thumb,
 .zitem__thumb {
   width: 96px;
   height: 96px;
@@ -3100,7 +3329,6 @@ button.segment:disabled {
   height: 72px;
 }
 
-.zoffer__thumb--empty,
 .zitem__thumb--empty {
   display: grid;
   place-items: center;
@@ -3108,12 +3336,10 @@ button.segment:disabled {
   color: var(--md-on-surface-variant);
 }
 
-.zoffer__body p,
 .zitem__body p {
   margin: 0;
 }
 
-.zoffer__brand,
 .zitem__brand,
 .sheet-item__brand {
   font-size: 0.75rem;
@@ -3122,7 +3348,6 @@ button.segment:disabled {
   text-transform: uppercase;
 }
 
-.zoffer__name,
 .zitem__name {
   font-size: 1rem;
   font-weight: 500;
@@ -3130,14 +3355,12 @@ button.segment:disabled {
   overflow-wrap: anywhere;
 }
 
-.zoffer__description,
 .zitem__description {
   color: var(--md-on-surface-variant);
   font-size: 0.8125rem;
   line-height: 1.125rem;
 }
 
-.zoffer__prices,
 .zitem__prices {
   display: flex;
   flex-wrap: wrap;
@@ -3146,7 +3369,6 @@ button.segment:disabled {
   margin-top: 6px;
 }
 
-.zoffer__price,
 .zitem__price {
   font-size: 1.25rem;
   font-weight: 600;
@@ -3154,14 +3376,12 @@ button.segment:disabled {
   line-height: 1.5rem;
 }
 
-.zoffer__old,
 .zitem__old {
   color: var(--md-on-surface-variant);
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
 }
 
-.zoffer__discount,
 .zitem__discount {
   align-self: center;
   height: 24px;
@@ -3172,9 +3392,6 @@ button.segment:disabled {
   font-variant-numeric: tabular-nums;
 }
 
-.zoffer__unit,
-.zoffer__extra,
-.zoffer__when,
 .zitem__unit,
 .zitem__extra,
 .zitem__when {
@@ -3183,13 +3400,10 @@ button.segment:disabled {
   line-height: 1.25rem;
 }
 
-.zoffer__extra,
 .zitem__extra {
   color: var(--md-on-surface);
 }
 
-.zoffer__card,
-.zoffer__when,
 .zitem__card,
 .zitem__when,
 .zitem__status {
@@ -3198,19 +3412,12 @@ button.segment:disabled {
   gap: 6px;
 }
 
-.zoffer__card .icon,
-.zoffer__when .icon,
 .zitem__card .icon,
 .zitem__when .icon,
 .zitem__status .icon {
   flex: none;
   width: 16px;
   height: 16px;
-}
-
-.zoffer__add {
-  grid-column: 1 / -1;
-  justify-self: stretch;
 }
 
 .zoffers__more {

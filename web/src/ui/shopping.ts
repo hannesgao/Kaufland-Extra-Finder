@@ -53,7 +53,13 @@ export function departmentIcon(department: string): IconName {
   return department === NO_DEPARTMENT ? "sell" : sectionIcon(department);
 }
 
-function picture(offer: Offer, size: number, className: string, eager = false): Element {
+function picture(
+  offer: Offer,
+  size: number,
+  className: string,
+  eager = false,
+  sizes?: string,
+): Element {
   const { thumbnail, thumbnail2x } = offer;
   if (!thumbnail) {
     return h("span", { class: `${className} ${className}--empty` }, icon("grocery"));
@@ -62,7 +68,11 @@ function picture(offer: Offer, size: number, className: string, eager = false): 
     class: className,
     // The sheet is printed larger than the tiles on screen: always the 322 px picture there.
     src: eager ? (thumbnail2x ?? thumbnail) : thumbnail,
-    ...(!eager && thumbnail2x && { srcset: `${thumbnail} 1x, ${thumbnail2x} 2x` }),
+    ...(!eager &&
+      thumbnail2x &&
+      (sizes
+        ? { srcset: `${thumbnail} 150w, ${thumbnail2x} 322w`, sizes }
+        : { srcset: `${thumbnail} 1x, ${thumbnail2x} 2x` })),
     alt: "",
     width: String(size),
     height: String(size),
@@ -73,8 +83,8 @@ function picture(offer: Offer, size: number, className: string, eager = false): 
 }
 
 /** Price, comparison price and discount; offers that only have a card price show that one. */
-function prices(offer: Offer, className: string): HTMLDivElement {
-  const discount = discountPercent(offer.price, offer.oldPrice);
+function prices(offer: Offer, className: string, withDiscount = true): HTMLDivElement {
+  const discount = withDiscount ? discountPercent(offer.price, offer.oldPrice) : null;
   const main = offer.price ?? offer.cardPrice;
   return h(
     "div",
@@ -131,6 +141,10 @@ function head(offer: Offer, className: string): Child[] {
 
 // ---------- Offers to pick from ----------
 
+/** Two to five tiles per row; see `.zoffers`. */
+const TILE_SIZES =
+  "(min-width: 1100px) 220px, (min-width: 840px) 25vw, (min-width: 600px) 33vw, 50vw";
+
 export function renderOfferTile(
   offer: Offer,
   onList: boolean,
@@ -138,26 +152,41 @@ export function renderOfferTile(
   onToggle: (offer: Offer) => void,
 ): HTMLLIElement {
   const { name } = offerNames(offer);
+  const discount = discountPercent(offer.price, offer.oldPrice);
+  const label = onList ? `${name} vom Zettel nehmen` : `${name} auf den Zettel setzen`;
+  const [from, to] = salesText(offer).split(" – ");
   return h(
     "li",
     { class: `zoffer${onList ? " zoffer--picked" : ""}`, "data-key": offer.key },
-    picture(offer, 96, "zoffer__thumb"),
+    h("div", { class: "zoffer__media" }, picture(offer, 322, "zoffer__thumb", false, TILE_SIZES)),
+    discount !== null && h("span", { class: "zoffer__discount" }, `−${String(discount)}\u00a0%`),
+    h("div", { class: "zoffer__text" }, ...head(offer, "zoffer"), ...conditions(offer, "zoffer")),
     h(
       "div",
-      { class: "zoffer__body" },
-      ...head(offer, "zoffer"),
-      prices(offer, "zoffer"),
-      ...conditions(offer, "zoffer"),
-      h("p", { class: "zoffer__when" }, icon("schedule"), salesText(offer)),
+      { class: "zoffer__foot" },
+      prices(offer, "zoffer", false),
+      h(
+        "p",
+        { class: "zoffer__when" },
+        h("span", {}, to === undefined ? from : `${from ?? ""} –`),
+        to !== undefined && h("span", {}, to),
+      ),
     ),
+    // Last in the source, in the picture's corner on screen: the name is read before the button.
     h(
       "button",
       {
         type: "button",
-        class: `btn btn--sm zoffer__add ${onList ? "btn--tonal" : "btn--outlined"}`,
+        class: "zoffer__add",
         "aria-pressed": String(onList),
-        "aria-label": onList ? `${name} vom Zettel nehmen` : `${name} auf den Zettel setzen`,
-        ...(full && !onList && { disabled: true, title: "Der Zettel ist voll." }),
+        "aria-label": label,
+        title:
+          full && !onList
+            ? "Der Zettel ist voll."
+            : onList
+              ? "Vom Zettel nehmen"
+              : "Auf den Zettel",
+        ...(full && !onList && { disabled: true }),
         on: {
           click: () => {
             onToggle(offer);
@@ -165,7 +194,6 @@ export function renderOfferTile(
         },
       },
       icon(onList ? "check" : "add"),
-      onList ? "Auf dem Zettel" : "Auf den Zettel",
     ),
   );
 }
