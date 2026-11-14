@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { Offer } from "../src/offers";
 import {
-  basePriceLines,
+  basePriceFacts,
   comparisonPrice,
   germanDecimals,
   multiBuyText,
-  unitLines,
+  unitFacts,
 } from "../src/ui/shopping";
 
 describe("comparisonPrice", () => {
@@ -48,35 +48,49 @@ describe("unit facts", () => {
     sections: [],
   };
 
-  it("takes the brackets off a base price", () => {
-    expect(basePriceLines("(1 kg = 4.03 - 5.78)")).toEqual(["1 kg = 4,03 - 5,78"]);
-    expect(basePriceLines(undefined)).toEqual([]);
+  it("splits a base price into label and amount", () => {
+    expect(basePriceFacts("(1 kg = 4.03 - 5.78)")).toEqual([
+      { label: "1 kg", value: "4,03\u00a0– 5,78\u00a0€" },
+    ]);
+    expect(basePriceFacts("(pro Stück = 0.25)")).toEqual([
+      { label: "pro Stück", value: "0,25\u00a0€" },
+    ]);
+    expect(basePriceFacts(undefined)).toEqual([]);
   });
 
-  it("splits a text before the brackets and several prices", () => {
-    expect(basePriceLines("Abtropfgewicht 250 g (1 kg = 9.90)")).toEqual([
-      "Abtropfgewicht 250 g",
-      "1 kg = 9,90",
+  it("keeps a text before the brackets and splits several prices", () => {
+    expect(basePriceFacts("Abtropfgewicht 250 g (1 kg = 9.90)")).toEqual([
+      { value: "Abtropfgewicht 250 g" },
+      { label: "1 kg", value: "9,90\u00a0€" },
     ]);
-    expect(basePriceLines("(1 kg = 4.03) / (1 l = 3.73)")).toEqual(["1 kg = 4,03", "1 l = 3,73"]);
+    expect(basePriceFacts("(1 kg = 4.03) / (1 l = 3.73)")).toEqual([
+      { label: "1 kg", value: "4,03\u00a0€" },
+      { label: "1 l", value: "3,73\u00a0€" },
+    ]);
+  });
+
+  it("leaves a price it cannot split as text", () => {
+    expect(basePriceFacts("(entspr. z. B. für eine 500-g-Packg. 4.99)")).toEqual([
+      { value: "entspr. z. B. für eine 500-g-Packg. 4,99" },
+    ]);
   });
 
   it("lists the unit, the base price and the card's base price", () => {
     expect(
-      unitLines({
+      unitFacts({
         ...offer,
         unit: "je 310 - 445-g-Packg.",
-        basePrice: "(1 kg = 4.03 - 5.78)",
-        cardBasePrice: "(1 kg = 3.73 - 5.36)",
+        basePrice: "(1 kg = 4.03)",
+        cardBasePrice: "(1 kg = 3.73)",
       }),
     ).toEqual([
-      "je 310 - 445-g-Packg.",
-      "1 kg = 4,03 - 5,78",
-      "mit Kaufland Card: 1 kg = 3,73 - 5,36",
+      { value: "je 310 - 445-g-Packg." },
+      { label: "1 kg", value: "4,03\u00a0€" },
+      { label: "1 kg", value: "3,73\u00a0€", card: true },
     ]);
   });
 
   it("drops a unit that says nothing", () => {
-    expect(unitLines({ ...offer, unit: "je" })).toEqual([]);
+    expect(unitFacts({ ...offer, unit: "je" })).toEqual([]);
   });
 });
