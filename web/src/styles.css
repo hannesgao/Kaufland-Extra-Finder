@@ -3092,11 +3092,15 @@ button.segment:disabled {
   }
 }
 
+/* Every tile spans eight rows of the list's grid and takes its row sizes from it (subgrid): the
+   picture, brand, name, description, unit facts, multi-buy note, prices and sale days of the
+   tiles in one row start at the same height, each as tall as the longest of its kind. */
 .zoffer {
-  container-type: inline-size;
-  display: flex;
+  display: grid;
   position: relative;
-  flex-direction: column;
+  grid-template-rows: subgrid;
+  grid-row: span 8;
+  row-gap: 0;
   min-width: 0;
   padding: 12px;
   border: 1px solid var(--md-outline-variant);
@@ -3111,7 +3115,6 @@ button.segment:disabled {
 
 .zoffer__media {
   position: relative;
-  flex: none;
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: var(--shape-md);
@@ -3191,48 +3194,57 @@ button.segment:disabled {
   height: 24px;
 }
 
-.zoffer__text,
-.zoffer__foot {
-  display: grid;
+.zoffer > * {
   min-width: 0;
-}
-
-.zoffer__text {
-  flex: 1 0 auto;
-  align-content: start;
-  margin-top: 10px;
-}
-
-.zoffer__foot {
-  margin-top: 8px;
 }
 
 .zoffer p {
   margin: 0;
 }
 
+.zoffer__media {
+  grid-row: 1;
+}
+
 .zoffer__brand {
-  overflow: hidden;
+  grid-row: 2;
+  margin-top: 10px !important;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1.125rem;
-  text-overflow: ellipsis;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .zoffer__name {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  grid-row: 3;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.25rem;
 }
 
-/* The description and the unit facts are shown in full. The tiles of a row are as tall as its
-   tallest one; one height for all rows would make every tile as tall as the longest description
-   among them (a ski jacket with 466 characters: twice the usual tile). */
+.zoffer__description {
+  grid-row: 4;
+}
+
+.zoffer__units {
+  grid-row: 5;
+}
+
+.zoffer__extra {
+  grid-row: 6;
+}
+
+.zoffer__pricebox {
+  container-type: inline-size;
+  grid-row: 7;
+}
+
+.zoffer__when {
+  grid-row: 8;
+}
+
+.zoffer__brand,
 .zoffer__name,
 .zoffer__description,
 .zoffer__unit,
@@ -3241,35 +3253,8 @@ button.segment:disabled {
   hyphens: auto;
 }
 
-.zoffer__units,
-.zitem__units,
-.sheet-item__units {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Apart from the description: what the pack is, then one line per base price. */
-.zoffer__units {
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid var(--md-outline-variant);
-  font-variant-numeric: tabular-nums;
-}
-
-.zitem__units {
-  margin-top: 2px;
-  font-variant-numeric: tabular-nums;
-}
-
-.zoffer__name {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  line-height: 1.25rem;
-}
-
 .zoffer__description,
-.zoffer__unit,
+.zoffer__units,
 .zoffer__extra,
 .zoffer__when {
   color: var(--md-on-surface-variant);
@@ -3277,46 +3262,89 @@ button.segment:disabled {
   line-height: 1.0625rem;
 }
 
-.zoffer__unit {
+.zoffer__extra {
+  margin-top: 4px !important;
   color: var(--md-on-surface);
 }
 
-.zoffer__extra {
-  margin-top: 4px;
+/* Unit facts: what the pack is, then one line per base price as "1 kg | 4,03 €". The labels
+   share a column, the amounts are set flush right. */
+.zoffer__units,
+.zitem__units,
+.sheet-item__units {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-content: start;
+  column-gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-variant-numeric: tabular-nums;
 }
 
-.zoffer__extra {
+.zoffer__units {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--md-outline-variant);
   color: var(--md-on-surface);
 }
 
-/* Price over its comparison price on the left, the Kaufland Card price as a tag on the right.
-   The block has one height whether or not there is a comparison or a card price. */
+.zoffer__unit,
+.zitem__unit,
+.sheet-item__unit {
+  display: contents;
+}
+
+.unit-fact__text {
+  grid-column: 1 / -1;
+}
+
+.unit-fact__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.unit-fact__label .icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  color: var(--md-tertiary);
+}
+
+/* On a tile a long label ("pro Anwendung") may wrap, and so may a price range on the narrowest
+   tiles; short labels like "1 kg" stay in one piece (see `unitFact`). */
+.zoffer__units {
+  grid-template-columns: auto auto;
+  justify-content: space-between;
+}
+
+.zoffer .unit-fact__label {
+  white-space: normal;
+}
+
+.zoffer .unit-fact__value {
+  justify-self: end;
+  text-align: right;
+}
+
+/* The price with its comparison price under it; the Kaufland Card price beside it, as large
+   and on the same baseline. */
+.zoffer__pricebox {
+  margin-top: 8px;
+}
+
 .zoffer__prices {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  grid-template-rows: 1.75rem 1.125rem;
   align-items: baseline;
   column-gap: 8px;
-  margin-top: 4px;
   white-space: nowrap;
 }
 
 .zoffer__regular {
   display: contents;
-}
-
-.zoffer__old {
-  grid-area: 2 / 1;
-}
-
-.zoffer__cardprice {
-  grid-area: 1 / 2;
-  justify-self: end;
-}
-
-.zoffer__cardprice--only {
-  grid-area: 1 / 1 / auto / -1;
-  justify-self: start;
 }
 
 .zoffer__price {
@@ -3327,10 +3355,21 @@ button.segment:disabled {
 }
 
 .zoffer__old {
+  grid-area: 2 / 1;
   color: var(--md-on-surface-variant);
   font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
   line-height: 1.125rem;
+}
+
+.zoffer__cardprice {
+  grid-area: 1 / 2;
+  justify-self: end;
+}
+
+.zoffer__cardprice--only {
+  grid-area: 1 / 1 / auto / -1;
+  justify-self: start;
 }
 
 .zoffer__cardprice,
@@ -3381,6 +3420,7 @@ button.segment:disabled {
 .zoffer__when {
   display: flex;
   flex-wrap: wrap;
+  align-content: start;
   column-gap: 0.25em;
 }
 
@@ -3388,12 +3428,11 @@ button.segment:disabled {
   white-space: nowrap;
 }
 
-/* Narrow tiles break the dates in two (one-day offers keep the same height) and put the card
-   price under the price. */
+/* Narrow tiles put the card price under the comparison price. */
 @container (max-width: 200px) {
   .zoffer__prices {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: 1.75rem 1.125rem 1.75rem;
+    grid-template-rows: 1.75rem 1.125rem auto;
     row-gap: 2px;
   }
 
@@ -3414,12 +3453,6 @@ button.segment:disabled {
   .zoffer__cardprice .icon {
     width: 14px;
     height: 14px;
-  }
-}
-
-@container (max-width: 172px) {
-  .zoffer__when {
-    min-height: 2.125rem;
   }
 }
 
@@ -3522,7 +3555,7 @@ button.segment:disabled {
   font-variant-numeric: tabular-nums;
 }
 
-.zitem__unit,
+.zitem__units,
 .zitem__extra,
 .zitem__when {
   color: var(--md-on-surface-variant);
@@ -3944,14 +3977,18 @@ button.segment:disabled {
   font-weight: 700;
 }
 
-.sheet-item__unit,
+.sheet-item__units,
 .sheet-item__extra,
 .sheet-item__when {
   font-size: 7.5pt;
 }
 
-.sheet-item__unit {
+.sheet-item__units {
   color: #444444;
+}
+
+.sheet-item .unit-fact__label .icon {
+  color: inherit;
 }
 
 .sheet-item__regular {

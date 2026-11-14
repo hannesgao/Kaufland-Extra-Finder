@@ -132,40 +132,80 @@ function prices(offer: Offer, className: string, withDiscount = true): HTMLDivEl
   );
 }
 
+/** One line of the unit facts: a base price as label and amount, or plain text. */
+export interface UnitFact {
+  /** "1 kg", "1 l", "pro Stück"; absent for plain text. */
+  label?: string;
+  /** "4,03 – 5,78 €", or the text. */
+  value: string;
+  /** The base price with the Kaufland Card. */
+  card?: true;
+}
+
+const AMOUNT = /^\d+,\d{2}(?: - \d+,\d{2})?$/;
+
 /**
- * Kaufland's base price text as separate facts: "Abtropfgewicht 250 g (1 kg = 9.90)" becomes
- * "Abtropfgewicht 250 g" and "1 kg = 9,90"; several bracketed prices become one fact each.
+ * Kaufland's base price text as separate facts: "Abtropfgewicht 250 g (1 kg = 9.90)" becomes the
+ * text "Abtropfgewicht 250 g" and the price "1 kg" / "9,90 €"; several bracketed prices become
+ * one fact each.
  */
-export function basePriceLines(basePrice: string | undefined): string[] {
+export function basePriceFacts(basePrice: string | undefined): UnitFact[] {
   if (!basePrice) return [];
   return germanDecimals(basePrice)
     .split(/[()]|\s\/\s/)
     .map((part) => part.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .map((part) => {
+      const at = part.indexOf(" = ");
+      const amount = at < 0 ? "" : part.slice(at + 3);
+      return AMOUNT.test(amount)
+        ? { label: part.slice(0, at), value: `${amount.replace(" - ", "\u00a0– ")}\u00a0€` }
+        : { value: part };
+    });
 }
 
 /** What the pack is and what it costs per kilogram, litre or piece: one line per fact. */
-export function unitLines(offer: Offer): string[] {
+export function unitFacts(offer: Offer): UnitFact[] {
   const unit = offer.unit?.trim();
   return [
     // A bare "je" only introduces Kaufland's price tag.
-    ...(unit && unit !== "je" ? [unit] : []),
-    ...basePriceLines(offer.basePrice),
-    ...basePriceLines(offer.cardBasePrice).map((line) => `mit Kaufland Card: ${line}`),
+    ...(unit && unit !== "je" ? [{ value: unit }] : []),
+    ...basePriceFacts(offer.basePrice),
+    ...basePriceFacts(offer.cardBasePrice).map((fact) => ({ ...fact, card: true as const })),
   ];
 }
 
-/** Unit, base prices and the multi-buy condition: the small print, apart from the description. */
+function unitFact(fact: UnitFact, className: string): HTMLLIElement {
+  const card = fact.card ? "mit Kaufland Card: " : "";
+  if (fact.label === undefined) {
+    return h(
+      "li",
+      { class: `${className}__unit` },
+      h("span", { class: "unit-fact__text" }, card + fact.value),
+    );
+  }
+  return h(
+    "li",
+    { class: `${className}__unit` },
+    h(
+      "span",
+      { class: "unit-fact__label", ...(fact.card && { title: "mit Kaufland Card" }) },
+      fact.card && icon("credit_card"),
+      fact.card && h("span", { class: "visually-hidden" }, card),
+      // "1 kg" and "1 l" never break; "pro Anwendung" may.
+      fact.label.length <= 6 ? fact.label.replaceAll(" ", "\u00a0") : fact.label,
+    ),
+    h("span", { class: "unit-fact__value" }, fact.value),
+  );
+}
+
+/** Unit facts and the multi-buy condition: the small print, apart from the description. */
 function conditions(offer: Offer, className: string): Child[] {
-  const lines = unitLines(offer);
+  const facts = unitFacts(offer);
   const multiBuy = multiBuyText(offer.multiBuy);
   return [
-    lines.length > 0 &&
-      h(
-        "ul",
-        { class: `${className}__units` },
-        ...lines.map((line) => h("li", { class: `${className}__unit` }, line)),
-      ),
+    facts.length > 0 &&
+      h("ul", { class: `${className}__units` }, ...facts.map((fact) => unitFact(fact, className))),
     multiBuy && h("p", { class: `${className}__extra` }, multiBuy),
   ];
 }
@@ -200,17 +240,15 @@ export function renderOfferTile(
     { class: `zoffer${onList ? " zoffer--picked" : ""}`, "data-key": offer.key },
     h("div", { class: "zoffer__media" }, picture(offer, 322, "zoffer__thumb", false, TILE_SIZES)),
     discount !== null && h("span", { class: "zoffer__discount" }, `−${String(discount)}\u00a0%`),
-    h("div", { class: "zoffer__text" }, ...head(offer, "zoffer"), ...conditions(offer, "zoffer")),
+    // Direct children: each one sits in its own row of the list's grid (see `.zoffer`).
+    ...head(offer, "zoffer"),
+    ...conditions(offer, "zoffer"),
+    h("div", { class: "zoffer__pricebox" }, prices(offer, "zoffer", false)),
     h(
-      "div",
-      { class: "zoffer__foot" },
-      prices(offer, "zoffer", false),
-      h(
-        "p",
-        { class: "zoffer__when" },
-        h("span", {}, to === undefined ? from : `${from ?? ""} –`),
-        to !== undefined && h("span", {}, to),
-      ),
+      "p",
+      { class: "zoffer__when" },
+      h("span", {}, to === undefined ? from : `${from ?? ""} –`),
+      to !== undefined && h("span", {}, to),
     ),
     // Last in the source, in the picture's corner on screen: the name is read before the button.
     h(
