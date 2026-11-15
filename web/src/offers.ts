@@ -21,9 +21,13 @@ import {
   type Json,
   type LatLng,
 } from "./data";
+import { brandDepartments, groupOf, groupsOf, guessDepartment } from "./classify";
 import { mondayOf } from "./dates";
 import { discountPercent } from "./deals";
 import { distanceKm } from "./geo";
+import { normalize } from "./text";
+
+export { normalize };
 
 export interface Offer {
   /** "<article number>|<first day shown>" */
@@ -49,7 +53,10 @@ export interface Offer {
   salesTo: IsoDate;
   thumbnail?: string;
   thumbnail2x?: string;
-  /** Kaufland's assortment category; promotions without one have none. */
+  /**
+   * Kaufland's assortment category. Offers that are only in promotion categories get a guessed
+   * one from `storeOffers`; those nothing can be said about have none.
+   */
   department?: string;
   sections: string[];
 }
@@ -194,16 +201,39 @@ export function parseOffer(key: string, record: Json, override?: Json): Offer {
   };
 }
 
+const brandCache = new WeakMap<OfferCatalog, Map<string, string>>();
+
+/** The categories of the brands whose offers Kaufland puts in one category only. */
+function catalogBrands(catalog: OfferCatalog): Map<string, string> {
+  let brands = brandCache.get(catalog);
+  if (!brands) {
+    const labelled: { title: string; department: string }[] = [];
+    for (const { title, department } of catalog.products.values()) {
+      if (typeof title === "string" && typeof department === "string") {
+        labelled.push({ title, department });
+      }
+    }
+    brands = brandDepartments(labelled);
+    brandCache.set(catalog, brands);
+  }
+  return brands;
+}
+
 /**
  * The store's offers: the common ones without its missing ones, plus its added ones. Keys the
- * catalog does not know (catalog and store file from different scans) are skipped.
+ * catalog does not know (catalog and store file from different scans) are skipped. Offers
+ * without a category get a guessed one where their texts or brand allow it.
  */
 export function storeOffers(catalog: OfferCatalog, file: StoreFile): Offer[] {
   const keys = [...catalog.common.filter((key) => !file.missing.has(key)), ...file.added];
+  const brands = catalogBrands(catalog);
   const offers: Offer[] = [];
   for (const key of new Set(keys)) {
     const record = catalog.products.get(key);
-    if (record) offers.push(parseOffer(key, record, file.overrides.get(key)));
+    if (!record) continue;
+    const offer = parseOffer(key, record, file.overrides.get(key));
+    const department = offer.department ?? guessDepartment(offer, brands);
+    offers.push(department === undefined ? offer : { ...offer, department });
   }
   return offers;
 }
@@ -232,11 +262,6 @@ export interface StoreChoice {
   store: OfferStore;
   /** Set when the stores were ranked by distance. */
   distanceKm?: number;
-}
-
-/** Lower case without accents, so "muenchen"/"münchen" style input still finds something. */
-export function normalize(text: string): string {
-  return text.toLocaleLowerCase("de").normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/ß/g, "ss");
 }
 
 export function nearestStores(
@@ -339,6 +364,8 @@ export interface OfferFilter {
   query: string;
   /** Only this department (`NO_DEPARTMENT` for promotions); null for all. */
   department: string | null;
+  /** Only this group of the department (see `groupsOf`); null for the whole department. */
+  group: string | null;
   /** Only offers of the sale week starting this Monday; null for all that have not ended. */
   week: IsoDate | null;
   sort: OfferSort;
@@ -378,8 +405,10 @@ export function filterOffers(
   today: IsoDate,
 ): Offer[] {
   const byName = (a: Offer, b: Offer) => offerName(a).localeCompare(offerName(b), "de");
+  const { department, group } = filter;
   return matching(offers, filter, today)
-    .filter((o) => filter.department === null || departmentOf(o) === filter.department)
+    .filter((o) => department === null || departmentOf(o) === department)
+    .filter((o) => department === null || group === null || groupOf(o, department) === group)
     .sort((a, b) => ORDER[filter.sort](a, b) || byName(a, b) || a.key.localeCompare(b.key));
 }
 
@@ -397,4 +426,26 @@ export function departmentCounts(
   return [...counts]
     .map(([department, count]) => ({ department, count }))
     .sort((a, b) => compareDepartments(a.department, b.department));
+}
+
+/**
+ * The groups of the filter's department with their number of offers, in display order and
+ * without empty ones. Empty when no department is chosen or it has no groups.
+ */
+export function groupCounts(
+  offers: readonly Offer[],
+  filter: OfferFilter,
+  today: IsoDate,
+): { group: string; count: number }[] {
+  const { department } = filter;
+  if (department === null) return [];
+  const counts = new Map<string, number>();
+  for (const offer of matching(offers, filter, today)) {
+    if (departmentOf(offer) !== department) continue;
+    const group = groupOf(offer, department);
+    if (group !== undefined) counts.set(group, (counts.get(group) ?? 0) + 1);
+  }
+  return groupsOf(department)
+    .map((group) => ({ group, count: counts.get(group) ?? 0 }))
+    .filter(({ count }) => count > 0);
 }

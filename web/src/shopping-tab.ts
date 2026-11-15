@@ -10,6 +10,7 @@ import { formatKm } from "./geo";
 import { icon, type IconName } from "./icons";
 import {
   departmentCounts,
+  groupCounts,
   filterOffers,
   findStores,
   loadOfferCatalog,
@@ -84,6 +85,7 @@ type View = "angebote" | "zettel";
 const SORT_LABELS: Record<OfferSort, string> = { rabatt: "Rabatt", preis: "Preis", name: "Name" };
 const LAYOUT_LABELS: Record<Layout, string> = { kacheln: "Kacheln", liste: "Liste" };
 const ALL_DEPARTMENTS = "";
+const ALL_GROUPS = "";
 
 function storage(): Storage | null {
   try {
@@ -179,7 +181,13 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
   let choosing = list.store === null;
   let shown = PAGE_SIZE;
   let confirmClear = false;
-  const filter: OfferFilter = { query: "", department: null, week: null, sort: "rabatt" };
+  const filter: OfferFilter = {
+    query: "",
+    department: null,
+    group: null,
+    week: null,
+    sort: "rabatt",
+  };
 
   const today = (): IsoDate => berlinToday(ctx.now());
 
@@ -241,6 +249,22 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
   const departmentRoot = h("div", { id: "zettel-department" });
   const departmentSelect = setupSelect(departmentRoot, "Kategorie", (value) => {
     filter.department = value === ALL_DEPARTMENTS ? null : value;
+    filter.group = null;
+    shown = PAGE_SIZE;
+    renderOffers();
+  });
+  // Groups of the chosen department, e.g. the kinds of meat; only the large departments have any.
+  const groupList = h("div", { class: "zsub__list" });
+  const groupField = h(
+    "fieldset",
+    { class: "zsub", hidden: true },
+    h("legend", { class: "visually-hidden" }, "Gruppe innerhalb der Kategorie"),
+    groupList,
+  );
+  groupField.addEventListener("change", (event) => {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement) || !input.checked) return;
+    filter.group = input.value === ALL_GROUPS ? null : input.value;
     shown = PAGE_SIZE;
     renderOffers();
   });
@@ -286,6 +310,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
           departmentRoot,
         ),
       ),
+      groupField,
     ),
     h("div", { class: "status-bar" }, offersStatus.box, offersAge.box),
     offerGrid,
@@ -556,6 +581,31 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
       })),
     ];
     departmentSelect.setOptions(options, filter.department ?? ALL_DEPARTMENTS);
+
+    const groups = groupCounts(offers, filter, day);
+    if (filter.group !== null && !groups.some((g) => g.group === filter.group)) filter.group = null;
+    // One group only would be the same choice as "Alle".
+    groupField.hidden = groups.length < 2;
+    replaceChildren(
+      groupList,
+      ...[
+        { group: ALL_GROUPS, label: "Alle", count: groups.reduce((sum, g) => sum + g.count, 0) },
+        ...groups.map((g) => ({ ...g, label: g.group })),
+      ].map(({ group, label, count }) =>
+        h(
+          "label",
+          { class: "zsub__chip" },
+          h("input", {
+            type: "radio",
+            name: "zettel-group",
+            value: group,
+            ...(group === (filter.group ?? ALL_GROUPS) && { checked: true }),
+          }),
+          label,
+          h("span", { class: "zsub__count" }, String(count)),
+        ),
+      ),
+    );
 
     const found = filterOffers(offers, filter, day);
     const week = weeks.find((w) => w.monday === filter.week);
