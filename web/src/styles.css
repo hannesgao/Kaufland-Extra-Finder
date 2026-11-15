@@ -3140,6 +3140,15 @@ button.segment:disabled {
   .zfilters__department:nth-child(odd of :not([hidden])) {
     grid-column: 1 / -1;
   }
+
+  /* Side by side, the category comes before the sorting. */
+  .zfilters__department:nth-child(even of :not([hidden])) {
+    order: 1;
+  }
+
+  .zfilters .segmented:nth-child(odd of :not([hidden])):has(input[name="zettel-sort"]) {
+    order: 2;
+  }
 }
 
 /* Offers to pick from: tiles like the ones on kaufland.de, one width for all. The picture is on
