@@ -1,8 +1,9 @@
 /**
  * The shopping list as a PDF: A4 pages laid out here, so that what is printed does not depend on
  * the browser's print dialog. Two layouts: clippings (three cards per row with large pictures)
- * and rows (two columns under a heading per department). Pages that are followed by another one
- * are filled to the bottom: cards get taller pictures, rows get more room.
+ * and rows (two columns under a heading per department, the rows of both columns on shared
+ * lines). Pages that are followed by another one are filled to the bottom: cards get taller
+ * pictures, rows get more room.
  *
  * Pure: pictures are passed in (see `jpeg.ts`); without them the boxes stay empty and the layout
  * is the same, which is how the page count is known before anything is loaded.
@@ -286,9 +287,11 @@ interface Block {
   draw(page: Page, x: number, top: number, extra: number): void;
 }
 
+const HEADING = 19;
+
 function heading(title: string, width: number): Block {
   return {
-    height: 19,
+    height: HEADING,
     stretch: 0,
     keepWithNext: true,
     draw(page, x, top) {
@@ -475,10 +478,19 @@ const ROW_PICTURE = 32;
 const ROW_PRICES = 62;
 const ROW_TEXT_X = 14 + ROW_PICTURE + 7;
 const ROW_TEXT_W = ROW_W - ROW_TEXT_X - ROW_PRICES - 6;
-/** A row gets at most this much more room to fill a column. */
-const ROW_STRETCH = 9;
+/** A line of rows gets at most this much more room to fill a page. */
+const ROW_STRETCH = 19;
 
-function row(item: ListItem, context: Context): Block {
+/** A row of the list. Rows are set on lines shared by both columns: see `Line`. */
+interface Row {
+  /** The department, on the first row of its group. */
+  heading: string | null;
+  height: number;
+  /** `extra`: the room its line has beyond the line's own height. */
+  draw(page: Page, x: number, top: number, extra: number): void;
+}
+
+function row(item: ListItem, heading: string | null, context: Context): Row {
   const f = facts(item, context);
   const offer = item.offer !== undefined;
   const textX = offer ? ROW_TEXT_X : 14;
@@ -540,8 +552,8 @@ function row(item: ListItem, context: Context): Block {
   const inner = Math.max(text(null, 0, 0), prices(null, 0, 0), offer ? ROW_PICTURE : 12);
   const pad = 4;
   return {
+    heading,
     height: inner + 2 * pad + 0.5,
-    stretch: ROW_STRETCH,
     draw(page, x, top, extra) {
       const y = top + pad + extra / 2;
       checkbox(page, x, y + 1, 10);
@@ -557,50 +569,115 @@ function row(item: ListItem, context: Context): Block {
         );
       text(page, x + textX, y);
       prices(page, x + ROW_W, y);
-      const rule = top + inner + 2 * pad + extra;
-      page.line(x, rule, x + ROW_W, rule, 0.4, RULE);
     },
   };
 }
 
-function rowBlocks(items: readonly ListItem[], context: Context): Block[] {
-  return groupItems(items).flatMap((group) => [
-    heading(group.title, ROW_W),
-    ...group.items.map((item) => row(item, context)),
-  ]);
+function rows(items: readonly ListItem[], context: Context): Row[] {
+  return groupItems(items).flatMap((group) =>
+    group.items.map((item, i) => row(item, i === 0 ? group.title : null, context)),
+  );
+}
+
+/**
+ * One line of the page: the n-th row of the left column beside the n-th of the right one. Both
+ * start at the same height and end at the same rule, so the line is as tall as its taller row;
+ * a department heading on either side takes a band above both.
+ */
+interface Line {
+  cells: (Row | undefined)[];
+  head: number;
+  height: number;
+}
+
+/** The first `count` rows down the left column, the next `count` down the right one. */
+function lines(list: readonly Row[], count: number): Line[] {
+  return Array.from({ length: count }, (_, n) => {
+    const cells = Array.from({ length: ROW_COLUMNS }, (__, c) => list[c * count + n]);
+    return {
+      cells,
+      head: cells.some((cell) => cell?.heading != null) ? HEADING : 0,
+      height: Math.max(...cells.map((cell) => cell?.height ?? 0)),
+    };
+  });
+}
+
+function linesHeight(list: readonly Line[]): number {
+  return list.reduce((sum, line) => sum + line.head + line.height, 0);
+}
+
+interface RowPage {
+  lines: Line[];
+  /** More of the section follows: the page is filled to the bottom. */
+  full: boolean;
+}
+
+/**
+ * Rows onto pages, read down the left column and then down the right one. A page that is
+ * followed by another takes as many lines as fit; the last one splits what is left over both
+ * columns instead of leaving the right one empty.
+ */
+function rowPages(list: readonly Row[], room: number): RowPage[] {
+  const pages: RowPage[] = [];
+  let rest = list;
+  while (rest.length) {
+    const half = Math.ceil(rest.length / ROW_COLUMNS);
+    const last = lines(rest, half);
+    if (linesHeight(last) <= room || half === 1) {
+      pages.push({ lines: last, full: false });
+      break;
+    }
+    let count = 1;
+    for (let n = 2; n < half; n++) if (linesHeight(lines(rest, n)) <= room) count = n;
+    pages.push({ lines: lines(rest, count), full: true });
+    rest = rest.slice(count * ROW_COLUMNS);
+  }
+  return pages;
+}
+
+function drawRows(page: Page, sheet: RowPage, top: number, room: number): number {
+  const spare = sheet.full ? Math.max(0, room - linesHeight(sheet.lines)) : 0;
+  const extra = Math.min(spare / sheet.lines.length, ROW_STRETCH);
+  let y = top;
+  for (const line of sheet.lines) {
+    const rule = y + line.head + line.height + extra;
+    line.cells.forEach((cell, c) => {
+      if (!cell) return;
+      const x = MARGIN + c * (ROW_W + ROW_GAP);
+      if (cell.heading !== null) heading(cell.heading, ROW_W).draw(page, x, y, 0);
+      cell.draw(page, x, y + line.head, extra);
+      page.line(x, rule, x + ROW_W, rule, 0.4, RULE);
+    });
+    y = rule;
+  }
+  return y;
 }
 
 /* ---------- Flowing blocks onto pages ---------- */
 
-/** Blocks of one column (or of the whole page width), top to bottom. */
+/** The blocks of one page, top to bottom. */
 interface Column {
-  x: number;
   blocks: Block[];
-  /** More of the section follows: the column is filled to the bottom. */
+  /** More of the section follows: the page is filled to the bottom. */
   full: boolean;
 }
 
 interface SheetPage {
   section: number;
-  columns: Column[];
+  /** Draws the content from `top` and returns where it ends. */
+  draw(page: Page, top: number, room: number): number;
 }
 
-/** Fill columns in turn; a block that does not fit starts the next column or page. */
-function flow(blocks: readonly Block[], columnsPerPage: number, room: number): Column[][] {
-  const width = columnsPerPage === 1 ? WIDTH : ROW_W;
-  const pages: Column[][] = [];
+/** Fill pages in turn; a block that does not fit starts the next one. */
+function flow(blocks: readonly Block[], room: number): Column[] {
+  const pages: Column[] = [];
   let column: Column | undefined;
   let used = 0;
   let give = 0;
   const next = (): Column => {
-    let page = pages.at(-1);
-    if (page === undefined || page.length >= columnsPerPage) {
-      page = [];
-      pages.push(page);
-    }
     if (column) column.full = true;
-    const fresh = { x: MARGIN + page.length * (width + ROW_GAP), blocks: [], full: false };
-    page.push(fresh);
+    const fresh = { blocks: [], full: false };
+    pages.push(fresh);
     used = 0;
     give = 0;
     return fresh;
@@ -619,30 +696,7 @@ function flow(blocks: readonly Block[], columnsPerPage: number, room: number): C
 }
 
 /**
- * The last page of rows: both columns about as long, instead of a full left one beside an empty
- * or short right one. A heading stays with the row after it.
- */
-function balance(page: Column[]): Column[] {
-  const blocks = page.flatMap((column) => column.blocks);
-  const total = blocks.reduce((sum, block) => sum + block.height, 0);
-  let left = 0;
-  let cut = blocks.length;
-  for (let i = 0; i < blocks.length; i++) {
-    left += blocks[i]?.height ?? 0;
-    if (left >= total / 2 && !blocks[i]?.keepWithNext) {
-      cut = i + 1;
-      break;
-    }
-  }
-  if (cut >= blocks.length) return page;
-  return [
-    { x: MARGIN, blocks: blocks.slice(0, cut), full: false },
-    { x: MARGIN + ROW_W + ROW_GAP, blocks: blocks.slice(cut), full: false },
-  ];
-}
-
-/**
- * Draw a column. A full one spreads the room that is left over its blocks: first into the
+ * Draw a page of blocks. A full one spreads the room that is left over its blocks: first into the
  * blocks that stretch, then between the blocks, each up to a limit. A column that holds more
  * than its room (see `flow`) takes the difference from the blocks that shrink.
  */
@@ -661,7 +715,7 @@ function drawColumn(page: Page, column: Column, top: number, room: number): numb
   let y = top;
   for (const block of column.blocks) {
     const extra = elastic.includes(block) ? each : 0;
-    block.draw(page, column.x, y, extra);
+    block.draw(page, MARGIN, y, extra);
     y += block.height + extra + gap;
   }
   return y - (column.blocks.length ? gap : 0);
@@ -709,17 +763,19 @@ function lay(options: SheetOptions, pictures: Pictures): Laid {
   const context = { today: options.today, pictures, showLate: !options.split };
   const sheets: SheetPage[] = [];
   sections.forEach((section, index) => {
-    const blocks =
-      options.layout === "kacheln"
-        ? cardBlocks(section.items, context)
-        : rowBlocks(section.items, context);
     const room = BOTTOM - contentTop(section);
-    const perPage = options.layout === "kacheln" ? 1 : ROW_COLUMNS;
-    const flowed = flow(blocks, perPage, room);
-    const last = flowed.at(-1);
-    if (perPage > 1 && last) flowed[flowed.length - 1] = balance(last);
+    const draws: SheetPage["draw"][] =
+      options.layout === "kacheln"
+        ? flow(cardBlocks(section.items, context), room).map(
+            (column) => (page, top, space) => drawColumn(page, column, top, space),
+          )
+        : rowPages(rows(section.items, context), room).map(
+            (sheet) => (page, top, space) => drawRows(page, sheet, top, space),
+          );
     // A section without anything still gets its page (an empty list is not printed at all).
-    for (const columns of flowed.length ? flowed : [[]]) sheets.push({ section: index, columns });
+    for (const draw of draws.length ? draws : [(_: Page, top: number) => top]) {
+      sheets.push({ section: index, draw });
+    }
   });
 
   const stand = options.generatedAt
@@ -732,7 +788,7 @@ function lay(options: SheetOptions, pictures: Pictures): Laid {
     const section = sections[sheet.section] ?? { heading: null, items: [] };
     const top = drawHead(page, options, section);
     const room = BOTTOM - top;
-    ends.push(Math.max(top, ...sheet.columns.map((column) => drawColumn(page, column, top, room))));
+    ends.push(sheet.draw(page, top, room));
     const baseline = PAGE_H - MARGIN;
     page.text(footer, MARGIN, baseline, FOOT_SIZE, false, MUTED);
     const number = `Seite ${String(i + 1)}/${String(sheets.length)}`;

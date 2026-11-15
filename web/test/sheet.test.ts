@@ -218,6 +218,23 @@ describe("sheet layout", () => {
     ).toBe(2);
   });
 
+  it("sets the rows of both columns on the same lines", () => {
+    // Tall rows on the left, short ones on the right, a heading above the left column only.
+    const long = "Beschreibung mit vielen Worten ".repeat(6);
+    const items = Array.from({ length: 8 }, (_, i) =>
+      item(i + 1, i < 3 ? { description: long } : {}),
+    );
+    const source = sheetSource(options(items, { layout: "liste" }), new Map());
+    const boxes = (source.match(/\d+\.?\d* \d+\.?\d* 9\.2 9\.2 re S/g) ?? []).map((m) =>
+      m.split(" ").slice(0, 2),
+    );
+    expect(boxes).toHaveLength(8);
+    const heights = new Map<string, Set<string>>();
+    for (const [x = "", y = ""] of boxes) heights.set(y, (heights.get(y) ?? new Set()).add(x));
+    expect(heights.size).toBe(4);
+    for (const columns of heights.values()) expect(columns.size).toBe(2);
+  });
+
   it("keeps long texts on the page", () => {
     const long = "Sehr langer Name ohne Ende ".repeat(12);
     const items = [
