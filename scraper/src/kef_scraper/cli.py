@@ -18,6 +18,7 @@ from kef_scraper.build import (
     build_cards,
     build_deals,
     build_extra,
+    build_offers,
     offers_problems,
     sanity_problems,
     with_history,
@@ -83,8 +84,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--offers",
         action="store_true",
-        help="also read each store's offer overview; writes cards.json (trading-card offers) "
-        "and deals.json (offers of the Extra leaflets)",
+        help="also read each store's offer overview; writes cards.json (trading-card offers), "
+        "deals.json (offers of the Extra leaflets) and offers/ (every offer of every store)",
     )
     p.add_argument(
         "--skip-pdf-check",
@@ -137,6 +138,29 @@ def _load_json(path: Path) -> dict[str, Any] | None:
         log.warning("ignoring unreadable %s: %s", path, e)
         return None
     return data if isinstance(data, dict) else None
+
+
+def _write_offers(directory: Path, offers: dict[str, Any], *, prune: bool) -> None:
+    """Write the offer catalog, the store index and one file per store.
+
+    A full scan also removes the files of stores it no longer has (closed stores). A partial scan
+    writes its stores only and leaves the catalog and the index of the last full scan alone:
+    they would no longer cover the other stores' files.
+    """
+    stores = directory / "stores"
+    for store_id, record in offers["stores"].items():
+        write_text_atomic(stores / f"{store_id}.json", dump_json(record, indent=None))
+    if not prune:
+        log.info(
+            "wrote %d store files to %s (partial scan: no catalog)", len(offers["stores"]), stores
+        )
+        return
+    for path in stores.glob("*.json"):
+        if path.stem not in offers["stores"]:
+            path.unlink()
+    write_text_atomic(directory / "catalog.json", dump_json(offers["catalog"], indent=1))
+    write_text_atomic(directory / "index.json", dump_json(offers["index"], indent=1))
+    log.info("wrote %s (%d stores)", directory, len(offers["stores"]))
 
 
 def main(
@@ -204,14 +228,17 @@ def main(
     )
     cards = build_cards(result, now, CARD_KEYWORDS) if args.offers and not card_problems else None
     deals = build_deals(result, extra, pdf_checks, now) if cards is not None else None
+    offers = build_offers(result, now) if cards is not None else None
 
-    sys.stdout.write(render_report(result, extra, diff, cards, card_problems, pdf_checks, deals))
+    sys.stdout.write(
+        render_report(result, extra, diff, cards, card_problems, pdf_checks, deals, offers)
+    )
     if args.summary:
         args.summary.parent.mkdir(parents=True, exist_ok=True)
         with args.summary.open("a", encoding="utf-8") as f:
             f.write(
                 render_summary_md(
-                    result, extra, diff, problems, cards, card_problems, pdf_checks, deals
+                    result, extra, diff, problems, cards, card_problems, pdf_checks, deals, offers
                 )
             )
 
@@ -231,13 +258,15 @@ def main(
     write_text_atomic(out / "extra.json", dump_json(extra))
     log.info("wrote %s", out / "extra.json")
     for p in card_problems:
-        log.warning("offer scan: %s; cards.json and deals.json not updated", p)
+        log.warning("offer scan: %s; cards.json, deals.json and offers/ not updated", p)
     if cards is not None:
         write_text_atomic(out / "cards.json", dump_json(cards))
         log.info("wrote %s", out / "cards.json")
     if deals is not None:
         write_text_atomic(out / "deals.json", dump_json(deals))
         log.info("wrote %s", out / "deals.json")
+    if offers is not None:
+        _write_offers(out / "offers", offers, prune=full_scan)
     return EXIT_OK
 
 

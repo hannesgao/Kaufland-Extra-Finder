@@ -16,6 +16,7 @@ from kef_scraper.build import (
     CARDS_SCHEMA_VERSION,
     build_cards,
     build_deals,
+    build_offers,
     offer_key,
     offers_problems,
 )
@@ -32,7 +33,7 @@ from kef_scraper.offers import (
 from kef_scraper.output import extra_offer_lines
 from kef_scraper.parse import ParseError, parse_stores
 from kef_scraper.pdfcheck import PdfCheck
-from kef_scraper.scan import scan_store
+from kef_scraper.scan import scan, scan_store
 
 NOW = dt.datetime(2026, 10, 6, 6, 30, tzinfo=ZoneInfo("Europe/Berlin"))
 TOP_TRAINER = "20973783"  # announced: shown 04.-09.10., sale 12.-17.10.
@@ -305,6 +306,11 @@ class TestCli:
         assert "Trading-card offers (pokemon): 2 in 1 stores" in report
         assert "Sammelkartenspiel »Top-Trainer-Box« (20973783) 55.00" in report
         assert "### 🃏 Trading cards" in summary.read_text()
+        assert "### 🧾 Offer catalog" in summary.read_text()
+        # A partial scan writes its stores only: its catalog would not cover the other stores.
+        store = json.loads((tmp_path / "offers" / "stores" / "DE4453.json").read_text())
+        assert (store["id"], store["added"], store["missing"]) == ("DE4453", [], [])
+        assert [p.name for p in (tmp_path / "offers").iterdir()] == ["stores"]
 
     def test_without_flag_cards_json_is_untouched(
         self, tmp_path: Path, pages: dict[str, str]
@@ -501,3 +507,127 @@ class TestBuildDeals:
                 {},
                 NOW.replace(tzinfo=None),
             )
+
+
+def _page(*categories: dict[str, Any]) -> str:
+    """An offer overview with the given categories, as the website embeds it."""
+    data = {
+        "component": "OfferTemplate",
+        "props": {"offerData": {"cycles": [{"categories": categories}]}},
+    }
+    return f"<script>window.SSR['x'] = {json.dumps(data, separators=(',', ':'))}</script>"
+
+
+def _raw(kl_nr: str = "00424937", **fields: Any) -> dict[str, Any]:
+    return {
+        "klNr": kl_nr,
+        "title": "KINDER",
+        "subtitle": "Pingui ",
+        "dateFrom": "2026-11-08",
+        "dateTo": "2026-11-14",
+        "salesFrom": "2026-11-12",
+        "salesTo": "2026-11-14",
+        "formattedPrice": "2.49",
+        "formattedOldPrice": "3.29",
+        "unit": "je 240-g-Packg.",
+    } | fields
+
+
+def _category(name: str, *offers: dict[str, Any], main: bool = False) -> dict[str, Any]:
+    return {"name": name, "displayName": name, "main": main, "offers": list(offers)}
+
+
+class TestOfferDetails:
+    def test_prices_dates_and_description(self) -> None:
+        raw = _raw(
+            detailDescription="Schoko-Milch-Dessert, gekühlt",
+            formattedBasePrice="(1 kg = 10.38)",
+            loyaltyFormattedPrice="2.22*",
+            loyaltyBasePrice="(1 kg = 9.25)",
+            bbyMessage=["3 Stück", "entspr. pro Packg. 1.34"],
+        )
+        (offer,) = parse_offers(_page(_category("Molkerei", raw, main=True))) or []
+        assert (offer.sales_from, offer.sales_to) == (dt.date(2026, 11, 12), dt.date(2026, 11, 14))
+        assert offer.description == "Schoko-Milch-Dessert, gekühlt"
+        assert (offer.base_price, offer.card_base_price) == ("(1 kg = 10.38)", "(1 kg = 9.25)")
+        assert offer.card_price == "2.22"  # without Kaufland's footnote mark
+        assert offer.multi_buy == ("3 Stück", "entspr. pro Packg. 1.34")
+
+    def test_plain_offer_has_none_of_them(self) -> None:
+        (offer,) = parse_offers(_page(_category("Molkerei", _raw()))) or []
+        assert (offer.description, offer.base_price, offer.card_price) == (None, None, None)
+        assert (offer.card_base_price, offer.multi_buy, offer.department) == (None, (), None)
+
+    def test_department_is_the_first_assortment_category(self) -> None:
+        page = _page(
+            _category("Unsere Knüller", _raw()),
+            _category("Molkerei", _raw(), main=True),
+            _category("Tiefkühlkost", _raw(), main=True),
+        )
+        (offer,) = parse_offers(page) or []
+        assert offer.department == "Molkerei"
+        assert offer.sections == ("Unsere Knüller", "Molkerei", "Tiefkühlkost")
+
+
+class TestBuildOffers:
+    """Three stores: milk everywhere, bread in A and B, cheese in C only; milk is dearer in C."""
+
+    def _offers(self) -> dict[str, Any]:
+        stores = list(_stores().values())[:3]
+        milk, bread, cheese = (
+            _raw("1", title="Milch"),
+            _raw("2", title="Brot"),
+            _raw("3", title="Käse"),
+        )
+        dear = milk | {"formattedPrice": "2.99", "formattedOldPrice": None}
+        pages = {
+            stores[0].id: _page(_category("Alles", milk, bread, main=True)),
+            stores[1].id: _page(_category("Alles", milk, bread, main=True)),
+            stores[2].id: _page(_category("Alles", dear, cheese, main=True)),
+        }
+        self.ids = [s.id for s in stores]
+        fetcher = FakeFetcher(store_list_sample(), {}, offer_pages=pages)
+        return build_offers(scan(fetcher, stores, full_scan=False, with_offers=True), NOW)
+
+    def test_catalog_has_each_offer_once_as_most_stores_have_it(self) -> None:
+        catalog = self._offers()["catalog"]
+        key = "1|2026-11-08"
+        assert list(catalog["products"]) == [key, "2|2026-11-08", "3|2026-11-08"]
+        assert catalog["products"][key] == {
+            "kl_nr": "1",
+            "title": "Milch",
+            "subtitle": "Pingui",
+            "price": "2.49",
+            "unit": "je 240-g-Packg.",
+            "shown_from": "2026-11-08",
+            "shown_to": "2026-11-14",
+            "sales_from": "2026-11-12",
+            "sales_to": "2026-11-14",
+            "old_price": "3.29",
+            "department": "Alles",
+            "sections": ["Alles"],
+        }
+        assert catalog["common"] == [key, "2|2026-11-08"]  # in more than half of the stores
+
+    def test_store_lists_its_differences_only(self) -> None:
+        offers = self._offers()
+        a, _, c = (offers["stores"][i] for i in self.ids)
+        assert (a["added"], a["missing"], "overrides" in a) == ([], [], False)
+        assert (c["added"], c["missing"]) == (["3|2026-11-08"], ["2|2026-11-08"])
+        # null: this store has no comparison price for the milk
+        assert c["overrides"] == {"1|2026-11-08": {"old_price": None, "price": "2.99"}}
+
+    def test_index_lists_stores_with_their_offer_count(self) -> None:
+        index = self._offers()["index"]
+        assert [(s["id"], s["offers"]) for s in index["stores"]] == [(i, 2) for i in self.ids]
+        assert index["generated_at"] == "2026-10-06T06:30:00+02:00"
+
+    def test_store_without_offers_is_left_out(self) -> None:
+        store = next(iter(_stores().values()))
+        result = ScanResult(results=(StoreResult(store, offers_scanned=True),), full_scan=False)
+        offers = build_offers(result, NOW)
+        assert (offers["stores"], offers["index"]["stores"]) == ({}, [])
+
+    def test_needs_an_aware_timestamp(self) -> None:
+        with pytest.raises(ValueError, match="timezone-aware"):
+            build_offers(ScanResult(results=(), full_scan=False), NOW.replace(tzinfo=None))

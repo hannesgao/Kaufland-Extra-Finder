@@ -6,7 +6,7 @@ name: Scrape and deploy
 # through the night; the gate job lets the first run after 03:30 Berlin time scrape and skips the
 # rest of the day once the data branch has a scan from today. A failed scrape leaves no commit, so
 # the next entry tries again. On Monday and Thursday the scrape also reads every store's offer
-# overview for trading cards (cards.json): it lists the whole week (incl. the Thursday-Saturday and
+# overview (cards.json, deals.json, offers/): it lists the whole week (incl. the Thursday-Saturday and
 # weekend offers) plus next week's announced offers from the Sunday before; Thursday's run picks up
 # late changes.
 # Deploy: after every scrape, on push to main (code changes, no scrape), and deploy-only when
@@ -23,7 +23,7 @@ on:
         options: [scrape-and-deploy, deploy]
         default: scrape-and-deploy
       offers:
-        description: Also scan the offer overviews for trading cards (cards.json)
+        description: Also scan the offer overviews (cards.json, deals.json, offers/)
         type: boolean
         default: true
   push:

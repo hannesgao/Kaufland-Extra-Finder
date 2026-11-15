@@ -101,8 +101,18 @@ def is_extra_offer(offer: Offer) -> bool:
     return EXTRA_SECTION in offer.sections
 
 
+def _opt(value: object) -> str | None:
+    """A non-empty string, HTML entities left as Kaufland sends them; anything else is None."""
+    text = _text(value)
+    return text or None
+
+
 def _offer(
-    raw: Mapping[str, Any], category: str, section: str, next_week: dt.date | None
+    raw: Mapping[str, Any],
+    category: str,
+    section: str,
+    next_week: dt.date | None,
+    main: bool = False,
 ) -> Offer | None:
     kl_nr = raw.get("klNr")
     shown_from, shown_to = _date(raw.get("dateFrom")), _date(raw.get("dateTo"))
@@ -127,6 +137,16 @@ def _offer(
         thumbnail_2x=_rendition(raw, IMAGE_RENDITION_2X),
         old_price=old_price if isinstance(old_price, str) and old_price else None,
         sections=(section,) if section else (),
+        department=section if main and section else None,
+        description=_opt(raw.get("detailDescription")),
+        base_price=_opt(raw.get("formattedBasePrice")),
+        card_price=(_opt(raw.get("loyaltyFormattedPrice")) or "").rstrip("*") or None,
+        card_base_price=_opt(raw.get("loyaltyBasePrice")),
+        multi_buy=tuple(
+            m.strip() for m in raw.get("bbyMessage") or () if isinstance(m, str) and m.strip()
+        )
+        if isinstance(raw.get("bbyMessage"), list)
+        else (),
     )
 
 
@@ -134,7 +154,8 @@ def parse_offers(html: str) -> list[Offer] | None:
     """All offers on a store's offer overview, or None if the page has no offer data.
 
     An offer listed in several categories is returned once (key: article number + start date),
-    with the first category's data and the display names of all of them in `sections`.
+    with the first category's data, the display names of all of them in `sections` and the first
+    assortment category in `department`.
     Raises ParseError when the offer data is there but cannot be read.
     """
     start = html.find(_TEMPLATE)
@@ -157,13 +178,19 @@ def parse_offers(html: str) -> list[Offer] | None:
         for category in cycle.get("categories") or []:
             name = _text(category.get("name"))
             section = _text(category.get("displayName"))
+            main = category.get("main") is True
             for raw in category.get("offers") or []:
-                offer = _offer(raw, name, section, next_week) if isinstance(raw, dict) else None
+                offer = (
+                    _offer(raw, name, section, next_week, main) if isinstance(raw, dict) else None
+                )
                 if offer is None:
                     log.debug("skipping malformed offer in %s", name)
                     continue
                 key = (offer.kl_nr, offer.shown_from)
                 first = offers.setdefault(key, offer)
                 if section and section not in first.sections:
-                    offers[key] = replace(first, sections=(*first.sections, section))
+                    first = replace(first, sections=(*first.sections, section))
+                if main and section and first.department is None:
+                    first = replace(first, department=section)
+                offers[key] = first
     return list(offers.values())
