@@ -3067,19 +3067,13 @@ button.segment:disabled {
   display: none;
 }
 
-/* Day ranges stay on one line; their counts are shown where four segments have room for them. */
+/* Labels stay on one line; the counts are shown where four segments have room for them. */
 .zfilters .segment {
   white-space: nowrap;
 }
 
 .zfilters .segmented__group {
   container-type: inline-size;
-}
-
-@container (max-width: 439px) {
-  .segment:has(input[name="zettel-day"]) .segment__detail {
-    display: none;
-  }
 }
 
 @container (max-width: 339px) {

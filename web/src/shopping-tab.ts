@@ -27,7 +27,6 @@ import {
   nearestStores,
   OFFER_SORTS,
   offerWeeks,
-  shoppingPeriods,
   startDays,
   storeOffers,
   type Offer,
@@ -201,7 +200,6 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     department: null,
     group: null,
     week: null,
-    day: null,
     start: null,
     sort: "rabatt",
   };
@@ -255,14 +253,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
   });
   const weekSwitch = segmented<IsoDate>("Woche", "zettel-week", (value) => {
     filter.week = value;
-    filter.day = null;
     filter.start = null;
-    shown = PAGE_SIZE;
-    renderOffers();
-  });
-  // The day of the shopping trip: offers that start on Thursday do not help on a Tuesday.
-  const daySwitch = segmented<string>("Einkaufstag", "zettel-day", (value) => {
-    filter.day = value === ALL_DAYS ? null : value;
     shown = PAGE_SIZE;
     renderOffers();
   });
@@ -330,7 +321,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
         h("label", { for: "zsearch" }, "Angebot suchen"),
       ),
       // The date filters share a row; those with nothing to choose are hidden.
-      h("div", { class: "zfilters__row" }, weekSwitch.field, daySwitch.field, startSwitch.field),
+      h("div", { class: "zfilters__row" }, weekSwitch.field, startSwitch.field),
       h(
         "div",
         { class: "zfilters__row" },
@@ -596,21 +587,6 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     if (weeks[0] && filter.week) {
       weekSwitch.set(weeks.map(weekOption), filter.week);
     }
-    const periods = filter.week ? shoppingPeriods(offers, filter.week, day) : [];
-    if (!periods.some((period) => period.from === filter.day)) filter.day = null;
-    // With one stretch of days every offer of the week applies on each of them.
-    daySwitch.field.hidden = periods.length < 2;
-    daySwitch.set(
-      [
-        { value: ALL_DAYS, label: "Alle" },
-        ...periods.map(({ from, to, count }) => ({
-          value: from,
-          label: from === to ? weekdayShort(from) : `${weekdayShort(from)}–${weekdayShort(to)}`,
-          detail: String(count),
-        })),
-      ],
-      filter.day ?? ALL_DAYS,
-    );
     const starts = filter.week ? startDays(offers, filter.week, day) : [];
     if (!starts.some((start) => start.day === filter.start)) filter.start = null;
     startSwitch.field.hidden = starts.length < 2;
@@ -676,16 +652,11 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
 
     const found = filterOffers(offers, filter, day);
     const week = weeks.find((w) => w.monday === filter.week);
-    const period = periods.find((p) => p.from === filter.day);
-    const when = period
-      ? period.from === period.to
-        ? `, gültig am ${weekdayShort(period.from)}, ${formatDate(period.from)}`
-        : `, gültig ${weekdayShort(period.from)}–${weekdayShort(period.to)}, ${formatRange(period.from, period.to)}`
-      : filter.start
-        ? `, gültig ab ${weekdayShort(filter.start)}, ${formatDate(filter.start)}`
-        : week
-          ? `, gültig ${formatRange(week.from, week.to)}`
-          : "";
+    const when = filter.start
+      ? `, gültig ab ${weekdayShort(filter.start)}, ${formatDate(filter.start)}`
+      : week
+        ? `, gültig ${formatRange(week.from, week.to)}`
+        : "";
     offersStatus.text.textContent = found.length
       ? `${String(found.length)} ${found.length === 1 ? "Angebot" : "Angebote"} in ${list.store.name}${when}.`
       : "Keine Angebote für diese Auswahl.";
