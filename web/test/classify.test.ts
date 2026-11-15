@@ -128,7 +128,48 @@ describe("groupOf", () => {
     expect(groupOf(offer(line), D.sweets)).toBe(group);
   });
 
-  it("has groups for the three large departments only", () => {
+  it.each([
+    [D.produce, "Span. Zitronen||Sorte laut Auszeichnung, Kl. I", "Obst"],
+    [D.produce, "Dtsch. Speisekartoffeln||festkochend", "Gemüse & Salat"],
+    [D.produce, "Weihnachtsstern Busch||versch. Farben, Topf Ø 23 cm", "Blumen & Pflanzen"],
+    [D.fish, "Norw. Lachsfilet||mit Haut", "Frischer Fisch"],
+    [D.fish, "Rotbarschstücke geräuchert||", "Geräuchert & mariniert"],
+    [D.dairy, "AMMERLÄNDER|Butterkäse|", "Käse"], // not butter
+    [D.dairy, "LECKERMÄULCHEN|Milch-Quark|", "Joghurt & Desserts"],
+    [D.dairy, "MÜLLER|Reine Buttermilch|", "Milch & Sahne"], // not butter
+    [D.dairy, "MEGGLE|Kräuter-Butter|", "Butter & Fette"],
+    [D.frozen, "BRANDENBURGER|Hefeklöße|", "Kartoffeln & Klöße"], // not a burger
+    [D.frozen, "SNACKMASTER|Mikrowellen-Pommes|", "Kartoffeln & Klöße"], // not a snack
+    [D.frozen, "BLOCK HOUSE|American Burger|", "Fleisch & Geflügel"],
+    [D.frozen, "BEN & JERRY'S|Eis|", "Eis"],
+    [D.deli, "K-BIO|Bio-Olivenöl|extra nativ", "Saucen, Öl & Gewürze"], // not olives
+    [D.deli, "GOLSSENER|Fleischsalat|", "Feinkost & Salate"],
+    [D.deli, "MIRACEL WHIP|Salatcreme|", "Saucen, Öl & Gewürze"],
+    [D.deli, "BONDUELLE|Goldmais|", "Konserven"],
+    [D.staples, "Nuss-Nougat-Croissant||Plunderteiggebäck", "Brot & Backwaren"],
+    [D.staples, "NUTELLA|Nuss-Nugat-Creme|", "Aufstriche & Honig"],
+    [D.staples, "K-CLASSIC|Walnusskerne|", "Nüsse & Trockenfrüchte"],
+    [D.staples, "BARILLA|Pasta-Sauce|", "Nudeln, Reis & Suppen"],
+    [D.drugstore, "GUHL|Shampoo oder Spülung|", "Körperpflege"], // not dish washing
+    [D.drugstore, "FIT|Geschirrspülmittel|", "Waschen & Reinigen"],
+    [D.drugstore, "PAMPERS|Feuchttücher|", "Baby"],
+    [D.drugstore, "FELIX|Katzennahrung|", "Tiernahrung"],
+    [D.electro, "PHILIPS|Wasserkocher »HD 9314.90«|", "Küchengeräte"],
+    [D.electro, "SHARP|QLED-Smart-TV »50JM5245E«|", "TV & Audio"],
+    [D.electro, "VARTA|Alkaline-Batterien Baby C|", "Batterien & Leuchtmittel"],
+    [D.home, "|Geschenkbox »Weihnachten«|", "Deko & Beleuchtung"], // not storage
+    [D.home, "SILVERCREST®|Wassergläser|", "Kochen & Küche"],
+    [D.home, "LEIFHEIT|Bodenwischer-Set »CLEAN TWIST«|", "Putzen & Wäsche"],
+    [D.leisure, "|Kinder-Kostüm »Rumi«|", "Spielzeug"], // not clothing
+    [D.leisure, "BEBECONFORT|Kinder-Sitzerhöhung »Gaia i-Fix«|", "Auto"],
+    [D.leisure, "VTECH|Parkgarage »Tut Tut Babyflitzer«|", "Spielzeug"], // not a car cover
+    [D.leisure, "NIKE|Herren-Sweathose|", "Bekleidung & Schuhe"],
+    [D.leisure, "LIVARNO®|Kuscheldecke|", "Heimtextilien"],
+  ])("%s: %s", (department, line, group) => {
+    expect(groupOf(offer(line), department)).toBe(group);
+  });
+
+  it("lists the groups in display order", () => {
     expect(groupsOf(D.meat)).toEqual([
       "Schwein",
       "Rind & Kalb",
@@ -141,7 +182,10 @@ describe("groupOf", () => {
     ]);
     expect(groupsOf(D.drinks).at(0)).toBe("Wasser");
     expect(groupsOf(D.sweets).at(-1)).toBe(OTHER_GROUP);
-    expect(groupsOf(D.dairy)).toEqual([]);
-    expect(groupOf(offer("ARLA|Skyr"), D.dairy)).toBeUndefined();
+    for (const department of Object.values(D)) {
+      expect(groupsOf(department).length).toBeGreaterThan(2);
+    }
+    expect(groupsOf("Aktionen und Sonstiges")).toEqual([]);
+    expect(groupOf(offer("ARLA|Skyr"), "Aktionen und Sonstiges")).toBeUndefined();
   });
 });
