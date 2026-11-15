@@ -2602,48 +2602,6 @@ button.segment:disabled {
   color: var(--md-on-surface-variant);
 }
 
-/* ---------- Extra-Angebote: one card per offer (article cards with prices) ---------- */
-.deal__prices {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
-  margin-top: 6px;
-}
-
-.deal__price {
-  font-size: 1.25rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.5rem;
-}
-
-.deal__from {
-  font-size: 0.8125rem;
-  font-weight: 500;
-}
-
-.deal__old {
-  color: var(--md-on-surface-variant);
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.deal__discount {
-  align-self: center;
-  height: 24px;
-  padding: 0 8px;
-  background: var(--md-error-container);
-  color: var(--md-on-error-container);
-  font-size: 0.8125rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.deal__unit {
-  color: var(--md-on-surface-variant);
-  font-size: 0.8125rem;
-}
-
 /* Category filter: a dropdown with icons (ui/select.ts) in the same outlined pill as the other
  * controls. The arrow sits at the inset of the switches; icons share one column. */
 .select-wrap {
@@ -3826,6 +3784,174 @@ button.segment:disabled {
 
 .zoffers__more[hidden] {
   display: none;
+}
+
+/* ---------- Extra-Angebote: tiles like the shopping list's, with the stores below ---------- */
+/* Seven rows: these tiles have no description, base prices or multi-buy note, and an empty row
+   would still cost the list's row gap. The last row holds the stores button. The panel with an offer's stores follows its tile in the
+   source and takes a whole row; `dense` lets the tiles after it fill the rest of the tile's row. */
+.zoffers--deals {
+  grid-auto-flow: row dense;
+  margin-top: 0;
+}
+
+.zoffers--deals[hidden] {
+  display: none;
+}
+
+.zoffer--deal {
+  grid-row: span 7;
+}
+
+.zoffer--deal .zoffer__pricebox {
+  grid-row: 5;
+}
+
+.zoffer--deal .zoffer__when {
+  grid-row: 6;
+}
+
+.zoffer--deal .zoffer__name {
+  margin: 0;
+}
+
+.zoffer--open {
+  border-color: var(--md-primary);
+  box-shadow: inset 0 0 0 1px var(--md-primary);
+}
+
+.zoffer__from {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.zoffer__stores {
+  display: flex;
+  grid-row: 7;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 10px 0 0 !important;
+  padding: 6px 4px 6px 10px;
+  border: 0;
+  border-radius: var(--shape-md);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface);
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.0625rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.zoffer__stores:hover {
+  background: color-mix(in srgb, var(--md-on-surface) 12%, var(--md-surface-container-high));
+}
+
+button.zoffer__stores:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+.zoffer__stores-text {
+  display: grid;
+  min-width: 0;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.zoffer__nearest {
+  color: var(--md-on-surface-variant);
+  font-weight: 400;
+}
+
+.zoffer__stores > .icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--md-on-surface-variant);
+}
+
+.zoffer__stores[aria-expanded="true"] > .icon {
+  transform: rotate(180deg);
+}
+
+/* One store's offers: the link to Kaufland instead of the button. */
+.zoffer__stores--single {
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  cursor: auto;
+}
+
+.zoffer__stores--single .offer__link {
+  margin-left: 0;
+}
+
+.zoffer__unconfirmed {
+  color: var(--md-on-surface-variant);
+}
+
+.zpanel {
+  grid-column: 1 / -1;
+  min-width: 0;
+  border: 1px solid var(--md-primary);
+  border-radius: var(--shape-lg);
+  background: var(--md-surface-container-lowest);
+}
+
+.zpanel__body {
+  padding: 12px 16px 8px;
+}
+
+.zpanel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.zpanel__title {
+  min-width: 0;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.4rem;
+  overflow-wrap: break-word;
+}
+
+.zpanel__close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-right: -8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+}
+
+.zpanel__close:hover {
+  background: color-mix(in srgb, var(--md-on-surface) var(--state-hover), transparent);
+}
+
+.zpanel__close:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+.zpanel__meta {
+  margin-top: 4px;
+}
+
+/* Stores side by side where there is room; every row keeps its line above. */
+.zpanel__stores {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  column-gap: 24px;
+  margin-top: 12px;
 }
 
 /* The list */

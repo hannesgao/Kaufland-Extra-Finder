@@ -4,7 +4,7 @@
  */
 
 import type { IsoDate } from "../data";
-import { berlinToday, formatDate, formatDay, isoWeek, mondayOf, weekdayShort } from "../dates";
+import { berlinToday, formatDate, formatDay, isoWeek, weekdayShort } from "../dates";
 import { discountPercent } from "../deals";
 import { h, type Child } from "../dom";
 import { icon, type IconName } from "../icons";
@@ -23,27 +23,13 @@ import {
 } from "../shopping";
 import { formatPrice } from "./cards";
 import { sectionIcon } from "./deals";
+import { comparisonPrice, lateStart, packText, salesText, tilePicture } from "./tile";
+
+export { comparisonPrice, lateStart, packText, salesText };
 
 /** Brand line and product name; Kaufland leaves some titles empty. */
 export function offerNames(offer: Offer): { brand: string; name: string } {
   return { brand: offer.subtitle ? offer.title : "", name: offer.subtitle || offer.title };
-}
-
-/** "Mo, 09.11. – Sa, 14.11." */
-export function salesText(offer: Pick<Offer, "salesFrom" | "salesTo">): string {
-  const day = (iso: IsoDate) => `${weekdayShort(iso)}, ${formatDay(iso)}`;
-  return offer.salesFrom === offer.salesTo
-    ? `nur ${day(offer.salesFrom)}`
-    : `${day(offer.salesFrom)} – ${day(offer.salesTo)}`;
-}
-
-/**
- * "Do" for an offer that has not started and does not start with its week: most offers apply
- * from Monday, so the others are easy to miss. Null for all others.
- */
-export function lateStart(offer: Pick<Offer, "salesFrom">, today: IsoDate): string | null {
-  const { salesFrom } = offer;
-  return salesFrom > today && salesFrom !== mondayOf(salesFrom) ? weekdayShort(salesFrom) : null;
 }
 
 /** "KW 47 · Alles gültig Do, 19.11. – Sa, 21.11.": the days on which a trip gets every price. */
@@ -71,13 +57,7 @@ export function departmentIcon(department: string): IconName {
   return department === NO_DEPARTMENT ? "sell" : sectionIcon(department);
 }
 
-function picture(
-  offer: Offer,
-  size: number,
-  className: string,
-  eager = false,
-  sizes?: string,
-): Element {
+function picture(offer: Offer, size: number, className: string, eager = false): Element {
   const { thumbnail, thumbnail2x } = offer;
   if (!thumbnail) {
     return h("span", { class: `${className} ${className}--empty` }, icon("grocery"));
@@ -86,11 +66,7 @@ function picture(
     class: className,
     // The sheet is printed larger than the tiles on screen: always the 322 px picture there.
     src: eager ? (thumbnail2x ?? thumbnail) : thumbnail,
-    ...(!eager &&
-      thumbnail2x &&
-      (sizes
-        ? { srcset: `${thumbnail} 150w, ${thumbnail2x} 322w`, sizes }
-        : { srcset: `${thumbnail} 1x, ${thumbnail2x} 2x` })),
+    ...(!eager && thumbnail2x && { srcset: `${thumbnail} 1x, ${thumbnail2x} 2x` }),
     alt: "",
     width: String(size),
     height: String(size),
@@ -98,12 +74,6 @@ function picture(
     decoding: "async",
     referrerpolicy: "no-referrer",
   });
-}
-
-/** Kaufland compares some prices with the list price: "UVP 47.69" becomes "UVP 47,69 €". */
-export function comparisonPrice(oldPrice: string): string {
-  const listPrice = /^UVP\s+(\d+(?:\.\d+)?)$/.exec(oldPrice)?.[1];
-  return listPrice === undefined ? formatPrice(oldPrice) : `UVP\u00a0${formatPrice(listPrice)}`;
 }
 
 /**
@@ -185,16 +155,6 @@ export function basePriceFacts(basePrice: string | undefined): UnitFact[] {
     });
 }
 
-/**
- * What the price is for: "Ka. 20 x 0,5-l-Fl.". Shown right under the name, because offers of
- * one product in two pack sizes differ in nothing else.
- */
-export function packText(offer: Pick<Offer, "unit">): string | null {
-  // "je Ka. 20 x 0,5-l-Fl." and the odd "je-1,5kg-Bund": the label needs no "je".
-  const pack = offer.unit?.trim().replace(/^je(?:[\s-]+|$)/, "");
-  return pack === undefined || pack === "" ? null : pack;
-}
-
 const DEPOSIT = /\s*\(\+\s*(\d+(?:[.,]\d{1,2})?)\s*(?:Flaschen)?pfand\)/i;
 
 /**
@@ -268,10 +228,6 @@ function head(offer: Offer, className: string): Child[] {
 
 // ---------- Offers to pick from ----------
 
-/** Two to five tiles per row; see `.zoffers`. */
-const TILE_SIZES =
-  "(min-width: 1100px) 220px, (min-width: 840px) 25vw, (min-width: 600px) 33vw, 50vw";
-
 export function renderOfferTile(
   offer: Offer,
   onList: boolean,
@@ -287,7 +243,7 @@ export function renderOfferTile(
   return h(
     "li",
     { class: `zoffer${onList ? " zoffer--picked" : ""}`, "data-key": offer.key },
-    h("div", { class: "zoffer__media" }, picture(offer, 322, "zoffer__thumb", false, TILE_SIZES)),
+    h("div", { class: "zoffer__media" }, tilePicture(offer)),
     (discount !== null || late !== null) &&
       h(
         "p",

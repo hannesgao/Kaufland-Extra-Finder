@@ -14,7 +14,16 @@ import {
   type DealView,
 } from "../src/deals";
 import { dealsButton, dealsStatus, DEALS_EMPTY } from "../src/summary";
-import { DEAL_STORES_SHOWN, dealStoreCount, otherStoresNote, renderDeal } from "../src/ui/deals";
+import {
+  DEAL_STORES_SHOWN,
+  dealPanelId,
+  dealStoreCount,
+  otherStoresNote,
+  renderDealPanel,
+  renderDealTile,
+  type DealPanelOptions,
+  type DealTileOptions,
+} from "../src/ui/deals";
 import { PLZ_KARLSRUHE } from "./helpers";
 
 const DEALS_PATH = resolve(import.meta.dirname, "fixtures/deals-2026-11-12.json");
@@ -262,69 +271,67 @@ describe("dealsStatus", () => {
   });
 });
 
-describe("renderDeal", () => {
+describe("renderDealTile", () => {
   const noop = () => undefined;
+  const tile = (view: DealView, options: Partial<DealTileOptions> = {}) =>
+    renderDealTile(view, {
+      extraStores: 5,
+      today: THURSDAY,
+      open: false,
+      single: false,
+      onToggle: noop,
+      ...options,
+    });
 
-  it("shows price, comparison price, discount and stores", () => {
-    const item = renderDeal(find(list().views, MILK), 5, false, noop);
+  it("shows price, comparison price, discount, sale days and the stores", () => {
+    const item = tile(find(list().views, MILK));
     expect(item.dataset.key).toBe(MILK);
-    expect(item.querySelector(".offer__brand")?.textContent).toBe("MÜLLER");
+    expect(item.querySelector(".zoffer__brand")?.textContent).toBe("MÜLLER");
     expect(item.querySelector("h3")?.textContent).toBe("Müllermilch");
-    expect(item.querySelector(".deal__price")?.textContent).toBe("0,59\u00a0€");
-    expect(item.querySelector(".deal__old")?.textContent).toBe("1,49\u00a0€");
-    expect(item.querySelector(".deal__discount")?.textContent).toBe("−60 %");
-    expect(item.textContent).toContain("in 5 von 5 Extra-Filialen");
-    expect(item.textContent).toContain("auch in 37 anderen Filialen");
-    expect(item.textContent).toContain("bis Sa, 14.11.");
-    expect(item.querySelectorAll(".article__store")).toHaveLength(DEAL_STORES_SHOWN);
+    expect(item.querySelector(".zoffer__price")?.textContent).toBe("0,59\u00a0€");
+    expect(item.querySelector(".zoffer__old")?.textContent).toBe("statt 1,49\u00a0€");
+    expect(item.querySelector(".zoffer__discount")?.textContent).toBe("−60\u00a0%");
+    expect(item.querySelector(".zoffer__when")?.textContent).toBe("Mo, 09.11. –Sa, 14.11.");
+    const stores = item.querySelector<HTMLButtonElement>("button.zoffer__stores");
+    expect(stores?.textContent).toContain("in 5 von 5 Filialen");
+    expect(stores?.textContent).toContain("nächste ");
+    expect(stores?.getAttribute("aria-expanded")).toBe("false");
+    expect(stores?.getAttribute("aria-controls")).toBe(dealPanelId(MILK));
+    const image = item.querySelector("img");
+    expect(image?.getAttribute("referrerpolicy")).toBe("no-referrer");
+    expect(image?.getAttribute("srcset")).toContain(" 322w");
+  });
+
+  it("toggles the stores", () => {
+    let toggled = "";
+    const item = tile(find(list().views, MILK), {
+      open: true,
+      onToggle: (key) => {
+        toggled = key;
+      },
+    });
+    expect(item.classList.contains("zoffer--open")).toBe(true);
+    const stores = item.querySelector<HTMLButtonElement>("button.zoffer__stores");
+    expect(stores?.getAttribute("aria-expanded")).toBe("true");
+    stores?.click();
+    expect(toggled).toBe(MILK);
+  });
+
+  it("shows 'ab' when prices differ", () => {
+    const item = tile(find(list().views, LAMB));
+    expect(item.querySelector(".zoffer__price")?.textContent).toBe("ab 3,69\u00a0€");
+    expect(item.querySelector(".zoffer__pack")?.textContent).toBe("100 g");
+  });
+
+  it("links to Kaufland when the list shows one store", () => {
+    const view = find(list({ storeId: "DE4443" }).views, MILK);
+    const item = tile(view, { single: true });
+    expect(item.querySelector("button")).toBeNull();
     const link = item.querySelector<HTMLAnchorElement>(".offer__link");
     expect(link?.href).toBe(
       "https://filiale.kaufland.de/angebote/uebersicht.html?kloffer-articleID=20683585&storeName=DE4443",
     );
     expect(link?.rel).toBe("noopener noreferrer");
-    const image = item.querySelector("img");
-    expect(image?.getAttribute("referrerpolicy")).toBe("no-referrer");
-  });
-
-  it("names the category with its icon", () => {
-    const item = renderDeal(find(list().views, MILK), 5, false, noop);
-    const section = item.querySelector(".deal__section");
-    expect(section?.textContent).toBe("Molkereiprodukte, Fette");
-    expect(section?.querySelector("svg")).not.toBeNull();
-    const paprika = list().views.find((v) => v.offer.product.sections.length === 0);
-    expect(
-      paprika && renderDeal(paprika, 5, false, noop).querySelector(".deal__section"),
-    ).toBeNull();
-  });
-
-  it("shows 'ab' and every store's price when prices differ", () => {
-    const item = renderDeal(find(list().views, LAMB), 5, false, noop);
-    expect(item.querySelector(".deal__price")?.textContent).toBe("ab 3,69\u00a0€");
-    const rows = [...item.querySelectorAll(".article__store-distance")].map((e) => e.textContent);
-    expect(rows[0]?.startsWith("3,99\u00a0€ · ")).toBe(true);
-    expect(rows[2]?.startsWith("3,69\u00a0€ · ")).toBe(true);
-  });
-
-  it("marks stores whose PDF does not show the offer", () => {
-    const item = renderDeal(find(list({ unconfirmed: true }).views, BEEF), 5, false, noop);
-    expect(item.textContent).toContain("im Prospekt-PDF nicht gefunden");
-    expect(item.textContent).not.toContain("anderen Filiale");
-  });
-
-  it("expands the store list", () => {
-    const views = list({ commonOnly: false }).views;
-    const many = { ...find(views, MILK) };
-    many.stores = [...many.stores, ...many.stores]; // 10 rows
-    let expanded = "";
-    const item = renderDeal(many, 5, false, (key) => {
-      expanded = key;
-    });
-    expect(item.querySelectorAll(".article__store")).toHaveLength(DEAL_STORES_SHOWN);
-    const more = item.querySelector<HTMLButtonElement>(".article__more");
-    expect(more?.textContent).toBe("Alle 10 Filialen anzeigen");
-    more?.click();
-    expect(expanded).toBe(MILK);
-    expect(renderDeal(many, 5, true, noop).querySelectorAll(".article__store")).toHaveLength(10);
   });
 
   it("escapes names", () => {
@@ -333,9 +340,75 @@ describe("renderDeal", () => {
       ...view,
       offer: { ...view.offer, product: { ...view.offer.product, subtitle: "<img src=x>" } },
     };
-    const item = renderDeal(evil, 5, false, noop);
+    const item = tile(evil);
     expect(item.querySelector("h3")?.textContent).toBe("<img src=x>");
     expect(item.querySelectorAll("img")).toHaveLength(1);
+  });
+});
+
+describe("renderDealPanel", () => {
+  const noop = () => undefined;
+  const panel = (view: DealView, options: Partial<DealPanelOptions> = {}) =>
+    renderDealPanel(view, {
+      extraStores: 5,
+      expanded: false,
+      onExpand: noop,
+      onClose: noop,
+      ...options,
+    });
+
+  it("lists the stores with links and what else is known", () => {
+    const item = panel(find(list().views, MILK));
+    expect(item.id).toBe(dealPanelId(MILK));
+    expect(item.querySelector("h4")?.textContent).toBe("Filialen mit MÜLLER Müllermilch");
+    expect(item.textContent).toContain("in 5 von 5 Extra-Filialen");
+    expect(item.textContent).toContain("auch in 37 anderen Filialen");
+    expect(item.textContent).toContain("bis Sa, 14.11.");
+    expect(item.querySelectorAll(".article__store")).toHaveLength(5);
+    const link = item.querySelector<HTMLAnchorElement>(".offer__link");
+    expect(link?.href).toBe(
+      "https://filiale.kaufland.de/angebote/uebersicht.html?kloffer-articleID=20683585&storeName=DE4443",
+    );
+    expect(link?.rel).toBe("noopener noreferrer");
+  });
+
+  it("names the category with its icon", () => {
+    const section = panel(find(list().views, MILK)).querySelector(".deal__section");
+    expect(section?.textContent).toBe("Molkereiprodukte, Fette");
+    expect(section?.querySelector("svg")).not.toBeNull();
+    const paprika = list().views.find((v) => v.offer.product.sections.length === 0);
+    expect(paprika && panel(paprika).querySelector(".deal__section")).toBeNull();
+  });
+
+  it("shows every store's price when prices differ", () => {
+    const item = panel(find(list().views, LAMB));
+    const rows = [...item.querySelectorAll(".article__store-distance")].map((e) => e.textContent);
+    expect(rows[0]?.startsWith("3,99\u00a0€ · ")).toBe(true);
+    expect(rows[2]?.startsWith("3,69\u00a0€ · ")).toBe(true);
+  });
+
+  it("marks stores whose PDF does not show the offer", () => {
+    const item = panel(find(list({ unconfirmed: true }).views, BEEF));
+    expect(item.textContent).toContain("im Prospekt-PDF nicht gefunden");
+    expect(item.textContent).not.toContain("anderen Filiale");
+  });
+
+  it("expands the store list and closes", () => {
+    const views = list({ commonOnly: false }).views;
+    const many = { ...find(views, MILK) };
+    many.stores = [...many.stores, ...many.stores]; // 10 rows
+    const calls: string[] = [];
+    const item = panel(many, {
+      onExpand: (key) => calls.push(`expand ${key}`),
+      onClose: (key) => calls.push(`close ${key}`),
+    });
+    expect(item.querySelectorAll(".article__store")).toHaveLength(DEAL_STORES_SHOWN);
+    const more = item.querySelector<HTMLButtonElement>(".article__more");
+    expect(more?.textContent).toBe("Alle 10 Filialen anzeigen");
+    more?.click();
+    item.querySelector<HTMLButtonElement>(".zpanel__close")?.click();
+    expect(calls).toEqual([`expand ${MILK}`, `close ${MILK}`]);
+    expect(panel(many, { expanded: true }).querySelectorAll(".article__store")).toHaveLength(10);
   });
 });
 

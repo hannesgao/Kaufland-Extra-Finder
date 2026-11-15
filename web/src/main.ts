@@ -36,7 +36,7 @@ import {
   type SortOrder,
 } from "./search";
 import { renderArticle, renderArticleStrip, renderCardStore } from "./ui/cards";
-import { renderDeal, sectionIcon } from "./ui/deals";
+import { renderDealPanel, renderDealTile, sectionIcon } from "./ui/deals";
 import { loadList } from "./shopping";
 import type { ShoppingTab } from "./shopping-tab";
 import { setupSelect } from "./ui/select";
@@ -241,6 +241,8 @@ let dealsUnconfirmed = parseQuery(location.search).dealsUnconfirmed;
 let dealStore: string | null = parseQuery(location.search).dealStore;
 /** Extra offers whose full store list is shown. */
 const expandedDeals = new Set<string>();
+/** The offer whose stores are shown below its tile; one at a time. */
+let openDeal: string | null = null;
 
 const zettelPanel = byId("panel-zettel", HTMLDivElement);
 const zettelCount = byId("tab-zettel-count", HTMLSpanElement);
@@ -722,17 +724,38 @@ function runDeals(): void {
   const views = dealSection
     ? listDeals(deals, at.point, today, { ...options, section: dealSection }).views
     : unfiltered.views;
+  const single = store !== null;
   replaceChildren(
     dealsList,
-    ...views.map((view) =>
-      renderDeal(view, extraStores, expandedDeals.has(view.offer.product.key), (key) => {
-        expandedDeals.add(key);
-        runDeals();
-      }),
-    ),
+    ...views.flatMap((view) => {
+      const { key } = view.offer.product;
+      const open = !single && openDeal === key;
+      const tile = renderDealTile(view, { extraStores, today, open, single, onToggle: toggleDeal });
+      if (!open) return [tile];
+      const panel = renderDealPanel(view, {
+        extraStores,
+        expanded: expandedDeals.has(key),
+        onExpand: (expand) => {
+          expandedDeals.add(expand);
+          runDeals();
+        },
+        onClose: toggleDeal,
+      });
+      return [tile, panel];
+    }),
   );
   const near = dealsNear ? { radiusKm: radius, label: at.label } : null;
   setDealsStatus(dealsStatus(views.length, total, extraStores, near, at.from, store?.name ?? null));
+}
+
+/** Open or close an offer's stores; the list is drawn again, so the button gets the focus back. */
+function toggleDeal(key: string): void {
+  openDeal = openDeal === key ? null : key;
+  runDeals();
+  const tile = [...dealsList.children].find(
+    (item) => item instanceof HTMLElement && item.dataset.key === key,
+  );
+  tile?.querySelector<HTMLButtonElement>("button.zoffer__stores")?.focus();
 }
 
 /** How many settings differ from the defaults, next to "Filter und Sortierung" on phones. */
