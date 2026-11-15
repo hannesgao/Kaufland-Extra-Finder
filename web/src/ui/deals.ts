@@ -51,11 +51,6 @@ export function otherStoresNote(count: number): string {
   return `auch in ${String(count)} ${count === 1 ? "anderen Filiale" : "anderen Filialen"}`;
 }
 
-/** "41 von 51 Filialen": the short form on a tile. */
-export function dealStoreShare(count: number, extraStores: number): string {
-  return `${String(count)} von ${String(extraStores)} Filialen`;
-}
-
 /** The id of the panel with an offer's stores, for `aria-controls`. */
 export function dealPanelId(key: string): string {
   return `deal-stores-${key.replace(/\W/g, "-")}`;
@@ -102,6 +97,11 @@ function priceBox(view: DealView): HTMLDivElement {
   );
 }
 
+/** Distances on a tile: whole kilometres from 100 km, so "ab 145 km" fits the narrowest tile. */
+export function tileKm(km: number): string {
+  return km >= 100 ? `${String(Math.round(km))} km` : formatKm(km);
+}
+
 export interface DealTileOptions {
   /** Extra stores with offers ("von 51"). */
   extraStores: number;
@@ -145,8 +145,20 @@ function storesLine(view: DealView, options: DealTileOptions): Element | null {
       "span",
       { class: "zoffer__stores-text" },
       h("span", { class: "visually-hidden" }, "in "),
-      h("span", {}, dealStoreShare(view.storeCount, options.extraStores)),
-      h("span", { class: "zoffer__nearest" }, `nächste ${formatKm(nearest.distanceKm)}`),
+      // Narrow tiles show "40 von 51" and "ab 2,2 km": the long words are then only read out.
+      h(
+        "span",
+        {},
+        `${String(view.storeCount)} von ${String(options.extraStores)}`,
+        h("span", { class: "zoffer__wide" }, " Filialen"),
+      ),
+      h(
+        "span",
+        { class: "zoffer__nearest" },
+        h("span", { class: "zoffer__wide" }, "nächste "),
+        h("span", { class: "zoffer__narrow", "aria-hidden": "true" }, "ab "),
+        tileKm(nearest.distanceKm),
+      ),
     ),
     icon("expand_more"),
   );

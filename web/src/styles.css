@@ -3860,9 +3860,37 @@ button.zoffer__stores:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+.zoffer__stores-text > span {
+  white-space: nowrap;
+}
+
 .zoffer__nearest {
   color: var(--md-on-surface-variant);
   font-weight: 400;
+}
+
+.zoffer__narrow {
+  display: none;
+}
+
+/* Two tiles per row on a small phone leave the button some 115px: without the long words. */
+button.zoffer__stores {
+  container-type: inline-size;
+}
+
+@container (max-width: 129px) {
+  .zoffer__wide {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .zoffer__narrow {
+    display: inline;
+  }
 }
 
 .zoffer__stores > .icon {
