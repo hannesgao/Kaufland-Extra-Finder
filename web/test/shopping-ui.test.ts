@@ -4,9 +4,11 @@ import {
   basePriceFacts,
   comparisonPrice,
   germanDecimals,
+  lateStart,
   multiBuyText,
   packText,
   splitDeposit,
+  tripText,
   unitFacts,
 } from "../src/ui/shopping";
 
@@ -121,5 +123,23 @@ describe("splitDeposit", () => {
     expect(splitDeposit("versch. Sorten")).toEqual({ text: "versch. Sorten" });
     expect(splitDeposit("ohne Pfand")).toEqual({ text: "ohne Pfand" });
     expect(splitDeposit(undefined)).toEqual({});
+  });
+});
+
+describe("days", () => {
+  it("names the weekday of an offer that starts later than its week", () => {
+    expect(lateStart({ salesFrom: "2026-11-19" }, "2026-11-16")).toBe("Do");
+    expect(lateStart({ salesFrom: "2026-11-20" }, "2026-11-19")).toBe("Fr");
+    expect(lateStart({ salesFrom: "2026-11-16" }, "2026-11-14")).toBeNull(); // a Monday
+    expect(lateStart({ salesFrom: "2026-11-19" }, "2026-11-19")).toBeNull(); // has started
+  });
+
+  it("says on which days a trip gets every price", () => {
+    const trip = { from: "2026-11-19", to: "2026-11-21", items: [] };
+    expect(tripText(trip)).toBe("KW\u00a047 · Gültig Do, 19.11. – Sa, 21.11.");
+    const item = { id: "a", quantity: 1, note: "" };
+    expect(tripText({ ...trip, to: "2026-11-19", items: [item, item] })).toBe(
+      "KW\u00a047 · Alles gültig nur Do, 19.11.",
+    );
   });
 });

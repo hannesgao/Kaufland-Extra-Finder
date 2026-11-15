@@ -22,7 +22,7 @@ import {
   type LatLng,
 } from "./data";
 import { brandDepartments, groupOf, groupsOf, guessDepartment } from "./classify";
-import { mondayOf } from "./dates";
+import { addDays, mondayOf } from "./dates";
 import { discountPercent } from "./deals";
 import { distanceKm } from "./geo";
 import { normalize } from "./text";
@@ -320,6 +320,39 @@ export function offerWeeks(offers: readonly Offer[], today: IsoDate): OfferWeek[
   return [...weeks.values()].sort((a, b) => a.monday.localeCompare(b.monday));
 }
 
+export interface ShoppingPeriod {
+  /** First and last day of a stretch on which the same offers apply. */
+  from: IsoDate;
+  to: IsoDate;
+  /** Offers whose price applies on these days. */
+  count: number;
+}
+
+/**
+ * The days of a sale week by what can be bought: Kaufland's offers start on Monday, Thursday
+ * or Friday, so Monday to Wednesday, Thursday, and Friday to Saturday are one stretch each.
+ * Days that are over and days without offers are left out.
+ */
+export function shoppingPeriods(
+  offers: readonly Offer[],
+  week: IsoDate,
+  today: IsoDate,
+): ShoppingPeriod[] {
+  const current = offers.filter((o) => mondayOf(o.salesFrom) === week && o.salesTo >= today);
+  // The set of valid offers only changes where one starts or the day after one has ended.
+  const changes = [...new Set(current.flatMap((o) => [o.salesFrom, addDays(o.salesTo, 1)]))].sort();
+  const periods: ShoppingPeriod[] = [];
+  changes.forEach((start, i) => {
+    const next = changes[i + 1];
+    if (next === undefined) return;
+    const to = addDays(next, -1);
+    const from = start < today ? today : start;
+    const count = current.filter((o) => o.salesFrom <= start && o.salesTo >= start).length;
+    if (count > 0 && to >= today) periods.push({ from, to, count });
+  });
+  return periods;
+}
+
 /** Kaufland's assortment categories in the order of the offer overview. */
 const DEPARTMENT_ORDER = [
   "Obst, Gemüse, Pflanzen",
@@ -368,6 +401,8 @@ export interface OfferFilter {
   group: string | null;
   /** Only offers of the sale week starting this Monday; null for all that have not ended. */
   week: IsoDate | null;
+  /** Only offers whose price applies on this day (the day of the shopping trip); null for all. */
+  day: IsoDate | null;
   sort: OfferSort;
 }
 
@@ -393,6 +428,9 @@ function matching(offers: readonly Offer[], filter: OfferFilter, today: IsoDate)
   return offers.filter((offer) => {
     if (offer.salesTo < today) return false;
     if (filter.week !== null && mondayOf(offer.salesFrom) !== filter.week) return false;
+    if (filter.day !== null && (offer.salesFrom > filter.day || offer.salesTo < filter.day)) {
+      return false;
+    }
     if (!words.length) return true;
     const text = normalize(`${offer.title} ${offer.subtitle} ${offer.description ?? ""}`);
     return words.every((word) => text.includes(word));

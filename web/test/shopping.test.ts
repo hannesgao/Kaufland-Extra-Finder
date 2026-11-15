@@ -13,6 +13,7 @@ import {
   MAX_QUANTITY,
   OWN_ENTRIES,
   parseList,
+  planTrips,
   refreshOffer,
   removeItem,
   removeOffer,
@@ -212,5 +213,59 @@ describe("groupItems", () => {
       [NO_DEPARTMENT, ["d"]],
       [OWN_ENTRIES, ["b"]],
     ]);
+  });
+});
+
+describe("planTrips", () => {
+  const item = (id: string, salesFrom: string, salesTo: string) => ({
+    id,
+    quantity: 1,
+    note: "",
+    offer: offer(`${id}|x`, { salesFrom, salesTo }),
+  });
+  const text = { id: "t", quantity: 1, note: "", text: "Brot" };
+  const plan = (items: Parameters<typeof planTrips>[0], today = "2026-11-09") => {
+    const { trips, other } = planTrips(items, today);
+    return {
+      trips: trips.map((t) => `${t.from}..${t.to}: ${t.items.map((i) => i.id).join(",")}`),
+      other: other.map((i) => i.id),
+    };
+  };
+
+  it("puts offers that share a day on one trip, on the days all of them apply", () => {
+    const week = item("a", "2026-11-09", "2026-11-14");
+    const thursday = item("b", "2026-11-12", "2026-11-14");
+    const friday = item("c", "2026-11-13", "2026-11-14");
+    expect(plan([week, thursday])).toEqual({
+      trips: ["2026-11-12..2026-11-14: a,b"],
+      other: [],
+    });
+    // The list order stays
+    expect(plan([friday, text, week, thursday])).toEqual({
+      trips: ["2026-11-13..2026-11-14: c,a,b"],
+      other: ["t"],
+    });
+  });
+
+  it("needs a trip per week, and two in a week when no day fits all", () => {
+    const week = item("a", "2026-11-09", "2026-11-14");
+    const next = item("n", "2026-11-16", "2026-11-21");
+    expect(plan([next, week]).trips).toEqual([
+      "2026-11-09..2026-11-14: a",
+      "2026-11-16..2026-11-21: n",
+    ]);
+    const early = item("e", "2026-11-09", "2026-11-11");
+    const late = item("l", "2026-11-12", "2026-11-14");
+    // The offer of the whole week goes with the first trip
+    expect(plan([late, week, early]).trips).toEqual([
+      "2026-11-09..2026-11-11: a,e",
+      "2026-11-12..2026-11-14: l",
+    ]);
+  });
+
+  it("leaves free-text entries and ended offers out of the trips", () => {
+    const ended = item("x", "2026-11-02", "2026-11-07");
+    expect(plan([ended, text])).toEqual({ trips: [], other: ["x", "t"] });
+    expect(plan([])).toEqual({ trips: [], other: [] });
   });
 });
