@@ -15,6 +15,7 @@ import {
   parseOfferIndex,
   parseStoreFile,
   shoppingPeriods,
+  startDays,
   storeOffers,
   type OfferFilter,
 } from "../src/offers";
@@ -110,6 +111,7 @@ const ALL: OfferFilter = {
   group: null,
   week: null,
   day: null,
+  start: null,
   sort: "name",
 };
 
@@ -273,6 +275,24 @@ describe("browsing", () => {
     expect(
       departmentCounts(offers(), { ...ALL, day: "2026-11-10" }, "2026-11-09").map((c) => c.count),
     ).toEqual([1, 1]);
+  });
+
+  it("filters by the day the price starts to apply", () => {
+    expect(startDays(offers(), "2026-11-09", "2026-11-09")).toEqual([
+      { day: "2026-11-09", count: 2 },
+      { day: "2026-11-12", count: 1 },
+    ]);
+    expect(startDays(offers(), "2026-11-09", "2026-11-15")).toEqual([]); // all have ended
+    const keys = (start: string) =>
+      filterOffers(offers(), { ...ALL, start }, "2026-11-09").map((o) => o.key);
+    expect(keys("2026-11-12")).toEqual([BEER]);
+    expect(keys("2026-11-09")).toEqual([MILK, BREAD]);
+    // Together with the day of the trip: what is new on Thursday, bought on Friday
+    expect(
+      filterOffers(offers(), { ...ALL, start: "2026-11-12", day: "2026-11-13" }, "2026-11-09").map(
+        (o) => o.key,
+      ),
+    ).toEqual([BEER]);
   });
 
   it("sorts by discount or price", () => {

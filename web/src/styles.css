@@ -3049,8 +3049,43 @@ button.segment:disabled {
   margin-top: 0;
 }
 
-.zfilters .search-options > * {
-  grid-column: auto;
+/* Rows of filters that share the width equally and wrap where they get too narrow. */
+.zfilters__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 12px;
+  margin-top: 16px;
+}
+
+.zfilters__row > * {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.zfilters__row:not(:has(> :not([hidden]))) {
+  display: none;
+}
+
+/* Day ranges stay on one line; their counts are shown where four segments have room for them. */
+.zfilters .segment {
+  white-space: nowrap;
+}
+
+.zfilters .segmented__group {
+  container-type: inline-size;
+}
+
+@container (max-width: 439px) {
+  .segment:has(input[name="zettel-day"]) .segment__detail {
+    display: none;
+  }
+}
+
+@container (max-width: 339px) {
+  .segment:has(input[name="zettel-start"]) .segment__detail {
+    display: none;
+  }
 }
 
 /* Groups of the chosen department as filter chips; a row that scrolls sideways on phones. */
@@ -3127,27 +3162,6 @@ button.segment:disabled {
     flex-wrap: nowrap;
     overflow-x: auto;
     scrollbar-width: none;
-  }
-}
-
-@media (min-width: 720px) {
-  .zfilters .search-options {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* The category takes the whole row when it would otherwise stand alone in it: week and
-     shopping day are hidden when there is nothing to choose. */
-  .zfilters__department:nth-child(odd of :not([hidden])) {
-    grid-column: 1 / -1;
-  }
-
-  /* Side by side, the category comes before the sorting. */
-  .zfilters__department:nth-child(even of :not([hidden])) {
-    order: 1;
-  }
-
-  .zfilters .segmented:nth-child(odd of :not([hidden])):has(input[name="zettel-sort"]) {
-    order: 2;
   }
 }
 
