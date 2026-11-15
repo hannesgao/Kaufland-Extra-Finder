@@ -447,10 +447,10 @@ late (6–7 hours in October and November 2026), so the workflow has cron entrie
 from 19:30 to 07:30 UTC; a gate job lets the first run after 03:30 Berlin time scrape and skips
 the others once the `data` branch has a scan from today. If a scrape fails, the next entry tries
 again; a failed push to `data` is retried twice.
-The Monday and Thursday runs also scan the offer overviews for trading cards (`--offers`, about
-330 MB more and a few minutes): the overview lists the whole week, including the Thursday–Saturday
-and weekend offers, plus next week's announced offers from the Sunday before; Thursday's run picks
-up late changes. Manual runs scan them unless `-f offers=false`.
+The Sunday and Thursday runs also scan the offer overviews (`--offers`, about 330 MB more and a
+few minutes): from Sunday the overview lists the coming week, including the Thursday–Saturday and
+weekend offers, so the data is there before the week starts on Monday; Thursday's run picks up
+late changes. Manual runs scan them unless `-f offers=false`.
 
 **Data.** The scrape job reads the previous `extra.json`, `pdf_checks.json` and `history.csv` from
 the `data` branch, so only new PDFs are downloaded. If the sanity check fails (exit code 2), the

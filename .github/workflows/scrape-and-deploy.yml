@@ -5,10 +5,10 @@ name: Scrape and deploy
 # GitHub starts scheduled runs late (6-7 hours in Oct/Nov 2026), so there are several cron entries
 # through the night; the gate job lets the first run after 03:30 Berlin time scrape and skips the
 # rest of the day once the data branch has a scan from today. A failed scrape leaves no commit, so
-# the next entry tries again. On Monday and Thursday the scrape also reads every store's offer
-# overview (cards.json, deals.json, offers/): it lists the whole week (incl. the Thursday-Saturday and
-# weekend offers) plus next week's announced offers from the Sunday before; Thursday's run picks up
-# late changes.
+# the next entry tries again. On Sunday and Thursday the scrape also reads every store's offer
+# overview (cards.json, deals.json, offers/): from Sunday it lists the coming week (incl. the
+# Thursday-Saturday and weekend offers), so the data is there before the week starts on Monday;
+# Thursday's run picks up late changes.
 # Deploy: after every scrape, on push to main (code changes, no scrape), and deploy-only when
 # release.yml starts it after a GitHub Release is published (footer shows the release date).
 on:
@@ -75,7 +75,7 @@ jobs:
                 echo "::notice::The data branch already has a scan from today ($last); skipping."
               else
                 scrape=true
-                case "$(TZ=Europe/Berlin date +%u)" in 1 | 4) offers=true ;; esac # Mon, Thu
+                case "$(TZ=Europe/Berlin date +%u)" in 4 | 7) offers=true ;; esac # Thu, Sun
               fi
               ;;
           esac
