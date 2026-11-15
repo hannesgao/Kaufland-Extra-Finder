@@ -353,6 +353,22 @@ export function shoppingPeriods(
   return periods;
 }
 
+/** The days on which offers of a sale week start, with the number of offers that have not ended. */
+export function startDays(
+  offers: readonly Offer[],
+  week: IsoDate,
+  today: IsoDate,
+): { day: IsoDate; count: number }[] {
+  const counts = new Map<IsoDate, number>();
+  for (const offer of offers) {
+    if (mondayOf(offer.salesFrom) !== week || offer.salesTo < today) continue;
+    counts.set(offer.salesFrom, (counts.get(offer.salesFrom) ?? 0) + 1);
+  }
+  return [...counts]
+    .map(([day, count]) => ({ day, count }))
+    .sort((a, b) => a.day.localeCompare(b.day));
+}
+
 /** Kaufland's assortment categories in the order of the offer overview. */
 const DEPARTMENT_ORDER = [
   "Obst, Gemüse, Pflanzen",
@@ -403,6 +419,8 @@ export interface OfferFilter {
   week: IsoDate | null;
   /** Only offers whose price applies on this day (the day of the shopping trip); null for all. */
   day: IsoDate | null;
+  /** Only offers whose price applies from this day on, e.g. those new on Thursday; null for all. */
+  start: IsoDate | null;
   sort: OfferSort;
 }
 
@@ -431,6 +449,7 @@ function matching(offers: readonly Offer[], filter: OfferFilter, today: IsoDate)
     if (filter.day !== null && (offer.salesFrom > filter.day || offer.salesTo < filter.day)) {
       return false;
     }
+    if (filter.start !== null && offer.salesFrom !== filter.start) return false;
     if (!words.length) return true;
     const text = normalize(`${offer.title} ${offer.subtitle} ${offer.description ?? ""}`);
     return words.every((word) => text.includes(word));
