@@ -14,7 +14,6 @@ import {
   parseOfferCatalog,
   parseOfferIndex,
   parseStoreFile,
-  shoppingPeriods,
   startDays,
   storeOffers,
   type OfferFilter,
@@ -110,7 +109,6 @@ const ALL: OfferFilter = {
   department: null,
   group: null,
   week: null,
-  day: null,
   start: null,
   sort: "name",
 };
@@ -246,37 +244,6 @@ describe("browsing", () => {
     expect(groupCounts(offers(), { ...ALL, department: NO_DEPARTMENT }, SATURDAY)).toEqual([]);
   });
 
-  it("splits a week into the days on which the same offers apply", () => {
-    // Milk and the promotion from Monday, the beer from Thursday; all end on Saturday.
-    expect(shoppingPeriods(offers(), "2026-11-09", "2026-11-09")).toEqual([
-      { from: "2026-11-09", to: "2026-11-11", count: 2 },
-      { from: "2026-11-12", to: "2026-11-14", count: 3 },
-    ]);
-    // Days that are over are left out; a running stretch starts today.
-    expect(shoppingPeriods(offers(), "2026-11-09", "2026-11-11")).toEqual([
-      { from: "2026-11-11", to: "2026-11-11", count: 2 },
-      { from: "2026-11-12", to: "2026-11-14", count: 3 },
-    ]);
-    expect(shoppingPeriods(offers(), "2026-11-09", SATURDAY)).toEqual([
-      { from: SATURDAY, to: SATURDAY, count: 3 },
-    ]);
-    expect(shoppingPeriods(offers(), "2026-11-16", SATURDAY)).toEqual([
-      { from: "2026-11-16", to: "2026-11-21", count: 1 },
-    ]);
-    expect(shoppingPeriods(offers(), "2026-11-23", SATURDAY)).toEqual([]);
-  });
-
-  it("filters by the day of the shopping trip", () => {
-    const keys = (day: string) =>
-      filterOffers(offers(), { ...ALL, day }, "2026-11-09").map((o) => o.key);
-    expect(keys("2026-11-10")).toEqual([MILK, BREAD]); // the beer starts on Thursday
-    expect(keys("2026-11-12")).toEqual([MILK, BEER, BREAD]);
-    expect(keys("2026-11-16")).toEqual([NEXT]);
-    expect(
-      departmentCounts(offers(), { ...ALL, day: "2026-11-10" }, "2026-11-09").map((c) => c.count),
-    ).toEqual([1, 1]);
-  });
-
   it("filters by the day the price starts to apply", () => {
     expect(startDays(offers(), "2026-11-09", "2026-11-09")).toEqual([
       { day: "2026-11-09", count: 2 },
@@ -287,12 +254,9 @@ describe("browsing", () => {
       filterOffers(offers(), { ...ALL, start }, "2026-11-09").map((o) => o.key);
     expect(keys("2026-11-12")).toEqual([BEER]);
     expect(keys("2026-11-09")).toEqual([MILK, BREAD]);
-    // Together with the day of the trip: what is new on Thursday, bought on Friday
     expect(
-      filterOffers(offers(), { ...ALL, start: "2026-11-12", day: "2026-11-13" }, "2026-11-09").map(
-        (o) => o.key,
-      ),
-    ).toEqual([BEER]);
+      departmentCounts(offers(), { ...ALL, start: "2026-11-12" }, "2026-11-09").map((c) => c.count),
+    ).toEqual([1]);
   });
 
   it("sorts by discount or price", () => {
