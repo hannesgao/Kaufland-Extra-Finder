@@ -5,6 +5,7 @@ import { DataError } from "../src/data";
 import {
   departmentCounts,
   filterOffers,
+  groupCounts,
   findStores,
   nearestStores,
   NO_DEPARTMENT,
@@ -40,6 +41,7 @@ function record(klNr: string, fields: Record<string, unknown> = {}): Record<stri
 }
 
 const MILK = "1|2026-11-08";
+// Only in a promotion category, and its texts say nothing about what it is.
 const BREAD = "2|2026-11-08";
 const BEER = "3|2026-11-08";
 const NEXT = "4|2026-11-15";
@@ -53,12 +55,12 @@ function catalogJson(): Record<string, unknown> {
       [MILK]: record("1"),
       [BREAD]: record("2", {
         title: "",
-        subtitle: "Weizenmischbrot",
+        subtitle: "Wochenknüller",
         description: "geschnitten",
         price: "1.11",
         old_price: undefined,
         department: undefined,
-        sections: ["Bäckerei"],
+        sections: ["Unsere Knüller"],
       }),
       [BEER]: record("3", {
         title: "OETTINGER",
@@ -101,7 +103,7 @@ function offers() {
   return storeOffers(parseOfferCatalog(catalogJson()), parseStoreFile(all));
 }
 
-const ALL: OfferFilter = { query: "", department: null, week: null, sort: "name" };
+const ALL: OfferFilter = { query: "", department: null, group: null, week: null, sort: "name" };
 
 describe("storeOffers", () => {
   it("takes the common offers without the missing ones, plus the added ones", () => {
@@ -134,6 +136,23 @@ describe("storeOffers", () => {
   it("falls back to the shown dates without sale dates", () => {
     const offer = parseOffer(MILK, record("1", { sales_from: undefined, sales_to: undefined }));
     expect([offer.salesFrom, offer.salesTo]).toEqual(["2026-11-08", "2026-11-14"]);
+  });
+
+  it("guesses the category of offers that are only in promotion categories", () => {
+    const catalog = catalogJson();
+    const products = catalog.products as Record<string, unknown>;
+    const promotion = { department: undefined, sections: ["Unsere Knüller"] };
+    products[BREAD] = record("2", { ...promotion, title: "", subtitle: "Weizenmischbrot" });
+    // No pattern knows the product, but every other offer of the brand is a drink.
+    products[NEXT] = record("4", { ...promotion, title: "OETTINGER", subtitle: "Export" });
+    const list = storeOffers(
+      parseOfferCatalog(catalog),
+      parseStoreFile(storeJson({ missing: [] })),
+    );
+    const departments = Object.fromEntries(list.map((o) => [o.key, o.department]));
+    expect(departments[BREAD]).toBe("Grundnahrungsmittel");
+    expect(departments[NEXT]).toBe("Getränke, Spirituosen");
+    expect(departments[MILK]).toBe("Molkereiprodukte, Fette"); // Kaufland's own stays
   });
 
   it("rejects a picture that is not https", () => {
@@ -196,13 +215,27 @@ describe("browsing", () => {
   it("filters by week, department and words, and hides ended offers", () => {
     const keys = (filter: Partial<OfferFilter>, today = SATURDAY) =>
       filterOffers(offers(), { ...ALL, ...filter }, today).map((o) => o.key);
-    expect(keys({})).toEqual([NEXT, MILK, BEER, BREAD]); // by name; the bread has no brand
+    expect(keys({})).toEqual([NEXT, MILK, BEER, BREAD]); // by name; the last one has no brand
     expect(keys({ week: "2026-11-09" })).toEqual([MILK, BEER, BREAD]);
     expect(keys({ department: "Getränke, Spirituosen" })).toEqual([BEER]);
     expect(keys({ department: NO_DEPARTMENT })).toEqual([BREAD]);
     expect(keys({ query: "MULLER milch" })).toEqual([MILK]);
     expect(keys({ query: "geschnitten" })).toEqual([BREAD]); // the description counts
     expect(keys({}, "2026-11-15")).toEqual([NEXT]);
+  });
+
+  it("filters by a group of the department and counts the groups", () => {
+    const drinks = { ...ALL, department: "Getränke, Spirituosen" };
+    expect(groupCounts(offers(), drinks, SATURDAY)).toEqual([{ group: "Bier", count: 1 }]);
+    const keys = (group: string) =>
+      filterOffers(offers(), { ...drinks, group }, SATURDAY).map((o) => o.key);
+    expect(keys("Bier")).toEqual([BEER]);
+    expect(keys("Wasser")).toEqual([]);
+    // No department chosen, or one without groups
+    expect(groupCounts(offers(), ALL, SATURDAY)).toEqual([]);
+    expect(
+      groupCounts(offers(), { ...ALL, department: "Molkereiprodukte, Fette" }, SATURDAY),
+    ).toEqual([]);
   });
 
   it("sorts by discount or price", () => {

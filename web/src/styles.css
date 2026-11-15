@@ -3053,6 +3053,83 @@ button.segment:disabled {
   grid-column: auto;
 }
 
+/* Groups of the chosen department as filter chips; a row that scrolls sideways on phones. */
+.zsub {
+  min-width: 0;
+  margin: 12px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.zsub[hidden] {
+  display: none;
+}
+
+.zsub__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.zsub__chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--md-outline);
+  border-radius: 8px;
+  color: var(--md-on-surface);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.zsub__chip input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.zsub__count {
+  color: var(--md-on-surface-variant);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.zsub__chip:hover {
+  background: color-mix(in srgb, var(--md-on-surface) var(--state-hover), transparent);
+}
+
+.zsub__chip:has(input:checked) {
+  border-color: transparent;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+
+.zsub__chip:has(input:checked) .zsub__count {
+  color: inherit;
+}
+
+/* Inside the chip: the scrolling row would cut an outline around it. */
+.zsub__chip:has(input:focus-visible) {
+  outline: 3px solid var(--md-primary);
+  outline-offset: -3px;
+}
+
+@media (max-width: 599px) {
+  .zsub__list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+}
+
 @media (min-width: 720px) {
   .zfilters .search-options {
     grid-template-columns: repeat(2, minmax(0, 1fr));
