@@ -231,11 +231,9 @@ describe("browsing", () => {
       filterOffers(offers(), { ...drinks, group }, SATURDAY).map((o) => o.key);
     expect(keys("Bier")).toEqual([BEER]);
     expect(keys("Wasser")).toEqual([]);
-    // No department chosen, or one without groups
+    // No department chosen, or the offers without one
     expect(groupCounts(offers(), ALL, SATURDAY)).toEqual([]);
-    expect(
-      groupCounts(offers(), { ...ALL, department: "Molkereiprodukte, Fette" }, SATURDAY),
-    ).toEqual([]);
+    expect(groupCounts(offers(), { ...ALL, department: NO_DEPARTMENT }, SATURDAY)).toEqual([]);
   });
 
   it("sorts by discount or price", () => {

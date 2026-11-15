@@ -253,7 +253,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     shown = PAGE_SIZE;
     renderOffers();
   });
-  // Groups of the chosen department, e.g. the kinds of meat; only the large departments have any.
+  // Groups of the chosen department, e.g. the kinds of meat.
   const groupList = h("div", { class: "zsub__list" });
   const groupField = h(
     "fieldset",

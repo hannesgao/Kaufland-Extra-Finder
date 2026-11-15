@@ -1,7 +1,7 @@
 /**
  * Kaufland names an assortment category for about two thirds of the offers; the others are only
  * in promotion categories ("Unsere Knüller", "Nächste Woche"). This module guesses the category
- * of those from their texts, and splits the three largest categories into groups. Pure.
+ * of those from their texts, and splits every category into groups. Pure.
  *
  * All patterns run on normalised text: lower case, no accents, "ß" as "ss".
  */
@@ -399,13 +399,376 @@ interface Grouping {
   rules: readonly Rule<string>[];
 }
 
+/** Checks that the rules only name groups of the display order. */
+function grouping<const O extends readonly string[]>(
+  order: O,
+  rules: readonly Rule<O[number]>[],
+): Grouping {
+  return { order, rules };
+}
+
+const PRODUCE = grouping(
+  ["Obst", "Gemüse & Salat", "Nüsse & Trockenfrüchte", "Blumen & Pflanzen"],
+  [
+    [
+      "Blumen & Pflanzen",
+      {
+        name: /weihnachtsstern|zauberstern|amaryllis|christrose|strauss|gesteck|schnittgrun|kaktus|orchidee|alpenveilchen|hyazinthe|kalanchoe|sukkulente|chrysanthemen|bepflanzt|rosen\b|tulpen/,
+        desc: /\btopf\b/,
+      },
+    ],
+    [
+      "Nüsse & Trockenfrüchte",
+      { name: /nuss|maronen|getrocknet|datteln|mandeln|pistazien/, desc: /^getrocknet/ },
+    ],
+    [
+      "Obst",
+      {
+        name: /apfel|birne|trauben|clementinen|mandarinen|orangen|zitronen|limetten|grapefruit|kaki|kiwi|mango|melone|papaya|ananas|bananen|beeren|pflaumen|passionsfrucht|avocado|kirschen|pfirsich|nektarinen|aprikosen|feigen/,
+      },
+    ],
+    [
+      "Gemüse & Salat",
+      {
+        name: /tomaten|gurke|paprika|zucchini|aubergine|mohren|karotten|kartoffeln|zwiebeln|salat|kohl|broccoli|sellerie|rote bete|radieschen|bohnen|schoten|champignons|pilze|ingwer|suppengrun|lauch|pastinaken|petersilie|spinat|spargel|kurbis|knoblauch|krauter|rucola|fenchel|mais\b/,
+      },
+    ],
+  ],
+);
+
+const FISH = grouping(
+  ["Frischer Fisch", "Geräuchert & mariniert", "Meeresfrüchte"],
+  [
+    ["Meeresfrüchte", { name: /muscheln|garnelen|krebs|prawns|tintenfisch|calamari|scampi/ }],
+    [
+      "Geräuchert & mariniert",
+      {
+        name: /gerauchert|hering|matjes|rollmops|salat|stremel|graved/,
+        desc: /gerauchert|mariniert/,
+      },
+    ],
+    [
+      "Frischer Fisch",
+      { name: /filet|lachs|dorade|heilbutt|barsch|forelle|kabeljau|fisch|thunfisch|scholle/ },
+    ],
+  ],
+);
+
+const DAIRY = grouping(
+  ["Käse", "Joghurt & Desserts", "Milch & Sahne", "Butter & Fette", "Eier"],
+  [
+    [
+      "Käse",
+      {
+        name: /kase|gouda|emmentaler|camembert|mozzarella|\bfeta\b|cheddar|limburger|raclette|parmigiano|grana padano|appenzeller|gruyere|manchego|roquefort|morbier|fondue|quase|hausmacher|cheese|leerdammer|\bkiri\b/,
+        desc: /fett i\. ?tr|schnittkase|weichkase|hartkase|frischkase|sauermilchkase/,
+        not: /kasekuchen|quark/,
+      },
+    ],
+    [
+      "Joghurt & Desserts",
+      {
+        name: /joghurt|jogurt|skyr|quark|pudding|dessert|mousse|grutze|milchreis|\bmonte\b|pingui|actimel|choco fresh|tortenstuck|edelcreme/,
+        desc: /joghurt|dessert|^pudding/,
+      },
+    ],
+    [
+      "Butter & Fette",
+      {
+        name: /butter\b|butterschmalz|margarine|streichfett|pflanzencreme|kokosfett|\blatta\b|\brama\b|sanella|kaergarden|finello/,
+        desc: /streichfett|aufstrich/,
+        not: /buttermilch|cremefine/,
+      },
+    ],
+    ["Eier", { name: /\beier\b|eiklar/ }],
+    [
+      "Milch & Sahne",
+      {
+        name: /milch|sahne|creme fraiche|cremefine|schmand|kefir|ayran|kakao|kaffeemischgetrank|trinkmahlzeit/,
+        desc: /kondensmilch/,
+      },
+    ],
+  ],
+);
+
+const FROZEN = grouping(
+  [
+    "Eis",
+    "Pizza & Snacks",
+    "Fisch",
+    "Fleisch & Geflügel",
+    "Kartoffeln & Klöße",
+    "Gemüse & Obst",
+    "Fertiggerichte",
+    "Kuchen & Backwaren",
+  ],
+  [
+    ["Eis", { name: /\beis\b|cremissimo/ }],
+    ["Fertiggerichte", { name: /vegan|fertiggericht|gerichte|a la carte/ }],
+    [
+      "Pizza & Snacks",
+      // "snack" and "burger" on the product name only: SNACKMASTER, BRANDENBURGER
+      {
+        name: /pizza|flammkuchen|piccolinis|toast|fingerfood|baguette|rustipani|ofenbrot/,
+        sub: /snack/,
+      },
+    ],
+    [
+      "Fisch",
+      { name: /fisch|lachs|garnelen|prawns|filegro|schlemmer-filet|makrele|seelachs|muscheln/ },
+    ],
+    [
+      "Fleisch & Geflügel",
+      {
+        name: /\bente\b|gans\b|\bpute|hirsch|wild|kaninchen|chicken|hahnchen|schnitzel|cordon|gyros|braten|gulasch|frikadelle/,
+        sub: /burger/,
+      },
+    ],
+    [
+      "Kartoffeln & Klöße",
+      { name: /pommes|kroketten|frites|fritten|kartoffel|klosse|knodel|rosti/ },
+    ],
+    [
+      "Kuchen & Backwaren",
+      {
+        name: /kuchen|torte|strudel|\bcake\b|brotchen|brezen|semmeln|goldstucke|sahne-rolle|croissant/,
+      },
+    ],
+    ["Gemüse & Obst", { name: /gemuse|spinat|beeren|krauter|erbsen|bohnen|kohl\b|obst/ }],
+    ["Fertiggerichte", { name: /pfanne|nudel|pasta|lasagne/, desc: /fertiggericht/ }],
+  ],
+);
+
+const DELI = grouping(
+  ["Feinkost & Salate", "Fertiggerichte & Teige", "Saucen, Öl & Gewürze", "Konserven"],
+  [
+    [
+      "Feinkost & Salate",
+      {
+        name: /salat\b|antipasti|peppers|peperoni|florini|lachs|graved|surimi|vegan|brotaufstrich|bouletten|oliven\b/,
+        desc: /gefullt mit|frischkase/,
+        not: /salatcreme/,
+      },
+    ],
+    [
+      "Fertiggerichte & Teige",
+      {
+        name: /eintopf|fertiggericht|suppe|gulasch|curry king|tortelloni|gnocchi|tradizionali|teig\b|pizzakit|knodel|ravioli/,
+      },
+    ],
+    [
+      "Saucen, Öl & Gewürze",
+      {
+        name: /ketchup|\bsenf|mayonnaise|salatcreme|sauce|essig|ol\b|gewurz|zimt|mildessa|wurz|dressing/,
+      },
+    ],
+    [
+      "Konserven",
+      {
+        name: /mais\b|champignons|zwiebeln|hulsenfruchte|gemuse|tomaten|heidelbeeren|mandarin|fruchtmus|apfelmus|rotkohl|gurken|spreelinge|schlemmertopfchen|hering|thunfisch|sardinen|makrele|bohnen|erbsen|sauerkraut|ananas|pfirsich/,
+      },
+    ],
+  ],
+);
+
+const STAPLES = grouping(
+  [
+    "Brot & Backwaren",
+    "Nudeln, Reis & Suppen",
+    "Müsli & Cerealien",
+    "Aufstriche & Honig",
+    "Backen & Zucker",
+    "Nüsse & Trockenfrüchte",
+  ],
+  [
+    [
+      "Brot & Backwaren",
+      {
+        name: /brot(chen)?\b|toast|croissant|^berliner\/|-berliner\b|brezel|baguette|donut|bagel|muffin|stange\b|krustchen|burli|pizza|hot dog|waffel|wafer|ohne gleichen|pains? au|pancakes|kuchen|rolle\b/,
+        desc: /geback\b|plunderteig|brot\b|geschnitten/,
+        not: /pfannkuchen- oder/,
+      },
+    ],
+    [
+      "Aufstriche & Honig",
+      {
+        name: /nuss-?nugat-creme|nuss-?creme|erdnusscreme|honig|konfiture|sirup|fruchtcreme|gourmet-fruhstuck/,
+      },
+    ],
+    ["Müsli & Cerealien", { name: /musli|cerealien|haferflocken|porridge|flakes/ }],
+    [
+      "Nudeln, Reis & Suppen",
+      {
+        name: /nudel|pasta|pesto|teigware|spaghetti|fusilli|\breis\b|basmati|suppe|bruhe|bouillon|sosse|\bfix\b|terrine/,
+      },
+    ],
+    [
+      "Backen & Zucker",
+      { name: /zucker|mehl\b|oblaten|geraspelt|raspel|flocken|shaker|backmischung/ },
+    ],
+    [
+      "Nüsse & Trockenfrüchte",
+      {
+        name: /nuss|nuts|kerne\b|mandeln|pistazien|cashew|studentenfutter|datteln|aprikosen|blaubeeren|samen\b/,
+        desc: /^getrocknet/,
+      },
+    ],
+  ],
+);
+
+const DRUGSTORE = grouping(
+  [
+    "Körperpflege",
+    "Waschen & Reinigen",
+    "Papier & Haushalt",
+    "Baby",
+    "Tiernahrung",
+    "Sport & Protein",
+  ],
+  [
+    ["Tiernahrung", { name: /hunde|katzen|\bcesar\b|\bfelix\b|whiskas|dreamies|purina/ }],
+    ["Baby", { name: /windeln|\bpants\b|pampers|\bhipp\b|quetschbeutel|smelties/ }],
+    ["Sport & Protein", { name: /protein|\bwhey\b|creatin|kreatin|low sugar/ }],
+    ["Papier & Haushalt", { name: /toilettenpapier|kuchentucher|taschentucher|backpapier/ }],
+    [
+      "Waschen & Reinigen",
+      {
+        name: /waschmittel|weichspuler|reiniger|spulmittel|spuler|spulmaschinen|geschirr|\bwc|tabs\b|entharter|erfrischer|wascheparfum|hygiene|allzweck|\bbref\b|bad total|\bfrosch\b/,
+        desc: /gegen kalk|reiniger\b/,
+      },
+    ],
+    [
+      "Körperpflege",
+      {
+        name: /dusch|\bdeo|shampoo|spulung|haar|zahn|mund|rasier|creme\b|lippen|seife|gesichts|slipeinlagen|tagespflege|coloration|bodyspray|hydro|burstenkopfe|sonicare|falten|pflege|reinigungstucher/,
+      },
+    ],
+  ],
+);
+
+const ELECTRO = grouping(
+  [
+    "TV & Audio",
+    "Küchengeräte",
+    "Haushaltsgeräte",
+    "Körperpflege",
+    "Technik & Zubehör",
+    "Batterien & Leuchtmittel",
+    "Büro & Schreibwaren",
+  ],
+  [
+    [
+      "Batterien & Leuchtmittel",
+      { name: /batterien|knopfzellen|led-birnen|led-filament|led-reflektoren|taschenlampe/ },
+    ],
+    [
+      "Körperpflege",
+      {
+        name: /rasierer|haartrockner|haarschneider|trimmer|epilierer|groomer|sonicare|zahnburste|reinigungskartuschen/,
+      },
+    ],
+    [
+      "TV & Audio",
+      {
+        name: /\btv\b|-tv\b|lautsprecher|soundbar|kopfhorer|beamer|karaoke|projektor|wandhalterung|radio/,
+      },
+    ],
+    [
+      "Küchengeräte",
+      {
+        name: /toaster|wasserkocher|mixer|fritteuse|mikrowelle|kuchenmaschine|vollautomat|padmaschine|eierkocher|grill\b|sandwichmaker|zerkleinerer|smoothiemaker|partypfanne|pizza-ofen|waffeleisen/,
+      },
+    ],
+    ["Haushaltsgeräte", { name: /sauger|saugroboter|bugel|dampf|nahmaschine|bohrmaschine/ }],
+    [
+      "Technik & Zubehör",
+      {
+        name: /powerbank|smartwatch|ladegerat|drucker|kamera|\bps5\b|playstation|nintendo|xbox|funkwecker|usb/,
+      },
+    ],
+    ["Büro & Schreibwaren", { name: /marker|stifte|gelschreiber|schreiber|papier|ordner/ }],
+  ],
+);
+
+const HOME = grouping(
+  ["Kochen & Küche", "Putzen & Wäsche", "Deko & Beleuchtung", "Aufbewahrung & Möbel"],
+  [
+    [
+      "Deko & Beleuchtung",
+      {
+        name: /deko|lichter|\bled-|kerzen|teelicht|weihnacht|nikolaus|aufhanger|sticker|geschenkbox|malset|windlicht/,
+      },
+    ],
+    [
+      "Putzen & Wäsche",
+      {
+        name: /wischer|wischmop|wischtuch|staub|swiffer|wasche(stander|trockner)|bugeltisch|kehr|abzieher|reiniger|teleskopstiel|tucher\b|starter-set/,
+      },
+    ],
+    [
+      "Kochen & Küche",
+      {
+        name: /pfanne|topf|besteck|messer|schneidebrett|backform|auflaufform|\bwok|becher|isolier|glaser|kanne|wasserfilter|wasserflter|sodastream|sprudler|zylinder|flasche|gebackdose|entkalker/,
+      },
+    ],
+    [
+      "Aufbewahrung & Möbel",
+      {
+        name: /box\b|regal|schrank|garderobe|hocker|kommode|korb|multibag|schale\b|tierhohle|haustierbett/,
+      },
+    ],
+  ],
+);
+
+const LEISURE = grouping(
+  ["Bekleidung & Schuhe", "Taschen & Koffer", "Heimtextilien", "Spielzeug", "Auto", "Feuerwerk"],
+  [
+    ["Feuerwerk", { name: /feuerwerk|knallerbsen|fontanen|bengal/ }],
+    [
+      "Spielzeug",
+      {
+        name: /spielset|bauset|\blego|puppe|plusch|puzzle|kartenspiel|rennbahn|\brc-|fahrzeug|horfigur|eisenbahn|\blok\b|feuerwehrlok|erweiterungs-set|blaster|mikroskop|bastelset|stifte-set|walkie|parkgarage|magnetwurfel|schlusselanhanger|figur|leuchtstab|puppenhaus|frisiertisch|kostum|perucke|kamera|monster|3-in-1/,
+      },
+    ],
+    [
+      "Auto",
+      {
+        name: /motorenol|frostschutz|enteiser|adblue|\bkfz|garage|flachbalkenwischer|\bsitz|kofferraum|eiskratzer|starthilfe|autoscheiben|kuhler/,
+      },
+    ],
+    [
+      "Heimtextilien",
+      {
+        name: /bettwasche|kissen|steppbett|kuscheldecke|handtuch|duschtuch|gastetuch|vorhang|tischdecke/,
+      },
+    ],
+    ["Taschen & Koffer", { name: /rucksack|tasche\b|gymbag|trolley|koffer\b/ }],
+    [
+      "Bekleidung & Schuhe",
+      {
+        name: /damen|herren|kinder|socken|strumpf|pyjama|pullover|hose\b|jacke|weste\b|schuhe|stiefel|boots|leggings|shirt|hoodie|beanie|slips|unterhemd|boxer|shorts|unterwasche|overall/,
+      },
+    ],
+  ],
+);
+
 const GROUPINGS: ReadonlyMap<string, Grouping> = new Map<string, Grouping>([
+  [DEPARTMENTS.produce, PRODUCE],
   [DEPARTMENTS.meat, { order: MEAT_ORDER, rules: MEAT_GROUPS }],
-  [DEPARTMENTS.drinks, { order: DRINK_ORDER, rules: DRINK_GROUPS }],
+  [DEPARTMENTS.fish, FISH],
+  [DEPARTMENTS.dairy, DAIRY],
+  [DEPARTMENTS.frozen, FROZEN],
+  [DEPARTMENTS.deli, DELI],
+  [DEPARTMENTS.staples, STAPLES],
   [DEPARTMENTS.sweets, { order: SWEET_ORDER, rules: SWEET_GROUPS }],
+  [DEPARTMENTS.drinks, { order: DRINK_ORDER, rules: DRINK_GROUPS }],
+  [DEPARTMENTS.drugstore, DRUGSTORE],
+  [DEPARTMENTS.electro, ELECTRO],
+  [DEPARTMENTS.home, HOME],
+  [DEPARTMENTS.leisure, LEISURE],
 ]);
 
-/** The groups a department is split into, in display order; empty for most departments. */
+/** The groups a department is split into, in display order; empty for an unknown one. */
 export function groupsOf(department: string): string[] {
   const grouping = GROUPINGS.get(department);
   return grouping ? [...grouping.order, OTHER_GROUP] : [];
