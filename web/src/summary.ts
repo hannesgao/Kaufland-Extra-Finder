@@ -106,7 +106,7 @@ export function cardsNearestStatus(distance: string, radius: number, where: stri
 
 export const CARDS_EMPTY = "Derzeit sind keine Pokémon-Angebote bekannt.";
 export const CARDS_MISSING =
-  "Noch keine Pokémon-Angebote verfügbar. Sie werden montags und donnerstags aktualisiert.";
+  "Noch keine Pokémon-Angebote verfügbar. Sie werden sonntags und donnerstags aktualisiert.";
 
 /** "2 Filialen mit „Sammelkartenspiel-Doppelpack“ im Umkreis von 25 km um PLZ 12683." */
 export function cardsArticleStatus(
@@ -141,7 +141,7 @@ export function articlesStatus(count: number, from: string): string {
 
 export const DEALS_EMPTY = "Derzeit gibt es keine Extra-Angebote.";
 export const DEALS_MISSING =
-  "Noch keine Extra-Angebote verfügbar. Sie werden montags und donnerstags aktualisiert.";
+  "Noch keine Extra-Angebote verfügbar. Sie werden sonntags und donnerstags aktualisiert.";
 
 /**
  * "31 Extra-Angebote aus 51 Extra-Filialen, 40 weitere ausgeblendet. Filialen nach Entfernung
