@@ -478,13 +478,33 @@ const ROW_PICTURE = 32;
 const ROW_PRICES = 62;
 const ROW_TEXT_X = 14 + ROW_PICTURE + 7;
 const ROW_TEXT_W = ROW_W - ROW_TEXT_X - ROW_PRICES - 6;
+/** Lines per column: every page of rows holds twice as many items, whatever they say. */
+const ROW_LINES = 8;
+
 /** A row of the list. Rows are set on lines shared by both columns: see `Line`. */
 interface Row {
   /** The department, on the first row of its group. */
   heading: string | null;
+  /** The row set into a height: texts lose lines until it fits (or nothing is left to drop). */
+  fit(max: number): FittedRow;
+}
+
+interface FittedRow {
   height: number;
   draw(page: Page, x: number, top: number): void;
 }
+
+/** Lines of name, details, unit prices and note; given up in this order when a row is too tall. */
+const ROW_CUTS = [
+  [2, 2, 2, 2],
+  [2, 1, 2, 2],
+  [2, 1, 2, 1],
+  [2, 1, 1, 1],
+  [2, 0, 1, 1],
+  [1, 0, 1, 1],
+  [1, 0, 1, 0],
+  [1, 0, 0, 0],
+] as const;
 
 function row(item: ListItem, heading: string | null, context: Context): Row {
   const f = facts(item, context);
@@ -492,30 +512,14 @@ function row(item: ListItem, heading: string | null, context: Context): Row {
   const textX = offer ? ROW_TEXT_X : 14;
   const w = offer ? ROW_TEXT_W : ROW_W - 14;
   const brand = fit(f.brand, w, 6.5, true, 1);
-  const name = fit(`${f.quantity} ${f.name}`.trim(), w, 9, false, 2);
-  const detail = fit([f.pack, f.description].filter(Boolean).join(" · "), w, 7.5, false, 2);
-  const units = fit(
-    [...f.units.map((u) => (u.label ? `${u.label} = ${u.value}` : u.value)), f.multiBuy]
-      .filter(Boolean)
-      .join(" · "),
-    w,
-    7.5,
-    false,
-    2,
-  );
   const late = f.late ? ` (${f.late})` : "";
   const when = fit(f.when && `${f.when}${late}`, w, 7.5, false, 1);
-  const note = fit(f.note && `Notiz: ${f.note}`, w, 7.5, false, 2);
-  const text = (page: Page | null, x: number, top: number): number => {
-    let y = top;
-    y += stack(page, brand, x, y, 6.5, 8.5, true, INK);
-    y += stack(page, name, x, y, 9, 11, false, INK);
-    y += stack(page, detail, x, y, 7.5, 9.5, false, MUTED);
-    y += stack(page, units, x, y, 7.5, 9.5, false, INK);
-    y += stack(page, when, x, y, 7.5, 9.5, f.late !== "", f.late ? BLUE : MUTED);
-    y += stack(page, note, x, y, 7.5, 9.5, false, INK);
-    return y - top;
-  };
+  const unitText = [
+    ...f.units.map((u) => (u.label ? `${u.label} = ${u.value}` : u.value)),
+    f.multiBuy,
+  ]
+    .filter(Boolean)
+    .join(" · ");
   const prices = (page: Page | null, edge: number, top: number): number => {
     let y = top;
     if (f.price) {
@@ -545,26 +549,47 @@ function row(item: ListItem, heading: string | null, context: Context): Row {
     }
     return y - top;
   };
-  const inner = Math.max(text(null, 0, 0), prices(null, 0, 0), offer ? ROW_PICTURE : 12);
   const pad = 4;
+  const set = ([names, details, unitLines, notes]: readonly number[]): FittedRow => {
+    const name = fit(`${f.quantity} ${f.name}`.trim(), w, 9, false, names ?? 1);
+    const detailText = [f.pack, f.description].filter(Boolean).join(" · ");
+    const detail = details ? fit(detailText, w, 7.5, false, details) : [];
+    const units = unitLines ? fit(unitText, w, 7.5, false, unitLines) : [];
+    const note = notes ? fit(f.note && `Notiz: ${f.note}`, w, 7.5, false, notes) : [];
+    const text = (page: Page | null, x: number, top: number): number => {
+      let y = top;
+      y += stack(page, brand, x, y, 6.5, 8.5, true, INK);
+      y += stack(page, name, x, y, 9, 11, false, INK);
+      y += stack(page, detail, x, y, 7.5, 9.5, false, MUTED);
+      y += stack(page, units, x, y, 7.5, 9.5, false, INK);
+      y += stack(page, when, x, y, 7.5, 9.5, f.late !== "", f.late ? BLUE : MUTED);
+      y += stack(page, note, x, y, 7.5, 9.5, false, INK);
+      return y - top;
+    };
+    const inner = Math.max(text(null, 0, 0), prices(null, 0, 0), offer ? ROW_PICTURE : 12);
+    return {
+      height: inner + 2 * pad + 0.5,
+      draw(page, x, top) {
+        const y = top + pad;
+        checkbox(page, x, y + 1, 10);
+        if (offer) {
+          const url = pictureUrl(item, "liste");
+          picture(page, context.pictures, url, x + 14, y, ROW_PICTURE, ROW_PICTURE);
+        }
+        text(page, x + textX, y);
+        prices(page, x + ROW_W, y);
+      },
+    };
+  };
   return {
     heading,
-    height: inner + 2 * pad + 0.5,
-    draw(page, x, top) {
-      const y = top + pad;
-      checkbox(page, x, y + 1, 10);
-      if (offer)
-        picture(
-          page,
-          context.pictures,
-          pictureUrl(item, "liste"),
-          x + 14,
-          y,
-          ROW_PICTURE,
-          ROW_PICTURE,
-        );
-      text(page, x + textX, y);
-      prices(page, x + ROW_W, y);
+    fit(max) {
+      let fitted = set(ROW_CUTS[0]);
+      for (const cut of ROW_CUTS.slice(1)) {
+        if (fitted.height <= max) break;
+        fitted = set(cut);
+      }
+      return fitted;
     },
   };
 }
@@ -580,16 +605,8 @@ function rows(items: readonly ListItem[], context: Context): Row[] {
  * department heading on either side takes a band above both, so the rows stay side by side.
  */
 interface Line {
-  cells: (Row | undefined)[];
+  cells: ({ heading: string | null; row: FittedRow } | undefined)[];
   head: number;
-}
-
-/** The first `count` rows down the left column, the next `count` down the right one. */
-function lines(list: readonly Row[], count: number): Line[] {
-  return Array.from({ length: count }, (_, n) => {
-    const cells = Array.from({ length: ROW_COLUMNS }, (__, c) => list[c * count + n]);
-    return { cells, head: cells.some((cell) => cell?.heading != null) ? HEADING : 0 };
-  });
 }
 
 interface RowPage {
@@ -598,50 +615,51 @@ interface RowPage {
   rowHeight: number;
 }
 
-/** No row is shorter than this: stops the search for how many lines fit. */
-const ROW_MIN = 20;
-
 /**
- * Rows onto pages. The left column is filled first, down to the bottom, then the right one.
- * All rows of a page are as tall as its tallest, and a page takes as many lines as fit that
- * way; the room that is left then goes into the rows, so that lines and headings together are
- * exactly as tall as the page. Only a list that fits into one column keeps its room below.
+ * Rows onto pages: `ROW_LINES` down the left column, then as many down the right one, on every
+ * page. All rows of a page are equally tall, and lines and headings together exactly as tall
+ * as the page; a row with more text than that leaves room for loses lines. Only a list that
+ * fits into one column is not stretched and keeps its room below.
  */
 function rowPages(list: readonly Row[], room: number): RowPage[] {
   const pages: RowPage[] = [];
-  let rest = list;
-  while (rest.length) {
-    let best: { page: Line[]; tallest: number; heads: number } | undefined;
-    for (let n = 1; n <= rest.length && (n === 1 || n * ROW_MIN <= room); n++) {
-      const page = lines(rest, n);
-      const shown = rest.slice(0, n * ROW_COLUMNS);
-      const tallest = Math.max(...shown.map((row) => row.height));
-      const heads = page.reduce((sum, line) => sum + line.head, 0);
-      if (n === 1 || n * tallest + heads <= room) best = { page, tallest, heads };
-    }
-    if (!best) break;
-    const count = best.page.length;
-    // More rows than the left column holds: it is stretched to end at the bottom.
-    const filled = rest.length > count ? (room - best.heads) / count : 0;
-    pages.push({ lines: best.page, rowHeight: Math.max(best.tallest, filled) });
-    rest = rest.slice(count * ROW_COLUMNS);
+  for (const rows of chunks(list, ROW_LINES * ROW_COLUMNS)) {
+    const count = Math.min(rows.length, ROW_LINES);
+    const cells = Array.from({ length: count }, (_, n) =>
+      Array.from({ length: ROW_COLUMNS }, (__, c) => rows[c * ROW_LINES + n]),
+    );
+    const heads = cells.map((line) => (line.some((row) => row?.heading != null) ? HEADING : 0));
+    const height = (room - heads.reduce<number>((sum, head) => sum + head, 0)) / ROW_LINES;
+    const lines = cells.map((line, n) => ({
+      head: heads[n] ?? 0,
+      cells: line.map((row) => row && { heading: row.heading, row: row.fit(height) }),
+    }));
+    const tallest = Math.max(...lines.flatMap((l) => l.cells.map((cell) => cell?.row.height ?? 0)));
+    // The left column is full: it ends at the bottom of the page.
+    pages.push({ lines, rowHeight: rows.length > ROW_LINES ? height : Math.min(tallest, height) });
   }
   return pages;
 }
 
 function drawRows(page: Page, sheet: RowPage, top: number): number {
   let y = top;
-  for (const line of sheet.lines) {
+  sheet.lines.forEach((line, n) => {
     const rule = y + line.head + sheet.rowHeight;
     line.cells.forEach((cell, c) => {
       if (!cell) return;
       const x = MARGIN + c * (ROW_W + ROW_GAP);
       if (cell.heading !== null) heading(cell.heading, ROW_W).draw(page, x, y, 0);
-      cell.draw(page, x, y + line.head);
+      else if (n === 0) {
+        // A column that goes on with a department still starts below a line: level with the
+        // one under a heading beside it.
+        const first = y + Math.max(0, line.head - 2.5);
+        page.line(x, first, x + ROW_W, first, 0.4, RULE);
+      }
+      cell.row.draw(page, x, y + line.head);
       page.line(x, rule, x + ROW_W, rule, 0.4, RULE);
     });
     y = rule;
-  }
+  });
   return y;
 }
 

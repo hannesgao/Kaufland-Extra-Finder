@@ -221,7 +221,7 @@ describe("sheet layout", () => {
   it("fills the left column of rows before the right one, on shared lines", () => {
     // Rows of different heights; fewer than two full columns.
     const long = "Beschreibung mit vielen Worten ".repeat(6);
-    const items = Array.from({ length: 16 }, (_, i) =>
+    const items = Array.from({ length: 13 }, (_, i) =>
       item(i + 1, i % 5 === 0 ? { description: long } : {}),
     );
     const { pages, ends, bottom } = sheetLayout(options(items, { layout: "liste" }));
@@ -236,6 +236,21 @@ describe("sheet layout", () => {
     expect(right.length).toBeGreaterThan(0);
     // Every row on the right starts where one on the left does.
     for (const y of right) expect(left).toContain(y);
+  });
+
+  it("puts sixteen rows on every page, whatever they say", () => {
+    const long = "Beschreibung mit vielen Worten ".repeat(6);
+    const items = Array.from({ length: 40 }, (_, i) => ({
+      ...item(i + 1, i % 3 === 0 ? { description: long } : {}),
+      note: i % 4 === 0 ? long : "",
+    }));
+    const sheet = options(items, { layout: "liste", split: false });
+    const { pages, ends, bottom } = sheetLayout(sheet);
+    expect(pages).toBe(3);
+    expect(ends[0]).toBeCloseTo(bottom, 1);
+    expect(ends[1]).toBeCloseTo(bottom, 1);
+    expect(ends[2]).toBeLessThanOrEqual(bottom + 0.01);
+    expect(boxes(sheetSource(sheet, new Map()))).toHaveLength(40);
   });
 
   it("keeps long texts on the page", () => {
