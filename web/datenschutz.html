@@ -40,8 +40,8 @@
         <ul>
           <li>
             Es gibt keine Benutzerkonten, keine Cookies, keine Analyse- oder Tracking-Dienste und
-            keine Werbung. Es werden keine externen Schriftarten geladen und nichts im Browser
-            gespeichert.
+            keine Werbung. Es werden keine externen Schriftarten geladen. Im Browser gespeichert
+            wird nur der Einkaufszettel, wenn Sie ihn benutzen; er verlässt Ihren Browser nicht.
           </li>
           <li>
             Die Suche (Postleitzahl, Standort, Umkreis) wird vollständig in Ihrem Browser
@@ -50,8 +50,8 @@
           <li>
             Personenbezogene Daten (insbesondere Ihre IP-Adresse) erhalten nur die Dienste, die für
             die Auslieferung nötig sind: GitHub als Hosting-Anbieter, für die Karte die
-            OpenStreetMap Foundation und, für Produktbilder in den Bereichen „Extra-Angebote“ und
-            „Pokémon-Angebote“, Kaufland.
+            OpenStreetMap Foundation und, für Produktbilder in den Bereichen „Extra-Angebote“,
+            „Pokémon-Angebote“ und „Einkaufszettel“, Kaufland.
           </li>
         </ul>
       </section>
@@ -127,11 +127,11 @@
 
       <section class="legal-card" aria-labelledby="produktbilder">
         <h2 class="legal-card__title" id="produktbilder">
-          <span data-icon="playing_cards"></span>4. Produktbilder (Extra- und Pokémon-Angebote)
+          <span data-icon="playing_cards"></span>4. Produktbilder (Angebote und Einkaufszettel)
         </h2>
         <p>
-          In den Bereichen „Extra-Angebote“ und „Pokémon-Angebote“ zeigt die Website kleine
-          Produktbilder der Angebote. Sie werden direkt von
+          In den Bereichen „Extra-Angebote“, „Pokémon-Angebote“ und „Einkaufszettel“ zeigt die
+          Website Produktbilder der Angebote. Sie werden direkt von
           <code>kaufland.media.schwarz</code> geladen, einem Bildserver der Schwarz Gruppe, zu der
           Kaufland gehört. Dabei werden Ihre IP-Adresse und Browserinformationen übermittelt, nicht
           aber die Adresse dieser Website (die Bilder werden ohne Referrer angefordert). Die Bilder
@@ -176,9 +176,29 @@
         </p>
       </section>
 
+      <section class="legal-card" aria-labelledby="zettel">
+        <h2 class="legal-card__title" id="zettel">
+          <span data-icon="receipt_long"></span>7. Einkaufszettel
+        </h2>
+        <p>
+          Wenn Sie im Bereich „Einkaufszettel“ eine Filiale wählen oder Einträge anlegen, speichert
+          Ihr Browser den Zettel im lokalen Speicher (<code>localStorage</code>) dieser Website: die
+          gewählte Filiale, die Angebote mit Menge und Notiz, eigene Einträge und das Druckbild. So
+          ist der Zettel beim nächsten Besuch noch da. Diese Daten bleiben in Ihrem Browser; sie
+          werden weder an mich noch an GitHub oder Dritte übertragen und nicht mit anderen Geräten
+          abgeglichen. Auch das Drucken geschieht vollständig in Ihrem Browser.
+        </p>
+        <p>
+          Ohne Nutzung des Einkaufszettels wird nichts gespeichert. Sie löschen die Daten mit
+          „Zettel leeren“ oder vollständig, indem Sie die Websitedaten dieser Seite in Ihrem Browser
+          löschen. Die Speicherung ist für diese von Ihnen ausdrücklich gewünschte Funktion
+          unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG).
+        </p>
+      </section>
+
       <section class="legal-card" aria-labelledby="links">
         <h2 class="legal-card__title" id="links">
-          <span data-icon="link"></span>7. Links zu anderen Websites
+          <span data-icon="link"></span>8. Links zu anderen Websites
         </h2>
         <p>
           Links zu Prospekten, PDF-Dateien und Filialseiten führen zu Angeboten von Kaufland bzw.
@@ -192,7 +212,7 @@
 
       <section class="legal-card" aria-labelledby="sponsors">
         <h2 class="legal-card__title" id="sponsors">
-          <span data-icon="volunteer_activism"></span>8. Unterstützung über GitHub Sponsors
+          <span data-icon="volunteer_activism"></span>9. Unterstützung über GitHub Sponsors
         </h2>
         <p>
           Die Schaltfläche „Unterstützen“ ist ein einfacher Link zu
@@ -209,7 +229,9 @@
       </section>
 
       <section class="legal-card" aria-labelledby="rechte">
-        <h2 class="legal-card__title" id="rechte"><span data-icon="gavel"></span>9. Ihre Rechte</h2>
+        <h2 class="legal-card__title" id="rechte">
+          <span data-icon="gavel"></span>10. Ihre Rechte
+        </h2>
         <p>
           Sie haben nach der DSGVO das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16),
           Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art.

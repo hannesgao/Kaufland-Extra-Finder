@@ -88,6 +88,22 @@
             <span data-icon="playing_cards"></span><span class="tab__label">Pokémon-Angebote</span
             ><span class="tab__label tab__label--short">Pokémon</span>
           </button>
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            id="tab-zettel"
+            data-tab="zettel"
+            aria-controls="panel-zettel"
+            aria-selected="false"
+            tabindex="-1"
+          >
+            <span class="tab__icon"
+              ><span data-icon="receipt_long"></span
+              ><span class="tab__badge" id="tab-zettel-count" hidden></span></span
+            ><span class="tab__label">Einkaufszettel</span
+            ><span class="tab__label tab__label--short">Zettel</span>
+          </button>
         </div>
       </div>
     </header>
@@ -431,7 +447,7 @@
 
         <ol
           id="deals-list"
-          class="articles deals"
+          class="zoffers zoffers--deals"
           aria-label="Extra-Angebote und ihre Filialen"
         ></ol>
       </div>
@@ -554,6 +570,14 @@
           ></div>
           <ol id="cards-list" class="list"></ol>
         </section>
+      </div>
+
+      <div id="panel-zettel" role="tabpanel" aria-labelledby="tab-zettel" hidden>
+        <h2 class="visually-hidden">Einkaufszettel</h2>
+        <div class="banner" id="zettel-loading">
+          <span class="banner__icon" data-icon="receipt_long"></span>
+          <p role="status" aria-live="polite">Einkaufszettel wird geladen …</p>
+        </div>
       </div>
     </main>
 

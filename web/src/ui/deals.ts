@@ -1,16 +1,19 @@
 /**
- * Cards of the "Extra-Angebote" tab: one per offer with price, comparison price, discount, how
- * many Extra stores have it, and those stores nearest first. All data goes through h() into
- * text nodes.
+ * Elements of the "Extra-Angebote" tab: one tile per offer, like the tiles of the shopping list
+ * tab (picture, discount, price, sale days), with the number of Extra stores that have it. The
+ * stores themselves, nearest first, are in a panel that opens below the tile's row. All data
+ * goes through h() into text nodes.
  */
 
+import type { IsoDate } from "../data";
 import type { DealStoreView, DealView } from "../deals";
 import { h } from "../dom";
 import { formatKm } from "../geo";
 import { icon, type IconName } from "../icons";
-import { formatPrice, names, offerLink, stateChip, thumbnail } from "./cards";
+import { formatPrice, names, offerLink, stateChip } from "./cards";
+import { comparisonPrice, lateStart, packText, salesText, tilePicture } from "./tile";
 
-export const DEAL_STORES_SHOWN = 5;
+export const DEAL_STORES_SHOWN = 6;
 
 /** Icons for Kaufland's categories, matched by a word of the name; first match wins. */
 const SECTION_ICONS: readonly (readonly [RegExp, IconName])[] = [
@@ -48,36 +51,161 @@ export function otherStoresNote(count: number): string {
   return `auch in ${String(count)} ${count === 1 ? "anderen Filiale" : "anderen Filialen"}`;
 }
 
-function priceBlock(view: DealView): HTMLDivElement {
-  const { product } = view.offer;
-  const { priceFrom, priceTo, discount } = view;
-  const varies = priceFrom !== undefined && priceTo !== undefined && priceFrom !== priceTo;
+/** The id of the panel with an offer's stores, for `aria-controls`. */
+export function dealPanelId(key: string): string {
+  return `deal-stores-${key.replace(/\W/g, "-")}`;
+}
+
+function nameId(key: string): string {
+  return `deal-${key.replace(/\W/g, "-")}`;
+}
+
+/** The days the price applies; Kaufland's display days for the few offers without them. */
+function salesDays(view: DealView): { salesFrom: IsoDate; salesTo: IsoDate } {
+  const { salesFrom, salesTo, shownFrom, shownTo } = view.offer.product;
+  return salesFrom && salesTo ? { salesFrom, salesTo } : { salesFrom: shownFrom, salesTo: shownTo };
+}
+
+function priceBox(view: DealView): HTMLDivElement {
+  const { oldPrice } = view.offer.product;
+  const { priceFrom, priceTo } = view;
   return h(
     "div",
-    { class: "deal__prices" },
-    priceFrom !== undefined &&
+    { class: "zoffer__pricebox" },
+    h(
+      "div",
+      { class: "zoffer__prices" },
       h(
         "span",
-        { class: "deal__price" },
-        varies && h("span", { class: "deal__from" }, "ab "),
-        formatPrice(priceFrom),
+        { class: "zoffer__regular" },
+        priceFrom !== undefined &&
+          h(
+            "span",
+            { class: "zoffer__price" },
+            priceFrom !== priceTo && h("span", { class: "zoffer__from" }, "ab "),
+            formatPrice(priceFrom),
+          ),
+        oldPrice !== undefined &&
+          h(
+            "s",
+            { class: "zoffer__old" },
+            h("span", { class: "visually-hidden" }, "statt "),
+            comparisonPrice(oldPrice),
+          ),
       ),
-    product.oldPrice !== undefined &&
-      h(
-        "s",
-        { class: "deal__old", "aria-label": `statt ${formatPrice(product.oldPrice)}` },
-        formatPrice(product.oldPrice),
-      ),
-    discount !== null &&
-      h(
-        "span",
-        {
-          class: "chip deal__discount",
-          title: "Rabatt gegenüber dem Vergleichspreis, den Kaufland nennt",
+    ),
+  );
+}
+
+/** Distances on a tile: whole kilometres from 100 km, so "ab 145 km" fits the narrowest tile. */
+export function tileKm(km: number): string {
+  return km >= 100 ? `${String(Math.round(km))} km` : formatKm(km);
+}
+
+export interface DealTileOptions {
+  /** Extra stores with offers ("von 51"). */
+  extraStores: number;
+  today: IsoDate;
+  /** The panel with the stores is open. */
+  open: boolean;
+  /** The list shows one store's offers: the tile links to Kaufland itself, there is no panel. */
+  single: boolean;
+  onToggle(key: string): void;
+}
+
+/** What is at the bottom of a tile: the stores button, or the link when there is one store. */
+function storesLine(view: DealView, options: DealTileOptions): Element | null {
+  const [nearest] = view.stores;
+  if (!nearest) return null;
+  if (options.single) {
+    return h(
+      "p",
+      { class: "zoffer__stores zoffer__stores--single" },
+      offerLink(view.offer, nearest.store, "Bei Kaufland"),
+      nearest.unconfirmed &&
+        h("span", { class: "zoffer__unconfirmed" }, "im Prospekt-PDF nicht gefunden"),
+    );
+  }
+  const { key } = view.offer.product;
+  return h(
+    "button",
+    {
+      type: "button",
+      class: "zoffer__stores",
+      "aria-expanded": String(options.open),
+      "aria-controls": dealPanelId(key),
+      title: options.open ? "Filialen ausblenden" : "Filialen anzeigen",
+      on: {
+        click: () => {
+          options.onToggle(key);
         },
-        `−${String(discount)} %`,
+      },
+    },
+    h(
+      "span",
+      { class: "zoffer__stores-text" },
+      h("span", { class: "visually-hidden" }, "in "),
+      // Narrow tiles show "40 von 51" and "ab 2,2 km": the long words are then only read out.
+      h(
+        "span",
+        {},
+        `${String(view.storeCount)} von ${String(options.extraStores)}`,
+        h("span", { class: "zoffer__wide" }, " Filialen"),
       ),
-    product.unit !== undefined && h("span", { class: "deal__unit" }, product.unit),
+      h(
+        "span",
+        { class: "zoffer__nearest" },
+        h("span", { class: "zoffer__wide" }, "nächste "),
+        h("span", { class: "zoffer__narrow", "aria-hidden": "true" }, "ab "),
+        tileKm(nearest.distanceKm),
+      ),
+    ),
+    icon("expand_more"),
+  );
+}
+
+/** One tile per offer. Its children sit in the rows of the list's grid, see `.zoffer`. */
+export function renderDealTile(view: DealView, options: DealTileOptions): HTMLLIElement {
+  const { offer } = view;
+  const { product } = offer;
+  const { brand, name } = names(offer);
+  const days = salesDays(view);
+  const late = lateStart(days, options.today);
+  const pack = packText(product);
+  const [from, to] = salesText(days).split(" – ");
+  return h(
+    "li",
+    {
+      class: `zoffer zoffer--deal${options.open ? " zoffer--open" : ""}`,
+      "data-key": product.key,
+    },
+    h("div", { class: "zoffer__media" }, tilePicture(product, "sell")),
+    (view.discount !== null || late !== null) &&
+      h(
+        "p",
+        { class: "zoffer__badges" },
+        view.discount !== null &&
+          h(
+            "span",
+            {
+              class: "zoffer__discount",
+              title: "Rabatt gegenüber dem Vergleichspreis, den Kaufland nennt",
+            },
+            `−${String(view.discount)}\u00a0%`,
+          ),
+        late !== null && h("span", { class: "zoffer__late" }, `ab ${late}.`),
+      ),
+    brand && h("p", { class: "zoffer__brand" }, brand),
+    h("h3", { class: "zoffer__name", id: nameId(product.key) }, name),
+    pack && h("p", { class: "zoffer__pack" }, h("span", { class: "pack" }, pack)),
+    priceBox(view),
+    h(
+      "p",
+      { class: "zoffer__when" },
+      h("span", {}, to === undefined ? from : `${from ?? ""} –`),
+      to !== undefined && h("span", {}, to),
+    ),
+    storesLine(view, options),
   );
 }
 
@@ -108,63 +236,81 @@ function storeRow(view: DealView, row: DealStoreView, varies: boolean): HTMLLIEl
   );
 }
 
-/** One card per offer; `extraStores` is the number of Extra stores with offers ("von 51"). */
-export function renderDeal(
-  view: DealView,
-  extraStores: number,
-  expanded: boolean,
-  onExpand: (key: string) => void,
-): HTMLLIElement {
+export interface DealPanelOptions {
+  extraStores: number;
+  /** All stores instead of the nearest `DEAL_STORES_SHOWN`. */
+  expanded: boolean;
+  onExpand(key: string): void;
+  onClose(key: string): void;
+}
+
+/**
+ * The stores of one offer, nearest first, with what else is known about it. It follows its tile
+ * in the list and spans the whole row below it.
+ */
+export function renderDealPanel(view: DealView, options: DealPanelOptions): HTMLLIElement {
   const { offer, stores } = view;
   const { product } = offer;
   const { brand, name } = names(offer);
-  const headingId = `deal-${product.key.replace(/\W/g, "-")}`;
-  const shown = expanded ? stores : stores.slice(0, DEAL_STORES_SHOWN);
+  const shown = options.expanded ? stores : stores.slice(0, DEAL_STORES_SHOWN);
   const more = stores.length - shown.length;
   const varies = view.priceFrom !== view.priceTo;
   return h(
     "li",
-    { class: "article deal", "data-key": product.key },
+    { class: "zpanel", id: dealPanelId(product.key), "data-panel": product.key },
     h(
-      "article",
-      { class: "article__body", "aria-labelledby": headingId },
+      "section",
+      { class: "zpanel__body", "aria-labelledby": `${dealPanelId(product.key)}-title` },
       h(
-        "div",
-        { class: "article__head" },
-        thumbnail(offer, 72, "article__thumb", "sell"),
+        "header",
+        { class: "zpanel__head" },
         h(
-          "div",
-          { class: "article__title" },
-          brand && h("p", { class: "offer__brand" }, brand),
-          h("h3", { class: "article__name", id: headingId }, name),
-          priceBlock(view),
-          h(
-            "div",
-            { class: "offer__meta" },
-            stateChip(offer),
-            h("span", { class: "offer__count" }, dealStoreCount(view.storeCount, extraStores)),
-            product.sections[0] !== undefined &&
-              h(
-                "span",
-                { class: "offer__count deal__section" },
-                icon(sectionIcon(product.sections[0])),
-                product.sections[0],
-              ),
-            product.otherStores > 0 &&
-              h(
-                "span",
-                {
-                  class: "offer__count deal__others",
-                  title: "Filialen, die kein Extra-Prospekt nennt, haben dieses Angebot ebenfalls",
-                },
-                otherStoresNote(product.otherStores),
-              ),
-          ),
+          "h4",
+          { class: "zpanel__title", id: `${dealPanelId(product.key)}-title` },
+          h("span", { class: "visually-hidden" }, "Filialen mit "),
+          `${brand} ${name}`.trim(),
+        ),
+        h(
+          "button",
+          {
+            type: "button",
+            class: "zpanel__close",
+            "aria-label": "Filialen ausblenden",
+            title: "Filialen ausblenden",
+            on: {
+              click: () => {
+                options.onClose(product.key);
+              },
+            },
+          },
+          icon("close"),
         ),
       ),
       h(
+        "div",
+        { class: "offer__meta zpanel__meta" },
+        stateChip(offer),
+        h("span", { class: "offer__count" }, dealStoreCount(view.storeCount, options.extraStores)),
+        product.sections[0] !== undefined &&
+          h(
+            "span",
+            { class: "offer__count deal__section" },
+            icon(sectionIcon(product.sections[0])),
+            product.sections[0],
+          ),
+        product.otherStores > 0 &&
+          h(
+            "span",
+            {
+              class: "offer__count deal__others",
+              title: "Filialen, die kein Extra-Prospekt nennt, haben dieses Angebot ebenfalls",
+            },
+            otherStoresNote(product.otherStores),
+          ),
+      ),
+      h(
         "ul",
-        { class: "article__stores", "aria-label": `Filialen mit ${name}` },
+        { class: "article__stores zpanel__stores", "aria-label": `Filialen mit ${name}` },
         ...shown.map((row) => storeRow(view, row, varies)),
       ),
       more > 0 &&
@@ -175,7 +321,7 @@ export function renderDeal(
             class: "btn btn--text btn--sm article__more",
             on: {
               click: () => {
-                onExpand(product.key);
+                options.onExpand(product.key);
               },
             },
           },

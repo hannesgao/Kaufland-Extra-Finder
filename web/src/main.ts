@@ -36,7 +36,9 @@ import {
   type SortOrder,
 } from "./search";
 import { renderArticle, renderArticleStrip, renderCardStore } from "./ui/cards";
-import { renderDeal, sectionIcon } from "./ui/deals";
+import { renderDealPanel, renderDealTile, sectionIcon } from "./ui/deals";
+import { loadList } from "./shopping";
+import type { ShoppingTab } from "./shopping-tab";
 import { setupSelect } from "./ui/select";
 import { renderDormant, renderHit, renderRow, type StoreDeals } from "./ui/list";
 import type { MapMarker, MapView } from "./ui/map";
@@ -239,6 +241,12 @@ let dealsUnconfirmed = parseQuery(location.search).dealsUnconfirmed;
 let dealStore: string | null = parseQuery(location.search).dealStore;
 /** Extra offers whose full store list is shown. */
 const expandedDeals = new Set<string>();
+/** The offer whose stores are shown below its tile; one at a time. */
+let openDeal: string | null = null;
+
+const zettelPanel = byId("panel-zettel", HTMLDivElement);
+const zettelCount = byId("tab-zettel-count", HTMLSpanElement);
+let zettel: ShoppingTab | "loading" | undefined;
 
 function setStatus(text: string, kind: "info" | "error" = "info"): void {
   status.textContent = text;
@@ -716,17 +724,38 @@ function runDeals(): void {
   const views = dealSection
     ? listDeals(deals, at.point, today, { ...options, section: dealSection }).views
     : unfiltered.views;
+  const single = store !== null;
   replaceChildren(
     dealsList,
-    ...views.map((view) =>
-      renderDeal(view, extraStores, expandedDeals.has(view.offer.product.key), (key) => {
-        expandedDeals.add(key);
-        runDeals();
-      }),
-    ),
+    ...views.flatMap((view) => {
+      const { key } = view.offer.product;
+      const open = !single && openDeal === key;
+      const tile = renderDealTile(view, { extraStores, today, open, single, onToggle: toggleDeal });
+      if (!open) return [tile];
+      const panel = renderDealPanel(view, {
+        extraStores,
+        expanded: expandedDeals.has(key),
+        onExpand: (expand) => {
+          expandedDeals.add(expand);
+          runDeals();
+        },
+        onClose: toggleDeal,
+      });
+      return [tile, panel];
+    }),
   );
   const near = dealsNear ? { radiusKm: radius, label: at.label } : null;
   setDealsStatus(dealsStatus(views.length, total, extraStores, near, at.from, store?.name ?? null));
+}
+
+/** Open or close an offer's stores; the list is drawn again, so the button gets the focus back. */
+function toggleDeal(key: string): void {
+  openDeal = openDeal === key ? null : key;
+  runDeals();
+  const tile = [...dealsList.children].find(
+    (item) => item instanceof HTMLElement && item.dataset.key === key,
+  );
+  tile?.querySelector<HTMLButtonElement>("button.zoffer__stores")?.focus();
 }
 
 /** How many settings differ from the defaults, next to "Filter und Sortierung" on phones. */
@@ -975,9 +1004,59 @@ function showTab(): void {
   } else if (tab === "cards") {
     ensureCards();
     if (cardsView === "filialen") drawMap(cardsMap);
+  } else if (tab === "zettel") {
+    ensureZettel();
   } else {
     drawMap(searchMap);
   }
+}
+
+/** Number of entries on the shopping list, on its tab. */
+function showZettelCount(count: number): void {
+  zettelCount.hidden = count === 0;
+  zettelCount.textContent = count > 99 ? "99+" : String(count);
+  zettelCount.setAttribute("aria-label", `${String(count)} Einträge`);
+}
+
+function storedZettelCount(): number {
+  try {
+    return loadList(window.localStorage).items.length;
+  } catch {
+    return 0;
+  }
+}
+
+/** The shopping list is its own chunk, loaded when its tab is first shown. */
+function ensureZettel(): void {
+  if (zettel === "loading" || !data) return;
+  if (zettel) {
+    zettel.show();
+    return;
+  }
+  zettel = "loading";
+  const { plz } = data;
+  import("./shopping-tab")
+    .then(({ mountShopping }) => {
+      zettel = mountShopping(zettelPanel, {
+        base: import.meta.env.BASE_URL,
+        plz,
+        currentPlz: () => origin?.plz ?? null,
+        onCount: showZettelCount,
+        now: () => new Date(),
+      });
+    })
+    .catch((err: unknown) => {
+      console.error(err);
+      zettel = undefined;
+      replaceChildren(
+        zettelPanel,
+        h(
+          "div",
+          { class: "banner banner--error" },
+          h("p", { role: "status" }, "Der Einkaufszettel konnte nicht geladen werden."),
+        ),
+      );
+    });
 }
 
 function searchPlz(plz: string, push: boolean): void {
@@ -1148,6 +1227,7 @@ tabs.select(initial.tab);
 for (const box of pdfSwitches) box.checked = initial.pdfOnly;
 checkCardsView();
 checkDealControls();
+showZettelCount(storedZettelCount());
 
 loadData(import.meta.env.BASE_URL)
   .then((loaded) => {

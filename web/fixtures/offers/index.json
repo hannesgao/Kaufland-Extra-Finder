@@ -1,0 +1,39 @@
+{
+ "schema_version": 1,
+ "generated_at": "2026-11-14T10:05:00+01:00",
+ "stores": [
+  {
+   "id": "DE1643",
+   "name": "Berlin-Spandau",
+   "plz": "13581",
+   "city": "Berlin",
+   "street": "Grünhofer Weg 9",
+   "lat": 52.5332485,
+   "lng": 13.1892761,
+   "url": "https://filiale.kaufland.de/service/filiale/berlin-spandau-1643.html",
+   "offers": 1205
+  },
+  {
+   "id": "DE4443",
+   "name": "Karlsruhe-Oststadt",
+   "plz": "76137",
+   "city": "Karlsruhe",
+   "street": "Durlacher Allee 111",
+   "lat": 49.0039646,
+   "lng": 8.4493277,
+   "url": "https://filiale.kaufland.de/service/filiale/karlsruhe-oststadt-4443.html",
+   "offers": 1294
+  },
+  {
+   "id": "DE4453",
+   "name": "Kassel-Wesertor",
+   "plz": "34125",
+   "city": "Kassel",
+   "street": "Franzgraben 40-42",
+   "lat": 51.321132,
+   "lng": 9.517428,
+   "url": "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html",
+   "offers": 1296
+  }
+ ]
+}
