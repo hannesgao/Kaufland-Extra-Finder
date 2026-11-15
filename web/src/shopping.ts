@@ -41,10 +41,12 @@ export interface ShoppingList {
   store: ListStore | null;
   items: ListItem[];
   layout: Layout;
+  /** Print the offers of every start day on pages of their own. */
+  split: boolean;
 }
 
 export function emptyList(): ShoppingList {
-  return { store: null, items: [], layout: "kacheln" };
+  return { store: null, items: [], layout: "kacheln", split: true };
 }
 
 // ---------- Storage ----------
@@ -145,6 +147,7 @@ export function parseList(json: string | null): ShoppingList {
     layout: (LAYOUTS as readonly unknown[]).includes(raw.layout)
       ? (raw.layout as Layout)
       : "kacheln",
+    split: raw.split !== false,
   };
 }
 
@@ -249,6 +252,10 @@ export function setStore(list: ShoppingList, store: ListStore): ShoppingList {
 
 export function setLayout(list: ShoppingList, layout: Layout): ShoppingList {
   return { ...list, layout };
+}
+
+export function setSplit(list: ShoppingList, split: boolean): ShoppingList {
+  return { ...list, split };
 }
 
 // ---------- Comparing with the current offers ----------

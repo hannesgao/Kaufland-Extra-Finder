@@ -56,6 +56,7 @@ import {
   removeOffer,
   saveList,
   setLayout,
+  setSplit,
   setNote,
   setQuantity,
   setStore,
@@ -64,13 +65,14 @@ import {
   type ShoppingList,
   type Trip,
 } from "./shopping";
+import { loadPdfImages } from "./export/jpeg";
+import { sheetPageCount, sheetPdf, sheetPictures, type SheetOptions } from "./export/sheet";
 import { setupSelect, type SelectOption } from "./ui/select";
 import {
   departmentIcon,
   renderGroupTitle,
   renderItem,
   renderOfferTile,
-  renderSheet,
   tripText,
   type ItemHandlers,
 } from "./ui/shopping";
@@ -97,6 +99,11 @@ type View = "angebote" | "zettel";
 
 const SORT_LABELS: Record<OfferSort, string> = { rabatt: "Rabatt", preis: "Preis", name: "Name" };
 const LAYOUT_LABELS: Record<Layout, string> = { kacheln: "Kacheln", liste: "Liste" };
+
+/** "2 Seiten A4" */
+export function pageCountText(pages: number): string {
+  return `${String(pages)} ${pages === 1 ? "Seite" : "Seiten"} A4`;
+}
 const ALL_DEPARTMENTS = "";
 const ALL_GROUPS = "";
 const ALL_DAYS = "";
@@ -357,11 +364,45 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
   const layoutSwitch = segmented<Layout>("Druckbild", "zettel-layout", (value) => {
     change(setLayout(list, value), false);
   });
+  const splitInput = h("input", {
+    type: "checkbox",
+    role: "switch",
+    class: "switch__input",
+    on: {
+      change: () => {
+        change(setSplit(list, splitInput.checked), false);
+      },
+    },
+  });
+  const splitSwitch = h(
+    "fieldset",
+    { class: "outlined switch-field" },
+    h("legend", { class: "outlined__label" }, "Seiten"),
+    h(
+      "label",
+      { class: "switch" },
+      splitInput,
+      h("span", { class: "switch__label" }, "Je Starttag eine eigene Seite"),
+      h(
+        "span",
+        { class: "switch__track", "aria-hidden": "true" },
+        h("span", { class: "switch__thumb" }),
+      ),
+    ),
+  );
   const printButton = h(
     "button",
-    { type: "button", class: "btn btn--filled", on: { click: () => void print() } },
+    { type: "button", class: "btn btn--filled", on: { click: () => void openPdf() } },
     icon("print"),
-    "Drucken",
+    "PDF öffnen",
+  );
+  const printNote = h("p", { class: "supporting-text zprint__note", "aria-live": "polite" });
+  // Not on phones (see `.zprint`): the sheet is made for paper.
+  const printBox = h(
+    "div",
+    { class: "zprint" },
+    h("div", { class: "zprint__options" }, layoutSwitch.field, splitSwitch),
+    h("div", { class: "zprint__go" }, printButton, printNote),
   );
   const clearSlot = h("div", { class: "zactions__clear" });
   const listStatus = banner("receipt_long");
@@ -374,15 +415,13 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
       "section",
       { class: "card search-card zactions", "aria-label": "Einkaufszettel bearbeiten" },
       textForm,
-      h("div", { class: "zactions__row" }, layoutSwitch.field, printButton, clearSlot),
+      printBox,
+      h("div", { class: "zactions__row" }, clearSlot),
       storageNote,
     ),
     h("div", { class: "status-bar status-bar--single" }, listStatus.box),
     groups,
   );
-
-  const sheetHost = h("div", { class: "sheet-host", "aria-hidden": "true" });
-  document.body.append(sheetHost);
 
   const missing = banner("info");
   missing.box.hidden = true;
@@ -403,7 +442,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     stored = saveList(storage(), list);
     ctx.onCount(list.items.length);
     if (rerender) render();
-    else renderSheetOnly();
+    else renderPrint();
   }
 
   function keepFocus(action: () => void): void {
@@ -455,7 +494,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     tile?.replaceWith(fresh);
     fresh.querySelector("button")?.focus();
     renderViewSwitch();
-    renderSheetOnly();
+    renderPrint();
   }
 
   // ---------- Rendering ----------
@@ -681,7 +720,6 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
       LAYOUTS.map((value) => ({ value, label: LAYOUT_LABELS[value] })),
       list.layout,
     );
-    printButton.disabled = count === 0;
     replaceChildren(
       clearSlot,
       ...(confirmClear
@@ -799,13 +837,23 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     );
   }
 
-  function renderSheetOnly(): void {
-    replaceChildren(
-      sheetHost,
-      list.items.length
-        ? renderSheet(list.store, list.items, list.layout, catalog?.generatedAt ?? null, today())
-        : null,
-    );
+  function sheetOptions(): SheetOptions {
+    return {
+      store: list.store,
+      items: list.items,
+      layout: list.layout,
+      split: list.split,
+      generatedAt: catalog?.generatedAt ?? null,
+      today: today(),
+    };
+  }
+
+  /** The print settings and how many pages they give; the layout needs no pictures for that. */
+  function renderPrint(): void {
+    splitInput.checked = list.split;
+    const pages = sheetPageCount(sheetOptions());
+    printButton.disabled = pages === 0 || printing;
+    if (!printing) printNote.textContent = pages === 0 ? "" : pageCountText(pages);
   }
 
   function render(): void {
@@ -815,7 +863,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     listView.hidden = view !== "zettel";
     if (view === "angebote") renderOffers();
     else renderList();
-    renderSheetOnly();
+    renderPrint();
   }
 
   // ---------- Loading ----------
@@ -870,23 +918,41 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
   }
 
   // ---------- Printing ----------
-  async function print(): Promise<void> {
-    if (!list.items.length) return;
-    renderSheetOnly();
-    // Pictures that have not loaded yet would print as gaps.
-    const images = [...sheetHost.querySelectorAll("img")];
-    await Promise.all(images.map((img) => img.decode().catch(() => undefined)));
-    window.print();
-  }
+  let printing = false;
+  let pdfUrl: string | undefined;
 
-  // Ctrl+P on this tab prints the sheet as well; other tabs print as before.
-  window.addEventListener("beforeprint", () => {
-    const visible = root.offsetParent !== null && list.items.length > 0;
-    document.documentElement.classList.toggle("print-zettel", visible);
-  });
-  window.addEventListener("afterprint", () => {
-    document.documentElement.classList.remove("print-zettel");
-  });
+  /**
+   * The sheet as a PDF in a new tab, to print or save from the browser's viewer. The tab is
+   * opened right away (later, after loading the pictures, the browser would block it) and
+   * shows the file once it is made; when no tab opens, the file is downloaded instead.
+   */
+  async function openPdf(): Promise<void> {
+    if (!list.items.length || printing) return;
+    const options = sheetOptions();
+    const tab = window.open("", "_blank");
+    if (tab) tab.document.title = "Einkaufszettel wird erstellt …";
+    printing = true;
+    printButton.disabled = true;
+    printNote.textContent = "Das PDF wird erstellt …";
+    try {
+      const images = await loadPdfImages(sheetPictures(options.items, options.layout));
+      if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+      pdfUrl = URL.createObjectURL(sheetPdf(options, images));
+      if (tab && !tab.closed) tab.location.replace(pdfUrl);
+      else {
+        const link = h("a", { href: pdfUrl, download: "Einkaufszettel.pdf" });
+        link.click();
+      }
+    } catch {
+      tab?.close();
+      printNote.textContent = "Das PDF konnte nicht erstellt werden.";
+      printing = false;
+      printButton.disabled = false;
+      return;
+    }
+    printing = false;
+    renderPrint();
+  }
 
   // ---------- Events ----------
   let typing: number | undefined;

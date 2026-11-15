@@ -4,21 +4,17 @@
  */
 
 import type { IsoDate } from "../data";
-import { berlinToday, formatDate, formatDay, isoWeek, weekdayShort } from "../dates";
+import { formatDay, isoWeek, weekdayShort } from "../dates";
 import { discountPercent } from "../deals";
 import { h, type Child } from "../dom";
 import { icon, type IconName } from "../icons";
-import { departmentOf, NO_DEPARTMENT, type Offer } from "../offers";
+import { NO_DEPARTMENT, type Offer } from "../offers";
 import {
-  groupItems,
-  planTrips,
   MAX_NOTE,
   MAX_QUANTITY,
   OWN_ENTRIES,
   type ItemStatus,
-  type Layout,
   type ListItem,
-  type ListStore,
   type Trip,
 } from "../shopping";
 import { formatPrice } from "./cards";
@@ -460,135 +456,5 @@ export function renderGroupTitle(title: string, count: number): HTMLHeadingEleme
     icon(departmentIcon(title)),
     title,
     h("span", { class: "zgroup__count" }, String(count)),
-  );
-}
-
-// ---------- The printed sheet ----------
-
-function sheetItem(item: ListItem, today: IsoDate): HTMLLIElement {
-  const { offer } = item;
-  const quantity =
-    item.quantity > 1 && h("span", { class: "sheet-item__qty" }, `${String(item.quantity)}×`);
-  const note = item.note && h("p", { class: "sheet-item__note" }, item.note);
-  const box = h("span", { class: "sheet-item__box", "aria-hidden": "true" });
-  if (!offer) {
-    return h(
-      "li",
-      { class: "sheet-item sheet-item--text" },
-      box,
-      h(
-        "div",
-        { class: "sheet-item__body" },
-        h("p", { class: "sheet-item__name" }, quantity, item.text ?? ""),
-        note,
-      ),
-    );
-  }
-  const expired = offer.salesTo < today;
-  return h(
-    "li",
-    { class: "sheet-item" },
-    h(
-      "div",
-      { class: "sheet-item__top" },
-      box,
-      quantity,
-      h("span", { class: "sheet-item__department" }, departmentOf(offer)),
-    ),
-    picture(offer, 322, "sheet-item__img", true),
-    h(
-      "div",
-      { class: "sheet-item__body" },
-      ...head(offer, "sheet-item"),
-      prices(offer, "sheet-item"),
-      ...conditions(offer, "sheet-item"),
-      h(
-        "p",
-        { class: "sheet-item__when" },
-        expired ? `Abgelaufen: ${salesText(offer)}` : `Gültig ${salesText(offer)}`,
-        lateMark(offer, today),
-      ),
-      note,
-    ),
-  );
-}
-
-/**
- * Rows are printed under a heading per department. Clippings fill one grid in the same order
- * (a heading per department would leave most rows half empty) and name the department on each.
- */
-function sheetGroups(
-  items: readonly ListItem[],
-  layout: Layout,
-): { title: string | null; items: ListItem[] }[] {
-  const groups = groupItems(items);
-  if (layout === "liste") return groups;
-  const offers = groups.filter((g) => g.title !== OWN_ENTRIES).flatMap((g) => g.items);
-  const own = groups.filter((g) => g.title === OWN_ENTRIES);
-  return [...(offers.length ? [{ title: null, items: offers }] : []), ...own];
-}
-
-/**
- * What is printed: one page per shopping trip, each with store and date on top, the days on
- * which every price of the page applies, and the items by department. Free-text entries and
- * ended offers are on the first page.
- */
-export function renderSheet(
-  store: ListStore | null,
-  items: readonly ListItem[],
-  layout: Layout,
-  generatedAt: Date | null,
-  today: IsoDate,
-): HTMLElement {
-  const where = store
-    ? `Kaufland ${store.name}, ${store.street}, ${store.plz} ${store.city}`
-    : "Ohne Filiale";
-  const stand = generatedAt
-    ? `Angebote laut kaufland.de, Stand ${formatDate(berlinToday(generatedAt))}. `
-    : "";
-  const { trips, other } = planTrips(items, today);
-  const pages: { trip: Trip | null; items: ListItem[] }[] = trips.length
-    ? trips.map((trip, i) => ({ trip, items: i === 0 ? [...trip.items, ...other] : trip.items }))
-    : [{ trip: null, items: other }];
-  return h(
-    "div",
-    { class: "sheets" },
-    ...pages.map((page, i) =>
-      h(
-        "article",
-        { class: `sheet sheet--${layout}` },
-        h(
-          "header",
-          { class: "sheet__head" },
-          h("h1", { class: "sheet__title" }, "Einkaufszettel"),
-          h("p", { class: "sheet__store" }, where),
-          page.trip &&
-            h(
-              "p",
-              { class: "sheet__trip" },
-              tripText(page.trip),
-              pages.length > 1 &&
-                h(
-                  "span",
-                  { class: "sheet__page" },
-                  `Zettel ${String(i + 1)} von ${String(pages.length)}`,
-                ),
-            ),
-          h("p", { class: "sheet__meta" }, `${stand}Preise und Verfügbarkeit ohne Gewähr.`),
-        ),
-        ...sheetGroups(page.items, layout).map((group) =>
-          h(
-            "section",
-            { class: "sheet__group" },
-            group.title && h("h2", { class: "sheet__group-title" }, group.title),
-            h(
-              "ul",
-              { class: `sheet__items${group.title === OWN_ENTRIES ? " sheet__items--text" : ""}` },
-              ...group.items.map((item) => sheetItem(item, today)),
-            ),
-          ),
-        ),
-      ),
-    ),
   );
 }
