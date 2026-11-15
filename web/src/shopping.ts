@@ -285,6 +285,56 @@ export function itemStatus(
     : { kind: "ok" };
 }
 
+// ---------- Shopping trips ----------
+
+export interface Trip {
+  /** The days on which the price of every offer of the trip applies. */
+  from: IsoDate;
+  to: IsoDate;
+  items: ListItem[];
+}
+
+export interface TripPlan {
+  /** In the order of their days; empty without offers that still apply. */
+  trips: Trip[];
+  /** Free-text entries and offers that have ended: they belong to no particular day. */
+  other: ListItem[];
+}
+
+/**
+ * The fewest trips on which every offer of the list can be bought at its price: offers that
+ * share a day go together (Monday to Saturday and Thursday to Saturday: one trip from Thursday),
+ * offers of different weeks do not. Items keep the order of the list.
+ */
+export function planTrips(items: readonly ListItem[], today: IsoDate): TripPlan {
+  type OfferItem = ListItem & { offer: Offer };
+  const current = items.filter(
+    (item): item is OfferItem => item.offer !== undefined && item.offer.salesTo >= today,
+  );
+  const tripOf = new Map<string, number>();
+  const trips: Trip[] = [];
+  // Whoever shops on the last day of the offer that ends first can take every offer that has
+  // started by then; the same again for the offers that are left.
+  let left = [...current].sort((a, b) => a.offer.salesTo.localeCompare(b.offer.salesTo));
+  while (left[0]) {
+    const day = left[0].offer.salesTo;
+    const together = left.filter((item) => item.offer.salesFrom <= day);
+    for (const item of together) tripOf.set(item.id, trips.length);
+    trips.push({
+      from: together.map((item) => item.offer.salesFrom).reduce((a, b) => (a > b ? a : b)),
+      to: day,
+      items: [],
+    });
+    left = left.filter((item) => item.offer.salesFrom > day);
+  }
+  const other: ListItem[] = [];
+  for (const item of items) {
+    const trip = trips[tripOf.get(item.id) ?? -1];
+    (trip ? trip.items : other).push(item);
+  }
+  return { trips, other };
+}
+
 // ---------- Printing ----------
 
 export interface ItemGroup {

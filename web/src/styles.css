@@ -3135,7 +3135,9 @@ button.segment:disabled {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .zfilters__department {
+  /* The category takes the whole row when it would otherwise stand alone in it: week and
+     shopping day are hidden when there is nothing to choose. */
+  .zfilters__department:nth-child(odd of :not([hidden])) {
     grid-column: 1 / -1;
   }
 }
@@ -3213,10 +3215,34 @@ button.segment:disabled {
   color: var(--md-on-surface-variant);
 }
 
-.zoffer__discount {
+/* Discount and a late start, stacked in the picture's corner. */
+.zoffer__badges {
+  display: flex;
   position: absolute;
   top: 12px;
   left: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 0;
+}
+
+.zoffer__late {
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 0 var(--shape-md) var(--shape-md) 0;
+  background: #2b4a9b; /* on the white picture in both schemes */
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.zoffer__late:first-child {
+  border-radius: var(--shape-md) 0 var(--shape-md) 0;
+}
+
+.zoffer__discount {
   height: 24px;
   padding: 0 8px;
   border-radius: var(--shape-md) 0 var(--shape-md) 0;
@@ -3716,6 +3742,59 @@ button.segment:disabled {
   gap: 6px;
 }
 
+/* The mark goes below the days where both do not fit on one line. */
+.zitem__when {
+  flex-wrap: wrap;
+}
+
+/* "erst ab Do.": the offer starts later than its week. */
+.late-mark {
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* The days on which every price of the list (or of one trip) applies. */
+.ztrip__when {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 16px;
+  border-radius: var(--shape-md);
+  background: var(--md-tertiary-container);
+  color: var(--md-on-tertiary-container);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.ztrip__when .icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.ztrip {
+  display: grid;
+  gap: 12px;
+}
+
+.ztrip + .ztrip {
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--md-outline-variant);
+}
+
+.ztrip__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
 .zitem__when .icon,
 .zitem__status .icon {
   flex: none;
@@ -3966,6 +4045,41 @@ button.segment:disabled {
   font-size: 10pt;
   font-weight: 600;
   text-align: right;
+}
+
+/* One page per shopping trip. */
+.sheet + .sheet {
+  break-before: page;
+}
+
+@media screen {
+  .sheet + .sheet {
+    margin-top: 12mm;
+  }
+}
+
+.sheet__trip {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: space-between;
+  gap: 6mm;
+  margin-top: 1mm !important;
+  font-size: 10pt;
+  font-weight: 700;
+}
+
+.sheet__page {
+  font-weight: 400;
+}
+
+.sheet .late-mark {
+  margin-left: 1.5mm;
+  padding: 0 1.2mm;
+  border: 0.3mm solid #000000;
+  border-radius: 1mm;
+  background: none;
+  color: #000000;
+  font-size: 7.5pt;
 }
 
 .sheet__meta {

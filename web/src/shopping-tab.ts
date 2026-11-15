@@ -4,7 +4,15 @@
  */
 
 import { DataError, type IsoDate, type PlzIndex } from "./data";
-import { berlinToday, formatDay, formatRange, formatStamp, isoWeek } from "./dates";
+import {
+  berlinToday,
+  formatDate,
+  formatDay,
+  formatRange,
+  formatStamp,
+  isoWeek,
+  weekdayShort,
+} from "./dates";
 import { h, replaceChildren } from "./dom";
 import { formatKm } from "./geo";
 import { icon, type IconName } from "./icons";
@@ -19,6 +27,7 @@ import {
   nearestStores,
   OFFER_SORTS,
   offerWeeks,
+  shoppingPeriods,
   storeOffers,
   type Offer,
   type OfferCatalog,
@@ -39,6 +48,7 @@ import {
   itemStatus,
   LAYOUTS,
   loadList,
+  planTrips,
   MAX_ITEMS,
   MAX_TEXT,
   refreshOffer,
@@ -50,7 +60,9 @@ import {
   setQuantity,
   setStore,
   type Layout,
+  type ListItem,
   type ShoppingList,
+  type Trip,
 } from "./shopping";
 import { setupSelect, type SelectOption } from "./ui/select";
 import {
@@ -59,6 +71,7 @@ import {
   renderItem,
   renderOfferTile,
   renderSheet,
+  tripText,
   type ItemHandlers,
 } from "./ui/shopping";
 
@@ -86,6 +99,7 @@ const SORT_LABELS: Record<OfferSort, string> = { rabatt: "Rabatt", preis: "Preis
 const LAYOUT_LABELS: Record<Layout, string> = { kacheln: "Kacheln", liste: "Liste" };
 const ALL_DEPARTMENTS = "";
 const ALL_GROUPS = "";
+const ALL_DAYS = "";
 
 function storage(): Storage | null {
   try {
@@ -186,6 +200,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     department: null,
     group: null,
     week: null,
+    day: null,
     sort: "rabatt",
   };
 
@@ -238,6 +253,13 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
   });
   const weekSwitch = segmented<IsoDate>("Woche", "zettel-week", (value) => {
     filter.week = value;
+    filter.day = null;
+    shown = PAGE_SIZE;
+    renderOffers();
+  });
+  // The day of the shopping trip: offers that start on Thursday do not help on a Tuesday.
+  const daySwitch = segmented<string>("Einkaufstag", "zettel-day", (value) => {
+    filter.day = value === ALL_DAYS ? null : value;
     shown = PAGE_SIZE;
     renderOffers();
   });
@@ -302,6 +324,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
         "div",
         { class: "search-options" },
         weekSwitch.field,
+        daySwitch.field,
         sortSwitch.field,
         h(
           "fieldset",
@@ -422,7 +445,13 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     const tile = [...offerGrid.children].find(
       (el) => el instanceof HTMLElement && el.dataset.key === offer.key,
     );
-    const fresh = renderOfferTile(offer, hasOffer(list, offer.key), isFull(list), toggleOffer);
+    const fresh = renderOfferTile(
+      offer,
+      hasOffer(list, offer.key),
+      isFull(list),
+      today(),
+      toggleOffer,
+    );
     tile?.replaceWith(fresh);
     fresh.querySelector("button")?.focus();
     renderViewSwitch();
@@ -558,6 +587,21 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     if (weeks[0] && filter.week) {
       weekSwitch.set(weeks.map(weekOption), filter.week);
     }
+    const periods = filter.week ? shoppingPeriods(offers, filter.week, day) : [];
+    if (!periods.some((period) => period.from === filter.day)) filter.day = null;
+    // With one stretch of days every offer of the week applies on each of them.
+    daySwitch.field.hidden = periods.length < 2;
+    daySwitch.set(
+      [
+        { value: ALL_DAYS, label: "Alle" },
+        ...periods.map(({ from, to, count }) => ({
+          value: from,
+          label: from === to ? weekdayShort(from) : `${weekdayShort(from)}–${weekdayShort(to)}`,
+          detail: String(count),
+        })),
+      ],
+      filter.day ?? ALL_DAYS,
+    );
     sortSwitch.set(
       OFFER_SORTS.map((value) => ({ value, label: SORT_LABELS[value] })),
       filter.sort,
@@ -609,7 +653,14 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
 
     const found = filterOffers(offers, filter, day);
     const week = weeks.find((w) => w.monday === filter.week);
-    const when = week ? `, gültig ${formatRange(week.from, week.to)}` : "";
+    const period = periods.find((p) => p.from === filter.day);
+    const when = period
+      ? period.from === period.to
+        ? `, gültig am ${weekdayShort(period.from)}, ${formatDate(period.from)}`
+        : `, gültig ${weekdayShort(period.from)}–${weekdayShort(period.to)}, ${formatRange(period.from, period.to)}`
+      : week
+        ? `, gültig ${formatRange(week.from, week.to)}`
+        : "";
     offersStatus.text.textContent = found.length
       ? `${String(found.length)} ${found.length === 1 ? "Angebot" : "Angebote"} in ${list.store.name}${when}.`
       : "Keine Angebote für diese Auswahl.";
@@ -621,7 +672,7 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
       offerGrid,
       ...found
         .slice(0, shown)
-        .map((offer) => renderOfferTile(offer, hasOffer(list, offer.key), full, toggleOffer)),
+        .map((offer) => renderOfferTile(offer, hasOffer(list, offer.key), full, day, toggleOffer)),
     );
     moreButton.hidden = found.length <= shown;
   }
@@ -702,9 +753,8 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
     const statusOf = new Map(
       list.items.map((item, i) => [item.id, statuses[i] ?? { kind: "ok" as const }]),
     );
-    replaceChildren(
-      groups,
-      ...groupItems(list.items).map((group) =>
+    const departments = (items: readonly ListItem[]) =>
+      groupItems(items).map((group) =>
         h(
           "section",
           { class: "zgroup" },
@@ -713,11 +763,43 @@ export function mountShopping(root: HTMLElement, ctx: ShoppingContext): Shopping
             "ul",
             { class: "zitems" },
             ...group.items.map((item) =>
-              renderItem(item, statusOf.get(item.id) ?? { kind: "ok" }, handlers),
+              renderItem(item, statusOf.get(item.id) ?? { kind: "ok" }, handlers, day),
             ),
           ),
         ),
-      ),
+      );
+    // One trip: its days on top of the list. Several (two weeks): a section each, as printed.
+    const { trips, other } = planTrips(list.items, day);
+    const tripNote = (trip: Trip) =>
+      h("p", { class: "ztrip__when" }, icon("fact_check"), tripText(trip));
+    const [only] = trips;
+    replaceChildren(
+      groups,
+      ...(only && trips.length === 1
+        ? [tripNote(only), ...departments(list.items)]
+        : trips.length === 0
+          ? departments(list.items)
+          : [
+              ...trips.map((trip, i) =>
+                h(
+                  "section",
+                  { class: "ztrip" },
+                  h("h3", { class: "ztrip__title" }, `Einkauf ${String(i + 1)}`),
+                  tripNote(trip),
+                  ...departments(trip.items),
+                ),
+              ),
+              ...(other.length
+                ? [
+                    h(
+                      "section",
+                      { class: "ztrip" },
+                      h("h3", { class: "ztrip__title" }, "Weitere Einträge"),
+                      ...departments(other),
+                    ),
+                  ]
+                : []),
+            ]),
     );
   }
 

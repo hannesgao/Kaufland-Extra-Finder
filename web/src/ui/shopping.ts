@@ -4,13 +4,14 @@
  */
 
 import type { IsoDate } from "../data";
-import { berlinToday, formatDate, formatDay, weekdayShort } from "../dates";
+import { berlinToday, formatDate, formatDay, isoWeek, mondayOf, weekdayShort } from "../dates";
 import { discountPercent } from "../deals";
 import { h, type Child } from "../dom";
 import { icon, type IconName } from "../icons";
 import { departmentOf, NO_DEPARTMENT, type Offer } from "../offers";
 import {
   groupItems,
+  planTrips,
   MAX_NOTE,
   MAX_QUANTITY,
   OWN_ENTRIES,
@@ -18,6 +19,7 @@ import {
   type Layout,
   type ListItem,
   type ListStore,
+  type Trip,
 } from "../shopping";
 import { formatPrice } from "./cards";
 import { sectionIcon } from "./deals";
@@ -33,6 +35,22 @@ export function salesText(offer: Pick<Offer, "salesFrom" | "salesTo">): string {
   return offer.salesFrom === offer.salesTo
     ? `nur ${day(offer.salesFrom)}`
     : `${day(offer.salesFrom)} – ${day(offer.salesTo)}`;
+}
+
+/**
+ * "Do" for an offer that has not started and does not start with its week: most offers apply
+ * from Monday, so the others are easy to miss. Null for all others.
+ */
+export function lateStart(offer: Pick<Offer, "salesFrom">, today: IsoDate): string | null {
+  const { salesFrom } = offer;
+  return salesFrom > today && salesFrom !== mondayOf(salesFrom) ? weekdayShort(salesFrom) : null;
+}
+
+/** "KW 47 · Alles gültig Do, 19.11. – Sa, 21.11.": the days on which a trip gets every price. */
+export function tripText(trip: Pick<Trip, "from" | "to" | "items">): string {
+  const days = salesText({ salesFrom: trip.from, salesTo: trip.to });
+  const lead = trip.items.length > 1 ? "Alles gültig" : "Gültig";
+  return `KW\u00a0${String(isoWeek(trip.from))} · ${lead} ${days}`;
 }
 
 /** Kaufland writes "(1 kg = 10.38)" and "entspr. pro Beutel 1.34": German decimal commas. */
@@ -258,17 +276,26 @@ export function renderOfferTile(
   offer: Offer,
   onList: boolean,
   full: boolean,
+  today: IsoDate,
   onToggle: (offer: Offer) => void,
 ): HTMLLIElement {
   const { name } = offerNames(offer);
   const discount = discountPercent(offer.price, offer.oldPrice);
+  const late = lateStart(offer, today);
   const label = onList ? `${name} vom Zettel nehmen` : `${name} auf den Zettel setzen`;
   const [from, to] = salesText(offer).split(" – ");
   return h(
     "li",
     { class: `zoffer${onList ? " zoffer--picked" : ""}`, "data-key": offer.key },
     h("div", { class: "zoffer__media" }, picture(offer, 322, "zoffer__thumb", false, TILE_SIZES)),
-    discount !== null && h("span", { class: "zoffer__discount" }, `−${String(discount)}\u00a0%`),
+    (discount !== null || late !== null) &&
+      h(
+        "p",
+        { class: "zoffer__badges" },
+        discount !== null &&
+          h("span", { class: "zoffer__discount" }, `−${String(discount)}\u00a0%`),
+        late !== null && h("span", { class: "zoffer__late" }, `ab ${late}.`),
+      ),
     // Direct children: each one sits in its own row of the list's grid (see `.zoffer`).
     ...head(offer, "zoffer"),
     ...conditions(offer, "zoffer"),
@@ -389,10 +416,17 @@ function quantityControl(item: ListItem, name: string, handlers: ItemHandlers): 
   );
 }
 
+/** "erst ab Do." next to the days of an offer that starts later than its week. */
+function lateMark(offer: Offer, today: IsoDate): HTMLElement | null {
+  const late = lateStart(offer, today);
+  return late === null ? null : h("span", { class: "late-mark" }, `erst ab ${late}.`);
+}
+
 export function renderItem(
   item: ListItem,
   status: ItemStatus,
   handlers: ItemHandlers,
+  today: IsoDate,
 ): HTMLLIElement {
   const { offer } = item;
   const name = offer ? offerNames(offer).name : (item.text ?? "");
@@ -411,7 +445,13 @@ export function renderItem(
             ...head(offer, "zitem"),
             prices(offer, "zitem"),
             ...conditions(offer, "zitem"),
-            h("p", { class: "zitem__when" }, icon("schedule"), salesText(offer)),
+            h(
+              "p",
+              { class: "zitem__when" },
+              icon("schedule"),
+              salesText(offer),
+              lateMark(offer, today),
+            ),
           ]
         : [h("p", { class: "zitem__name" }, name)]),
       statusNote(item, status, handlers),
@@ -510,6 +550,7 @@ function sheetItem(item: ListItem, today: IsoDate): HTMLLIElement {
         "p",
         { class: "sheet-item__when" },
         expired ? `Abgelaufen: ${salesText(offer)}` : `Gültig ${salesText(offer)}`,
+        lateMark(offer, today),
       ),
       note,
     ),
@@ -531,7 +572,11 @@ function sheetGroups(
   return [...(offers.length ? [{ title: null, items: offers }] : []), ...own];
 }
 
-/** The page that is printed: store and date on top, then the items by department. */
+/**
+ * What is printed: one page per shopping trip, each with store and date on top, the days on
+ * which every price of the page applies, and the items by department. Free-text entries and
+ * ended offers are on the first page.
+ */
 export function renderSheet(
   store: ListStore | null,
   items: readonly ListItem[],
@@ -545,25 +590,47 @@ export function renderSheet(
   const stand = generatedAt
     ? `Angebote laut kaufland.de, Stand ${formatDate(berlinToday(generatedAt))}. `
     : "";
+  const { trips, other } = planTrips(items, today);
+  const pages: { trip: Trip | null; items: ListItem[] }[] = trips.length
+    ? trips.map((trip, i) => ({ trip, items: i === 0 ? [...trip.items, ...other] : trip.items }))
+    : [{ trip: null, items: other }];
   return h(
-    "article",
-    { class: `sheet sheet--${layout}` },
-    h(
-      "header",
-      { class: "sheet__head" },
-      h("h1", { class: "sheet__title" }, "Einkaufszettel"),
-      h("p", { class: "sheet__store" }, where),
-      h("p", { class: "sheet__meta" }, `${stand}Preise und Verfügbarkeit ohne Gewähr.`),
-    ),
-    ...sheetGroups(items, layout).map((group) =>
+    "div",
+    { class: "sheets" },
+    ...pages.map((page, i) =>
       h(
-        "section",
-        { class: "sheet__group" },
-        group.title && h("h2", { class: "sheet__group-title" }, group.title),
+        "article",
+        { class: `sheet sheet--${layout}` },
         h(
-          "ul",
-          { class: `sheet__items${group.title === OWN_ENTRIES ? " sheet__items--text" : ""}` },
-          ...group.items.map((item) => sheetItem(item, today)),
+          "header",
+          { class: "sheet__head" },
+          h("h1", { class: "sheet__title" }, "Einkaufszettel"),
+          h("p", { class: "sheet__store" }, where),
+          page.trip &&
+            h(
+              "p",
+              { class: "sheet__trip" },
+              tripText(page.trip),
+              pages.length > 1 &&
+                h(
+                  "span",
+                  { class: "sheet__page" },
+                  `Zettel ${String(i + 1)} von ${String(pages.length)}`,
+                ),
+            ),
+          h("p", { class: "sheet__meta" }, `${stand}Preise und Verfügbarkeit ohne Gewähr.`),
+        ),
+        ...sheetGroups(page.items, layout).map((group) =>
+          h(
+            "section",
+            { class: "sheet__group" },
+            group.title && h("h2", { class: "sheet__group-title" }, group.title),
+            h(
+              "ul",
+              { class: `sheet__items${group.title === OWN_ENTRIES ? " sheet__items--text" : ""}` },
+              ...group.items.map((item) => sheetItem(item, today)),
+            ),
+          ),
         ),
       ),
     ),
