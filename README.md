@@ -362,9 +362,12 @@ KEF_EXTRA_JSON=fixtures/extra.json npm run build && npm run preview
   and add own entries. Each entry has a quantity and a note. The list belongs to one store and is
   kept in `localStorage` (`kef.einkaufszettel.v1`) with a copy of each offer, so it still prints
   when the data has moved on; entries whose offer has ended, is gone or has another price are
-  marked. "Drucken" prints an A4 sheet instead of the page: clippings with picture, name, price,
-  comparison price, unit, card price and the days the price applies, or compact rows by
-  category. `data/offers/` is optional (`fixtures/offers/` in development, `KEF_OFFERS_DIR` for a
+  marked. "PDF öffnen" (not on phones) makes an A4 PDF in the browser and opens it in a new tab
+  (`export/sheet.ts` on the small PDF writer `export/pdfdoc.ts`; the pictures are fetched as
+  JPEGs and embedded as they are): clippings with picture, name, price, comparison price, unit,
+  card price and the days the price applies, or compact rows by category. Pages that are
+  followed by another one are filled to the bottom. With "Je Starttag eine eigene Seite" (on by
+  default) the offers of every start day begin a page of their own. `data/offers/` is optional (`fixtures/offers/` in development, `KEF_OFFERS_DIR` for a
   build); without it the list still takes own entries.
 - _Extra-Angebote_: `data/deals.json` is loaded after the Extra stores and is optional like
   `cards.json` (`fixtures/deals.json` in development, `KEF_DEALS_JSON` for a build). One card per

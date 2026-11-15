@@ -18,7 +18,8 @@ const CSP = [
   "script-src 'self'",
   "style-src 'self'",
   "img-src 'self' data: https://tile.openstreetmap.org https://kaufland.media.schwarz",
-  "connect-src 'self'",
+  // The shopping list PDF embeds the product pictures: it reads them as data.
+  "connect-src 'self' https://kaufland.media.schwarz",
   "font-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",

@@ -3346,20 +3346,6 @@ button.segment:disabled {
   margin: 4px 0 2px !important;
 }
 
-.sheet-item__pack {
-  margin: 0.6mm 0 !important;
-}
-
-.sheet-item .pack {
-  padding: 0 1.5mm;
-  border: 0.25mm solid #666666;
-  border-radius: 1mm;
-  background: transparent;
-  color: #000000;
-  font-size: 7.5pt;
-  line-height: 1.35;
-}
-
 .zoffer__brand,
 .zoffer__name,
 .zoffer__description,
@@ -3386,8 +3372,7 @@ button.segment:disabled {
 /* Base prices, one per line as "1 kg | 4,03 €". The labels
    share a column, the amounts are set flush right. */
 .zoffer__units,
-.zitem__units,
-.sheet-item__units {
+.zitem__units {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
   align-content: start;
@@ -3406,8 +3391,7 @@ button.segment:disabled {
 }
 
 .zoffer__unit,
-.zitem__unit,
-.sheet-item__unit {
+.zitem__unit {
   display: contents;
 }
 
@@ -3642,8 +3626,7 @@ button.segment:disabled {
   margin: 0;
 }
 
-.zitem__brand,
-.sheet-item__brand {
+.zitem__brand {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -4001,11 +3984,6 @@ button.zoffer__stores {
   margin-top: 16px;
 }
 
-.zactions__row .segmented {
-  flex: 1 1 220px;
-  max-width: 320px;
-}
-
 .zactions__clear {
   display: flex;
   flex-wrap: wrap;
@@ -4158,396 +4136,6 @@ button.zoffer__stores {
   outline: 1px solid var(--md-primary);
 }
 
-/* ---------- The printed sheet ---------- */
-.sheet-host {
-  display: none;
-}
-
-@media print {
-  @page {
-    size: A4;
-    margin: 12mm;
-  }
-
-  /* Only when the shopping list is printed: the other tabs print as the page looks. */
-  .print-zettel body {
-    display: block;
-    padding: 0;
-    background: #ffffff;
-    color: #000000;
-  }
-
-  .print-zettel body > :not(.sheet-host) {
-    display: none !important;
-  }
-
-  .print-zettel .sheet-host {
-    display: block;
-  }
-}
-
-.sheet {
-  color: #000000;
-  font-size: 9pt;
-  line-height: 1.3;
-}
-
-.sheet p,
-.sheet h1,
-.sheet h2 {
-  margin: 0;
-}
-
-.sheet__head {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: baseline;
-  gap: 0 6mm;
-  padding-bottom: 2mm;
-  border-bottom: 0.5mm solid #000000;
-}
-
-.sheet__title {
-  font-size: 16pt;
-  font-weight: 700;
-}
-
-.sheet__store {
-  font-size: 10pt;
-  font-weight: 600;
-  text-align: right;
-}
-
-/* One page per shopping trip. */
-.sheet + .sheet {
-  break-before: page;
-}
-
-@media screen {
-  .sheet + .sheet {
-    margin-top: 12mm;
-  }
-}
-
-.sheet__trip {
-  display: flex;
-  grid-column: 1 / -1;
-  justify-content: space-between;
-  gap: 6mm;
-  margin-top: 1mm !important;
-  font-size: 10pt;
-  font-weight: 700;
-}
-
-.sheet__page {
-  font-weight: 400;
-}
-
-.sheet .late-mark {
-  margin-left: 1.5mm;
-  padding: 0 1.2mm;
-  border: 0.3mm solid #000000;
-  border-radius: 1mm;
-  background: none;
-  color: #000000;
-  font-size: 7.5pt;
-}
-
-.sheet__meta {
-  grid-column: 1 / -1;
-  color: #444444;
-  font-size: 7.5pt;
-}
-
-.sheet__group-title {
-  margin: 4mm 0 1.5mm !important;
-  font-size: 9pt;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  break-after: avoid;
-}
-
-.sheet__items {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2.5mm;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.sheet-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 2.5mm;
-  border: 0.25mm solid #888888;
-  border-radius: 2mm;
-  break-inside: avoid;
-}
-
-.sheet-item__top {
-  position: absolute;
-  top: 2mm;
-  left: 2mm;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 1.5mm;
-}
-
-.sheet-item__top {
-  right: 2mm;
-}
-
-.sheet-item__department {
-  margin-left: auto;
-  overflow: hidden;
-  color: #444444;
-  font-size: 6.5pt;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sheet--liste .sheet-item__department {
-  display: none;
-}
-
-.sheet__group:first-of-type .sheet__items {
-  margin-top: 3mm;
-}
-
-.sheet-item__box {
-  flex: none;
-  width: 4.5mm;
-  height: 4.5mm;
-  border: 0.4mm solid #000000;
-  border-radius: 0.8mm;
-  background: #ffffff;
-}
-
-.sheet-item__qty {
-  padding: 0 1.5mm;
-  border-radius: 1mm;
-  background: #000000;
-  color: #ffffff;
-  font-size: 9pt;
-  font-weight: 700;
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
-}
-
-.sheet-item__img {
-  align-self: center;
-  width: 34mm;
-  height: 34mm;
-  margin-top: 4mm; /* below the check box and the department */
-  object-fit: contain;
-}
-
-.sheet-item__img--empty {
-  display: block;
-}
-
-.sheet-item__img--empty .icon {
-  display: none;
-}
-
-.sheet-item__body {
-  margin-top: 1.5mm;
-}
-
-.sheet-item__brand {
-  font-size: 7pt;
-}
-
-.sheet-item__name {
-  font-size: 9.5pt;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-
-.sheet-item__description {
-  color: #444444;
-  font-size: 7.5pt;
-}
-
-.sheet-item__prices {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 2mm;
-  margin-top: 1mm;
-}
-
-.sheet-item__price {
-  font-size: 15pt;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.sheet-item__old {
-  color: #444444;
-  font-size: 8pt;
-}
-
-.sheet-item__discount {
-  height: auto;
-  padding: 0 1.5mm;
-  border: 0.25mm solid #000000;
-  border-radius: 1mm;
-  background: transparent;
-  color: #000000;
-  font-size: 8pt;
-  font-weight: 700;
-}
-
-.sheet-item__units,
-.sheet-item__extra,
-.sheet-item__when {
-  font-size: 7.5pt;
-}
-
-.sheet-item__units {
-  color: #444444;
-}
-
-.sheet-item .unit-fact__label .icon {
-  color: inherit;
-}
-
-.sheet-item__regular {
-  display: contents;
-}
-
-.sheet-item__deposit {
-  font-size: 8pt;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.sheet-item__cardprice {
-  padding: 0 1.5mm;
-  border: 0.25mm solid #000000;
-  border-radius: 1mm;
-  font-size: 15pt; /* as large as the regular price */
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.sheet-item__cardprice .icon {
-  display: none;
-}
-
-.sheet-item__cardlabel {
-  font-size: 7pt;
-  font-weight: 400;
-}
-
-.sheet-item__when {
-  margin-top: 0.8mm !important;
-  font-weight: 600;
-}
-
-.sheet-item__note {
-  margin-top: 1mm !important;
-  padding-top: 1mm;
-  border-top: 0.25mm dashed #888888;
-  font-size: 8.5pt;
-  font-style: italic;
-}
-
-/* Free-text entries: check box and text in a row, two columns. */
-.sheet__items--text {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5mm 6mm;
-}
-
-.sheet-item--text {
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 2.5mm;
-  padding: 1mm 0;
-  border: 0;
-  border-bottom: 0.25mm solid #bbbbbb;
-  border-radius: 0;
-}
-
-.sheet-item--text .sheet-item__body {
-  margin-top: 0;
-}
-
-.sheet-item--text .sheet-item__name {
-  font-size: 10.5pt;
-  font-weight: 400;
-}
-
-.sheet-item--text .sheet-item__qty {
-  margin-right: 1.5mm;
-}
-
-.sheet-item--text .sheet-item__note {
-  border-top: 0;
-  padding-top: 0;
-}
-
-/* Compact layout: one row per offer with a small picture, two columns. */
-.sheet--liste .sheet__items:not(.sheet__items--text) {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 6mm;
-}
-
-.sheet--liste .sheet-item:not(.sheet-item--text) {
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 2.5mm;
-  padding: 1.5mm 0 1.5mm 9mm;
-  border: 0;
-  border-bottom: 0.25mm solid #bbbbbb;
-  border-radius: 0;
-}
-
-.sheet--liste .sheet-item__top {
-  top: 1.5mm;
-  left: 0;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.sheet--liste .sheet-item__top {
-  right: auto;
-}
-
-.sheet--liste .sheet-item__qty {
-  padding: 0 1mm;
-  font-size: 8pt;
-}
-
-.sheet--liste .sheet-item__img {
-  flex: none;
-  align-self: flex-start;
-  margin-top: 0;
-  width: 16mm;
-  height: 16mm;
-}
-
-.sheet--liste .sheet-item__body {
-  flex: 1;
-  min-width: 0;
-  margin-top: 0;
-}
-
-.sheet--liste .sheet-item__price {
-  font-size: 11pt;
-}
-
-.sheet--liste .sheet-item__description {
-  display: none;
-}
-
 /* Own entries have no picture: text, then the controls. */
 .zitem--text {
   grid-template-columns: minmax(0, 1fr);
@@ -4557,16 +4145,39 @@ button.zoffer__stores {
   display: none;
 }
 
-@media (max-width: 519px) {
-  .zstore__current {
-    flex-wrap: wrap;
-  }
+/* Printing: layout, pages and the button. Phones do not print (the sheet is made for paper). */
+.zprint {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--md-outline-variant);
+}
 
-  .zstore__current .btn {
-    margin-left: 56px; /* under the text, past the icon */
-  }
+.zprint__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
 
-  .zadd {
-    grid-template-columns: minmax(0, 1fr);
+.zprint__options > * {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.zprint__go {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.zprint__note {
+  margin: 0;
+}
+
+@media (max-width: 599px) {
+  .zprint {
+    display: none;
   }
 }
