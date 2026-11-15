@@ -21,6 +21,7 @@ import {
   otherStoresNote,
   renderDealPanel,
   renderDealTile,
+  tileKm,
   type DealPanelOptions,
   type DealTileOptions,
 } from "../src/ui/deals";
@@ -300,6 +301,11 @@ describe("renderDealTile", () => {
     const image = item.querySelector("img");
     expect(image?.getAttribute("referrerpolicy")).toBe("no-referrer");
     expect(image?.getAttribute("srcset")).toContain(" 322w");
+  });
+
+  it("rounds long distances", () => {
+    expect(tileKm(99.94)).toBe("99,9 km");
+    expect(tileKm(144.5)).toBe("145 km");
   });
 
   it("toggles the stores", () => {
