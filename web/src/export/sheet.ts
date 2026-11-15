@@ -1,9 +1,9 @@
 /**
  * The shopping list as a PDF: A4 pages laid out here, so that what is printed does not depend on
  * the browser's print dialog. Two layouts: clippings (three cards per row with large pictures)
- * and rows (two columns under a heading per department, the rows of both columns on shared
- * lines). Pages that are followed by another one are filled to the bottom: cards get taller
- * pictures, rows get more room.
+ * and rows (two columns under a heading per department, all rows of a page equally tall and on
+ * lines shared by both columns). Pages that are followed by another one are filled to the
+ * bottom: cards get taller pictures, rows get more room.
  *
  * Pure: pictures are passed in (see `jpeg.ts`); without them the boxes stay empty and the layout
  * is the same, which is how the page count is known before anything is loaded.
@@ -478,16 +478,12 @@ const ROW_PICTURE = 32;
 const ROW_PRICES = 62;
 const ROW_TEXT_X = 14 + ROW_PICTURE + 7;
 const ROW_TEXT_W = ROW_W - ROW_TEXT_X - ROW_PRICES - 6;
-/** A line of rows gets at most this much more room to fill a page. */
-const ROW_STRETCH = 19;
-
 /** A row of the list. Rows are set on lines shared by both columns: see `Line`. */
 interface Row {
   /** The department, on the first row of its group. */
   heading: string | null;
   height: number;
-  /** `extra`: the room its line has beyond the line's own height. */
-  draw(page: Page, x: number, top: number, extra: number): void;
+  draw(page: Page, x: number, top: number): void;
 }
 
 function row(item: ListItem, heading: string | null, context: Context): Row {
@@ -554,8 +550,8 @@ function row(item: ListItem, heading: string | null, context: Context): Row {
   return {
     heading,
     height: inner + 2 * pad + 0.5,
-    draw(page, x, top, extra) {
-      const y = top + pad + extra / 2;
+    draw(page, x, top) {
+      const y = top + pad;
       checkbox(page, x, y + 1, 10);
       if (offer)
         picture(
@@ -580,72 +576,68 @@ function rows(items: readonly ListItem[], context: Context): Row[] {
 }
 
 /**
- * One line of the page: the n-th row of the left column beside the n-th of the right one. Both
- * start at the same height and end at the same rule, so the line is as tall as its taller row;
- * a department heading on either side takes a band above both.
+ * One line of the page: the n-th row of the left column beside the n-th of the right one. A
+ * department heading on either side takes a band above both, so the rows stay side by side.
  */
 interface Line {
   cells: (Row | undefined)[];
   head: number;
-  height: number;
 }
 
 /** The first `count` rows down the left column, the next `count` down the right one. */
 function lines(list: readonly Row[], count: number): Line[] {
   return Array.from({ length: count }, (_, n) => {
     const cells = Array.from({ length: ROW_COLUMNS }, (__, c) => list[c * count + n]);
-    return {
-      cells,
-      head: cells.some((cell) => cell?.heading != null) ? HEADING : 0,
-      height: Math.max(...cells.map((cell) => cell?.height ?? 0)),
-    };
+    return { cells, head: cells.some((cell) => cell?.heading != null) ? HEADING : 0 };
   });
-}
-
-function linesHeight(list: readonly Line[]): number {
-  return list.reduce((sum, line) => sum + line.head + line.height, 0);
 }
 
 interface RowPage {
   lines: Line[];
-  /** More of the section follows: the page is filled to the bottom. */
-  full: boolean;
+  /** Every row of the page is this tall. */
+  rowHeight: number;
 }
 
+/** No row is shorter than this: stops the search for how many lines fit. */
+const ROW_MIN = 20;
+
 /**
- * Rows onto pages, read down the left column and then down the right one. A page that is
- * followed by another takes as many lines as fit; the last one splits what is left over both
- * columns instead of leaving the right one empty.
+ * Rows onto pages. The left column is filled first, down to the bottom, then the right one.
+ * All rows of a page are as tall as its tallest, and a page takes as many lines as fit that
+ * way; the room that is left then goes into the rows, so that lines and headings together are
+ * exactly as tall as the page. Only a list that fits into one column keeps its room below.
  */
 function rowPages(list: readonly Row[], room: number): RowPage[] {
   const pages: RowPage[] = [];
   let rest = list;
   while (rest.length) {
-    const half = Math.ceil(rest.length / ROW_COLUMNS);
-    const last = lines(rest, half);
-    if (linesHeight(last) <= room || half === 1) {
-      pages.push({ lines: last, full: false });
-      break;
+    let best: { page: Line[]; tallest: number; heads: number } | undefined;
+    for (let n = 1; n <= rest.length && (n === 1 || n * ROW_MIN <= room); n++) {
+      const page = lines(rest, n);
+      const shown = rest.slice(0, n * ROW_COLUMNS);
+      const tallest = Math.max(...shown.map((row) => row.height));
+      const heads = page.reduce((sum, line) => sum + line.head, 0);
+      if (n === 1 || n * tallest + heads <= room) best = { page, tallest, heads };
     }
-    let count = 1;
-    for (let n = 2; n < half; n++) if (linesHeight(lines(rest, n)) <= room) count = n;
-    pages.push({ lines: lines(rest, count), full: true });
+    if (!best) break;
+    const count = best.page.length;
+    // More rows than the left column holds: it is stretched to end at the bottom.
+    const filled = rest.length > count ? (room - best.heads) / count : 0;
+    pages.push({ lines: best.page, rowHeight: Math.max(best.tallest, filled) });
     rest = rest.slice(count * ROW_COLUMNS);
   }
   return pages;
 }
 
-function drawRows(page: Page, sheet: RowPage, top: number, room: number): number {
-  const spare = sheet.full ? Math.max(0, room - linesHeight(sheet.lines)) : 0;
-  const extra = Math.min(spare / sheet.lines.length, ROW_STRETCH);
+function drawRows(page: Page, sheet: RowPage, top: number): number {
   let y = top;
   for (const line of sheet.lines) {
-    const rule = y + line.head + line.height + extra;
+    const rule = y + line.head + sheet.rowHeight;
     line.cells.forEach((cell, c) => {
       if (!cell) return;
       const x = MARGIN + c * (ROW_W + ROW_GAP);
       if (cell.heading !== null) heading(cell.heading, ROW_W).draw(page, x, y, 0);
-      cell.draw(page, x, y + line.head, extra);
+      cell.draw(page, x, y + line.head);
       page.line(x, rule, x + ROW_W, rule, 0.4, RULE);
     });
     y = rule;
@@ -770,7 +762,7 @@ function lay(options: SheetOptions, pictures: Pictures): Laid {
             (column) => (page, top, space) => drawColumn(page, column, top, space),
           )
         : rowPages(rows(section.items, context), room).map(
-            (sheet) => (page, top, space) => drawRows(page, sheet, top, space),
+            (sheet) => (page, top) => drawRows(page, sheet, top),
           );
     // A section without anything still gets its page (an empty list is not printed at all).
     for (const draw of draws.length ? draws : [(_: Page, top: number) => top]) {

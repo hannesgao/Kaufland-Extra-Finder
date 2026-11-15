@@ -203,36 +203,39 @@ describe("sheet layout", () => {
     expect(ends[0]).toBeLessThan(bottom / 2);
   });
 
-  it("splits a short list of rows over both columns", () => {
+  /** Check boxes of a page of rows: [x, y] in PDF units, in drawing order. */
+  const boxes = (source: string): [number, number][] =>
+    (source.match(/\d+\.?\d* \d+\.?\d* 9\.2 9\.2 re S/g) ?? []).map((m) => {
+      const [x = "", y = ""] = m.split(" ");
+      return [Number(x), Number(y)];
+    });
+
+  it("keeps a short list of rows in the left column", () => {
     const { pages, ends, bottom } = sheetLayout(options(many(8), { layout: "liste" }));
     expect(pages).toBe(1);
-    // Eight rows in one column would reach further down than four and four.
-    const single = sheetLayout(options(many(4), { layout: "liste" }));
-    expect(ends[0]).toBeLessThan(bottom / 2);
-    expect(ends[0]).toBeGreaterThan(single.ends[0] ?? 0);
+    expect(ends[0]).toBeLessThan(bottom);
     const source = sheetSource(options(many(8), { layout: "liste" }), new Map());
-    // Check boxes are drawn at the left edge of both columns.
-    expect(
-      new Set(source.match(/\d+\.?\d* \d+\.?\d* 9\.2 9\.2 re S/g)?.map((m) => m.split(" ")[0]))
-        .size,
-    ).toBe(2);
+    expect(new Set(boxes(source).map(([x]) => x)).size).toBe(1);
   });
 
-  it("sets the rows of both columns on the same lines", () => {
-    // Tall rows on the left, short ones on the right, a heading above the left column only.
+  it("fills the left column of rows before the right one, on shared lines", () => {
+    // Rows of different heights; fewer than two full columns.
     const long = "Beschreibung mit vielen Worten ".repeat(6);
-    const items = Array.from({ length: 8 }, (_, i) =>
-      item(i + 1, i < 3 ? { description: long } : {}),
+    const items = Array.from({ length: 16 }, (_, i) =>
+      item(i + 1, i % 5 === 0 ? { description: long } : {}),
     );
-    const source = sheetSource(options(items, { layout: "liste" }), new Map());
-    const boxes = (source.match(/\d+\.?\d* \d+\.?\d* 9\.2 9\.2 re S/g) ?? []).map((m) =>
-      m.split(" ").slice(0, 2),
-    );
-    expect(boxes).toHaveLength(8);
-    const heights = new Map<string, Set<string>>();
-    for (const [x = "", y = ""] of boxes) heights.set(y, (heights.get(y) ?? new Set()).add(x));
-    expect(heights.size).toBe(4);
-    for (const columns of heights.values()) expect(columns.size).toBe(2);
+    const { pages, ends, bottom } = sheetLayout(options(items, { layout: "liste" }));
+    expect(pages).toBe(1);
+    // The left column ends exactly at the bottom of the page.
+    expect(ends[0]).toBeCloseTo(bottom, 1);
+    const all = boxes(sheetSource(options(items, { layout: "liste" }), new Map()));
+    const [leftX] = [...new Set(all.map(([x]) => x))].sort((a, b) => a - b);
+    const left = all.filter(([x]) => x === leftX).map(([, y]) => y);
+    const right = all.filter(([x]) => x !== leftX).map(([, y]) => y);
+    expect(left.length).toBeGreaterThan(right.length);
+    expect(right.length).toBeGreaterThan(0);
+    // Every row on the right starts where one on the left does.
+    for (const y of right) expect(left).toContain(y);
   });
 
   it("keeps long texts on the page", () => {
