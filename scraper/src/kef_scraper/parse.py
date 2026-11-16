@@ -1,14 +1,15 @@
-"""Pure parsing of Kaufland's store list and leaflet pages. No network access here."""
+"""Pure parsing of Kaufland's sitemap and store pages. No network access here."""
 
 from __future__ import annotations
 
 import datetime as dt
+import json
 import logging
 import re
 
 from bs4 import BeautifulSoup, Tag
 
-from kef_scraper.models import Leaflet, SpecialDay, Store, Tile
+from kef_scraper.models import Leaflet, SpecialDay, Store, StoreRef, Tile
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +23,9 @@ _LAT_RANGE = (47.0, 55.5)
 _LNG_RANGE = (5.5, 15.5)
 _PDF_ID_RE = re.compile(r"/pdfs/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/")
 STORE_PAGE_BASE = "https://filiale.kaufland.de/service/filiale/"
-_SLUG_RE = re.compile(r"[a-z0-9]+(?:-+[a-z0-9]+)*")
+_LOC_RE = re.compile(r"<loc>\s*([^<\s]+)\s*</loc>")
+# e.g. `kassel-wesertor-4453.html`; the number is the store id without its country prefix.
+_STORE_PAGE_RE = re.compile(r"(?P<slug>[a-z0-9]+(?:-+[a-z0-9]+)*?-+(?P<number>\d{4}))\.html")
 _SPECIAL_DAY_RE = re.compile(
     r"(?P<date>\d{4}-\d{2}-\d{2})\|(?P<opens>\d{2}:\d{2})\|(?P<closes>\d{2}:\d{2})"
 )
@@ -35,40 +38,48 @@ class ParseError(ValueError):
     """Raised when Kaufland's data does not have the expected shape."""
 
 
-def parse_stores(raw: object) -> tuple[list[Store], list[str]]:
-    """Convert the `.klstorefinder.json` payload into stores.
+def parse_sitemap(xml: str) -> tuple[list[StoreRef], list[str]]:
+    """Find the store pages in the sitemap.
 
-    Returns the valid stores and one error message per invalid record. Invalid records count as
-    failures in the sanity check instead of aborting the whole scan.
+    Returns the stores and one error message per store page address that does not have the
+    expected form. Those count as failures in the sanity check instead of aborting the scan.
     """
-    if not isinstance(raw, list):
-        raise ParseError(f"store list: expected a JSON array, got {type(raw).__name__}")
-    stores: list[Store] = []
+    refs: dict[str, StoreRef] = {}
     errors: list[str] = []
-    for i, rec in enumerate(raw):
-        try:
-            stores.append(_parse_store(i, rec))
-        except ParseError as e:
-            errors.append(str(e))
-    return stores, errors
+    for url in _LOC_RE.findall(xml):
+        if not url.startswith(STORE_PAGE_BASE):
+            continue
+        m = _STORE_PAGE_RE.fullmatch(url.removeprefix(STORE_PAGE_BASE))
+        if m is None:
+            errors.append(f"sitemap: unexpected store page address {url!r}")
+            continue
+        ref = StoreRef(id=f"DE{m['number']}", slug=m["slug"])
+        if refs.setdefault(ref.id, ref) != ref:
+            errors.append(f"sitemap: {ref.id} is listed as {refs[ref.id].slug} and {ref.slug}")
+    return list(refs.values()), errors
 
 
-def _parse_store(index: int, rec: object) -> Store:
-    if not isinstance(rec, dict):
-        raise ParseError(f"store #{index}: expected an object, got {type(rec).__name__}")
+def parse_store_page(html: str, ref: StoreRef) -> tuple[Store, list[Tile]]:
+    """Read the store's details and its leaflet tiles from its page."""
+    soup = BeautifulSoup(html, "lxml")
+    details = soup.select_one('[data-t-name="StoreDetails"]')
+    info = soup.select_one('[data-t-name="StoreInfo"]')
+    if details is None or info is None:
+        raise ParseError(f"{ref.id}: no store details on the page")
+    sid = _attr(details, "data-force-store-change")
+    if sid != ref.id:
+        raise ParseError(f"{ref.id}: the page is for store {sid!r}")
+    name, plz = _prop(info, sid, "name"), _prop(info, sid, "postalCode")
+    city, street = _prop(info, sid, "addressLocality"), _prop(info, sid, "streetAddress")
     try:
-        sid, name, plz = str(rec["n"]), str(rec["cn"]), str(rec["pc"])
-        city, street = str(rec["t"]), str(rec["sn"])
-        lat, lng = float(rec["lat"]), float(rec["lng"])
-    except KeyError as e:
-        raise ParseError(f"store #{index}: missing field {e}") from e
-    except (TypeError, ValueError) as e:
-        raise ParseError(f"store #{index} ({rec.get('n')}): invalid coordinates") from e
+        lat, lng = float(_attr(info, "data-lat") or ""), float(_attr(info, "data-lng") or "")
+    except ValueError as e:
+        raise ParseError(f"store {sid}: invalid coordinates") from e
     if not _PLZ_RE.fullmatch(plz):
         raise ParseError(f"store {sid}: invalid PLZ {plz!r}")
     if not (_LAT_RANGE[0] <= lat <= _LAT_RANGE[1] and _LNG_RANGE[0] <= lng <= _LNG_RANGE[1]):
         raise ParseError(f"store {sid}: coordinates {lat},{lng} outside Germany")
-    return Store(
+    store = Store(
         id=sid,
         name=name.removeprefix(_NAME_PREFIX),
         plz=plz,
@@ -76,23 +87,36 @@ def _parse_store(index: int, rec: object) -> Store:
         street=street,
         lat=lat,
         lng=lng,
-        special_days=parse_special_days(sid, rec.get("sod")),
-        url=store_url(sid, rec.get("friendlyUrl")),
+        special_days=parse_special_days(sid, _special_opening_days(sid, info)),
+        url=f"{STORE_PAGE_BASE}{ref.slug}.html",
     )
+    return store, _tiles(soup)
 
 
-def store_url(store_id: str, slug: object) -> str | None:
-    """Store page URL from the `friendlyUrl` slug, e.g. `kassel-wesertor-4453`."""
-    if slug is None:
+def _prop(info: Tag, store_id: str, name: str) -> str:
+    """The `content` of a schema.org microdata property of the store."""
+    el = info.select_one(f'[itemprop="{name}"]')
+    value = _attr(el, "content") if el is not None else None
+    if not value:
+        raise ParseError(f"store {store_id}: missing field {name!r}")
+    return value
+
+
+def _special_opening_days(store_id: str, info: Tag) -> object:
+    """The `specialOpeningDay` list of the opening-hours data, None if the page has none."""
+    script = info.select_one("script.m-store-open-status__data")
+    if script is None:
         return None
-    if not isinstance(slug, str) or not _SLUG_RE.fullmatch(slug):
-        log.warning("%s: ignoring invalid store slug %r", store_id, slug)
+    try:
+        data = json.loads(script.get_text())
+    except ValueError:
+        log.warning("%s: ignoring unreadable opening hours", store_id)
         return None
-    return f"{STORE_PAGE_BASE}{slug}.html"
+    return data.get("specialOpeningDay") if isinstance(data, dict) else None
 
 
 def parse_special_days(store_id: str, raw: object) -> tuple[SpecialDay, ...]:
-    """Parse the optional `sod` field (`YYYY-MM-DD|HH:MM|HH:MM`, `00:00|00:00` = closed).
+    """Parse the special opening days (`YYYY-MM-DD|HH:MM|HH:MM`, `00:00|00:00` = closed).
 
     This is supplementary information, so malformed entries are logged and skipped instead of
     failing the store.
@@ -131,8 +155,11 @@ def _attr(tag: Tag, name: str) -> str | None:
 
 
 def parse_tiles(html: str) -> list[Tile]:
-    """Extract all leaflet tiles from a store's `prospekte.html`."""
-    soup = BeautifulSoup(html, "lxml")
+    """Extract all leaflet tiles from a page."""
+    return _tiles(BeautifulSoup(html, "lxml"))
+
+
+def _tiles(soup: BeautifulSoup) -> list[Tile]:
     tiles = []
     for el in soup.select('[data-t-name="FlyerTile"]'):
         link = el.find("a", href=True)

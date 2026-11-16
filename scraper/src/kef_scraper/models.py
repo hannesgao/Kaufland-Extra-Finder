@@ -33,8 +33,16 @@ class Store:
 
 
 @dataclass(frozen=True, slots=True)
+class StoreRef:
+    """A store page listed in the sitemap, e.g. `kassel-wesertor-4453` for store DE4453."""
+
+    id: str
+    slug: str
+
+
+@dataclass(frozen=True, slots=True)
 class Tile:
-    """One leaflet tile as rendered on a store's leaflet page."""
+    """One leaflet tile as rendered on a store's page."""
 
     subcategory: str | None
     title: str | None
@@ -110,7 +118,7 @@ class StoreResult:
 class ScanResult:
     results: tuple[StoreResult, ...]
     full_scan: bool
-    # Store-list records that could not be parsed (they never reach `results`).
+    # Store pages in the sitemap whose address could not be read (they never reach `results`).
     list_errors: tuple[str, ...] = ()
     duration_s: float = 0.0
     failures: tuple[StoreResult, ...] = field(init=False)
@@ -120,7 +128,7 @@ class ScanResult:
 
     @property
     def store_count(self) -> int:
-        """Stores in Kaufland's list, including records that could not be parsed."""
+        """Stores in Kaufland's sitemap, including entries that could not be read."""
         return len(self.results) + len(self.list_errors)
 
     @property

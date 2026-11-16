@@ -4,18 +4,18 @@ import datetime as dt
 
 import pytest
 
-from conftest import fixture_text, store_list_sample
-from kef_scraper.models import SpecialDay, Tile
+from conftest import fixture_text, sample_refs, sample_stores, store_list_sample, store_page
+from kef_scraper.models import SpecialDay, StoreRef, Tile
 from kef_scraper.parse import (
     ParseError,
     is_extra,
     is_standard,
+    parse_sitemap,
     parse_special_days,
-    parse_stores,
+    parse_store_page,
     parse_tiles,
     parse_validity,
     pdf_id,
-    store_url,
     to_leaflet,
 )
 
@@ -35,52 +35,126 @@ def _tile(**overrides: str | None) -> Tile:
     return Tile(**base)
 
 
-class TestParseStores:
+SITEMAP_HEAD = '<?xml version="1.0" encoding="UTF-8"?><urlset>'
+STORE_PAGES = "https://filiale.kaufland.de/service/filiale/"
+
+
+class TestParseSitemap:
     def test_sample(self) -> None:
-        stores, errors = parse_stores(store_list_sample())
+        refs, errors = parse_sitemap(fixture_text("sitemap_sample.xml"))
         assert errors == []
-        by_id = {s.id: s for s in stores}
-        assert set(by_id) == {"DE1300", "DE1530", "DE4443", "DE4453", "DE8530"}
-        s = by_id["DE4443"]
+        assert refs == [
+            StoreRef("DE1300", "ahaus-1300"),
+            # Real slug with a double hyphen, as for "Halle (Saale)" -> "halle-saale--1393".
+            StoreRef("DE1323", "ingolstadt-muenchener-str--1323"),
+            StoreRef("DE1530", "menden-boesperde-1530"),
+            StoreRef("DE4443", "karlsruhe-oststadt-4443"),
+            StoreRef("DE4453", "kassel-wesertor-4453"),
+            StoreRef("DE8530", "karlsruhe-gruenwinkel-8530"),
+        ]
+
+    def test_no_store_pages(self) -> None:
+        assert parse_sitemap("<html><body>Wartungsarbeiten</body></html>") == ([], [])
+
+    @pytest.mark.parametrize(
+        "name",
+        ["kassel-wesertor.html", "Kassel-4453.html", "-4453.html", "a/b-4453.html", "a-44530.html"],
+    )
+    def test_unexpected_address_is_reported_not_fatal(self, name: str) -> None:
+        pages = "".join(
+            f"<url><loc>{STORE_PAGES}{n}</loc></url>" for n in (name, "ahaus-1300.html")
+        )
+        xml = f"{SITEMAP_HEAD}{pages}</urlset>"
+        refs, errors = parse_sitemap(xml)
+        assert refs == [StoreRef("DE1300", "ahaus-1300")]
+        assert len(errors) == 1
+        assert "unexpected store page address" in errors[0]
+
+    def test_two_pages_for_one_store(self) -> None:
+        xml = "".join(f"<url><loc>{STORE_PAGES}{s}-1300.html</loc></url>" for s in ("ahaus", "x"))
+        refs, errors = parse_sitemap(xml + f"<loc>{STORE_PAGES}ahaus-1300.html</loc>")
+        assert refs == [StoreRef("DE1300", "ahaus-1300")]
+        assert errors == ["sitemap: DE1300 is listed as ahaus-1300 and x-1300"]
+
+
+class TestParseStorePage:
+    def test_real_page(self) -> None:
+        store, tiles = parse_store_page(
+            fixture_text("filiale_DE4453.html"), StoreRef("DE4453", "kassel-wesertor-4453")
+        )
+        assert (store.id, store.name) == ("DE4453", "Kassel-Wesertor")
+        assert (store.plz, store.city, store.street) == ("34125", "Kassel", "Franzgraben 40-42")
+        assert store.lat == pytest.approx(51.321132)
+        assert store.lng == pytest.approx(9.517428)
+        assert store.special_days == ()
+        assert store.url == "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html"
+        assert [t.subcategory for t in tiles] == [
+            "KDZ1",
+            "Hyper1",
+            "Leaflet1",
+            "Leaflet2",
+            "Leaflet3",
+            "Leaflet5",
+            "Leaflet6",
+        ]
+        (extra,) = [t for t in tiles if is_extra(t)]
+        assert to_leaflet(extra).valid_to == dt.date(2026, 11, 21)
+
+    def test_real_page_with_a_special_day(self) -> None:
+        store, tiles = parse_store_page(
+            fixture_text("filiale_DE1300.html"), StoreRef("DE1300", "ahaus-1300")
+        )
+        assert store.name == "Ahaus"
+        assert store.special_days == (SpecialDay(dt.date(2026, 11, 22)),)
+        assert len(tiles) == 6
+        assert not any(is_extra(t) for t in tiles)
+
+    def test_sample_stores(self) -> None:
+        s = sample_stores()["DE4443"]
         assert s.name == "Karlsruhe-Oststadt"
         assert (s.plz, s.city, s.street) == ("76137", "Karlsruhe", "Durlacher Allee 111")
         assert s.lat == pytest.approx(49.0039646)
         assert s.lng == pytest.approx(8.4493277)
 
-    def test_not_a_list(self) -> None:
-        with pytest.raises(ParseError, match="JSON array"):
-            parse_stores({"stores": []})
+    def test_page_of_another_store(self) -> None:
+        with pytest.raises(ParseError, match="DE1300: the page is for store 'DE4453'"):
+            parse_store_page(fixture_text("filiale_DE4453.html"), StoreRef("DE1300", "ahaus-1300"))
+
+    def test_page_without_store_details(self) -> None:
+        with pytest.raises(ParseError, match="no store details"):
+            parse_store_page(fixture_text("prospekte_DE4453.html"), sample_refs()["DE4453"])
 
     @pytest.mark.parametrize(
         ("patch", "message"),
         [
             ({"lat": ""}, "invalid coordinates"),
-            ({"lat": None}, "invalid coordinates"),
+            ({"lat": "north"}, "invalid coordinates"),
             ({"lat": "0", "lng": "0"}, "outside Germany"),
             ({"pc": "1234"}, "invalid PLZ"),
+            ({"sn": ""}, "missing field 'streetAddress'"),
         ],
     )
-    def test_invalid_record_is_reported_not_fatal(
-        self, patch: dict[str, object], message: str
-    ) -> None:
-        raw = store_list_sample()
-        raw[0] = {**raw[0], **patch}
-        stores, errors = parse_stores(raw)
-        assert len(stores) == len(raw) - 1
-        assert len(errors) == 1
-        assert message in errors[0]
+    def test_invalid_store_details(self, patch: dict[str, object], message: str) -> None:
+        record = {**store_list_sample()[0], **patch}
+        with pytest.raises(ParseError, match=message):
+            parse_store_page(store_page(record), sample_refs()["DE1300"])
 
     def test_missing_field(self) -> None:
-        raw = store_list_sample()
-        del raw[1]["sn"]
-        _, errors = parse_stores(raw)
-        assert errors == ["store #1: missing field 'sn'"]
+        record = store_list_sample()[0]
+        del record["sn"]
+        with pytest.raises(ParseError, match="store DE1300: missing field 'streetAddress'"):
+            parse_store_page(store_page(record), sample_refs()["DE1300"])
+
+    def test_unreadable_opening_hours_are_ignored(self, caplog: pytest.LogCaptureFixture) -> None:
+        page = store_page(store_list_sample()[0]).replace('{"specialOpeningDay"', "{broken")
+        store, _ = parse_store_page(page, sample_refs()["DE1300"])
+        assert store.special_days == ()
+        assert "DE1300: ignoring unreadable opening hours" in caplog.text
 
 
 class TestSpecialDays:
-    def test_from_store_list(self) -> None:
-        stores, _ = parse_stores(store_list_sample())
-        by_id = {s.id: s for s in stores}
+    def test_from_store_page(self) -> None:
+        by_id = sample_stores()
         assert by_id["DE4453"].special_days == ()
         closed = by_id["DE1530"].special_days
         assert [d.date.isoformat() for d in closed] == [f"2026-10-{d:02d}" for d in range(5, 12)]
@@ -118,32 +192,6 @@ class TestSpecialDays:
     def test_duplicate_dates_keep_last(self) -> None:
         days = parse_special_days("DE1", ["2026-10-06|00:00|00:00", "2026-10-06|08:00|12:00"])
         assert days == (SpecialDay(dt.date(2026, 10, 6), "08:00", "12:00"),)
-
-
-class TestStoreUrl:
-    def test_from_store_list(self) -> None:
-        stores, _ = parse_stores(store_list_sample())
-        urls = {s.id: s.url for s in stores}
-        assert (
-            urls["DE4453"]
-            == "https://filiale.kaufland.de/service/filiale/kassel-wesertor-4453.html"
-        )
-
-    def test_double_hyphen_slug(self) -> None:
-        # Real slug, e.g. "Halle (Saale)" -> "halle-saale--1393"
-        assert store_url("DE1393", "halle-saale--1393") == (
-            "https://filiale.kaufland.de/service/filiale/halle-saale--1393.html"
-        )
-
-    def test_missing(self) -> None:
-        assert store_url("DE1", None) is None
-
-    @pytest.mark.parametrize(
-        "slug", ["", "../../evil", "kassel/wesertor", "Kassel-4453", "-4453", "a b", 4453]
-    )
-    def test_invalid_slug_is_dropped(self, slug: object, caplog: pytest.LogCaptureFixture) -> None:
-        assert store_url("DE1", slug) is None
-        assert "ignoring invalid store slug" in caplog.text
 
 
 class TestParseTiles:

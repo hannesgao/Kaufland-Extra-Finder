@@ -123,8 +123,13 @@ def test_unknown_store_id(tmp_path: Path, pages: dict[str, str]) -> None:
     assert fetcher.requested == []
 
 
-def test_broken_store_list(tmp_path: Path, pages: dict[str, str]) -> None:
-    assert _run(FakeFetcher({"error": "maintenance"}, pages), tmp_path / "data") == EXIT_ERROR
+def test_sitemap_cannot_be_loaded(tmp_path: Path, pages: dict[str, str]) -> None:
+    assert _run(FakeFetcher(FetchError("HTTP 503"), pages), tmp_path / "data") == EXIT_ERROR
+
+
+def test_sitemap_without_store_pages(tmp_path: Path, pages: dict[str, str]) -> None:
+    assert _run(FakeFetcher([], pages), tmp_path / "data") == EXIT_ERROR
+    assert not (tmp_path / "data").exists()
 
 
 @pytest.mark.parametrize("workers", ["0", "5"])

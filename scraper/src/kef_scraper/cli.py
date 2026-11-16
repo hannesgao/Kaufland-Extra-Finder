@@ -38,7 +38,7 @@ from kef_scraper.output import (
     update_history,
     write_text_atomic,
 )
-from kef_scraper.parse import ParseError, parse_stores
+from kef_scraper.parse import parse_sitemap
 from kef_scraper.scan import (
     PDF_DELAY_S,
     PDF_RETRY_DELAY_S,
@@ -177,9 +177,12 @@ def main(
 
     try:
         fetcher.preflight()
-        stores, list_errors = parse_stores(fetcher.store_list())
-    except (FetchError, ParseError) as e:
+        stores, list_errors = parse_sitemap(fetcher.sitemap())
+    except FetchError as e:
         log.error("cannot load store list: %s", e)
+        return EXIT_ERROR
+    if not stores:
+        log.error("cannot load store list: the sitemap lists no store pages")
         return EXIT_ERROR
 
     full_scan = not args.stores
