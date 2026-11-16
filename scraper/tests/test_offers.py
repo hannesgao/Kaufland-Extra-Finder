@@ -11,7 +11,14 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from conftest import NO_OFFERS_PAGE, FakeFetcher, store_list_sample
+from conftest import (
+    MINIMAL_PAGE,
+    NO_OFFERS_PAGE,
+    FakeFetcher,
+    sample_refs,
+    sample_stores,
+    store_list_sample,
+)
 from kef_scraper.build import (
     CARDS_SCHEMA_VERSION,
     build_cards,
@@ -31,7 +38,7 @@ from kef_scraper.offers import (
     parse_offers,
 )
 from kef_scraper.output import extra_offer_lines
-from kef_scraper.parse import ParseError, parse_stores
+from kef_scraper.parse import ParseError
 from kef_scraper.pdfcheck import PdfCheck
 from kef_scraper.scan import scan, scan_store
 
@@ -46,8 +53,7 @@ def _by_nr(offers: list[Offer]) -> dict[str, Offer]:
 
 
 def _stores() -> dict[str, Store]:
-    stores, _ = parse_stores(store_list_sample())
-    return {s.id: s for s in stores}
+    return sample_stores()
 
 
 class TestParseOffers:
@@ -168,8 +174,8 @@ class TestMatching:
 
 class TestScanStore:
     def test_offers_are_added(self, pages: dict[str, str], offer_page: str) -> None:
-        fetcher = FakeFetcher([], pages, offer_pages={"DE4453": offer_page})
-        r = scan_store(fetcher, _stores()["DE4453"], with_offers=True)
+        fetcher = FakeFetcher(store_list_sample(), pages, offer_pages={"DE4453": offer_page})
+        r = scan_store(fetcher, sample_refs()["DE4453"], with_offers=True)
         assert r.offers_scanned
         assert r.error is None
         assert r.leaflets
@@ -177,30 +183,42 @@ class TestScanStore:
         assert r.card_like == ()
 
     def test_not_requested_without_flag(self, pages: dict[str, str]) -> None:
-        fetcher = FakeFetcher([], pages)
-        r = scan_store(fetcher, _stores()["DE4453"])
+        fetcher = FakeFetcher(store_list_sample(), pages)
+        r = scan_store(fetcher, sample_refs()["DE4453"])
         assert not r.offers_scanned
         assert fetcher.offer_requests == []
 
     def test_store_without_offer_data(self, pages: dict[str, str]) -> None:
-        fetcher = FakeFetcher([], pages, offer_default=NO_OFFERS_PAGE)
-        r = scan_store(fetcher, _stores()["DE4453"], with_offers=True)
+        fetcher = FakeFetcher(store_list_sample(), pages, offer_default=NO_OFFERS_PAGE)
+        r = scan_store(fetcher, sample_refs()["DE4453"], with_offers=True)
         assert r.no_offer_page
         assert r.offers_error is None
         assert r.cards == ()
 
     def test_offer_failure_keeps_leaflets(self, pages: dict[str, str]) -> None:
-        fetcher = FakeFetcher([], pages, offer_default=FetchError("HTTP 503"))
-        r = scan_store(fetcher, _stores()["DE4453"], with_offers=True)
+        fetcher = FakeFetcher(store_list_sample(), pages, offer_default=FetchError("HTTP 503"))
+        r = scan_store(fetcher, sample_refs()["DE4453"], with_offers=True)
         assert r.offers_error == "HTTP 503"
         assert r.leaflets
         assert r.error is None
 
     def test_leaflet_failure_keeps_offers(self, offer_page: str) -> None:
-        fetcher = FakeFetcher([], {"DE4453": FetchError("HTTP 503")}, offer_default=offer_page)
-        r = scan_store(fetcher, _stores()["DE4453"], with_offers=True)
-        assert r.error == "HTTP 503"
+        fetcher = FakeFetcher(store_list_sample(), {"DE4453": ""}, offer_default=offer_page)
+        r = scan_store(fetcher, sample_refs()["DE4453"], with_offers=True)
+        assert r.error == "no leaflet tiles found"
+        assert r.store.name == "Kassel-Wesertor"
         assert len(r.cards) == 2
+
+    def test_store_page_failure_skips_offers(self, offer_page: str) -> None:
+        """Without the store's page its name, address and position are unknown."""
+        fetcher = FakeFetcher(
+            store_list_sample(), {"DE4453": FetchError("HTTP 503")}, offer_default=offer_page
+        )
+        r = scan_store(fetcher, sample_refs()["DE4453"], with_offers=True)
+        assert r.error == "HTTP 503"
+        assert r.offers_error == "store page could not be read"
+        assert r.offers == ()
+        assert fetcher.offer_requests == []
 
 
 def _result(offer_page: str, n_without: int = 0, n_failed: int = 0) -> ScanResult:
@@ -586,8 +604,9 @@ class TestBuildOffers:
             stores[2].id: _page(_category("Alles", dear, cheese, main=True)),
         }
         self.ids = [s.id for s in stores]
-        fetcher = FakeFetcher(store_list_sample(), {}, offer_pages=pages)
-        return build_offers(scan(fetcher, stores, full_scan=False, with_offers=True), NOW)
+        fetcher = FakeFetcher(store_list_sample(), {}, MINIMAL_PAGE, offer_pages=pages)
+        refs = [sample_refs()[s.id] for s in stores]
+        return build_offers(scan(fetcher, refs, full_scan=False, with_offers=True), NOW)
 
     def test_catalog_has_each_offer_once_as_most_stores_have_it(self) -> None:
         catalog = self._offers()["catalog"]

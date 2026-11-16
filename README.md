@@ -12,7 +12,7 @@ the store-specific offers that mydealz users call "Kaufland Extra Filialen".
 
 ## How it works
 
-1. A scheduled GitHub Actions job scans every store's leaflet page on `filiale.kaufland.de`
+1. A scheduled GitHub Actions job scans every store's page on `filiale.kaufland.de`
    (four times a week, low concurrency).
 2. Stores with an Extra leaflet are written to `extra.json` on the `data` branch. Each new Extra
    PDF is downloaded once to read which store(s) it names ("NUR IN …"): Kaufland also shows such a
@@ -53,6 +53,13 @@ Please don't run full scans locally; they run on a schedule in GitHub Actions.
 
 Exit codes: `0` success, `1` error (store list unavailable, unknown store id, …),
 `2` sanity check failed (fewer than 700 stores or more than 5 % failures) — nothing is written.
+
+**What is requested.** The stores come from the site's sitemap (`/.sitemap.xml`, named in its
+`robots.txt`), which lists one page per store (`/service/filiale/<name>-<number>.html`; the number
+is the store id without `DE`). That page carries the store's name, address, position and special
+opening days as well as its leaflets, so a scan is one request per store. Every run reads
+`robots.txt` first and requests nothing it disallows; paths are matched as in RFC 9309, including
+the `*` and `$` wildcards (`robots.py`).
 
 ### `extra.json` format
 
@@ -113,7 +120,7 @@ Expired leaflets are not filtered by the scraper; consumers compare `valid_to` w
 so a store stays in `extra.json` when its leaflet is gone: each run reads the previous
 `extra.json` and moves leaflets that are no longer listed (or have expired) into the store's
 `past` (`with_history()` in `build.py`). A store whose page could not be read keeps its leaflets
-that are still valid; a store that is no longer in Kaufland's store list (closed) is dropped. The
+that are still valid; a store that is no longer in Kaufland's sitemap (closed) is dropped. The
 first run after this was added seeded the history once from `snapshots/` (since 2026-10-06).
 
 ### PDF check

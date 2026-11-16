@@ -1,0 +1,25 @@
+User-agent: *
+Disallow: /etc.clientlibs/
+Allow: /etc.clientlibs/kaufland
+Disallow: /*.shoppinglist_share*
+Disallow: /*.klstorefinder*
+Disallow: /*.storefinder_*
+Disallow: /*.klonboarding*
+Disallow: /*.mainnavigation*
+Disallow: /*.marketplacemainnavigation*
+Disallow: /*.priornoticestoreopening*
+Disallow: /*.welcomemessage*
+Disallow: /*.recipecollectioncluster*
+Disallow: /*.calendar-overlay*
+Disallow: /*.teasers.*
+Disallow: /angebote/naechste-woche/detail
+Disallow: /angebote/aktuell/uebersicht/detail
+Disallow: /sortiment/billig/billig-neu
+Disallow: /rezepte/menues/detail/rezept
+Disallow: /rezepte/rezeptwelten/detail/rezept
+Disallow: /rezepte/taste-traveler
+Disallow: /sortiment/marken/bioland-sortiment
+Disallow: /sortiment/marken/demeter-sortiment
+Disallow: /sortiment/das-sortiment
+
+Sitemap: https://filiale.kaufland.de/.sitemap.xml

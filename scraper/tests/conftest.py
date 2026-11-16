@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import html
 import json
 import socket
 from collections.abc import Callable, Mapping
@@ -9,11 +10,13 @@ from typing import Any, NoReturn
 import pytest
 
 from kef_scraper.fetch import FetchError
+from kef_scraper.models import Store, StoreRef
+from kef_scraper.parse import STORE_PAGE_BASE, parse_store_page
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
-# A store page with only standard leaflets; much cheaper to parse than a real fixture,
+# The leaflets of a store with only standard ones; much cheaper to parse than a real fixture,
 # which matters when filling a scan up to the 700-store minimum.
 MINIMAL_PAGE = (
     '<html><body><div data-t-name="FlyerTile" data-subcategory="KDZ1" '
@@ -43,12 +46,69 @@ def store_list_sample() -> list[dict[str, Any]]:
     return data
 
 
+def store_ref(record: Mapping[str, Any]) -> StoreRef:
+    return StoreRef(id=str(record["n"]), slug=str(record["friendlyUrl"]))
+
+
+def sample_refs() -> dict[str, StoreRef]:
+    return {ref.id: ref for ref in map(store_ref, store_list_sample())}
+
+
+def sample_stores() -> dict[str, Store]:
+    """The sample stores as the scraper reads them from their pages."""
+    records = {str(r["n"]): r for r in store_list_sample()}
+    return {
+        sid: parse_store_page(store_page(records[sid]), ref)[0]
+        for sid, ref in sample_refs().items()
+    }
+
+
+def store_page(record: Mapping[str, Any], leaflets: str = "") -> str:
+    """A store page with the markup the scraper reads, filled from a store record.
+
+    `leaflets` is the page's leaflet section: a fragment or a whole document, whose body then
+    gets the store details in front.
+    """
+
+    def attr(key: str) -> str:
+        return html.escape(str(record[key]), quote=True) if key in record else ""
+
+    def prop(name: str, key: str) -> str:
+        return f'<span itemprop="{name}" content="{attr(key)}"></span>' if key in record else ""
+
+    hours = json.dumps({"specialOpeningDay": record.get("sod") or [], "weekdayOpeningDay": []})
+    details = (
+        f'<div data-t-name="StoreDetails" data-force-store-change="{attr("n")}">'
+        f'<div data-t-name="StoreInfo" data-lat="{attr("lat")}" data-lng="{attr("lng")}">'
+        + prop("name", "cn")
+        + prop("streetAddress", "sn")
+        + prop("addressLocality", "t")
+        + prop("postalCode", "pc")
+        + f'<script class="m-store-open-status__data" type="application/json">{hours}</script>'
+        "</div></div>"
+    )
+    if "<body>" in leaflets:
+        return leaflets.replace("<body>", f"<body>{details}", 1)
+    return f"<html><body>{details}{leaflets}</body></html>"
+
+
+def sitemap(records: list[dict[str, Any]]) -> str:
+    urls = "".join(
+        f"<url><loc>{STORE_PAGE_BASE}{r['friendlyUrl']}.html</loc></url>" for r in records
+    )
+    return f'<?xml version="1.0" encoding="UTF-8"?><urlset>{urls}</urlset>'
+
+
 class FakeFetcher:
-    """Offline stand-in for `HttpFetcher`, serving fixtures."""
+    """Offline stand-in for `HttpFetcher`.
+
+    `stores` are store records (see `store_list_sample`); the sitemap and the store pages are
+    made from them. `pages` holds each store's leaflet section by store id.
+    """
 
     def __init__(
         self,
-        stores: object,
+        stores: list[dict[str, Any]] | Exception,
         pages: Mapping[str, str | Exception],
         default: str | Exception | None = None,
         pdfs: Mapping[str, bytes | Exception] | None = None,
@@ -68,17 +128,22 @@ class FakeFetcher:
     def preflight(self) -> None:
         return None
 
-    def store_list(self) -> object:
-        return self._stores
+    def sitemap(self) -> str:
+        if isinstance(self._stores, Exception):
+            raise self._stores
+        return sitemap(self._stores)
 
-    def leaflet_page(self, store_id: str) -> str:
+    def store_page(self, slug: str) -> str:
+        assert not isinstance(self._stores, Exception)
+        record = next(r for r in self._stores if r["friendlyUrl"] == slug)
+        store_id = str(record["n"])
         self.requested.append(store_id)
         page = self._pages.get(store_id, self._default)
         if page is None:
             raise FetchError(f"no fixture for {store_id}")
         if isinstance(page, Exception):
             raise page
-        return page
+        return store_page(record, page)
 
     def offers_page(self, store_id: str) -> str:
         self.offer_requests.append(store_id)
@@ -118,7 +183,12 @@ def make_store_record() -> Callable[[str], dict[str, Any]]:
     template = store_list_sample()[0]
 
     def make(store_id: str) -> dict[str, Any]:
-        return {**template, "n": store_id, "cn": f"Kaufland Test {store_id}"}
+        return {
+            **template,
+            "n": store_id,
+            "cn": f"Kaufland Test {store_id}",
+            "friendlyUrl": f"test-{store_id[2:]}",
+        }
 
     return make
 

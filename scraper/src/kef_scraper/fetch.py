@@ -6,16 +6,17 @@ import logging
 import random
 import threading
 import time
-import urllib.robotparser
 from typing import Protocol
 
 import requests
 
+from kef_scraper.robots import Rule, is_allowed, parse_rules
+
 log = logging.getLogger(__name__)
 
 BASE_URL = "https://filiale.kaufland.de"
-STORE_LIST_PATH = "/.klstorefinder.json"
-LEAFLET_PATH = "/prospekte.html"
+SITEMAP_PATH = "/.sitemap.xml"  # named in robots.txt; lists every store page
+STORE_PAGE_PATH = "/service/filiale/{slug}.html"  # store details and the store's leaflets
 OFFERS_PATH = "/angebote/uebersicht.html"  # ~400 KB compressed, ~5 MB of HTML per store
 USER_AGENT = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -38,9 +39,9 @@ class Fetcher(Protocol):
 
     def preflight(self) -> None: ...
 
-    def store_list(self) -> object: ...
+    def sitemap(self) -> str: ...
 
-    def leaflet_page(self, store_id: str) -> str: ...
+    def store_page(self, slug: str) -> str: ...
 
     def offers_page(self, store_id: str) -> str: ...
 
@@ -65,6 +66,7 @@ class HttpFetcher:
         self.backoff = backoff
         self.base_url = base_url
         self._local = threading.local()
+        self._rules: list[Rule] | None = None  # set by preflight()
 
     def _session(self) -> requests.Session:
         session: requests.Session | None = getattr(self._local, "session", None)
@@ -75,29 +77,36 @@ class HttpFetcher:
         return session
 
     def preflight(self) -> None:
-        """Abort if robots.txt disallows the paths we need."""
+        """Load robots.txt and abort if it disallows the fixed paths we need.
+
+        Store pages are checked one by one when they are requested.
+        """
         url = f"{self.base_url}/robots.txt"
         resp = self._get(url, accept_status=frozenset({404}))
         if resp.status_code == 404:  # no robots.txt: everything is allowed
+            self._rules = []
             return
-        parser = urllib.robotparser.RobotFileParser(url)
-        parser.parse(resp.text.splitlines())
-        for path in (STORE_LIST_PATH, LEAFLET_PATH, OFFERS_PATH):
-            if not parser.can_fetch(USER_AGENT, f"{self.base_url}{path}"):
-                raise FetchError(f"robots.txt disallows {path}")
+        self._rules = parse_rules(resp.text, USER_AGENT)
+        for path in (SITEMAP_PATH, OFFERS_PATH):
+            self._check_robots(path)
 
-    def store_list(self) -> object:
-        resp = self._get(f"{self.base_url}{STORE_LIST_PATH}")
-        try:
-            return resp.json()
-        except ValueError as e:
-            raise FetchError(f"store list is not valid JSON: {e}") from e
+    def _check_robots(self, path: str) -> None:
+        if self._rules is None:
+            raise FetchError("robots.txt has not been checked; call preflight() first")
+        if not is_allowed(self._rules, path):
+            raise FetchError(f"robots.txt disallows {path}")
 
-    def leaflet_page(self, store_id: str) -> str:
-        resp = self._get(f"{self.base_url}{LEAFLET_PATH}", cookies={"x-aem-variant": store_id})
-        return resp.text
+    def sitemap(self) -> str:
+        self._check_robots(SITEMAP_PATH)
+        return self._get(f"{self.base_url}{SITEMAP_PATH}").text
+
+    def store_page(self, slug: str) -> str:
+        path = STORE_PAGE_PATH.format(slug=slug)
+        self._check_robots(path)
+        return self._get(f"{self.base_url}{path}").text
 
     def offers_page(self, store_id: str) -> str:
+        self._check_robots(OFFERS_PATH)
         resp = self._get(f"{self.base_url}{OFFERS_PATH}", cookies={"x-aem-variant": store_id})
         return resp.text
 

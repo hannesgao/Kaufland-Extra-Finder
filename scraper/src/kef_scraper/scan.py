@@ -8,18 +8,24 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 
 from kef_scraper.fetch import MAX_WORKERS, Fetcher, FetchError
-from kef_scraper.models import Leaflet, Offer, ScanResult, Store, StoreResult, Tile
+from kef_scraper.models import Leaflet, Offer, ScanResult, Store, StoreRef, StoreResult, Tile
 from kef_scraper.offers import is_card, is_card_like, is_extra_offer, parse_offers
-from kef_scraper.parse import ParseError, is_extra, is_standard, parse_tiles, to_leaflet
+from kef_scraper.parse import ParseError, is_extra, is_standard, parse_store_page, to_leaflet
 from kef_scraper.pdfcheck import PdfCheck, check_pdf
 
 log = logging.getLogger(__name__)
 
 
-def _leaflets(fetcher: Fetcher, store: Store) -> StoreResult:
-    """Fetch and classify one store's leaflets. Sets `error` instead of raising."""
+def _unknown(ref: StoreRef) -> Store:
+    """Stands in for a store whose page could not be read: only its id is known."""
+    return Store(id=ref.id, name=ref.slug, plz="", city="", street="", lat=0.0, lng=0.0)
+
+
+def _leaflets(fetcher: Fetcher, ref: StoreRef) -> StoreResult:
+    """Fetch one store's page and classify its leaflets. Sets `error` instead of raising."""
+    store = _unknown(ref)
     try:
-        tiles = parse_tiles(fetcher.leaflet_page(store.id))
+        store, tiles = parse_store_page(fetcher.store_page(ref.slug), ref)
         if not tiles:
             # Every store has standard leaflets; an empty page means a block or a layout change.
             raise ParseError("no leaflet tiles found")
@@ -41,7 +47,7 @@ def _leaflets(fetcher: Fetcher, store: Store) -> StoreResult:
 def _with_offers(
     fetcher: Fetcher, result: StoreResult, shared: dict[Offer, Offer] | None = None
 ) -> StoreResult:
-    """Add the store's offers. Independent of the leaflet result.
+    """Add the store's offers. Independent of the store's leaflets.
 
     Most offers are identical in hundreds of stores: `shared` keeps one object per distinct offer
     for the whole scan instead of one per store.
@@ -68,19 +74,24 @@ def _with_offers(
 
 def scan_store(
     fetcher: Fetcher,
-    store: Store,
+    ref: StoreRef,
     *,
     with_offers: bool = False,
     shared: dict[Offer, Offer] | None = None,
 ) -> StoreResult:
     """Fetch and classify one store. Never raises for expected failures; sets errors instead."""
-    result = _leaflets(fetcher, store)
-    return _with_offers(fetcher, result, shared) if with_offers else result
+    result = _leaflets(fetcher, ref)
+    if not with_offers:
+        return result
+    if result.store == _unknown(ref):
+        # Without the store's page there is no name, address or position to publish offers under.
+        return replace(result, offers_scanned=True, offers_error="store page could not be read")
+    return _with_offers(fetcher, result, shared)
 
 
 def scan(
     fetcher: Fetcher,
-    stores: list[Store],
+    stores: list[StoreRef],
     *,
     workers: int = MAX_WORKERS,
     full_scan: bool,
