@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-15T18:18:05+01:00",
+  "generated_at": "2026-11-16T04:01:12+01:00",
   "store_count": 788,
   "failed_count": 0,
   "stores": [
@@ -26,7 +26,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -67,7 +67,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -120,7 +120,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -173,7 +173,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -226,11 +226,11 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-18",
           "closed": true
         },
         {
-          "date": "2026-11-18",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -271,7 +271,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -312,7 +312,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -353,7 +353,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -394,7 +394,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -447,7 +447,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -500,7 +500,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -541,7 +541,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -594,7 +594,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -682,7 +682,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -770,7 +770,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -905,11 +905,11 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-18",
           "closed": true
         },
         {
-          "date": "2026-11-18",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -950,7 +950,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1038,7 +1038,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1091,11 +1091,11 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-18",
           "closed": true
         },
         {
-          "date": "2026-11-18",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1148,7 +1148,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1201,7 +1201,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1254,7 +1254,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1295,11 +1295,11 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-18",
           "closed": true
         },
         {
-          "date": "2026-11-18",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1352,7 +1352,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1393,7 +1393,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1434,7 +1434,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1475,7 +1475,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1563,7 +1563,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1604,7 +1604,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1645,11 +1645,11 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-18",
           "closed": true
         },
         {
-          "date": "2026-11-18",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1690,7 +1690,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1731,7 +1731,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1784,7 +1784,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1872,7 +1872,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -1925,7 +1925,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2048,7 +2048,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2101,7 +2101,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2154,7 +2154,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2195,7 +2195,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2236,7 +2236,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2289,7 +2289,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2342,7 +2342,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2395,7 +2395,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2448,7 +2448,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2583,7 +2583,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2624,11 +2624,11 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-18",
           "closed": true
         },
         {
-          "date": "2026-11-18",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2669,7 +2669,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2722,7 +2722,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2763,7 +2763,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2804,7 +2804,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2845,7 +2845,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2886,7 +2886,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2939,7 +2939,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -2992,7 +2992,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3115,7 +3115,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3168,7 +3168,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3209,7 +3209,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3250,7 +3250,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3303,7 +3303,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3356,7 +3356,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3444,7 +3444,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3485,7 +3485,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3538,7 +3538,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3708,7 +3708,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3831,7 +3831,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -3977,7 +3977,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4018,7 +4018,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4094,7 +4094,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4135,7 +4135,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4176,7 +4176,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4217,7 +4217,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4258,7 +4258,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4311,7 +4311,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4364,11 +4364,11 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-18",
           "closed": true
         },
         {
-          "date": "2026-11-18",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4409,7 +4409,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4462,7 +4462,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4550,7 +4550,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
@@ -4585,7 +4585,7 @@
       ],
       "special_days": [
         {
-          "date": "2026-11-15",
+          "date": "2026-11-22",
           "closed": true
         }
       ],
