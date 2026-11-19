@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated_at": "2026-11-15T18:18:05+01:00",
+ "generated_at": "2026-11-19T10:12:21+01:00",
  "common": [
   "00010555|2026-11-15",
   "00011303|2026-11-15",
@@ -41,7 +41,6 @@
   "00804575|2026-11-15",
   "00808063|2026-11-15",
   "00839777|2026-11-15",
-  "00849269|2026-11-14",
   "00852307|2026-11-15",
   "00857754|2026-11-15",
   "00865660|2026-11-15",
@@ -56,7 +55,7 @@
   "00933184|2026-11-15",
   "00933989|2026-11-15",
   "00934648|2026-11-15",
-  "00936541|2026-11-14",
+  "00936541|2026-11-22",
   "00948423|2026-11-15",
   "00949652|2026-11-15",
   "00952285|2026-11-15",
@@ -73,9 +72,9 @@
   "00991599|2026-11-15",
   "00994211|2026-11-15",
   "01001005|2026-11-15",
-  "01002939|2026-11-14",
-  "01002954|2026-11-14",
-  "01003229|2026-11-14",
+  "01002939|2026-11-22",
+  "01002954|2026-11-22",
+  "01003229|2026-11-22",
   "01003339|2026-11-15",
   "01020011|2026-11-15",
   "01027259|2026-11-15",
@@ -98,9 +97,8 @@
   "01096077|2026-11-15",
   "01096432|2026-11-15",
   "01101906|2026-11-15",
-  "01102757|2026-11-14",
+  "01102757|2026-11-22",
   "01107588|2026-11-15",
-  "01107735|2026-11-14",
   "01107790|2026-11-15",
   "01108544|2026-11-15",
   "01108606|2026-11-15",
@@ -139,7 +137,6 @@
   "01169525|2026-11-15",
   "01170216|2026-11-15",
   "01173077|2026-11-15",
-  "01175436|2026-11-14",
   "01184499|2026-11-15",
   "01186236|2026-11-15",
   "01187000|2026-11-15",
@@ -177,8 +174,6 @@
   "01285529|2026-11-15",
   "01287896|2026-11-15",
   "01292376|2026-11-15",
-  "01293288|2026-11-14",
-  "01293305|2026-11-14",
   "01296075|2026-11-15",
   "01303851|2026-11-15",
   "01305157|2026-11-15",
@@ -195,8 +190,6 @@
   "01383311|2026-11-15",
   "01384842|2026-11-15",
   "01388399|2026-11-15",
-  "01395350|2026-11-14",
-  "01395418|2026-11-14",
   "01399826|2026-11-15",
   "01400300|2026-11-15",
   "01403751|2026-11-15",
@@ -224,35 +217,24 @@
   "01470354|2026-11-15",
   "01470970|2026-11-15",
   "01472223|2026-11-15",
-  "01474082|2026-11-14",
-  "01474436|2026-11-14",
-  "01474441|2026-11-14",
-  "01474442|2026-11-14",
   "01474713|2026-11-15",
-  "01475555|2026-11-14",
-  "01475556|2026-11-14",
-  "01475560|2026-11-14",
-  "01475563|2026-11-14",
-  "01475564|2026-11-14",
   "01476609|2026-11-15",
-  "01478280|2026-11-14",
   "01479183|2026-11-15",
   "01481760|2026-11-15",
   "01482030|2026-11-15",
   "01485266|2026-11-15",
   "01487280|2026-11-15",
-  "01489529|2026-11-14",
+  "01489529|2026-11-22",
   "01501807|2026-11-15",
   "01507953|2026-11-15",
-  "01509460|2026-11-14",
   "01511557|2026-11-15",
   "01511978|2026-11-15",
   "01512519|2026-11-15",
   "01522618|2026-11-15",
   "01526591|2026-11-15",
-  "01533121|2026-11-14",
-  "01533122|2026-11-14",
-  "01533123|2026-11-14",
+  "01533121|2026-11-22",
+  "01533122|2026-11-22",
+  "01533123|2026-11-22",
   "01533335|2026-11-15",
   "01534958|2026-11-15",
   "01535004|2026-11-15",
@@ -337,16 +319,15 @@
   "05008180|2026-11-15",
   "05403650|2026-11-15",
   "06112595|2026-11-15",
-  "06310361|2026-11-14",
-  "06601201|2026-11-14",
-  "06601217|2026-11-14",
-  "06601222|2026-11-14",
-  "06602536|2026-11-14",
-  "06605570|2026-11-14",
-  "06605612|2026-11-14",
+  "06310361|2026-11-22",
+  "06601201|2026-11-22",
+  "06601217|2026-11-22",
+  "06601222|2026-11-22",
+  "06602536|2026-11-22",
+  "06605570|2026-11-22",
+  "06605612|2026-11-22",
   "07700115|2026-11-15",
   "07700123|2026-11-15",
-  "08021697|2026-11-14",
   "0903780|2026-11-15",
   "09900188|2026-11-15",
   "09902941_09900119|2026-11-15",
@@ -372,9 +353,6 @@
   "20622140|2026-11-15",
   "20622169|2026-11-15",
   "20622379|2026-11-15",
-  "20624665|2026-11-14",
-  "20624702|2026-11-14",
-  "20624705|2026-11-14",
   "20627328|2026-11-15",
   "20627562|2026-11-15",
   "20655052|2026-11-15",
@@ -406,29 +384,25 @@
   "20706646|2026-11-15",
   "20708822|2026-11-15",
   "20710876|2026-11-14",
-  "20711298|2026-11-14",
+  "20711298|2026-11-22",
   "20711602|2026-11-15",
   "20713403|2026-11-15",
   "20713426|2026-11-15",
   "20713525|2026-11-15",
   "20714746|2026-11-15",
   "20716244|2026-11-15",
-  "20716321|2026-11-14",
   "20717423|2026-11-15",
   "20719610|2026-11-15",
   "20720654|2026-11-15",
   "20735348|2026-11-15",
   "20738173|2026-11-15",
   "20740471|2026-11-15",
-  "20746681|2026-11-14",
-  "20746687|2026-11-14",
   "20749910|2026-11-15",
   "20751438|2026-11-15",
   "20753794|2026-11-15",
   "20754468|2026-11-15",
   "20754772|2026-11-15",
   "20755937|2026-11-15",
-  "20757057|2026-11-14",
   "20762626|2026-11-15",
   "20767002|2026-11-15",
   "20767003|2026-11-15",
@@ -436,7 +410,7 @@
   "20785598|2026-11-15",
   "20785790|2026-11-15",
   "20787694|2026-11-15",
-  "20798746|2026-11-14",
+  "20798746|2026-11-22",
   "20805997|2026-11-15",
   "20806200|2026-11-15",
   "20820509|2026-11-15",
@@ -448,7 +422,7 @@
   "20839683|2026-11-15",
   "20841530|2026-11-14",
   "20841531|2026-11-14",
-  "20842095|2026-11-14",
+  "20842095|2026-11-22",
   "20843606|2026-11-15",
   "20845084|2026-11-15",
   "20847944|2026-11-15",
@@ -467,17 +441,15 @@
   "20880158|2026-11-14",
   "20880159|2026-11-14",
   "20881880|2026-11-15",
-  "20883667|2026-11-14",
   "20884866|2026-11-15",
-  "20885622|2026-11-14",
   "20888670|2026-11-15",
   "20888753|2026-11-15",
   "20896910|2026-11-15",
   "20897370|2026-11-15",
-  "20897904|2026-11-14",
-  "20897905|2026-11-14",
-  "20897906|2026-11-14",
-  "20897907|2026-11-14",
+  "20897904|2026-11-22",
+  "20897905|2026-11-22",
+  "20897906|2026-11-22",
+  "20897907|2026-11-22",
   "20905821|2026-11-15",
   "20906166|2026-11-15",
   "20906173|2026-11-15",
@@ -502,39 +474,29 @@
   "20930475|2026-11-15",
   "20930477|2026-11-15",
   "20930579|2026-11-15",
-  "20932111|2026-11-14",
   "20933828|2026-11-15",
-  "20933836|2026-11-14",
-  "20933837|2026-11-14",
-  "20935172|2026-11-14",
-  "20935173|2026-11-14",
-  "20935470|2026-11-14",
+  "20935172|2026-11-22",
+  "20935173|2026-11-22",
+  "20935470|2026-11-22",
   "20936809|2026-11-14",
   "20937027|2026-11-15",
   "20937143|2026-11-15",
-  "20937647|2026-11-14",
-  "20937935|2026-11-14",
-  "20938213|2026-11-14",
-  "20938248|2026-11-14",
-  "20938250|2026-11-14",
-  "20938524|2026-11-14",
-  "20938525|2026-11-14",
-  "20938526|2026-11-14",
-  "20938527|2026-11-14",
-  "20938528|2026-11-14",
-  "20938529|2026-11-14",
-  "20941030|2026-11-14",
-  "20942287|2026-11-14",
+  "20937647|2026-11-22",
+  "20938524|2026-11-22",
+  "20938525|2026-11-22",
+  "20938526|2026-11-22",
+  "20938527|2026-11-22",
+  "20938528|2026-11-22",
+  "20938529|2026-11-22",
+  "20942287|2026-11-22",
   "20942488|2026-11-15",
   "20942492|2026-11-15",
   "20942493|2026-11-15",
-  "20945099|2026-11-14",
-  "20945120|2026-11-14",
   "20945157|2026-11-15",
   "20945710|2026-11-15",
   "20945750|2026-11-15",
   "20945765|2026-11-15",
-  "20946682|2026-11-14",
+  "20946682|2026-11-22",
   "20947593|2026-11-15",
   "20947594|2026-11-15",
   "20947600|2026-11-15",
@@ -542,30 +504,18 @@
   "20947602|2026-11-15",
   "20949257|2026-11-15",
   "20951650|2026-11-15",
-  "20951651|2026-11-14",
   "20952456|2026-11-15",
   "20953641|2026-11-15",
-  "20953806|2026-11-14",
-  "20953835|2026-11-14",
-  "20956870|2026-11-14",
-  "20956872|2026-11-14",
-  "20956874|2026-11-14",
+  "20956870|2026-11-22",
+  "20956872|2026-11-22",
+  "20956874|2026-11-22",
   "20958982|2026-11-15",
   "20962131|2026-11-15",
   "20962479|2026-11-15",
   "20962485|2026-11-15",
-  "20963409|2026-11-14",
-  "20963410|2026-11-14",
-  "20963411|2026-11-14",
-  "20963415|2026-11-14",
-  "20963416|2026-11-14",
-  "20963417|2026-11-14",
-  "20963419|2026-11-14",
-  "20963420|2026-11-14",
   "20963477|2026-11-15",
-  "20963511|2026-11-14",
   "20964072|2026-11-15",
-  "20964296|2026-11-14",
+  "20964296|2026-11-22",
   "20964626|2026-11-15",
   "20964627|2026-11-15",
   "20964631|2026-11-15",
@@ -580,34 +530,18 @@
   "20967585|2026-11-15",
   "20967586|2026-11-15",
   "20967587|2026-11-15",
-  "20967744|2026-11-14",
-  "20968754|2026-11-14",
-  "20968755|2026-11-14",
+  "20967744|2026-11-22",
+  "20968754|2026-11-22",
+  "20968755|2026-11-22",
   "20969376|2026-11-15",
-  "20971876|2026-11-14",
-  "20971877|2026-11-14",
-  "20971878|2026-11-14",
-  "20971959|2026-11-14",
-  "20971962|2026-11-14",
-  "20971963|2026-11-14",
-  "20971964|2026-11-14",
   "20972112|2026-11-15",
   "20972113|2026-11-15",
   "20972114|2026-11-15",
   "20972115|2026-11-15",
   "20972116|2026-11-15",
   "20973072|2026-11-15",
-  "20973733|2026-11-14",
-  "20973766|2026-11-14",
-  "20973898|2026-11-14",
-  "20973937|2026-11-14",
-  "20974517|2026-11-14",
-  "20974518|2026-11-14",
-  "20974523|2026-11-14",
-  "20974525|2026-11-14",
-  "20974526|2026-11-14",
-  "20974527|2026-11-14",
-  "20974529|2026-11-14",
+  "20973733|2026-11-22",
+  "20973766|2026-11-22",
   "20974614|2026-11-15",
   "20974615|2026-11-15",
   "20975087|2026-11-15",
@@ -615,27 +549,23 @@
   "20975089|2026-11-15",
   "20977695|2026-11-15",
   "20977696|2026-11-15",
-  "20977756|2026-11-14",
-  "20978085|2026-11-14",
+  "20978085|2026-11-22",
   "20979701|2026-11-15",
   "20979703|2026-11-15",
   "20980332|2026-11-15",
-  "20980658|2026-11-14",
+  "20980658|2026-11-22",
   "20981299|2026-11-15",
   "20981561|2026-11-15",
   "20982055|2026-11-15",
   "20982571|2026-11-15",
-  "20982787|2026-11-14",
-  "20982986|2026-11-14",
   "20983030|2026-11-15",
-  "20983283|2026-11-14",
   "20986497|2026-11-15",
   "20987863|2026-11-15",
   "20988287|2026-11-15",
   "20989962|2026-11-15",
   "20991154|2026-11-15",
-  "20991479|2026-11-14",
-  "20991480|2026-11-14",
+  "20991479|2026-11-22",
+  "20991480|2026-11-22",
   "20996250|2026-11-15",
   "20998497|2026-11-15",
   "21000255|2026-11-15"
@@ -2659,8 +2589,8 @@
    "shown_to": "2026-11-21",
    "sales_from": "2026-11-16",
    "sales_to": "2026-11-21",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/00500199?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/00500199?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/3176580107617_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/3176580107617_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "5.99",
    "base_price": "(1 kg = 11.10 - 12.34)",
    "description": "franz. Schnittkäse, mit oder ohne Rinde, 48 % Fett i. Tr., gekühlt",
@@ -3035,24 +2965,6 @@
    "sections": [
     "Getränke, Spirituosen",
     "Extra-Angebote"
-   ]
-  },
-  "00849269|2026-11-14": {
-   "kl_nr": "00849269",
-   "title": "DICKIE",
-   "subtitle": "Rally-Monster-Auto",
-   "price": "4.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4006333073052_DE_V_6820-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4006333073052_DE_V_6820-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "old_price": "UVP 9.99",
-   "description": "> Mit Rückziehmotor und Federung > Türen lassen sich öffnen > Größe ca. 15 cm > Für Kinder ab 3 Jahren",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "00852307|2026-11-15": {
@@ -3581,14 +3493,14 @@
     "Ab Mo.: Jetzt sparen mit Kaufland Card XTRA"
    ]
   },
-  "00936541|2026-11-14": {
+  "00936541|2026-11-22": {
    "kl_nr": "00936541",
    "title": "LEIFHEIT",
    "subtitle": "Glasreiniger",
    "price": "3.99",
    "unit": "je 1-l-Flasche",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/00936541?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -4055,14 +3967,14 @@
     "Drogerie, Tiernahrung"
    ]
   },
-  "01002939|2026-11-14": {
+  "01002939|2026-11-22": {
    "kl_nr": "01002939",
    "title": "LEIFHEIT",
    "subtitle": "Handkehrset »Classic«",
    "price": "3.99",
    "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01002939_P_571078?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -4073,14 +3985,14 @@
     "Nächste Woche"
    ]
   },
-  "01002954|2026-11-14": {
+  "01002954|2026-11-22": {
    "kl_nr": "01002954",
    "title": "LEIFHEIT",
    "subtitle": "Teleskopstiel",
    "price": "5.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01002954?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -4091,14 +4003,14 @@
     "Nächste Woche"
    ]
   },
-  "01003229|2026-11-14": {
+  "01003229|2026-11-22": {
    "kl_nr": "01003229",
    "title": "SWIFFER",
    "subtitle": "Staubmagnet XXL",
    "price": "4.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE01003229-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -4653,14 +4565,14 @@
     "Ab Mo.: Jetzt sparen mit Kaufland Card XTRA"
    ]
   },
-  "01102757|2026-11-14": {
+  "01102757|2026-11-22": {
    "kl_nr": "01102757",
    "title": "LEIFHEIT",
    "subtitle": "Fenstersauger »Dry & Clean«",
    "price": "34.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01102757e?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -4690,24 +4602,6 @@
    "sections": [
     "Drogerie, Tiernahrung",
     "Markenartikel in Bio-Qualität"
-   ]
-  },
-  "01107735|2026-11-14": {
-   "kl_nr": "01107735",
-   "title": "DICKIE",
-   "subtitle": "Einsatzfahrzeug",
-   "price": "5.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE01107735-V?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE01107735-V?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "old_price": "UVP 9.99",
-   "description": "> Polizei oder Feuerwehr > Maßstab 1:36 > Mit Rückziehmotor, Licht und Sound > Türen lassen sich öffnen > Größe ca. 12 cm > Inkl. Batterien > Für Kinder ab 3 Jahren",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "01107790|2026-11-15": {
@@ -5676,23 +5570,6 @@
     "Ab Mo.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "01175436|2026-11-14": {
-   "kl_nr": "01175436",
-   "title": "",
-   "subtitle": "Deko-Aufsteller »Rentier«",
-   "price": "1.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01175436_P_439373?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01175436_P_439373?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Holz > Mit Fellnase > Versch. Ausführungen > Größe ca. 15 x 7,3 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "01184499|2026-11-15": {
    "kl_nr": "01184499",
    "title": "MAGGI",
@@ -6633,40 +6510,6 @@
     "Fleisch, Geflügel, Wurst"
    ]
   },
-  "01293288|2026-11-14": {
-   "kl_nr": "01293288",
-   "title": "",
-   "subtitle": "Deko-Matte »Weihnachten«",
-   "price": "1.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4009017784633_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4009017784633_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Polyester > Größe ca. 30 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "01293305|2026-11-14": {
-   "kl_nr": "01293305",
-   "title": "",
-   "subtitle": "Deko-Hänger-Set",
-   "price": "1.00",
-   "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4009017706208_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4009017706208_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Weihnachtsmann und Schneemann > Aus Filz > Größe je ca. 10 x 8 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "01296075|2026-11-15": {
    "kl_nr": "01296075",
    "title": "SILIT",
@@ -6685,14 +6528,14 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "01302221|2026-11-14": {
+  "01302221|2026-11-22": {
    "kl_nr": "01302221",
    "title": "BESTRON",
    "subtitle": "Kaffeemaschine »ACM1112Z«",
    "price": "20.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8712184056446_DE_V_3360-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -7100,40 +6943,6 @@
    "sections": [
     "Getränke, Spirituosen",
     "Ab Mo.: Jetzt sparen mit Kaufland Card XTRA"
-   ]
-  },
-  "01395350|2026-11-14": {
-   "kl_nr": "01395350",
-   "title": "BERGNER",
-   "subtitle": "Besteck-Set »ORIGEN«",
-   "price": "14.99",
-   "unit": "je 24-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01395350_P_467351?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01395350_P_467351?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Mit je 6 Messern, Gabeln, Löffeln und Teelöffeln > Aus rostfreiem Edelstahl > Spülmaschinengeeignet > Größen ca. 23, 20 und 14 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "01395418|2026-11-14": {
-   "kl_nr": "01395418",
-   "title": "BERGNER",
-   "subtitle": "Schneidebrett »ORIGEN«",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01395418_P_665668?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01395418_P_665668?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Bambus > Mit Edelstahl-Griff > Größe ca. 40 x 25 cm",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "01399826|2026-11-15": {
@@ -7634,8 +7443,8 @@
    "shown_to": "2026-11-21",
    "sales_from": "2026-11-16",
    "sales_to": "2026-11-21",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4013900036174_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4013900036174_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE01456466-P-4013900036174?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE01456466-P-4013900036174?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "1.66",
    "base_price": "(1 kg = 11.12)",
    "description": "in Zartbitterschokolade, enthält Alkohol",
@@ -7930,74 +7739,6 @@
     "Ab Mo.: Jetzt sparen mit Kaufland Card XTRA"
    ]
   },
-  "01474082|2026-11-14": {
-   "kl_nr": "01474082",
-   "title": "BERGNER",
-   "subtitle": "Bratpfanne »ORIGEN« Ø 16 cm",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01474082_P_665669?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01474082_P_665669?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus geschmiedetem Aluminium > Außen mit gehämmertem Finish > Mit 3-lagiger Antihaft-Beschichtung > Ergonomischer Griff aus Edelstahl > Für alle Herdarten und Backofen (bis 170 °C) > Größe ca. Ø 16 x 4 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "01474436|2026-11-14": {
-   "kl_nr": "01474436",
-   "title": "BERGNER",
-   "subtitle": "Bratpfanne »ORIGEN« Ø 20 cm",
-   "price": "9.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01474436_P_665670?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01474436_P_665670?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus geschmiedetem Aluminium > Außen mit gehämmertem Finish > Mit 3-lagiger Antihaft-Beschichtung > Ergonomischer Griff aus Edelstahl > Für alle Herdarten und Backofen (bis 170 °C) > Größe ca. Ø 20 x 4 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "01474441|2026-11-14": {
-   "kl_nr": "01474441",
-   "title": "BERGNER",
-   "subtitle": "Bratpfanne »ORIGEN« Ø 24 cm",
-   "price": "12.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01474441_P_665671?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01474441_P_665671?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus geschmiedetem Aluminium > Außen mit gehämmertem Finish > Mit 3-lagiger Antihaft-Beschichtung > Ergonomischer Griff aus Edelstahl > Für alle Herdarten und Backofen (bis 170 °C) > Größe ca. Ø 24 x 5 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "01474442|2026-11-14": {
-   "kl_nr": "01474442",
-   "title": "BERGNER",
-   "subtitle": "Bratpfanne »ORIGEN« Ø 28 cm",
-   "price": "14.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01474442_P_665672?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01474442_P_665672?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus geschmiedetem Aluminium > Außen mit gehämmertem Finish > Mit 3-lagiger Antihaft-Beschichtung > Ergonomischer Griff aus Edelstahl > Für alle Herdarten und Backofen (bis 170 °C) > Größe ca. Ø 28 x 5,5 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "01474713|2026-11-15": {
    "kl_nr": "01474713",
    "title": "K-CLASSIC",
@@ -8017,91 +7758,6 @@
     "Unsere Eigenmarken: Preise auf die 1"
    ]
   },
-  "01475555|2026-11-14": {
-   "kl_nr": "01475555",
-   "title": "BERGNER",
-   "subtitle": "Kochtopf »ORIGEN« Ø 20 cm",
-   "price": "19.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01475555_P_665673?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01475555_P_665673?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus geschmiedetem Aluminium > Außen mit gehämmertem Finish > Mit 3-lagiger Antihaftbeschichtung > Ergonomische Griffe aus Edelstahl > Glasdeckel mit Dampfaustrittsloch > Für alle Herdarten und Backofen (bis 170 °C) > Größe ca. Ø 20 x 8 cm (ca. 2,4 l)",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "01475556|2026-11-14": {
-   "kl_nr": "01475556",
-   "title": "BERGNER",
-   "subtitle": "Kochtopf »ORIGEN« Ø 24 cm",
-   "price": "24.99",
-   "unit": "> Größe ca. Ø 24 x 10 cm (ca. 4,3 l) je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01475556_P_665674?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01475556_P_665674?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus geschmiedetem Aluminium > Außen mit gehämmertem Finish > Mit 3-lagiger Antihaft-Beschichtung > Ergonomische Griffe aus Edelstahl > Glasdeckel mit Dampfaustrittsloch > Für alle Herdarten und Backofen (bis 170 °C)",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "01475560|2026-11-14": {
-   "kl_nr": "01475560",
-   "title": "BERGNER",
-   "subtitle": "Wokpfanne »ORIGEN« Ø 28 cm",
-   "price": "19.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01475560_P_665678?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01475560_P_665678?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus geschmiedetem Aluminium > Außen mit gehämmertem Finish > Mit 3-lagiger Antihaft-Beschichtung > Ergonomischer Griff aus Edelstahl > Für alle Herdarten und Backofen (bis 170 °C) > Größe ca. Ø 28 x 8 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "01475563|2026-11-14": {
-   "kl_nr": "01475563",
-   "title": "BERGNER",
-   "subtitle": "Kochtopf »ORIGEN« Ø 28 cm",
-   "price": "29.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01475563_P_665680?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01475563_P_665680?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus geschmiedetem Aluminium > Außen mit gehämmertem Finish > Mit 3-lagiger Antihaftbeschichtung > Ergonomische Griffe aus Edelstahl > Glasdeckel mit Dampfaustrittsloch > Für alle Herdarten und Backofen (bis 170 °C) > Größe ca. Ø 28 x 15 cm (ca. 6,9 l)",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "01475564|2026-11-14": {
-   "kl_nr": "01475564",
-   "title": "BERGNER",
-   "subtitle": "Messer-Set »ORIGEN«",
-   "price": "14.99",
-   "unit": "je 4-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01475564_P_665688?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01475564_P_665688?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus rostfreiem Edelstahl > Mit ergonomischem Griff > Chefmesser, Klinge ca. 20 cm > Santokumesser, Klinge ca. 17,5 cm > Universalmesser, Klinge ca. 12,5 cm > Schälmesser, Klinge ca. 8,8 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "01476609|2026-11-15": {
    "kl_nr": "01476609",
    "title": "CASO",
@@ -8118,23 +7774,6 @@
    "description": "> Bratfläche antihaftbeschichtet > Glasdeckel mit Dunstabzug > Temperaturregelung bis 240 °C > Warmhaltefunktion > Nutzvolumen ca. 3 l > Vielseitig einsetzbar > 1.500 W",
    "sections": [
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
-   ]
-  },
-  "01478280|2026-11-14": {
-   "kl_nr": "01478280",
-   "title": "BESTRON",
-   "subtitle": "Paninigrill »ASW113CO«",
-   "price": "14.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8712184055340_DE_V_0824-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8712184055340_DE_V_0824-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Vielseitig einsetzbar zum Grillen und Toasten > Panini, Bruschetta, Toast, Gemüse, Fleisch etc. > Gehäuse und Griff wärmeisoliert > Antihaftbeschichtete Grillfläche ca. 28 x 17 cm > Mit Fettauffangschale > Deckelverriegelung und Kabelaufwicklung > Anti-Rutsch-Füße > Max. 1.000 W",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "01479183|2026-11-15": {
@@ -8235,14 +7874,14 @@
     "Ab Mo.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "01489529|2026-11-14": {
+  "01489529|2026-11-22": {
    "kl_nr": "01489529",
    "title": "",
    "subtitle": "Rollgarderobe",
    "price": "17.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01489529_P_759533?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -8374,23 +8013,6 @@
    "department": "Fleisch, Geflügel, Wurst",
    "sections": [
     "Fleisch, Geflügel, Wurst"
-   ]
-  },
-  "01509460|2026-11-14": {
-   "kl_nr": "01509460",
-   "title": "",
-   "subtitle": "Nikolaus-Stiefel",
-   "price": "2.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01509460_P_1285251?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01509460_P_1285251?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Polyester > Größe ca. 24 x 35 cm",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "01511557|2026-11-15": {
@@ -8531,14 +8153,14 @@
     "Extra-Angebote"
    ]
   },
-  "01533121|2026-11-14": {
+  "01533121|2026-11-22": {
    "kl_nr": "01533121",
    "title": "",
    "subtitle": "Wave-Box ca. 58 l",
    "price": "4.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01533121_internet?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -8548,29 +8170,31 @@
     "Nächste Woche"
    ]
   },
-  "01533122|2026-11-14": {
+  "01533122|2026-11-22": {
    "kl_nr": "01533122",
    "title": "",
    "subtitle": "Wave-Box ca. 18 l",
    "price": "2.49",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01533122_internet?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/01533122_internet?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "description": "> Aus Kunststoff > Deckel mit Wellenstruktur > Geschlossen stapelbar > Größe ca. B 40 x H 23 x T 30 cm (ca. 18 l)",
    "sections": [
     "Nächste Woche"
    ]
   },
-  "01533123|2026-11-14": {
+  "01533123|2026-11-22": {
    "kl_nr": "01533123",
    "title": "",
    "subtitle": "Wave-Box ca. 5,5 l",
    "price": "1.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/01533123_internet-2?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -11132,14 +10756,14 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "06310361|2026-11-14": {
+  "06310361|2026-11-22": {
    "kl_nr": "06310361",
    "title": "",
    "subtitle": "Klappbox",
    "price": "2.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/06310361f?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -11150,14 +10774,14 @@
     "Nächste Woche"
    ]
   },
-  "06601201|2026-11-14": {
+  "06601201|2026-11-22": {
    "kl_nr": "06601201",
    "title": "SWIFFER",
    "subtitle": "Staubmagnet-Tücher",
    "price": "4.99",
    "unit": "je 9-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8700216676793_DE_V_0424-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -11168,14 +10792,14 @@
     "Nächste Woche"
    ]
   },
-  "06601217|2026-11-14": {
+  "06601217|2026-11-22": {
    "kl_nr": "06601217",
    "title": "LEIFHEIT",
    "subtitle": "Fensterabzieher »Window Slider M«",
    "price": "5.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4006501514257_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -11186,14 +10810,14 @@
     "Nächste Woche"
    ]
   },
-  "06601222|2026-11-14": {
+  "06601222|2026-11-22": {
    "kl_nr": "06601222",
    "title": "LEIFHEIT",
    "subtitle": "Fliesenwischer »FlexiPad«",
    "price": "5.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/06601222?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -11204,14 +10828,14 @@
     "Nächste Woche"
    ]
   },
-  "06602536|2026-11-14": {
+  "06602536|2026-11-22": {
    "kl_nr": "06602536",
    "title": "LEIFHEIT",
    "subtitle": "Fensterwischer »Cleaner L micro duo«",
    "price": "9.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/06602536_P_684526?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -11222,14 +10846,14 @@
     "Nächste Woche"
    ]
   },
-  "06605570|2026-11-14": {
+  "06605570|2026-11-22": {
    "kl_nr": "06605570",
    "title": "SWIFFER",
    "subtitle": "Bodenreinigungstücher feucht",
    "price": "4.99",
    "unit": "je 24-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/06605570?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -11240,14 +10864,14 @@
     "Nächste Woche"
    ]
   },
-  "06605612|2026-11-14": {
+  "06605612|2026-11-22": {
    "kl_nr": "06605612",
    "title": "SWIFFER",
    "subtitle": "Bodenwischer-Staubtücher",
    "price": "4.99",
    "unit": "je 36-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8700216677363_DE_CU_9298-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -11297,23 +10921,6 @@
    "sections": [
     "Bekleidung, Auto, Freizeit, Spiel",
     "Ab Mo.: Black Week mit ganz vielen Top-Preisdeals"
-   ]
-  },
-  "08021697|2026-11-14": {
-   "kl_nr": "08021697",
-   "title": "",
-   "subtitle": "Nikolausmütze",
-   "price": "1.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/08021697_P_439402?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/08021697_P_439402?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Filz > Mit Bommel > Größe ca. 40 x 28 cm",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "0903780|2026-11-15": {
@@ -11548,16 +11155,18 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20274269|2026-11-14": {
+  "20274269|2026-11-22": {
    "kl_nr": "20274269",
    "title": "SWITCH ON®",
    "subtitle": "Dampfmopp/Handdampfreiniger »SDM 1500 D4«",
    "price": "20.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/a_500466_S-A-V01_-GQ00_FS_KL_NFVP_CU_4699?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/a_500466_S-A-V01_-GQ00_FS_KL_NFVP_CU_4699?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "27.99",
    "description": "> Dampfbereit in ca. 30 sec > Dampfstoßstärke stufenlos einstellbar > Dampfeinheit und Dampffuß abnehmbar > Wassertank ca. 350 ml > Betriebsdauer pro Tankfüllung ca. 15 min > Bezug für Polstermöbelaufsatz > 2 Faser-Tücher für Fußbodenreinigung > Teppichgleiter-Aufsatz > Großer und kleiner Rundbürsten-Aufsatz > Länglicher Bürsten-Aufsatz > Winkeldüsen- und Schaber-Aufsatz > Fensterabzieher- und Polstermöbel-Aufsatz > Verlängerungsdüse und Verlängerungsschlauch > 1.500 W > 3 Jahre Garantie",
    "sections": [
@@ -11832,23 +11441,6 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20624665|2026-11-14": {
-   "kl_nr": "20624665",
-   "title": "",
-   "subtitle": "Geschenkbox »Weihnachten«",
-   "price": "1.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20624665-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20624665-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Größe ca. B 15 x H 5,5 x T 11 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20624684|2026-11-15": {
    "kl_nr": "20624684",
    "title": "ESCAL",
@@ -11868,40 +11460,6 @@
    "sections": [
     "Tiefkühlkost",
     "Extra-Angebote"
-   ]
-  },
-  "20624702|2026-11-14": {
-   "kl_nr": "20624702",
-   "title": "",
-   "subtitle": "Deko-Figur Elch",
-   "price": "2.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20624702-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20624702-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Mangoholz > Mit Juteband > Größe ca. 13 x 11 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20624705|2026-11-14": {
-   "kl_nr": "20624705",
-   "title": "",
-   "subtitle": "Deko-Aufsteller Tanne",
-   "price": "2.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20624705-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20624705-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Mangoholz > Größe ca. 13 cm",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "20627328|2026-11-15": {
@@ -12249,6 +11807,7 @@
     "entspr. pro Packg. 1.00"
    ],
    "sections": [
+    "Ab Do.: Mehr kaufen. Mehr sparen.",
     "Unsere Eigenmarken: Preise auf die 1"
    ]
   },
@@ -12348,14 +11907,14 @@
     "Obst, Gemüse, Pflanzen"
    ]
   },
-  "20683330|2026-11-14": {
+  "20683330|2026-11-22": {
    "kl_nr": "20683330",
    "title": "SWITCH ON®",
    "subtitle": "Mini-Backofen »SOGB 1200«",
    "price": "25.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066627687044_DE_V_6045-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -12747,36 +12306,19 @@
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20710876_P_1230311?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
    "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20710876_P_1230311?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "2.49",
-   "description": "> Mit Knallteufeln, Blitz-Knatter-Kegeln u.v.m. > Über 70 Einzelteile > 5-fach sortiert",
+   "description": "> Mit Knallteufeln, Blitz-Knatter-Kegeln u. v. m. > Über 70 Einzelteile > 5-fach sortiert",
    "sections": [
     "Nächste Woche"
    ]
   },
-  "20711110|2026-11-14": {
-   "kl_nr": "20711110",
-   "title": "BESTRON",
-   "subtitle": "Multizerkleinerer »AKC200CO«",
-   "price": "12.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20711110_V_1081953?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20711110_V_1081953?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Zum Schneiden, Hacken, Pürieren und Mischen > Mit großem Impulsschalter > 2 Edelstahlmesser > Kunststoff-Mixbecher mit Spritzschutzdeckel > Fassungsvermögen ca. 500 ml > Rutschfester Boden > Einzelteile spülmaschinengeeignet > 400 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20711298|2026-11-14": {
+  "20711298|2026-11-22": {
    "kl_nr": "20711298",
    "title": "",
    "subtitle": "XXL-Thermo-Einkaufskorb",
    "price": "7.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20711298_P_1146340?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -12926,31 +12468,35 @@
     "Exklusive Eröffnungsangebote"
    ]
   },
-  "20715130|2026-11-14": {
+  "20715130|2026-11-22": {
    "kl_nr": "20715130",
    "title": "CAT",
    "subtitle": "Herren-Sweathoodie",
    "price": "30.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20715130_internet_a?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20715130_internet_a?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "description": "> Aus Baumwolle und Polyester > Größen M - XXL",
    "sections": [
     "Nächste Woche"
    ]
   },
-  "20715717|2026-11-14": {
+  "20715717|2026-11-22": {
    "kl_nr": "20715717",
    "title": "LIV&BO®",
    "subtitle": "Küchen-Nischenwagen",
    "price": "7.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20715717_P_1110009?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20715717_P_1110009?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "15.00",
    "description": "> Ideal für Nischen, schmale Räume, hinter der Tür > Mit 3 Ablageflächen (für je max. 3 kg) > Mit Griff und 2 Rollen > Größe ca. B 15 x H 79 x T 50 cm > Inkl. Montagematerial und Anleitung",
    "sections": [
@@ -12980,23 +12526,6 @@
    "sections": [
     "Kaffee, Tee, Süßwaren, Knabberartikel",
     "Süßes für alle"
-   ]
-  },
-  "20716321|2026-11-14": {
-   "kl_nr": "20716321",
-   "title": "BERGNER",
-   "subtitle": "Crêpespfanne »ORIGEN«",
-   "price": "9.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/6942423911140_DE_V_2670-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/6942423911140_DE_V_2670-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus geschmiedetem Aluminium > Außen mit gehämmertem Finish > Mit 3-lagiger Antihaft-Beschichtung > Ergonomischer Griff aus Edelstahl > Für alle Herdarten und Backofen (bis 170 °C) > Größe ca. Ø 24 x 2 cm",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "20717423|2026-11-15": {
@@ -13054,14 +12583,14 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20721690|2026-11-14": {
+  "20721690|2026-11-22": {
    "kl_nr": "20721690",
    "title": "K-CARINURA",
    "subtitle": "Kratzbaum",
    "price": "12.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20721690_V_1605502?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -13150,24 +12679,6 @@
     "Fleisch, Geflügel, Wurst"
    ]
   },
-  "20736770|2026-11-14": {
-   "kl_nr": "20736770",
-   "title": "BENCH",
-   "subtitle": "Herren-Sweatpullover",
-   "price": "15.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20736770_Internet?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20736770_Internet?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "old_price": "17.99",
-   "description": "> Aus Baumwolle und Polyester > Versch. Farben > Größen M - XXL",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20736770|2026-11-15": {
    "kl_nr": "20736770",
    "title": "BENCH",
@@ -13186,6 +12697,24 @@
    "sections": [
     "Bekleidung, Auto, Freizeit, Spiel",
     "Exklusive Eröffnungsangebote"
+   ]
+  },
+  "20736770|2026-11-22": {
+   "kl_nr": "20736770",
+   "title": "BENCH",
+   "subtitle": "Herren-Sweatpullover",
+   "price": "15.00",
+   "unit": "je",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
+   "sales_from": "2026-11-23",
+   "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20736770_internet?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20736770_internet?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "old_price": "17.99",
+   "description": "> Aus Baumwolle und Polyester > Versch. Farben > Größen M - XXL",
+   "sections": [
+    "Nächste Woche"
    ]
   },
   "20738003|2026-11-15": {
@@ -13366,41 +12895,6 @@
     "Exklusive Eröffnungsangebote"
    ]
   },
-  "20746681|2026-11-14": {
-   "kl_nr": "20746681",
-   "title": "BESTRON",
-   "subtitle": "Raclette-Grill »ARG1200CO«",
-   "price": "34.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20746681_P_1183810?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20746681_P_1183810?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "card_price": "29.99",
-   "description": "> Mit Wendegrillplatte und Grillsteinplatte > Grillfläche je ca. 21 x 21 cm > Stufenlose Temperaturregelung > Grillplatte spülmaschinengeeignet > Anti-Rutsch-Füße > Max. 1.400 W > Inkl. je 8 Pfännchen und Kunststoffschaber",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20746687|2026-11-14": {
-   "kl_nr": "20746687",
-   "title": "BESTRON",
-   "subtitle": "Mikrowelle »AMN100CO«",
-   "price": "49.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20746687_P_1183807?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20746687_P_1183807?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Garraum ca. 20 l > Mit 6 Leistungsstufen > 30-min-Timer > Garraum-Beleuchtung > Drehteller ca. Ø 24,5 cm > Größe ca. B 45 x H 26 x T 34 cm > Max. 700 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20749910|2026-11-15": {
    "kl_nr": "20749910",
    "title": "BRAUN",
@@ -13422,14 +12916,14 @@
     "Ab Mo.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20751333|2026-11-14": {
+  "20751333|2026-11-22": {
    "kl_nr": "20751333",
    "title": "BESTRON",
    "subtitle": "Stabmixer »ASM500GP« Golden-Platin-Serie",
    "price": "12.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20751333_P_1183838?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -13576,29 +13070,14 @@
     "Fleisch, Geflügel, Wurst"
    ]
   },
-  "20757057|2026-11-14": {
-   "kl_nr": "20757057",
-   "title": "",
-   "subtitle": "Fenstersticker »Weihnachten«",
-   "price": "2.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Metallic-Optik > Größe ca. 40 x 24 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20761330|2026-11-14": {
+  "20761330|2026-11-22": {
    "kl_nr": "20761330",
    "title": "LIV&BO®",
    "subtitle": "Küchentrolley",
    "price": "18.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066627593512_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -13686,24 +13165,6 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20771539|2026-11-14": {
-   "kl_nr": "20771539",
-   "title": "TRISTAR",
-   "subtitle": "Handmixer »MX-4202KL«",
-   "price": "7.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20771539_V_1274906?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20771539_V_1274906?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "old_price": "9.99",
-   "description": "> 6 Geschwindigkeitsstufen + Turbo > Mit je 2 Knethaken und Rührbesen aus Edelstahl > 200 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20771539|2026-11-15": {
    "kl_nr": "20771539",
    "title": "TRISTAR",
@@ -13722,6 +13183,24 @@
    "sections": [
     "Elektro, Büro, Medien",
     "Exklusive Eröffnungsangebote"
+   ]
+  },
+  "20771539|2026-11-22": {
+   "kl_nr": "20771539",
+   "title": "TRISTAR",
+   "subtitle": "Handmixer »MX-4202KL«",
+   "price": "7.00",
+   "unit": "je",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
+   "sales_from": "2026-11-23",
+   "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20771539_V_1274906?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20771539_V_1274906?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "old_price": "9.99",
+   "description": "> 6 Geschwindigkeitsstufen + Turbo > Mit je 2 Knethaken und Rührbesen aus Edelstahl > 200 W",
+   "sections": [
+    "Nächste Woche"
    ]
   },
   "20778927|2026-11-15": {
@@ -13745,29 +13224,31 @@
     "Black Week: das beste aus der Drogerie"
    ]
   },
-  "20780761|2026-11-14": {
+  "20780761|2026-11-22": {
    "kl_nr": "20780761",
    "title": "K-CLASSIC",
    "subtitle": "Recycling-Box",
    "price": "5.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20780761_P_1306059-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20780761_P_1306059-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "description": "> Aus recyceltem Kunststoff > Ideal zum Trennen von Altglas, -papier, Flaschen > Vielseitig einsetzbar z. B. in Küche, Keller > Mit Klappdeckel und 2 Tragegriffen > Mit weiteren Boxen dieser Art stapelbar > Belastbarkeit max. 13 kg > Stapellast max. 20 kg (unterste Box) > Größe ca. B 39 x H 38 x T 29 cm (ca. 30 l) > Inkl. 6 versch. Aufklebern zum Markieren der Box > 3 Jahre Garantie",
    "sections": [
     "Nächste Woche"
    ]
   },
-  "20782656|2026-11-14": {
+  "20782656|2026-11-22": {
    "kl_nr": "20782656",
    "title": "STARLYF",
    "subtitle": "Steckdosenheizer",
    "price": "15.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20782656_P_1637668?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -13919,14 +13400,14 @@
     "Extra-Angebote"
    ]
   },
-  "20798746|2026-11-14": {
+  "20798746|2026-11-22": {
    "kl_nr": "20798746",
    "title": "EASYMAXX",
    "subtitle": "Schuhregal faltbar",
    "price": "14.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4067522074977_DE_V_4752-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -14036,18 +13517,18 @@
     "Extra-Angebote"
    ]
   },
-  "20811072|2026-11-14": {
+  "20811072|2026-11-22": {
    "kl_nr": "20811072",
    "title": "ZENKER",
    "subtitle": "Wähenblech mit Hebeboden",
    "price": "5.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4044935081730_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4044935081730_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4044935081730_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4044935081730_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "9.99",
    "description": "> Aus Metall > Mit Antihaftbeschichtung > Größe ca. Ø 28 x 4 cm",
    "sections": [
@@ -14305,14 +13786,14 @@
     "Nächste Woche"
    ]
   },
-  "20842095|2026-11-14": {
+  "20842095|2026-11-22": {
    "kl_nr": "20842095",
    "title": "LEIFHEIT",
    "subtitle": "Staubwedel »Superduster XL«",
    "price": "5.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4006501412508_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -14431,8 +13912,8 @@
    "shown_to": "2026-11-20",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4251192138798_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4251192138798_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20846992-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20846992-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "14.99",
    "description": "> Hörfigur für die Toniebox > Spannende, kindgerechte Audio-Abenteuer > Abspielen durch Aufstellen auf die Toniebox > Perfekt zum Sammeln, Spielen und Zuhören",
    "sections": [
@@ -14467,8 +13948,8 @@
    "shown_to": "2026-11-20",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4251192144522_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4251192144522_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20847016-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20847016-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "14.99",
    "description": "> Hörfigur für die Toniebox > Spannende, kindgerechte Audio-Abenteuer > Abspielen durch Aufstellen auf die Toniebox > Perfekt zum Sammeln, Spielen und Zuhören",
    "sections": [
@@ -14485,8 +13966,8 @@
    "shown_to": "2026-11-20",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4251192129147_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4251192129147_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20847019-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20847019-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "16.99",
    "description": "> Hörfigur für die Toniebox > Spannende, kindgerechte Audio-Abenteuer > Abspielen durch Aufstellen auf die Toniebox > Perfekt zum Sammeln, Spielen und Zuhören",
    "sections": [
@@ -14503,8 +13984,8 @@
    "shown_to": "2026-11-20",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4251192147097_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4251192147097_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20847036-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20847036-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "14.99",
    "description": "> Hörfigur für die Toniebox > Spannende, kindgerechte Audio-Abenteuer > Abspielen durch Aufstellen auf die Toniebox > Perfekt zum Sammeln, Spielen und Zuhören",
    "sections": [
@@ -14539,8 +14020,8 @@
    "shown_to": "2026-11-20",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4251192128980_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4251192128980_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20847041-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20847041-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "16.99",
    "description": "> Hörfigur für die Toniebox > Spannende, kindgerechte Audio-Abenteuer > Abspielen durch Aufstellen auf die Toniebox > Perfekt zum Sammeln, Spielen und Zuhören",
    "sections": [
@@ -14557,8 +14038,8 @@
    "shown_to": "2026-11-20",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4251192147110_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4251192147110_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20847049-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20847049-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "16.99",
    "description": "> Hörfigur für die Toniebox > Spannende, kindgerechte Audio-Abenteuer > Abspielen durch Aufstellen auf die Toniebox > Perfekt zum Sammeln, Spielen und Zuhören",
    "sections": [
@@ -14929,14 +14410,14 @@
     "Exklusive Eröffnungsangebote"
    ]
   },
-  "20869358|2026-11-14": {
+  "20869358|2026-11-22": {
    "kl_nr": "20869358",
    "title": "FISHER-PRICE",
    "subtitle": "Schlummer-Koala",
    "price": "20.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20869358-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -15060,14 +14541,14 @@
     "Nächste Woche"
    ]
   },
-  "20881701|2026-11-14": {
+  "20881701|2026-11-22": {
    "kl_nr": "20881701",
    "title": "SWITCH ON®",
    "subtitle": "Heißluftfritteuse »SOHFDA 2600«",
    "price": "55.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066627613326_DE_V_9081-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -15097,23 +14578,6 @@
     "Getränke, Spirituosen"
    ]
   },
-  "20883667|2026-11-14": {
-   "kl_nr": "20883667",
-   "title": "",
-   "subtitle": "LED-Teelichter",
-   "price": "2.00",
-   "unit": "je 4-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20883667-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20883667-P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Kunststoff > Inkl. Batterien",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20884866|2026-11-15": {
    "kl_nr": "20884866",
    "title": "LEGO BOTANICALS",
@@ -15130,23 +14594,6 @@
    "description": "> Strauß mit Gänseblümchen und Lavendel > Mit Marienkäfer > Für Kinder ab 9 Jahren",
    "sections": [
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
-   ]
-  },
-  "20885622|2026-11-14": {
-   "kl_nr": "20885622",
-   "title": "K-CLASSIC",
-   "subtitle": "Anzündwolle",
-   "price": "2.49",
-   "unit": "je 32-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4063367645068_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4063367645068_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Ideal für Holzfeuerungen, Grill, Kamin und Ofen > Aus Holz und Wachs > Leicht zu entzünden, geruchsarm > Anzündhilfe DIN EN 1860-3:2023-08",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "20888670|2026-11-15": {
@@ -15230,14 +14677,14 @@
     "Fleisch, Geflügel, Wurst"
    ]
   },
-  "20897904|2026-11-14": {
+  "20897904|2026-11-22": {
    "kl_nr": "20897904",
    "title": "",
    "subtitle": "K-Pop-Kinder-Kostüm »Classic Rumi Golden«",
    "price": "19.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20897904-P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -15247,14 +14694,14 @@
     "Nächste Woche"
    ]
   },
-  "20897905|2026-11-14": {
+  "20897905|2026-11-22": {
    "kl_nr": "20897905",
    "title": "",
    "subtitle": "K-Pop-Kinder-Perücke »Rumi«",
    "price": "14.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20897905-P_V_4680?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -15264,14 +14711,14 @@
     "Nächste Woche"
    ]
   },
-  "20897906|2026-11-14": {
+  "20897906|2026-11-22": {
    "kl_nr": "20897906",
    "title": "",
    "subtitle": "K-Pop-Kinder-Perücke »Zoey«",
    "price": "14.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20897906-P_V_3491?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -15281,14 +14728,14 @@
     "Nächste Woche"
    ]
   },
-  "20897907|2026-11-14": {
+  "20897907|2026-11-22": {
    "kl_nr": "20897907",
    "title": "",
    "subtitle": "K-Pop-Kinder-Kostüm »Zoey Core Look«",
    "price": "19.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20897907-P_V_5811?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -15436,24 +14883,6 @@
     "Ab Mo.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20908435|2026-11-14": {
-   "kl_nr": "20908435",
-   "title": "PRINCESS",
-   "subtitle": "Nähmaschine »326010«",
-   "price": "35.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8711658527000_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8711658527000_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "old_price": "39.99",
-   "description": "> Freiarm-Nähmaschine > 14 Stichmuster > Knopflochfunktion > Spulenfunktion > Rückwärtsnähen > LED-Leuchte > Einstellbare Fadenspannung > Automatischer Geschwindigkeitsregler > Automatische Einfädelfunktion > Fadenschneider > 9 W > Inkl. Schutzhaube, Zwillingsnadel und Zubehör",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20908435|2026-11-15": {
    "kl_nr": "20908435",
    "title": "PRINCESS",
@@ -15464,10 +14893,30 @@
    "shown_to": "2026-11-21",
    "sales_from": "2026-11-16",
    "sales_to": "2026-11-21",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8711658527000_DE_V_8932-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8711658527000_DE_V_8932-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "description": "> Freiarm-Nähmaschine > 14 Stichmuster > Knopflochfunktion > Spulenfunktion > Rückwärtsnähen > LED-Leuchte > Einstellbare Fadenspannung > Automatischer Geschwindigkeitsregler > Automatische Einfädelfunktion > Fadenschneider > 9 W > Inkl. Schutzhaube, Zwillingsnadel und Zubehör",
    "department": "Elektro, Büro, Medien",
    "sections": [
     "Elektro, Büro, Medien"
+   ]
+  },
+  "20908435|2026-11-22": {
+   "kl_nr": "20908435",
+   "title": "PRINCESS",
+   "subtitle": "Nähmaschine »326010«",
+   "price": "35.00",
+   "unit": "je",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
+   "sales_from": "2026-11-23",
+   "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8711658527000_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8711658527000_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
+   "old_price": "39.99",
+   "description": "> Freiarm-Nähmaschine > 14 Stichmuster > Knopflochfunktion > Spulenfunktion > Rückwärtsnähen > LED-Leuchte > Einstellbare Fadenspannung > Automatischer Geschwindigkeitsregler > Automatische Einfädelfunktion > Fadenschneider > 9 W > Inkl. Schutzhaube, Zwillingsnadel und Zubehör",
+   "sections": [
+    "Nächste Woche"
    ]
   },
   "20909066|2026-11-15": {
@@ -15887,21 +15336,6 @@
     "Fleisch, Geflügel, Wurst"
    ]
   },
-  "20932111|2026-11-14": {
-   "kl_nr": "20932111",
-   "title": "",
-   "subtitle": "Kinder-Hausschuhe",
-   "price": "7.99",
-   "unit": "je Paar",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus Textilmaterial > Größen 30/31 - 34/35",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20933828|2026-11-15": {
    "kl_nr": "20933828",
    "title": "LENOR",
@@ -15925,48 +15359,14 @@
     "Ab Mo.: Jetzt sparen mit Kaufland Card XTRA"
    ]
   },
-  "20933836|2026-11-14": {
-   "kl_nr": "20933836",
-   "title": "",
-   "subtitle": "Kinder-Weihnachtspullover",
-   "price": "4.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4063367671135_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4063367671135_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Baumwolle und Polyester > Größen 98/104 - 122/128",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20933837|2026-11-14": {
-   "kl_nr": "20933837",
-   "title": "",
-   "subtitle": "Kinder-Weihnachtspullover",
-   "price": "4.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4063367671159_DE_V_0807-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4063367671159_DE_V_0807-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Baumwolle und Polyester > Größen 134/140 - 158/164",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20935172|2026-11-14": {
+  "20935172|2026-11-22": {
    "kl_nr": "20935172",
    "title": "EASYMAXX",
    "subtitle": "Stoffschrank",
    "price": "14.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4067522084457_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -15976,14 +15376,14 @@
     "Nächste Woche"
    ]
   },
-  "20935173|2026-11-14": {
+  "20935173|2026-11-22": {
    "kl_nr": "20935173",
    "title": "EASYMAXX",
    "subtitle": "Wäscheständer",
    "price": "14.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4067522093015_DE_V_1517-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -15993,14 +15393,14 @@
     "Nächste Woche"
    ]
   },
-  "20935470|2026-11-14": {
+  "20935470|2026-11-22": {
    "kl_nr": "20935470",
    "title": "MATTEL",
    "subtitle": "Mini-Figur »K-Pop Damon Hunters«",
    "price": "4.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/194735433261_DE_V_3479-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16066,14 +15466,14 @@
     "Käse von mild bis herzhaft"
    ]
   },
-  "20937647|2026-11-14": {
+  "20937647|2026-11-22": {
    "kl_nr": "20937647",
    "title": "",
    "subtitle": "Bettwäsche-Set »K-Pop Demon Hunters«",
    "price": "17.99",
    "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5056197207383_DE_V_5307-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16083,80 +15483,14 @@
     "Nächste Woche"
    ]
   },
-  "20937935|2026-11-14": {
-   "kl_nr": "20937935",
-   "title": "",
-   "subtitle": "Weihnachtspullover »Kaufland«",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4063367673191_DE_Mood_8552-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4063367673191_DE_Mood_8552-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Polyacryl > Größen S - XXL",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20938213|2026-11-14": {
-   "kl_nr": "20938213",
-   "title": "",
-   "subtitle": "Kinder-Pyjama »Weihnachtsmann & Co. KG«",
-   "price": "4.99",
-   "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus Baumwolle > Mit Pigment-Druck > Größen 110/116 - 134/140",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20938248|2026-11-14": {
-   "kl_nr": "20938248",
-   "title": "",
-   "subtitle": "Damen-Pyjama »Weihnachtsmann & Co. KG«",
-   "price": "9.99",
-   "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4040073141749_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4040073141749_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Baumwolle > Mit Pigment-Druck > Größen S - XL",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20938250|2026-11-14": {
-   "kl_nr": "20938250",
-   "title": "",
-   "subtitle": "Herren-Pyjama »Weihnachtsmann & Co. KG«",
-   "price": "9.99",
-   "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20938250-Mood_20938213_20938248-7?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20938250-Mood_20938213_20938248-7?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Baumwolle > Mit Pigment-Druck > Größen M - XXL",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20938524|2026-11-14": {
+  "20938524|2026-11-22": {
    "kl_nr": "20938524",
    "title": "",
    "subtitle": "Kinder-Sweathose »K-Pop Demon Hunters«",
    "price": "7.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5710756108084_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16166,14 +15500,14 @@
     "Nächste Woche"
    ]
   },
-  "20938525|2026-11-14": {
+  "20938525|2026-11-22": {
    "kl_nr": "20938525",
    "title": "",
    "subtitle": "Kinder-Sweatpullover »K-Pop Demon Hunters«",
    "price": "7.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5710756108145_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16183,14 +15517,14 @@
     "Nächste Woche"
    ]
   },
-  "20938526|2026-11-14": {
+  "20938526|2026-11-22": {
    "kl_nr": "20938526",
    "title": "",
    "subtitle": "Kinder-Pyjama »K-Pop Demon Hunters«",
    "price": "7.99",
    "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5710756108190_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16200,14 +15534,14 @@
     "Nächste Woche"
    ]
   },
-  "20938527|2026-11-14": {
+  "20938527|2026-11-22": {
    "kl_nr": "20938527",
    "title": "",
    "subtitle": "Kinder-Slips »K-Pop Demon Hunters«",
    "price": "4.99",
    "unit": "je 3-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5710756108244_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16217,14 +15551,14 @@
     "Nächste Woche"
    ]
   },
-  "20938528|2026-11-14": {
+  "20938528|2026-11-22": {
    "kl_nr": "20938528",
    "title": "",
    "subtitle": "Kinder-Unterhemden »K-Pop Demon Hunters«",
    "price": "4.99",
    "unit": "je 2-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5710756108305_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16234,14 +15568,14 @@
     "Nächste Woche"
    ]
   },
-  "20938529|2026-11-14": {
+  "20938529|2026-11-22": {
    "kl_nr": "20938529",
    "title": "",
    "subtitle": "Kinder-Socken »K-Pop Demon Hunters«",
    "price": "2.99",
    "unit": "je 3 Paar",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5710756108367_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16251,33 +15585,18 @@
     "Nächste Woche"
    ]
   },
-  "20941030|2026-11-14": {
-   "kl_nr": "20941030",
-   "title": "FLASH",
-   "subtitle": "Zündstifte mit Reibekopf",
-   "price": "1.49",
-   "unit": "je 24-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4007467900245_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4007467900245_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Anzündriegel aus Holz und Wachs mit Reibekopf > Zum sicheren und geruchsarmen Anzünden > Ideal für Grill, Ofen und Kamin > Einfach wie ein Streichholz anzünden > Entspricht der Norm DIN EN 1860-3",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20942287|2026-11-14": {
+  "20942287|2026-11-22": {
    "kl_nr": "20942287",
    "title": "",
    "subtitle": "Schuhabtropfschale",
    "price": "4.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20942287_internet?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20942287_internet?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "description": "> Aus Kunststoff > Für bis zu 3 Schuhpaare > Fängt Wasser und Schmutz zuverlässig auf > Mit versch. Motiven > Größe ca. B 75 x H 2,5 x T 38 cm",
    "sections": [
     "Nächste Woche"
@@ -16396,40 +15715,6 @@
     "Bekleidung, Auto, Freizeit, Spiel"
    ]
   },
-  "20945099|2026-11-14": {
-   "kl_nr": "20945099",
-   "title": "",
-   "subtitle": "Schlüsselanhänger »Surprise Makiki«",
-   "price": "3.49",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8714627035452_DE_V_4950-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8714627035452_DE_V_4950-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Makiki-Figur aus weichem Plüschmaterial > Überraschungsbox mit 1 von 4 Makiki-Charakteren > Mit Schlüsselring und Identitätskarte > Größe ca. 15 cm > Für Kinder ab 3 Jahren",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20945120|2026-11-14": {
-   "kl_nr": "20945120",
-   "title": "",
-   "subtitle": "Magnetwürfel-Set »CraftBlocks«",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8714627034257_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8714627034257_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Set mit 48 magnetischen Plastikwürfeln > Würfeln unterschiedlich bedruckt > Ideal zum Bau immer wieder neuer Fantasiewelten > Für Kinder ab 3 Jahren",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20945157|2026-11-15": {
    "kl_nr": "20945157",
    "title": "VTECH",
@@ -16505,14 +15790,14 @@
     "Ab Mo.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20946682|2026-11-14": {
+  "20946682|2026-11-22": {
    "kl_nr": "20946682",
    "title": "CASA SI",
    "subtitle": "Klapphocker »One Step«",
    "price": "3.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/9007741026512_DE_V_7200-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16664,24 +15949,6 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20951651|2026-11-14": {
-   "kl_nr": "20951651",
-   "title": "BABYBORN",
-   "subtitle": "Puppe »Cutie«",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4001167842034_DE_V_0585-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4001167842034_DE_V_0585-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "old_price": "UVP 9.99",
-   "description": "> Kuschlig-weiche Puppe > Kopf aus softem Vinyl > Mit Knisterfolie im Inneren > Größe ca. 18 cm > Versch. Charaktere > Für Kinder ab 0 Jahren",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20952287|2026-11-15": {
    "kl_nr": "20952287",
    "title": "VOGELY",
@@ -16775,46 +16042,14 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20953806|2026-11-14": {
-   "kl_nr": "20953806",
-   "title": "",
-   "subtitle": "Socken",
-   "price": "3.99",
-   "unit": "je Paar",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5906482945240_DE_P?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/5906482945240_DE_P?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Baumwolle, Polyester und Elastan > Versch. Wintermotive > Mit versch. originellen Weihnachtverpackungen > Größen 35 - 40 und 41 - 46",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20953835|2026-11-14": {
-   "kl_nr": "20953835",
-   "title": "",
-   "subtitle": "Socken",
-   "price": "4.99",
-   "unit": "je 2 Paar",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus Baumwolle, Polyester und Elastan > Mit versch. winterlichen Motiven > Größen 35 - 40 bzw. 41 - 46",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20956870|2026-11-14": {
+  "20956870|2026-11-22": {
    "kl_nr": "20956870",
    "title": "",
    "subtitle": "K-Pop-Kinder-Kostüm »Rumi Core Look«",
    "price": "19.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/195884145708_DE_V_5734-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16824,14 +16059,14 @@
     "Nächste Woche"
    ]
   },
-  "20956872|2026-11-14": {
+  "20956872|2026-11-22": {
    "kl_nr": "20956872",
    "title": "",
    "subtitle": "K-Pop-Kinder-Kostüm »Mira Core Look«",
    "price": "19.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/195884145654_DE_V_3739-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16841,14 +16076,14 @@
     "Nächste Woche"
    ]
   },
-  "20956874|2026-11-14": {
+  "20956874|2026-11-22": {
    "kl_nr": "20956874",
    "title": "",
    "subtitle": "K-Pop-Kinder-Perücke »Mira«",
    "price": "14.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/195884145548_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -16878,16 +16113,18 @@
     "Ab Mo.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20962076|2026-11-14": {
+  "20962076|2026-11-22": {
    "kl_nr": "20962076",
    "title": "COOCAA",
    "subtitle": "QLED-Smart-TV 32 Zoll »32CRQH40Z«",
    "price": "99.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
+   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/20962076_internet?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
+   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/20962076_internet?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "old_price": "UVP 199.00",
    "description": "> Frameless Design > Bildschirm ca. 80 cm (32 Zoll) > QLED-Panel: intensivere Farben, mehr Helligkeit > HD-Auflösung 1.366 x 768 px > Betriebssystem RokuTV mit Smarthome-Integration > 3 x HDMI, 2 x USB, AUX, CI+, LAN, WiFi > Optisches S/PDIF, DVB-T2/-C/-S2, Apple AirPlay > VESA-Standard 200 x 100 mm > Energieeffizienzklasse E (Spektrum A bis G)",
    "sections": [
@@ -16968,142 +16205,6 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20963409|2026-11-14": {
-   "kl_nr": "20963409",
-   "title": "BESTRON",
-   "subtitle": "Toaster »ATS1001COKL«",
-   "price": "19.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20963409-V-3?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20963409-V-3?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> 6 einstellbare Bräunungsstufen > Mit Auftau- und Aufwärmfunktion > Automatische Pop-up-Funktion > Mit Brötchenwärmer > Herausnehmbare Krümelschublade > 950 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20963410|2026-11-14": {
-   "kl_nr": "20963410",
-   "title": "BESTRON",
-   "subtitle": "Glaswasserkocher »AWK501COKL«",
-   "price": "9.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/DE20963410-V-2?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/DE20963410-V-2?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Gehäuse aus Edelstahl und Glas > Fassungsvermögen ca. 1,7 l > Mit blauer LED-Beleuchtung > Verdecktes Heizelement > Ein/Aus-Schalter mit Kontrollleuchte > Kabellos, mit 360°-Sockel > Max. 2.200 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20963411|2026-11-14": {
-   "kl_nr": "20963411",
-   "title": "BESTRON",
-   "subtitle": "Heißluftfritteuse »AAF7006DCOKL«",
-   "price": "39.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8711658533674_DE_V_4205-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8711658533674_DE_V_4205-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Zum Frittieren, Grillen, Backen, Garen > Frittieren ohne zusätzliches Öl oder Fett > Kapazität max. 4,2 l > 8 voreingestellte Programme > Temperatureinstellung von 60 bis 200 °C > Timer bis 60 min > Mit LED-Touch-Display > Schüttelerinnerung > 1.500 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20963415|2026-11-14": {
-   "kl_nr": "20963415",
-   "title": "BESTRON",
-   "subtitle": "Küchenmaschine »AKM1500CO«",
-   "price": "49.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8711658533537_DE_V_3001-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8711658533537_DE_V_3001-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Zum Kneten, Rühren, Schlagen, Vermischen > Planetarisches Rührwerk > 9 Geschwindigkeitsstufen und Turbofunktion > Mit Rührarm, Knethaken und Schneebesen > Edelstahl-Rührschüssel für bis zu 500 g Teig > Spritzschutzdeckel mit Einfüllöffnung > Anti-Rutsch-Füße > Max. 1.500 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20963416|2026-11-14": {
-   "kl_nr": "20963416",
-   "title": "BESTRON",
-   "subtitle": "Handmixer »AHM1001COKL«",
-   "price": "12.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8711658533575_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8711658533575_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> 6 Leistungsstufen + Turbo-Funktion > Mit je 2 Rührbesen und Knethaken > Zubehör spülmaschinenfest > 400 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20963417|2026-11-14": {
-   "kl_nr": "20963417",
-   "title": "BESTRON",
-   "subtitle": "Stabmixer »ASM501COKL«",
-   "price": "12.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8711658533551_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8711658533551_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> 2 Geschwindigkeitsstufen + Turbo-Funktion > Abnehmbarer Mixfuß mit Edelstahl-Klinge > 1.000 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20963419|2026-11-14": {
-   "kl_nr": "20963419",
-   "title": "BESTRON",
-   "subtitle": "Sandwichmaker »ASM94XLCOKL«",
-   "price": "14.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8711658533698_DE_V_6631-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8711658533698_DE_V_6631-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Für Toastscheiben bis 14 x 15 cm > Heizplatten antihaftbeschichtet > Automatische Temperaturregelung > Bereitschaftsanzeige > Anti-Rutsch-Füße > Max. 1.000 W",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20963420|2026-11-14": {
-   "kl_nr": "20963420",
-   "title": "BESTRON",
-   "subtitle": "Eierkocher »AEC2003COKL«",
-   "price": "9.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8711658534480_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8711658534480_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Für bis zu 3 Eier > Härtegrad einstellbar > Herausnehmbarer Eiereinsatz > 210 W > Inkl. Messbecher und Eierstecher",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20963477|2026-11-15": {
    "kl_nr": "20963477",
    "title": "K-CLASSIC",
@@ -17122,23 +16223,6 @@
    "sections": [
     "Drogerie, Tiernahrung",
     "Ab Mo.: Unsere Knüller"
-   ]
-  },
-  "20963511|2026-11-14": {
-   "kl_nr": "20963511",
-   "title": "",
-   "subtitle": "Styling-Puppenkopf »Schönheitssalon«",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8721345305064_DE_V_3263-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/8721345305064_DE_V_3263-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Stylingkopf mit vielen Friseur-Accessoires > Zum Beispiel Kamm, Haartrockner, -schmuck etc. > Für Kinder ab 3 Jahren",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "20963936|2026-11-15": {
@@ -17181,14 +16265,14 @@
     "Ab Mo.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20964296|2026-11-14": {
+  "20964296|2026-11-22": {
    "kl_nr": "20964296",
    "title": "CLEMENTONI",
    "subtitle": "Stifte-Set »K-Pop Demon Hunters«",
    "price": "14.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8005125184767_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -17524,14 +16608,14 @@
     "Unsere Frische-Highlights"
    ]
   },
-  "20967744|2026-11-14": {
+  "20967744|2026-11-22": {
    "kl_nr": "20967744",
    "title": "",
    "subtitle": "Gymbag »K-Pop Demon Hunters«",
    "price": "4.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5411217174067_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -17579,14 +16663,14 @@
     "Unsere Frische-Highlights"
    ]
   },
-  "20968754|2026-11-14": {
+  "20968754|2026-11-22": {
    "kl_nr": "20968754",
    "title": "",
    "subtitle": "Rucksack »K-Pop Demon Hunters«",
    "price": "19.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5411217170090_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -17596,14 +16680,14 @@
     "Nächste Woche"
    ]
   },
-  "20968755|2026-11-14": {
+  "20968755|2026-11-22": {
    "kl_nr": "20968755",
    "title": "",
    "subtitle": "Schultertasche »K-Pop Demon Hunters«",
    "price": "7.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5411217170601_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -17630,125 +16714,6 @@
    "description": "versch. Sorten, tiefgefroren",
    "sections": [
     "Ab Do.: Unsere Knüller"
-   ]
-  },
-  "20971876|2026-11-14": {
-   "kl_nr": "20971876",
-   "title": "LUPILU®",
-   "subtitle": "XL-Eisenbahn-Set »City-Express«",
-   "price": "39.99",
-   "unit": "je 53-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066627987670_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4066627987670_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Schienen aus europäischem Buchenholz > Streckenlänge max. 3,5 m > Viele kreative Aufbauvarianten > 3 Stationen: Bahnhof, Lichttunnel, Dreh-Weiche > Selbstfahrender, batteriebetriebener Zug > Alle Fahrzeuge mit Magnetkupplungen > Kompatibel mit üblichen Holzbahn-/Fahrzeugssets > Fördert Kreativität, Fantasie, Feinmotorik > Inkl. Batterien > Für Kinder ab 3 Jahren > 3 Jahre Garantie",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20971877|2026-11-14": {
-   "kl_nr": "20971877",
-   "title": "LUPILU®",
-   "subtitle": "Elektrische Lok mit Anhänger »Glow-in-the-Dark«",
-   "price": "9.99",
-   "unit": "je 3-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066627986956_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4066627986956_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Kunststoff > Selbstfahrende, batteriebetriebene Lok > Mit Vor- und Rückwärtsfahrfunktion > Mit Licht- und Soundeffekten > Verschließbare Anhänger und Edelstein > Glow-in-the-Dark-Elemente > Mit Magnetkupplungen > Kompatibel mit üblichen Holzbahn-/Fahrzeugssets > Inkl. Batterien > Für Kinder ab 3 Jahren > 2 Jahre Garantie",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20971878|2026-11-14": {
-   "kl_nr": "20971878",
-   "title": "LUPILU®",
-   "subtitle": "»Lokschuppen« Erweiterungs-Set",
-   "price": "12.99",
-   "unit": "je 24-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066628103192_DE_V_3807-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4066628103192_DE_V_3807-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Kunststoff > Mit Rangierscheibe und 3 Parkmöglichkeiten > Schienen aus Buchenholz > Lokomotive mit Magnetkupplung > Spielfigur mit Signalkelle > Kompatibel mit üblichen Holzbahn-/Fahrzeugssets > Fördert Kreativität, Fantasie und Feinmotorik > Für Kinder ab 3 Jahren > 3 Jahre Garantie",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20971959|2026-11-14": {
-   "kl_nr": "20971959",
-   "title": "LUPILU®",
-   "subtitle": "XL-Eisenbahn-Set »Dinoland«",
-   "price": "39.99",
-   "unit": "je 51-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066627987687_DE_V_6959-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4066627987687_DE_V_6959-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Schienen aus europäischem Buchenholz > Streckenlänge max. 3,8 m > Viele kreative Aufbauvarianten > Vulkan mit Licht- und Dampffunktion > Dinosauriertunnelskelett mit Soundfunktion > Vulkan und Skelett leuchten im Dunkeln > Mit 4 Dinosauriern und 2 Spielfiguren > Selbstfahrender, batteriebetriebener Truck > Alle Fahrzeuge mit Magnetkupplungen > Kompatibel mit anderen Holzbahn-/Fahrzeugssets > Fördert Kreativität, Fantasie, Feinmotorik > Inkl. Batterien > Für Kinder ab 3 Jahren > 3 Jahre Garantie",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20971962|2026-11-14": {
-   "kl_nr": "20971962",
-   "title": "LUPILU®",
-   "subtitle": "Elektrische Feuerwehrlok mit Anhänger",
-   "price": "9.99",
-   "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066627986987_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4066627986987_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Kunststoff > Selbstfahrende, batteriebetriebene Lok > Mit Vor- und Rückwärtsfahrfunktion > Anhänger mit Leiter und Schlauchrolle > Mit Magnetkupplungen > Kompatibel mit üblichen Holzbahn-/Fahrzeugssets > Inkl. Batterien > Für Kinder ab 3 Jahren > 2 Jahre Garantie",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20971963|2026-11-14": {
-   "kl_nr": "20971963",
-   "title": "LUPILU®",
-   "subtitle": "»Bahnhof« Erweiterungs-Set",
-   "price": "12.99",
-   "unit": "je 23-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066628103208_DE_Mood_7929-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4066628103208_DE_Mood_7929-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Kunststoff > Mit Drehtür und verstellbarer Bahnsteiganzeige > Schienen aus Buchenholz > 2-teiliger Zug mit Magnetkupplungen > Kompatibel mit üblichen Holzbahn-/Fahrzeugssets > Fördert Kreativität, Fantasie und Feinmotorik > Für Kinder ab 3 Jahren > 3 Jahre Garantie",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20971964|2026-11-14": {
-   "kl_nr": "20971964",
-   "title": "LUPILU®",
-   "subtitle": "»Verladekran« Erweiterungs-Set",
-   "price": "12.99",
-   "unit": "je 17-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066628103215_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4066628103215_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Kunststoff > Verschiebbare Krankabine mit Kurbel > Magnetische Ladung > Mit Eisenbahn, Anhänger, Container, Spielfigur > Schienen aus Buchenholz > Kompatibel mit üblichen Holzbahn-/Fahrzeugssets > Fördert Kreativität, Fantasie und Feinmotorik > Für Kinder ab 3 Jahren > 3 Jahre Garantie",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "20972112|2026-11-15": {
@@ -17867,14 +16832,14 @@
     "Süßes für alle"
    ]
   },
-  "20973733|2026-11-14": {
+  "20973733|2026-11-22": {
    "kl_nr": "20973733",
    "title": "",
    "subtitle": "Einkaufstasche »K-Pop Demon Hunters«",
    "price": "2.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4043946333074_DE_V_5709-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -17884,53 +16849,19 @@
     "Nächste Woche"
    ]
   },
-  "20973766|2026-11-14": {
+  "20973766|2026-11-22": {
    "kl_nr": "20973766",
    "title": "",
    "subtitle": "Becher »K-Pop Demon Hunters«",
    "price": "9.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/5056197210512_DE_V_6922-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
    "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/5056197210512_DE_V_6922-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
    "description": "> Aus doppelwandigem Edelstahl > Mit großem Henkel und Trinkhalm > Lackiert und bedruckt > Fassungsvermögen ca. 1.200 ml",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20973898|2026-11-14": {
-   "kl_nr": "20973898",
-   "title": "ESMARA®",
-   "subtitle": "Damen-Pullover",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066628141989_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/4066628141989_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Baumwolle > Mit Pailletten > Größen 36/38 - 48/50 (S - XL)",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20973937|2026-11-14": {
-   "kl_nr": "20973937",
-   "title": "ESMARA®",
-   "subtitle": "Damen-Sweathose",
-   "price": "6.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/a_524478_S-A-D-Sweathose-Weihnachten-CO-PES-RCS-VA-S-36-38-vs-v01_-XX1A_FS_EU-KL_NFVP?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/a_524478_S-A-D-Sweathose-Weihnachten-CO-PES-RCS-VA-S-36-38-vs-v01_-XX1A_FS_EU-KL_NFVP?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Baumwolle und recyceltem, RCS-zertifiziertem Polyester > Angeraute Innenseite > Mit Eingrifftaschen > Mit Gummizugbund, Kordel und Bündchen > Größen 36/38 - 44/46 (S - L)",
    "sections": [
     "Nächste Woche"
    ]
@@ -17969,115 +16900,6 @@
    "description": "vom Jungbullen, zum Braten am Stück oder für Gulasch, gekühlt",
    "sections": [
     "Unsere Frische-Highlights"
-   ]
-  },
-  "20974517|2026-11-14": {
-   "kl_nr": "20974517",
-   "title": "LIVARNO®",
-   "subtitle": "Feinbiber-Bettwäsche-Set ca. 135 x 200 cm",
-   "price": "9.99",
-   "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus recyceltem, GRS-zertifiziertem Polyester > Mikrofaser-Qualität > Weich, atmungsaktiv und schnelltrocknend > Mit Reißverschlüssen > Kissenbezug ca. 80 x 80 cm > Deckenbezug ca. 135 x 200 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20974518|2026-11-14": {
-   "kl_nr": "20974518",
-   "title": "LIVARNO®",
-   "subtitle": "Feinbiber-Bettwäsche-Set ca. 155 x 220 cm",
-   "price": "12.99",
-   "unit": "je 2-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus recyceltem, GRS-zertifiziertem Polyester > Mikrofaser-Qualität > Weich, atmungsaktiv und schnelltrocknend > Mit Reißverschlüssen > Kissenbezug ca. 80 x 80 cm > Deckenbezug ca. 155 x 220 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20974523|2026-11-14": {
-   "kl_nr": "20974523",
-   "title": "ESMARA KIDS®",
-   "subtitle": "Kinder-Thermosocken",
-   "price": "2.49",
-   "unit": "je 2 Paar",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus Baumwolle, Polyamid und Elastan (CREORA™) > Größen 27/30 - 39/42",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20974525|2026-11-14": {
-   "kl_nr": "20974525",
-   "title": "LUPILU®",
-   "subtitle": "Kinder-Thermosocken",
-   "price": "2.49",
-   "unit": "je 2 Paar",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus Baumwolle, Polyamid und Elastan (CREORA™) > Mit Anti-Rutsch-Noppen > Größen 19/22 - 31/34",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20974526|2026-11-14": {
-   "kl_nr": "20974526",
-   "title": "LUPILU®",
-   "subtitle": "Kinder-Plüschoverall",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus recyceltem, GRS-zertifiziertem Polyester > Durchgehender Reißverschluss mit Zippergarage > Mit Rippbündchen an Ärmel- und Beinabschluss > Größen 110/116 - 122/128",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20974527|2026-11-14": {
-   "kl_nr": "20974527",
-   "title": "ESMARA MEN®",
-   "subtitle": "Herren-Strickpullover",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/a_524477_S-A-H-Pullover-Weihnachten-FUN-PAN-Best-vs-v01_-XX1A_FS_EU-KL_NFVP?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/a_524477_S-A-H-Pullover-Weihnachten-FUN-PAN-Best-vs-v01_-XX1A_FS_EU-KL_NFVP?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Obermaterial Polyacryl > Futter aus Baumwolle > Aufgesetzte Taschen – ideal für Getränkedosen > Größen 48/50 - 60/62 (M - XXL)",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20974529|2026-11-14": {
-   "kl_nr": "20974529",
-   "title": "ESMARA®",
-   "subtitle": "Damen-Strick-Leggings",
-   "price": "8.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/a_524487_S-A-D-Leggings-Weihnachten-vs-v01_-XX1A_FS_EU-KL_NFVP?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
-   "thumbnail_2x": "https://kaufland.media.schwarz/is/image/schwarz/a_524487_S-A-D-Leggings-Weihnachten-vs-v01_-XX1A_FS_EU-KL_NFVP?JGstbGVnYWN5LW9uc2l0ZS0yJA==",
-   "description": "> Aus Viskose (LENZING™ ECOVERO™) und Polyamid > Besonders weich und anschmiegsam > Mit Gummizugbund und Bündchen > Größen 36/38 - 48/50 (S - XL)",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "20974614|2026-11-15": {
@@ -18229,29 +17051,14 @@
     "Ab Do.: Black Week mit ganz vielen Top-Preisdeals"
    ]
   },
-  "20977756|2026-11-14": {
-   "kl_nr": "20977756",
-   "title": "LIVARNO®",
-   "subtitle": "Kuscheldecke",
-   "price": "7.99",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus recyceltem, GRS-zertifiziertem Polyester > Mit flauschiger Rückseite aus Teddy-Fleece > Größe ca. 140 x 180 cm",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20978085|2026-11-14": {
+  "20978085|2026-11-22": {
    "kl_nr": "20978085",
    "title": "MATTEL",
    "subtitle": "Singende Puppe »K-Pop Demon Hunters«",
    "price": "27.99",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/194735424856_DE_V_2737-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -18316,14 +17123,14 @@
     "Molkereiprodukte, Fette"
    ]
   },
-  "20980658|2026-11-14": {
+  "20980658|2026-11-22": {
    "kl_nr": "20980658",
    "title": "SILVERCREST®",
    "subtitle": "Saugroboter 2 in 1 mit Ladestation",
    "price": "129.00",
    "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/4066627939877_DE_V_2587-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -18416,36 +17223,6 @@
     "Für maximale Bio-Power!"
    ]
   },
-  "20982787|2026-11-14": {
-   "kl_nr": "20982787",
-   "title": "ESMARA®",
-   "subtitle": "Socken",
-   "price": "2.69",
-   "unit": "je 3 Paar",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus Baumwolle, Polyamid und Elastan (CREORA™) > Größen 35/38 - 43/46",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
-  "20982986|2026-11-14": {
-   "kl_nr": "20982986",
-   "title": "",
-   "subtitle": "Aufhänger",
-   "price": "1.00",
-   "unit": "je 100-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus Metall > Für Baumschmuck",
-   "sections": [
-    "Nächste Woche"
-   ]
-  },
   "20983030|2026-11-15": {
    "kl_nr": "20983030",
    "title": "K-BIO ORGANIC",
@@ -18484,21 +17261,6 @@
    "department": "Fleisch, Geflügel, Wurst",
    "sections": [
     "Fleisch, Geflügel, Wurst"
-   ]
-  },
-  "20983283|2026-11-14": {
-   "kl_nr": "20983283",
-   "title": "",
-   "subtitle": "Gebäckdose",
-   "price": "2.00",
-   "unit": "je",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
-   "sales_from": "2026-11-23",
-   "sales_to": "2026-11-28",
-   "description": "> Aus Metall > Größe ca. B 14 x H 6,5 x T 18 cm",
-   "sections": [
-    "Nächste Woche"
    ]
   },
   "20986497|2026-11-15": {
@@ -18604,14 +17366,14 @@
     "Black Week: das beste aus der Drogerie"
    ]
   },
-  "20991479|2026-11-14": {
+  "20991479|2026-11-22": {
    "kl_nr": "20991479",
    "title": "SWIFFER",
    "subtitle": "Starter-Set",
    "price": "7.99",
    "unit": "je 13-teilig",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8700216655996_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
@@ -18622,14 +17384,14 @@
     "Nächste Woche"
    ]
   },
-  "20991480|2026-11-14": {
+  "20991480|2026-11-22": {
    "kl_nr": "20991480",
    "title": "SWIFFER",
    "subtitle": "Bodenreinigungstücher feucht",
    "price": "4.99",
    "unit": "je 24-St.-Packg.",
-   "shown_from": "2026-11-14",
-   "shown_to": "2026-11-20",
+   "shown_from": "2026-11-22",
+   "shown_to": "2026-11-28",
    "sales_from": "2026-11-23",
    "sales_to": "2026-11-28",
    "thumbnail": "https://kaufland.media.schwarz/is/image/schwarz/8700216717786_DE_P-1?JGstbGVnYWN5LW9uc2l0ZS0xJA==",
