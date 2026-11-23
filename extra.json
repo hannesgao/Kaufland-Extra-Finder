@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-22T09:35:28+01:00",
+  "generated_at": "2026-11-23T10:34:50+01:00",
   "store_count": 788,
   "failed_count": 0,
   "stores": [
@@ -14,12 +14,6 @@
       "lng": 12.1211415,
       "url": "https://filiale.kaufland.de/service/filiale/rostock-suedstadt-1443.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -51,12 +45,6 @@
       "lng": 7.5841314,
       "url": "https://filiale.kaufland.de/service/filiale/hagen-hohenlimburg-1480.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -100,12 +88,6 @@
       "lng": 8.726286,
       "url": "https://filiale.kaufland.de/service/filiale/paderborn-schloss-neuhaus-1560.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -149,12 +131,6 @@
       "lng": 8.0822934,
       "url": "https://filiale.kaufland.de/service/filiale/soest-1600.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -198,12 +174,6 @@
       "lng": 12.4878617,
       "url": "https://filiale.kaufland.de/service/filiale/taucha-1620.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -235,12 +205,6 @@
       "lng": 13.1892761,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-spandau-1643.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -272,12 +236,6 @@
       "lng": 6.1528729,
       "url": "https://filiale.kaufland.de/service/filiale/wuerselen-1653.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -309,12 +267,6 @@
       "lng": 8.7399154,
       "url": "https://filiale.kaufland.de/service/filiale/paderborn-kernstadt-rieme-1663.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -346,12 +298,6 @@
       "lng": 8.230617,
       "url": "https://filiale.kaufland.de/service/filiale/mainz-mombach-1733.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -395,12 +341,6 @@
       "lng": 6.4115753,
       "url": "https://filiale.kaufland.de/service/filiale/moenchengladbach-holt-1773.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -444,12 +384,6 @@
       "lng": 13.5383818,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-marzahn-1780.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -481,12 +415,6 @@
       "lng": 6.8901167,
       "url": "https://filiale.kaufland.de/service/filiale/monheim-am-rhein-1970.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -530,12 +458,6 @@
       "lng": 6.0585098,
       "url": "https://filiale.kaufland.de/service/filiale/aachen-vaalser-str--1990.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -610,12 +532,6 @@
       "lng": 13.2134715,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-spandau-pichelsw--2043.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -690,12 +606,6 @@
       "lng": 12.0730833,
       "url": "https://filiale.kaufland.de/service/filiale/rostock-schmarl-2333.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -813,12 +723,6 @@
       "lng": 13.3390088,
       "url": "https://filiale.kaufland.de/service/filiale/freiberg-bebelplatz-2640.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -850,12 +754,6 @@
       "lng": 11.5636815,
       "url": "https://filiale.kaufland.de/service/filiale/muenchen-milbertshofen-am-h-2723.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -930,12 +828,6 @@
       "lng": 13.5969599,
       "url": "https://filiale.kaufland.de/service/filiale/eiche-3070.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -979,12 +871,6 @@
       "lng": 12.4785725,
       "url": "https://filiale.kaufland.de/service/filiale/leipzig-paunsdorf-3140.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1028,12 +914,6 @@
       "lng": 14.3165846,
       "url": "https://filiale.kaufland.de/service/filiale/cottbus-schmellwitz-3160.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1079,8 +959,9 @@
       "leaflets": [],
       "special_days": [
         {
-          "date": "2026-11-22",
-          "closed": true
+          "date": "2026-11-29",
+          "open": "13:00",
+          "close": "18:00"
         }
       ],
       "past": [
@@ -1126,12 +1007,6 @@
       "lng": 13.2191487,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-haselhorst-3290.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1163,12 +1038,6 @@
       "lng": 13.3284456,
       "url": "https://filiale.kaufland.de/service/filiale/freiberg-haeuersteig-3300.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1212,12 +1081,6 @@
       "lng": 13.4565806,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-storkower-str--3330.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1249,12 +1112,6 @@
       "lng": 13.5867248,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-koepenick-3580.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1286,12 +1143,6 @@
       "lng": 13.4043873,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-pankow-3650.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1323,12 +1174,6 @@
       "lng": 12.193031,
       "url": "https://filiale.kaufland.de/service/filiale/bentwisch-3700.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1403,12 +1248,6 @@
       "lng": 6.125751,
       "url": "https://filiale.kaufland.de/service/filiale/aachen-breslauer-str--4003.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1440,12 +1279,6 @@
       "lng": 13.476104,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-lichtenberg-4033.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1477,12 +1310,6 @@
       "lng": 12.4589578,
       "url": "https://filiale.kaufland.de/service/filiale/leipzig-heiterblick-4110.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1514,12 +1341,6 @@
       "lng": 8.599059,
       "url": "https://filiale.kaufland.de/service/filiale/bremerhaven-lehe-4113.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1551,12 +1372,6 @@
       "lng": 10.0569452,
       "url": "https://filiale.kaufland.de/service/filiale/celle-4123.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1600,12 +1415,6 @@
       "lng": 7.3714169,
       "url": "https://filiale.kaufland.de/service/filiale/dortmund-oespel-4153.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1680,12 +1489,6 @@
       "lng": 6.4686079,
       "url": "https://filiale.kaufland.de/service/filiale/dueren-4183.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1729,12 +1532,6 @@
       "lng": 6.7780702,
       "url": "https://filiale.kaufland.de/service/filiale/duesseldorf-friedrichstadt-4193.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1840,12 +1637,6 @@
       "lng": 9.597184,
       "url": "https://filiale.kaufland.de/service/filiale/garbsen-4273.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1889,12 +1680,6 @@
       "lng": 10.5386563,
       "url": "https://filiale.kaufland.de/service/filiale/gifhorn-4303.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1938,12 +1723,6 @@
       "lng": 9.8828881,
       "url": "https://filiale.kaufland.de/service/filiale/goettingen-grone-4313.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -1975,12 +1754,6 @@
       "lng": 9.9271805,
       "url": "https://filiale.kaufland.de/service/filiale/goettingen-weende-4323.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2012,12 +1785,6 @@
       "lng": 13.4305359,
       "url": "https://filiale.kaufland.de/service/filiale/greifswald-4333.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2061,12 +1828,6 @@
       "lng": 11.6436324,
       "url": "https://filiale.kaufland.de/service/filiale/muenchen-neuperlach-4370.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2110,12 +1871,6 @@
       "lng": 6.1102485,
       "url": "https://filiale.kaufland.de/service/filiale/heinsberg-4393.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2159,12 +1914,6 @@
       "lng": 13.4450862,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-heinersdorf-4400.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2208,12 +1957,6 @@
       "lng": 7.4329911,
       "url": "https://filiale.kaufland.de/service/filiale/dortmund-hombruch-4420.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2331,12 +2074,6 @@
       "lng": 13.461711,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-h--blankenstein-str-4460.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2368,12 +2105,6 @@
       "lng": 12.500093,
       "url": "https://filiale.kaufland.de/service/filiale/grosspoesna-4480.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2405,12 +2136,6 @@
       "lng": 8.6009403,
       "url": "https://filiale.kaufland.de/service/filiale/bremerhaven-fischereihafen-4520.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2454,12 +2179,6 @@
       "lng": 6.9500883,
       "url": "https://filiale.kaufland.de/service/filiale/langenfeld-rheinland--4533.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2491,12 +2210,6 @@
       "lng": 8.2296898,
       "url": "https://filiale.kaufland.de/service/filiale/mainz-bretzenheim-4563.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2528,12 +2241,6 @@
       "lng": 6.460389,
       "url": "https://filiale.kaufland.de/service/filiale/moenchengladbach-pesch-4593.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2565,12 +2272,6 @@
       "lng": 6.4605285,
       "url": "https://filiale.kaufland.de/service/filiale/moenchengladbach-eicken-4603.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2602,12 +2303,6 @@
       "lng": 11.5972031,
       "url": "https://filiale.kaufland.de/service/filiale/muenchen-schwabing-freimann-4613.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2651,12 +2346,6 @@
       "lng": 10.1525975,
       "url": "https://filiale.kaufland.de/service/filiale/oststeinbek-4693.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2700,12 +2389,6 @@
       "lng": 8.7686648,
       "url": "https://filiale.kaufland.de/service/filiale/paderborn-kernstadt-4703.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2811,12 +2494,6 @@
       "lng": 11.8872998,
       "url": "https://filiale.kaufland.de/service/filiale/amberg-4750.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2860,12 +2537,6 @@
       "lng": 12.120529,
       "url": "https://filiale.kaufland.de/service/filiale/rosenheim-happing-4773.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2897,12 +2568,6 @@
       "lng": 11.3925643,
       "url": "https://filiale.kaufland.de/service/filiale/schwerin-krebsfoerden-4803.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2934,12 +2599,6 @@
       "lng": 10.7258392,
       "url": "https://filiale.kaufland.de/service/filiale/wolfsburg-4863.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -2985,8 +2644,9 @@
       "leaflets": [],
       "special_days": [
         {
-          "date": "2026-11-22",
-          "closed": true
+          "date": "2026-11-29",
+          "open": "13:00",
+          "close": "18:00"
         }
       ],
       "past": [
@@ -3032,12 +2692,6 @@
       "lng": 11.9993108,
       "url": "https://filiale.kaufland.de/service/filiale/bad-aibling-4900.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3112,12 +2766,6 @@
       "lng": 14.2610471,
       "url": "https://filiale.kaufland.de/service/filiale/kolkwitz-5053.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3149,12 +2797,6 @@
       "lng": 9.9001077,
       "url": "https://filiale.kaufland.de/service/filiale/goettingen-weststadt-5060.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3198,12 +2840,6 @@
       "lng": 9.4339801,
       "url": "https://filiale.kaufland.de/service/filiale/flensburg-5083.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3352,12 +2988,6 @@
       "lng": 6.4447027,
       "url": "https://filiale.kaufland.de/service/filiale/moenchengladbach-rheydt-5403.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3463,12 +3093,6 @@
       "lng": 13.5584569,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-biesdorf-6200.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3593,12 +3217,6 @@
       "lng": 14.3346832,
       "url": "https://filiale.kaufland.de/service/filiale/cottbus-madlow-6430.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3630,12 +3248,6 @@
       "lng": 13.5034572,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-alt-hohenschoenhaus--6620.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3698,12 +3310,6 @@
       "lng": 13.4970425,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-friedrichsfelde-6740.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3735,12 +3341,6 @@
       "lng": 13.4726729,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-rummelsburg-7370.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3772,12 +3372,6 @@
       "lng": 14.6464729,
       "url": "https://filiale.kaufland.de/service/filiale/forst-7470.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3809,12 +3403,6 @@
       "lng": 9.9382306,
       "url": "https://filiale.kaufland.de/service/filiale/goettingen-innenstadt-7680.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3846,12 +3434,6 @@
       "lng": 10.9846703,
       "url": "https://filiale.kaufland.de/service/filiale/weissenburg-7760.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3895,12 +3477,6 @@
       "lng": 12.0906324,
       "url": "https://filiale.kaufland.de/service/filiale/rosenheim-sued-7800.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3944,12 +3520,6 @@
       "lng": 12.4049898,
       "url": "https://filiale.kaufland.de/service/filiale/leipzig-reudnitz-thonberg-7923.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -3981,12 +3551,6 @@
       "lng": 11.4658307,
       "url": "https://filiale.kaufland.de/service/filiale/schwerin-muesser-holz-8340.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -4030,12 +3594,6 @@
       "lng": 13.6213423,
       "url": "https://filiale.kaufland.de/service/filiale/koenigs-wusterhausen-8390.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -4110,12 +3668,6 @@
       "lng": 7.4615569,
       "url": "https://filiale.kaufland.de/service/filiale/hagen-nord-8730.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
@@ -4141,12 +3693,6 @@
       "lng": 13.1853795,
       "url": "https://filiale.kaufland.de/service/filiale/berlin-wilhelmstadt-8860.html",
       "leaflets": [],
-      "special_days": [
-        {
-          "date": "2026-11-22",
-          "closed": true
-        }
-      ],
       "past": [
         {
           "valid_from": "2026-11-15",
